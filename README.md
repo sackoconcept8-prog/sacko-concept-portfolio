@@ -1,6 +1,6 @@
 # SACKO CONCEPT — Creative Studio
 
-Premium, responsive French/English studio website for Hawa Sacko.
+Premium, responsive English-first studio website for Hawa Sacko, with a French language switch. English is used on first visit and in the static HTML. An explicit language choice is remembered across the studio and privacy page.
 
 Portfolio, services, three package collections, made-to-order designer resources, LaunchVault, six client brief links and a fixed WhatsApp button.
 
