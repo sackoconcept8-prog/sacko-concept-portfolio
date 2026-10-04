@@ -8,11 +8,11 @@ Portfolio, services, three package collections, made-to-order designer resources
 
 Repository: https://github.com/sackoconcept8-prog/sacko-concept-portfolio
 
-Expected public URL after Pages is enabled: https://sackoconcept8-prog.github.io/sacko-concept-portfolio/
+Live website: https://sackoconcept8-prog.github.io/sacko-concept-portfolio/
 
 In repository **Settings → Pages → Build and deployment → Source**, select **GitHub Actions**. The workflow builds only the production files in `dist/`. All subsequent pushes to `main` publish automatically. No installation or paid dependency is required.
 
-The previous deployment failed because Pages was not enabled. The GitHub connector available to the agent can write repository files but has no endpoint to activate Pages. Activation must be completed in GitHub settings before the public URL is considered live.
+GitHub Pages is enabled with GitHub Actions. The production workflow has been verified successfully, and the public website serves English by default. Hawa’s supplied premium logo is used in the header, footer, studio section and site icon.
 
 ## Build
 

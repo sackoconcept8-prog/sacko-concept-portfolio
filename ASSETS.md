@@ -1,6 +1,6 @@
 # Asset attribution
 
-Original Sacko Concept hero and logo reused from the existing repository.
+Original Sacko Concept hero reused from the existing repository. The premium SC logo was supplied directly by Hawa in `SACKO_Concept_Premium_Logo.png.png` and is published as `assets/sacko-premium-logo.png` without changing its original pixels.
 
 The following portfolio artwork was published by **SACKO CONCEPT / Hawa Sacko** on her own Dribbble profile and reused for her requested website. These are independent portfolio concepts, not endorsements from the demonstration brands.
 

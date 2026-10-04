@@ -9,7 +9,7 @@ await rm(out, {recursive:true,force:true});
 await mkdir(join(out,'assets'), {recursive:true});
 const files = ['index.html','legal.html','styles.css','design.css','script.js','legal.js','site-config.js','catalog.js','robots.txt','sitemap.xml'];
 for (const file of files) await copyFile(join(root,file),join(out,file));
-const assets = (await readdir(join(root,'assets'))).filter(file=>/\.(webp|woff2|svg)$/.test(file));
+const assets = (await readdir(join(root,'assets'))).filter(file=>/\.(png|webp|woff2|svg)$/.test(file) && !file.endsWith('-source.png'));
 for(const file of assets) await copyFile(join(root,'assets',file),join(out,'assets',file));
 await copyFile(join(root,'.nojekyll'),join(out,'.nojekyll'));
 for(const list of Object.values(packages)) for(const pack of list) {
