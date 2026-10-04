@@ -1,0 +1,9 @@
+{
+  "name": "sacko-concept-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Sacko Concept design studio, portfolio, packages and order briefs",
+  "scripts": { "build": "node scripts/build.mjs" },
+  "engines": { "node": ">=20" }
+}

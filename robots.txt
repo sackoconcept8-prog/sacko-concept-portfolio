@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sackoconcept8-prog.github.io/sacko-concept-portfolio/sitemap.xml
