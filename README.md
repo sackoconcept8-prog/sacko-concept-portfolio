@@ -8,7 +8,7 @@ Portfolio, services, three package collections, made-to-order designer resources
 
 Repository: https://github.com/sackoconcept8-prog/sacko-concept-portfolio
 
-Live website: https://sackoconcept8-prog.github.io/sacko-concept-portfolio/
+Live website: https://www.sackoconcept.com/
 
 In repository **Settings → Pages → Build and deployment → Source**, select **GitHub Actions**. The workflow builds only the production files in `dist/`. All subsequent pushes to `main` publish automatically. No installation or paid dependency is required.
 
@@ -33,7 +33,7 @@ Add official payment URLs to `SITE.payments` using the corresponding package IDs
 If supported by the payment provider, set the post-payment return URL to:
 
 ```text
-https://sackoconcept8-prog.github.io/sacko-concept-portfolio/?brief=impact-profile
+https://www.sackoconcept.com/?brief=impact-profile
 ```
 
 Replace `impact-profile` with the relevant package ID. The returned page displays a link to the correct brief. A return visit is never treated as verified payment. Final payment confirmation belongs to the provider and the studio.
@@ -60,3 +60,7 @@ Portfolio work is labelled as independent concepts and design studies, not paid-
 Public package values used: Impact $15/$45/$95, website $49/$89/$149, signature logo $250, product UI $477 and intake system $47. Delivery estimates and scope must be confirmed in the brief.
 
 See `ASSETS.md` for original portfolio sources and font attribution.
+
+## Custom domain and SEO
+
+The public canonical site is https://www.sackoconcept.com/. Keep `robots.txt`, `sitemap.xml`, canonical and social preview tags on this domain. The site uses an SVG favicon to avoid downloading the large logo PNG for a small browser icon. Brand artwork remains unchanged. Before adding payment links, use only official provider URLs and confirm that checkout and customer forms work end to end.
