@@ -29,7 +29,7 @@ export const SITE = {
   store: 'https://vault.sackoconcept.com/',
   // Only official payment URLs. No made-up PayPal.me links or payment success claims.
   payments: {
-    'impact-starter': null, 'impact-profile': null, 'impact-business': null,
+    'impact-starter': 'https://www.paypal.com/ncp/payment/PLB-HL32LQES6W4Z', 'impact-profile': null, 'impact-business': null,
     'website-starter': null, 'website-premium': null, 'website-pro': null,
     'brand-signature': null, 'ui-signature': null, 'intake-system': null,
   },
