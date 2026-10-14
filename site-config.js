@@ -35,5 +35,5 @@ export const SITE = {
   },
   // Return URLs that payment-link owners can configure in their payment dashboard.
   // Returning here is an invitation to fill a brief, not proof that payment succeeded.
-  afterPaymentBase: 'https://sackoconcept8-prog.github.io/sacko-concept-portfolio/',
+  afterPaymentBase: 'https://www.sackoconcept.com/',
 };
