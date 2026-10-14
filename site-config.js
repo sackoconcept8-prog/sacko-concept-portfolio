@@ -31,7 +31,7 @@ export const SITE = {
   payments: {
     'impact-starter': 'https://www.paypal.com/ncp/payment/PLB-HL32LQES6W4Z', 'impact-profile': 'https://www.paypal.com/ncp/payment/PLB-FPKN3A2SR748', 'impact-business': 'https://www.paypal.com/ncp/payment/PLB-NNCAK4L48V9N',
     'website-starter': 'https://www.paypal.com/ncp/payment/PLB-HVKVQVAACXGM', 'website-premium': 'https://www.paypal.com/ncp/payment/PLB-NXEB74SG827V', 'website-pro': 'https://www.paypal.com/ncp/payment/PLB-TWLG9QFBEQF9',
-    'brand-signature': null, 'ui-signature': null, 'intake-system': null,
+    'brand-signature': 'https://www.paypal.com/ncp/payment/PLB-2WFJRVY2BF3R', 'ui-signature': null, 'intake-system': null,
   },
   // Return URLs that payment-link owners can configure in their payment dashboard.
   // Returning here is an invitation to fill a brief, not proof that payment succeeded.
