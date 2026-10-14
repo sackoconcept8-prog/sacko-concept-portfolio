@@ -26,7 +26,7 @@ export const SITE = {
     { name: 'TikTok', url: null, icon: 'link' },
     { name: 'PayPal', url: null, icon: 'link' },
   ],
-  store: 'https://shop.sackoconcept.com/',
+  store: 'https://vault.sackoconcept.com/',
   // Only official payment URLs. No made-up PayPal.me links or payment success claims.
   payments: {
     'impact-starter': null, 'impact-profile': null, 'impact-business': null,
