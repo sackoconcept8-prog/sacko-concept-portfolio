@@ -7,7 +7,7 @@ const root = resolve(new URL('..', import.meta.url).pathname);
 const out = join(root, 'dist');
 await rm(out, {recursive:true,force:true});
 await mkdir(join(out,'assets'), {recursive:true});
-const files = ['index.html','legal.html','styles.css','design.css','script.js','legal.js','site-config.js','catalog.js','robots.txt','sitemap.xml'];
+const files = ['index.html','legal.html','styles.css','design.css','script.js','legal.js','site-config.js','catalog.js','robots.txt','sitemap.xml','catalogue-1tpe.html','vente-suivi-ventes-1tpe.html','vente-gestion-stocks-1tpe.html','vente-conges-absences-rh-1tpe.html','vente-launchvault-1tpe.html'];
 for (const file of files) await copyFile(join(root,file),join(out,file));
 const assets = (await readdir(join(root,'assets'))).filter(file=>/\.(png|webp|woff2|svg)$/.test(file) && !file.endsWith('-source.png'));
 for(const file of assets) await copyFile(join(root,'assets',file),join(out,'assets',file));
