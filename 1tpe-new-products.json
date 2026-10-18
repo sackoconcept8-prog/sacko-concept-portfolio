@@ -1,0 +1,16 @@
+{
+  "ia-bureau": {
+    "page": "vente-ia-au-bureau-1tpe.html",
+    "priceTtcEur": null,
+    "vatFrancePercent": null,
+    "checkoutUrl": null,
+    "deliveryConfigured": false
+  },
+  "pack-rh": {
+    "page": "vente-pack-rh-documents-1tpe.html",
+    "priceTtcEur": null,
+    "vatFrancePercent": null,
+    "checkoutUrl": null,
+    "deliveryConfigured": false
+  }
+}
