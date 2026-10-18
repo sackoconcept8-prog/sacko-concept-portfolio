@@ -1,9 +1,9 @@
 {
   "ia-bureau": {
     "page": "vente-ia-au-bureau-1tpe.html",
-    "priceTtcEur": null,
-    "vatFrancePercent": null,
-    "checkoutUrl": null,
+    "priceTtcEur": 8.4,
+    "vatFrancePercent": 20,
+    "checkoutUrl": "https://www.1tpe.net/commander.php?u=sackoconcept&p=6",
     "deliveryConfigured": false
   },
   "pack-rh": {
