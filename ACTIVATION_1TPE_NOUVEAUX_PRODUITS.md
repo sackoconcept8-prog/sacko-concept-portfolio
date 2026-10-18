@@ -5,6 +5,8 @@ Pages de présentation créées à partir des archives effectivement inspectées
 - `/vente-ia-au-bureau-1tpe.html` : cinq PDF en français (manuel de 80 pages, recueil de 100 prompts de 53 pages, missions de 23 pages, checklists de 8 pages et fiche d’une page), plus LISEZ_MOI. Aperçu public : huit premières pages du manuel.
 - `/vente-pack-rh-documents-1tpe.html` : édition anglaise V3, 33 modèles Word et Company_Profile, trois systèmes Excel en BLANK + DEMO, six PDF et une vidéo sous-titrée de 76 secondes. Aperçu public fourni dans le pack : 15 pages.
 
+La fiche du Pack RH V3 est intégralement en anglais, y compris ses boutons, sa FAQ, ses conditions et sa carte dans le catalogue. Son visuel principal est celui fourni par la vendeuse (« Pack RH et documents administratifs-21.png »), optimisé en WebP sans recadrage. Les extraits réels restent présentés séparément.
+
 Les archives payantes et leurs liens de livraison ne sont pas publiés dans ce dépôt public. Seuls les aperçus destinés au public sont intégrés.
 
 ## Informations commerciales encore manquantes

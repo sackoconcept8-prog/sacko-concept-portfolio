@@ -60,11 +60,27 @@ const products=[
 {type:"ia",name:"SACKO LaunchVault",desc:"Une collection de 500 prompts IA organisés en cinq kits : Shopify, Contenu, Web Design, Business et Productivité.",features:["500 prompts IA","5 kits professionnels","Guide d'accès"],price:"57 €",img:"assets/vault.webp",page:"https://launchvault.sackoconcept.com/",pay:"https://www.1tpe.net/commander.php?u=sackoconcept&p=4"},
 /* NOUVEAUTES_1TPE_START */
 {"type":"ia","tag":"Guide pratique en français","name":"L’IA au bureau, c’est facile !","desc":"Un manuel de 80 pages, 100 prompts et des exercices corrigés pour utiliser l’IA dans vos tâches professionnelles, vérifier ses réponses et mieux protéger vos données.","features":["Manuel de 80 pages","100 prompts bonus","5 PDF en français"],"price":"Prochainement","priceLabel":"Disponibilité","img":"assets/ia-bureau-cover.webp","page":"vente-ia-au-bureau-1tpe.html","pay":null},
-{"type":"rh","tag":"Documents RH · Édition anglaise","name":"Pack RH & documents d’entreprise V3","desc":"Pack RH en anglais : 33 modèles Word, 3 systèmes Excel en versions vierge et démonstration, guides PDF et vidéo de présentation. Licence pour une organisation.","features":["33 modèles Word","3 systèmes Excel","Fichiers en anglais"],"price":"Prochainement","priceLabel":"Disponibilité","img":"assets/pack-rh-cover.webp","page":"vente-pack-rh-documents-1tpe.html","pay":null}
+{"type":"rh","tag":"HR documents · English edition","name":"HR & Business Documents Pack V3","desc":"An English-language HR pack with 33 Word templates, 3 Excel systems in blank and demo editions, PDF guides and a video walkthrough. Licensed for one organisation.","features":["33 Word templates","3 Excel systems","English files"],"price":"Coming soon","priceLabel":"Availability","img":"assets/pack-rh-v3-cover.webp","page":"vente-pack-rh-documents-1tpe.html","pay":null,"lang":"en"}
 /* NOUVEAUTES_1TPE_END */
 ];
 const grid=document.querySelector("#products"),search=document.querySelector("#search"),empty=document.querySelector("#empty");let selected="all";
-function makeCard(p){const el=document.createElement("article");el.className="product reveal";el.innerHTML='<a class="cover" aria-label="Voir la fiche produit"><img loading="lazy" width="800" height="800"></a><div class="copy"><span class="tag"></span><h3></h3><p></p><div class="pills"></div><div class="purchase"><div class="price"><small></small><strong></strong></div><div class="card-actions"><a class="btn outline">Détails</a><a class="btn gold" rel="nofollow"></a></div></div></div>';const cover=el.querySelector(".cover");cover.href=p.page;const img=el.querySelector("img");img.src=p.img;img.alt=(p.tag?"Présentation de ":"Visuel publicitaire de ")+p.name;if(p.tag)img.style.objectFit="contain";el.querySelector(".tag").textContent=p.tag||(p.type==="excel"?"Collection Excel":"Ressource IA");el.querySelector("h3").textContent=p.name;el.querySelector(".copy p").textContent=p.desc;el.querySelector(".price small").textContent=p.priceLabel||"Prix HT";el.querySelector(".price strong").textContent=p.price;if(!p.pay)el.querySelector(".price strong").style.fontSize="1.15rem";let links=el.querySelectorAll(".card-actions a");links[0].href=p.page;links[1].href=p.pay||p.page;links[1].textContent=p.pay?"Commander ↗":"Découvrir ↗";p.features.forEach(s=>{let tag=document.createElement("span");tag.textContent=s;el.querySelector(".pills").append(tag)});return el}
+function makeCard(p){
+  const english=p.lang==="en",el=document.createElement("article");
+  el.className="product reveal";
+  if(english)el.lang="en";
+  el.innerHTML='<a class="cover"><img loading="lazy" width="800" height="800"></a><div class="copy"><span class="tag"></span><h3></h3><p></p><div class="pills"></div><div class="purchase"><div class="price"><small></small><strong></strong></div><div class="card-actions"><a class="btn outline"></a><a class="btn gold" rel="nofollow"></a></div></div></div>';
+  const cover=el.querySelector(".cover");cover.href=p.page;cover.setAttribute("aria-label",english?"View product details":"Voir la fiche produit");
+  const img=el.querySelector("img");img.src=p.img;img.alt=(english?"Presentation of ":p.tag?"Présentation de ":"Visuel publicitaire de ")+p.name;
+  if(p.tag)img.style.objectFit="contain";
+  el.querySelector(".tag").textContent=p.tag||(p.type==="excel"?"Collection Excel":"Ressource IA");
+  el.querySelector("h3").textContent=p.name;el.querySelector(".copy p").textContent=p.desc;
+  el.querySelector(".price small").textContent=p.priceLabel||"Prix HT";el.querySelector(".price strong").textContent=p.price;
+  if(!p.pay)el.querySelector(".price strong").style.fontSize="1.15rem";
+  const links=el.querySelectorAll(".card-actions a");links[0].href=p.page;links[0].textContent=english?"Details":"Détails";
+  links[1].href=p.pay||p.page;links[1].textContent=p.pay?(english?"Order ↗":"Commander ↗"):(english?"Explore ↗":"Découvrir ↗");
+  p.features.forEach(s=>{const tag=document.createElement("span");tag.textContent=s;el.querySelector(".pills").append(tag)});
+  return el;
+}
 let observer;if("IntersectionObserver" in window){observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visible");observer.unobserve(e.target)}}),{threshold:.08})}
 function reveal(){document.querySelectorAll(".reveal:not(.visible)").forEach(x=>{if(observer)observer.observe(x);else x.classList.add("visible")})}
 function render(){const q=search.value.trim().toLocaleLowerCase("fr");const arr=products.filter(p=>(selected==="all"||p.type===selected)&&[p.name,p.desc,...p.features].join(" ").toLocaleLowerCase("fr").includes(q));grid.replaceChildren(...arr.map(makeCard));empty.hidden=arr.length!==0;document.querySelector("#counter").textContent=arr.length+" produit"+(arr.length>1?"s":"");reveal()}
