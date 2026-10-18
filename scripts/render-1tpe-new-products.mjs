@@ -12,7 +12,7 @@ const number = value => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 
 const products = [
   {
     id: 'ia-bureau', name: 'L’IA au bureau, c’est facile !', short: 'L’IA au bureau', type: 'ia', tag: 'Guide pratique en français',
-    edition: 'Édition française · Octobre 2026', cover: 'assets/ia-bureau-cover.webp', coverWidth: 1024, coverHeight: 1536,
+    edition: 'Édition française · Octobre 2026', cover: 'assets/ia-bureau-guide-cover.webp', coverWidth: 1024, coverHeight: 1536,
     artClass: 'book', coverCaption: 'Couverture du guide · Les bonus sont livrés séparément.',
     headline: 'L’IA au bureau,<br><em>c’est facile !</em>',
     description: 'Un manuel de 80 pages, 100 prompts et des exercices corrigés pour utiliser l’IA dans vos tâches professionnelles, vérifier ses réponses et mieux protéger vos données.',
