@@ -128,23 +128,23 @@ function render(product) {
   const money = value => english ? new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR' }).format(value) : euro(value);
   const vat = value => english ? new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 }).format(value) : number(value);
   const checkout = (text, className='btn gold') => `<a class="${className}" href="${esc(c.checkoutUrl)}" rel="nofollow" target="_top">${esc(text)} <span aria-hidden="true">↗</span></a>`;
-  const previewButton = `<a class="btn ${c.ready ? 'outline' : 'gold'} pdf-link" href="${product.preview}" target="_blank" rel="noopener">${esc(product.previewName)}</a>`;
+  const previewButton = `<a class="btn ${c.hasCheckout ? 'outline' : 'gold'} pdf-link" href="${product.preview}" target="_blank" rel="noopener">${esc(product.previewName)}</a>`;
   const price = c.hasVerifiedPrice ? `${money(c.priceTtcEur)} ${t('TTC', 'incl. VAT')}` : t('Tarif communiqué sur 1TPE', 'Price shown by 1TPE');
-  const heroCommercial = c.ready
+  const heroCommercial = c.hasCheckout && c.hasVerifiedPrice
     ? `<p class="hero-price">${esc(price)}<small>${t(`France · TVA ${vat(c.vatFrancePercent)} % comprise · Paiement unique`, `France · Includes ${vat(c.vatFrancePercent)}% VAT · One-time payment`)}</small></p>`
     : c.hasCheckout ? `<p class="pending-chip">${t('Produit en attente de validation 1TPE · Le paiement sera possible après approbation · Pack fourni entièrement en anglais.', 'Pending 1TPE approval · English-language files')}</p>`
     : `<p class="pending-chip">${t('La commande sur 1TPE sera ouverte prochainement.', 'Ordering on 1TPE will open soon.')}</p>`;
-  const orderCommercial = c.ready
+  const orderCommercial = c.hasCheckout && c.hasVerifiedPrice
     ? `<span class="price-label">${t('Paiement unique · France', 'One-time payment · France')}</span><strong class="price">${esc(price)}</strong><p class="small">${t(`TVA française de ${vat(c.vatFrancePercent)} % comprise. Le montant applicable à votre pays est présenté sur 1TPE avant paiement.`, `Includes French VAT at ${vat(c.vatFrancePercent)}%. The amount applicable to your country is displayed on 1TPE before payment.`)}</p>${checkout(t('Acheter sur 1TPE', 'Buy on 1TPE'))}<p class="small" style="margin-top:15px">${t('Le paiement s’ouvre directement sur le domaine 1TPE.', 'Checkout opens directly on the 1TPE domain.')}</p>`
     : c.hasCheckout ? `<span class="price-label">Lien de commande officiel 1TPE</span><strong class="price">${c.hasVerifiedPrice ? esc(price) : 'Vente en attente de validation'}</strong><p class="small" style="margin-top:15px">${c.hasVerifiedPrice ? `France : TVA ${vat(c.vatFrancePercent)} % comprise.` : 'Le prix TTC et la TVA applicables seront précisés dans le parcours de commande dès son activation.'} Le pack livré est entièrement en anglais.</p>${checkout('Commander sur 1TPE')}<p class="small" style="margin-top:15px">Le lien mène au produit officiel sur 1TPE. Jusqu’à l’approbation de la fiche par 1TPE, la plateforme peut afficher « Ce produit n’est pas en vente actuellement ».</p>`
     : `<span class="price-label">${t('Disponibilité', 'Availability')}</span><strong class="price">${t('Ouverture prochaine', 'Coming soon')}</strong><p class="small" style="margin-top:15px">${t('La commande de ce produit sur 1TPE est en préparation. Vous pouvez déjà consulter son contenu et son aperçu gratuit.', 'Ordering this product on 1TPE is being prepared. You can déjà consulter son contenu et son aperçu gratuit.')}</p>`;
-  const delivery = c.ready
+  const delivery = c.hasCheckout && c.hasVerifiedPrice
     ? t('Après validation du paiement, suivez le lien d’accès remis par 1TPE et téléchargez le fichier ZIP du pack. Décompressez-le pour retrouver les fichiers annoncés. Conservez une copie sur votre appareil : l’accès proposé par 1TPE est limité à 48 heures.', 'After payment is confirmed, follow the access link provided by 1TPE and download the pack as a ZIP file. Extract the ZIP to access the listed files. Keep a copy on your device: the access window provided by 1TPE is limited to 48 hours.')
     : t('Lors de l’ouverture de la vente sur 1TPE, le pack sera remis au format ZIP à télécharger après paiement validé. L’accès de téléchargement et ses instructions seront communiqués par 1TPE. La commande est actuellement en préparation.', 'When sales open on 1TPE, the pack will be delivered as a ZIP download after payment is confirmed. 1TPE will provide the download access and instructions. Ordering is currently being prepared.');
   const structured = {
     '@context':'https://schema.org', '@type':'Product', name:product.name, description:product.description,
     image:origin+product.cover, brand:{'@type':'Brand',name:'SACKO CONCEPT'}, url,
-    ...(c.ready ? { offers:{'@type':'Offer',url:c.checkoutUrl,price:c.priceTtcEur.toFixed(2),priceCurrency:'EUR',availability:'https://schema.org/InStock'} } : {})
+    ...(c.hasCheckout && c.hasVerifiedPrice ? { offers:{'@type':'Offer',url:c.checkoutUrl,price:c.priceTtcEur.toFixed(2),priceCurrency:'EUR',availability:'https://schema.org/InStock'} } : {})
   };
   return `<!doctype html>
 <html lang="${t('fr', 'en')}"${english ? ' translate="no" class="notranslate"' : ''}>
@@ -152,7 +152,7 @@ function render(product) {
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(product.name)} | SACKO CONCEPT</title>
 <meta name="description" content="${esc(product.description)}">
-<meta name="robots" content="${c.ready ? 'index,follow' : 'noindex,follow'}">
+<meta name="robots" content="${c.hasCheckout && c.hasVerifiedPrice ? 'index,follow' : 'noindex,follow'}">
 <meta name="theme-color" content="#081b13">
 <link rel="canonical" href="${url}"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="1tpe-product-pages.css">
@@ -188,7 +188,7 @@ export async function renderNew1TpeProducts() {
     return {
       type:product.type,tag:product.tag,name:product.name,desc:product.description,
       features:product.id==='ia-bureau' ? ['Manuel de 80 pages','100 prompts bonus','5 PDF en français'] : ['33 Word templates','3 Excel systems','English files'],
-      price:c.ready?price:(english?'Coming soon':'Prochainement'),priceLabel:c.ready?(english?'Price incl. VAT · France':'Prix TTC France'):(english?'Availability':'Disponibilité'),img:product.cover,page:c.page,pay:c.ready?c.checkoutUrl:null,
+      price:c.hasCheckout && c.hasVerifiedPrice?price:(english?'Coming soon':'Prochainement'),priceLabel:c.hasCheckout && c.hasVerifiedPrice?(english?'Price incl. VAT · France':'Prix TTC France'):(english?'Availability':'Disponibilité'),img:product.cover,page:c.page,pay:c.hasCheckout && c.hasVerifiedPrice?c.checkoutUrl:null,
       ...(english ? { lang:'en' } : {})
     };
   });
