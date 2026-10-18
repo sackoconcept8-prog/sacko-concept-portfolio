@@ -10,7 +10,7 @@
     "page": "vente-pack-rh-documents-1tpe.html",
     "priceTtcEur": null,
     "vatFrancePercent": null,
-    "checkoutUrl": null,
+    "checkoutUrl": "https://www.1tpe.net/commander.php?u=sackoconcept&p=5",
     "deliveryConfigured": false
   }
 }
