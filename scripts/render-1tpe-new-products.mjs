@@ -141,7 +141,7 @@ function render(product) {
     ...(c.ready ? { offers:{'@type':'Offer',url:c.checkoutUrl,price:c.priceTtcEur.toFixed(2),priceCurrency:'EUR',availability:'https://schema.org/InStock'} } : {})
   };
   return `<!doctype html>
-<html lang="${t('fr', 'en')}">
+<html lang="${t('fr', 'en')}"${english ? ' translate="no" class="notranslate"' : ''}>
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(product.name)} | SACKO CONCEPT</title>

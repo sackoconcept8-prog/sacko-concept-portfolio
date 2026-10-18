@@ -31,7 +31,7 @@ for(const file of ['index.html','legal.html']) {
 for (const file of ['vente-ia-au-bureau-1tpe.html','vente-pack-rh-documents-1tpe.html']) {
   const html = await readFile(join(out,file),'utf8');
   const language = file === 'vente-pack-rh-documents-1tpe.html' ? 'en' : 'fr';
-  if (!html.includes(`<html lang="${language}">`) || !html.includes('https://www.sackoconcept.com/'+file)) throw new Error('Missing language or canonical metadata: '+file);
+  if (!new RegExp(`<html\\b[^>]*\\blang="${language}"(?:\\s|>)`).test(html) || !html.includes('https://www.sackoconcept.com/'+file)) throw new Error('Missing language or canonical metadata: '+file);
   if (/<iframe\b/i.test(html)) throw new Error('Payment must open on 1TPE: '+file);
   if (!html.includes('mailto:') || !html.includes('id="conditions"') || !html.includes('https://www.1tpe.com/CGV.pdf')) throw new Error('Product conditions or support missing: '+file);
   for (const match of html.matchAll(/(?:src|href)="(assets\/[^"?#]+|1tpe-product-pages\.css)"/g)) await readFile(join(out,match[1]));
