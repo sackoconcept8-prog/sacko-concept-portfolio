@@ -3,14 +3,16 @@ import { resolve, join } from 'node:path';
 import { SITE } from '../site-config.js';
 import { packages } from '../catalog.js';
 import { renderNew1TpeProducts } from './render-1tpe-new-products.mjs';
+import { renderLaunchVault1Tpe } from './render-launchvault-1tpe.mjs';
 
 await renderNew1TpeProducts();
+await renderLaunchVault1Tpe();
 
 const root = resolve(new URL('..', import.meta.url).pathname);
 const out = join(root, 'dist');
 await rm(out, {recursive:true,force:true});
 await mkdir(join(out,'assets'), {recursive:true});
-const files = ['index.html','legal.html','styles.css','design.css','script.js','legal.js','site-config.js','catalog.js','robots.txt','sitemap.xml','catalogue-1tpe.html','vente-suivi-ventes-1tpe.html','vente-gestion-stocks-1tpe.html','vente-conges-absences-rh-1tpe.html','vente-launchvault-1tpe.html','vente-ia-au-bureau-1tpe.html','vente-pack-rh-documents-1tpe.html','1tpe-product-pages.css'];
+const files = ['index.html','legal.html','styles.css','design.css','script.js','legal.js','site-config.js','catalog.js','robots.txt','sitemap.xml','catalogue-1tpe.html','vente-suivi-ventes-1tpe.html','vente-gestion-stocks-1tpe.html','vente-conges-absences-rh-1tpe.html','vente-launchvault-1tpe.html','vente-launchvault-500-prompts-1tpe.html','apercu-launchvault-1tpe.html','vente-ia-au-bureau-1tpe.html','vente-pack-rh-documents-1tpe.html','1tpe-product-pages.css','launchvault-1tpe.css'];
 for (const file of files) await copyFile(join(root,file),join(out,file));
 const previewPdfs = ['ia-bureau-extrait.pdf','pack-rh-apercu.pdf'];
 const assets = (await readdir(join(root,'assets'))).filter(file=>(/\.(png|webp|woff2|svg)$/.test(file) || previewPdfs.includes(file)) && !file.endsWith('-source.png'));
@@ -28,13 +30,13 @@ for(const file of ['index.html','legal.html']) {
   }
 }
 
-for (const file of ['vente-ia-au-bureau-1tpe.html','vente-pack-rh-documents-1tpe.html']) {
+for (const file of ['vente-ia-au-bureau-1tpe.html','vente-pack-rh-documents-1tpe.html','vente-launchvault-500-prompts-1tpe.html']) {
   const html = await readFile(join(out,file),'utf8');
   const language = file === 'vente-pack-rh-documents-1tpe.html' ? 'en' : 'fr';
   if (!new RegExp(`<html\\b[^>]*\\blang="${language}"(?:\\s|>)`).test(html) || !html.includes('https://www.sackoconcept.com/'+file)) throw new Error('Missing language or canonical metadata: '+file);
   if (/<iframe\b/i.test(html)) throw new Error('Payment must open on 1TPE: '+file);
   if (!html.includes('mailto:') || !html.includes('id="conditions"') || !html.includes('https://www.1tpe.com/CGV.pdf')) throw new Error('Product conditions or support missing: '+file);
-  for (const match of html.matchAll(/(?:src|href)="(assets\/[^"?#]+|1tpe-product-pages\.css)"/g)) await readFile(join(out,match[1]));
+  for (const match of html.matchAll(/(?:src|href)="(assets\/[^"?#]+|(?:1tpe-product-pages|launchvault-1tpe)\.css)"/g)) await readFile(join(out,match[1]));
 }
 for (const file of previewPdfs) {
   const bytes = await readFile(join(out,'assets',file));

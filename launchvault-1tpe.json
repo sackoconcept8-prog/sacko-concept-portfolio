@@ -1,0 +1,87 @@
+{
+  "page": "vente-launchvault-500-prompts-1tpe.html",
+  "previewPage": "apercu-launchvault-1tpe.html",
+  "checkoutUrl": "https://www.1tpe.net/commander.php?u=sackoconcept&p=4",
+  "memberAreaUrl": "https://launchvault.sackoconcept.com/",
+  "priceHtEur": 57,
+  "vatFrancePercent": 20,
+  "salesEnabled": false,
+  "deliveryVerified": false,
+  "name": "SACKO LaunchVault – 500 prompts IA",
+  "description": "500 prompts IA en français et en anglais, répartis en cinq kits : Shopify, création de contenu, web design, business et productivité. Quatre parcours guidés, accès personnel en ligne et guide PDF d’accès inclus.",
+  "kits": [
+    {
+      "name": "Kit Business Shopify",
+      "count": 100,
+      "categories": 10,
+      "sample": {
+        "titleFr": "Concept & Niche de la boutique",
+        "textFr": "Tu es un stratège e-commerce senior qui a lancé des dizaines de boutiques Shopify rentables. Je veux créer une boutique autour de [PRODUIT/IDÉE].\n\nAide-moi à définir un concept ciblé et rentable. Procède étape par étape :\n1. Niche — affine mon idée vers une niche précise et mal desservie, et explique pourquoi elle est viable.\n2. Client idéal — qui achète exactement ça (sa situation, ses désirs, ses douleurs, où il se trouve).\n3. Angle unique — comment je me démarque des concurrents (positionnement, pas juste le produit).\n4. Phrase de positionnement — une phrase : « J'aide [qui] à obtenir [résultat] grâce à [quoi]. »\n5. Validation rapide — 3 moyens rapides de confirmer une vraie demande avant d'investir.\n\nPose-moi d'abord 2-3 questions de clarification si nécessaire. Puis réponds en sections claires avec des exemples concrets — pas de conseils vagues.",
+        "titleEn": "Store Concept & Niche",
+        "textEn": "You are a senior e-commerce strategist who has launched dozens of profitable Shopify stores. I want to build a store around [PRODUCT/IDEA].\n\nHelp me define a focused, profitable concept. Work through it step by step:\n1. Niche — narrow my idea to a specific, underserved niche, and explain why it's viable.\n2. Ideal customer — who exactly buys this (their situation, desires, pains, where they hang out).\n3. Unique angle — how I stand out from competitors (positioning, not just product).\n4. Positioning statement — one sentence: \"I help [who] get [outcome] through [what].\"\n5. Quick validation — 3 fast ways to confirm real demand before I invest.\n\nAsk me 2-3 clarifying questions first if needed. Then answer in clear sections with concrete examples — no vague advice."
+      }
+    },
+    {
+      "name": "Kit Web Designer",
+      "count": 100,
+      "categories": 10,
+      "sample": {
+        "titleFr": "Brief stratégique du site",
+        "textFr": "Tu es un stratège web senior qui a briefé plus de 100 sites web à succès.\n\nJe veux planifier un site web pour [MARQUE] dans le secteur [SECTEUR]. Avant tout design, aide-moi à construire un brief stratégique serré.\n\nTravaille ces points, en me posant d'abord 2-3 questions de clarification si nécessaire :\n1. Objectif principal — ce que le site doit accomplir (ex. obtenir des appels, vendre un produit, générer des inscriptions).\n2. Visiteur cible — qui il est, ce qu'il veut, sa principale hésitation.\n3. La seule action clé que je veux que chaque visiteur fasse.\n4. Ton & personnalité (ex. minimal-luxe, audacieux, amical).\n5. Les 3 choses qu'un visiteur doit comprendre dans les 5 premières secondes.\n\nDonne le résultat sous forme de brief propre d'une page que je peux réutiliser pour chaque décision de design.",
+        "titleEn": "Site Strategy Brief",
+        "textEn": "You are a senior web strategist who has briefed 100+ successful websites.\n\nI want to plan a website for [BRAND] in the [INDUSTRY] space. Before any design, help me build a tight strategy brief.\n\nWork through these, asking me 2-3 clarifying questions first if needed:\n1. Primary goal — what the site must achieve (e.g. book calls, sell a product, get sign-ups).\n2. Target visitor — who they are, what they want, their main hesitation.\n3. The one key action I want every visitor to take.\n4. Tone & personality (e.g. minimal-luxury, bold, friendly).\n5. The 3 things a visitor must understand in the first 5 seconds.\n\nOutput as a clean one-page brief I can reuse for every design decision."
+      }
+    },
+    {
+      "name": "AI Business Vault",
+      "count": 100,
+      "categories": 10,
+      "sample": {
+        "titleFr": "Plan de contenu 30 jours",
+        "textFr": "Tu es un stratège de contenu. Construis un plan de contenu sur 30 jours pour [MARQUE/NICHE] sur [PLATEFORME].\n\nLivre :\n1. Un mix de contenu entre types : éducatif, histoire, coulisses, preuve sociale, et promotionnel.\n2. Pour chacun des 30 jours : le sujet, l'angle, et le format (reel, carrousel, post, story).\n3. Un thème hebdomadaire pour garder la cohérence.\n4. Les 3 posts les plus susceptibles de générer des ventes.\n\nDonne le résultat sous forme de tableau-calendrier de 30 jours.",
+        "titleEn": "30-Day Content Plan",
+        "textEn": "You are a content strategist. Build a 30-day content plan for [BRAND/NICHE] on [PLATFORM].\n\nDeliver:\n1. A content mix across types: educational, story, behind-the-scenes, social proof, and promotional.\n2. For each of the 30 days: the topic, the angle, and the format (reel, carousel, post, story).\n3. A weekly theme to keep it coherent.\n4. The 3 posts most likely to drive sales.\n\nOutput as a 30-day calendar table."
+      }
+    },
+    {
+      "name": "Kit Créateur de Contenu",
+      "count": 100,
+      "categories": 10,
+      "sample": {
+        "titleFr": "Niche & Positionnement",
+        "textFr": "Tu es un stratège créateur qui a fait grandir plusieurs comptes. Aide-moi à définir ma niche de contenu et mon positionnement.\n\nTravaille :\n1. De quoi je parle (resserre vers une voie claire).\n2. Pour qui c'est (mon spectateur idéal).\n3. Mon angle unique vs les autres du domaine.\n4. Une bio d'une ligne qui capte tout ça.\n\nPose-moi d'abord 2-3 questions si nécessaire. Donne le résultat sous forme de résumé de positionnement que je peux mettre dans ma bio et épingler à mon profil.",
+        "titleEn": "Niche & Positioning",
+        "textEn": "You are a creator strategist who has grown multiple accounts. Help me define my content niche and positioning.\n\nWork through:\n1. What I talk about (narrow it to a clear lane).\n2. Who it's for (my ideal viewer).\n3. My unique angle vs others in the space.\n4. A one-line bio that captures it.\n\nAsk me 2-3 questions first if needed. Output as a positioning summary I can put in my bio and pin to my profile."
+      }
+    },
+    {
+      "name": "Kit Productivité IA",
+      "count": 100,
+      "categories": 10,
+      "sample": {
+        "titleFr": "Constructeur de formule",
+        "textFr": "Tu es un expert Excel et Google Sheets. J'ai besoin d'une formule pour : [DÉCRIS CE QUE TU VEUX].\n\nMes données : [DÉCRIS LES COLONNES / colle un échantillon].\n\nDonne-moi :\n1. La formule exacte (versions Excel et Google Sheets si elles diffèrent).\n2. Dans quelle cellule la mettre.\n3. Une explication d'une ligne de son fonctionnement.\n4. Une erreur courante à éviter.\n\nDonne la formule prête à coller.",
+        "titleEn": "Formula Builder",
+        "textEn": "You are an Excel and Google Sheets expert. I need a formula to: [DESCRIBE WHAT YOU WANT].\n\nMy data: [DESCRIBE COLUMNS / paste a sample].\n\nGive me:\n1. The exact formula (Excel and Google Sheets versions if they differ).\n2. Which cell to put it in.\n3. A one-line explanation of how it works.\n4. A common mistake to avoid.\n\nOutput the formula ready to paste."
+      }
+    }
+  ],
+  "paths": [
+    {
+      "name": "Parcours de Lancement 7 jours",
+      "steps": 7
+    },
+    {
+      "name": "Sprint Contenu-vers-Ventes",
+      "steps": 5
+    },
+    {
+      "name": "Parcours Premier Client",
+      "steps": 5
+    },
+    {
+      "name": "Sprint Croissance Créateur",
+      "steps": 5
+    }
+  ]
+}
