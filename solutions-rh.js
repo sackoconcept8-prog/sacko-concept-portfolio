@@ -12,7 +12,7 @@ function revealHash(){const target=document.getElementById(location.hash.slice(1
 window.addEventListener('hashchange',revealHash);revealHash();
 // Integration hook: no persistence, network calls, third-party SDK or personal data.
 // An optional analytics adapter must obtain appropriate consent before forwarding.
-document.querySelectorAll('.buy').forEach(link=>link.addEventListener('click',()=>{window.dispatchEvent(new CustomEvent('sacko:purchase-click',{detail:{edition:link.dataset.edition,placement:link.closest('.mobile-buy')?'mobile':link.closest('.closing')?'closing':'product'}}));}));
+document.querySelectorAll('.buy').forEach(link=>link.addEventListener('click',()=>{window.dispatchEvent(new CustomEvent('sacko:purchase-click',{detail:{edition:link.dataset.edition,placement:link.closest('.mobile-buy')?'mobile':link.closest('.closing')?'closing':link.closest('.hero-purchase')?'hero':'product'}}));}));
 
 const previewLanguageButtons = document.querySelectorAll('[data-preview-language]');
 function selectPreview(language){
