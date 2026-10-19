@@ -13,3 +13,11 @@ window.addEventListener('hashchange',revealHash);revealHash();
 // Integration hook: no persistence, network calls, third-party SDK or personal data.
 // An optional analytics adapter must obtain appropriate consent before forwarding.
 document.querySelectorAll('.buy').forEach(link=>link.addEventListener('click',()=>{window.dispatchEvent(new CustomEvent('sacko:purchase-click',{detail:{edition:link.dataset.edition,placement:link.closest('.mobile-buy')?'mobile':link.closest('.closing')?'closing':'product'}}));}));
+
+const previewLanguageButtons = document.querySelectorAll('[data-preview-language]');
+function selectPreview(language){
+  for(const choice of ['fr','en'])document.getElementById('preview-'+choice).hidden=choice!==language;
+  previewLanguageButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.previewLanguage===language)));
+}
+previewLanguageButtons.forEach(button=>button.addEventListener('click',()=>selectPreview(button.dataset.previewLanguage)));
+selectPreview(document.documentElement.lang==='en'?'en':'fr');
