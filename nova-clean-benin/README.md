@@ -1,18 +1,14 @@
-# Présentation du projet NOVA CLEAN BENIN
-Une page courte signée SACKO CONCEPT : introduction, galerie de 5 à 10 captures, démonstration vidéo et contact.
-
-Les captures et la vidéo ne sont pas encore fournies. Aucun aperçu fictif n’est présenté comme réel.
-
-## Ajouter les médias
-Déposer les captures dans `assets/images/`. Dans `script.js`, renseigner les champs `src`, `title`, `format` et `caption` du tableau `captures`. Ajouter ou retirer des entrées pour conserver 5 à 10 images. Chaque image réelle pourra s’agrandir, avec zoom et fermeture par Échap. Les images sont affichées sans recadrage.
-
-Pour la vidéo, créer `assets/video/`, y déposer le MP4 puis renseigner `presentationVideo.src`. Le lecteur propose lecture, volume et plein écran via les commandes natives du navigateur. Ajouter éventuellement une affiche dans `poster` et des sous-titres VTT français dans `captions`.
-
-Le logo affiché est celui de SACKO CONCEPT. NOVA CLEAN BENIN est le destinataire du projet.
-
-## Publication existante
+# Page de vente personnalisée NOVA CLEAN BENIN
+Conception : SACKO CONCEPT.
 URL : https://www.sackoconcept.com/nova-clean-benin/
-Dépôt : https://github.com/sackoconcept8-prog/sacko-concept-portfolio
-Le dossier `nova-clean-benin/` est copié dans `dist/` par `scripts/build.mjs`. Le workflow GitHub Pages publie les modifications de `main`.
 
-La police est chargée depuis `../assets/manrope.woff2`, déjà fournie par le site parent. Sans elle, la page utilise Arial. Pour un hébergement indépendant, utiliser Arial ou embarquer la police autorisée.
+Contenu : présentation du pack, huit captures réelles avec zoom, informations pratiques et demande de tarif par email. Les captures fournies sont conservées sans modification ; un doublon du dossier opérations a été écarté. Les images de listes de dossiers sont identifiées comme telles. Les descriptions reposent sur les écrans visibles ; les fichiers métier eux-mêmes n’ont pas été audités.
+
+Le prix est affiché sur la page. Aucun lien de paiement fourni : le bouton ouvre une commande par email à contact@sackoconcept.com. Pour activer l’achat direct, remplacer le bouton par le lien officiel du produit. Aucun avis, résultat chiffré, garantie ou délai inventé.
+
+Aucune vidéo fournie : aucun emplacement vide affiché. Logo de la page : SACKO CONCEPT. Le logo client reste dans les captures des fichiers.
+
+Publication : le workflow GitHub Pages copie ce dossier dans dist via scripts/build.mjs. La police provient du dossier assets du site parent, avec Arial en remplacement.
+
+## Offre commerciale confirmée
+Tarif de référence fourni : 120 000 F CFA. Tarif du pack : 71 000 F CFA. Remise supplémentaire de 15 % pendant 72 heures : 60 350 F CFA, soit 10 650 F CFA supplémentaires économisés. Échéance fixe : 23 octobre 2026 à 12 h 50 UTC / 13 h 50 Bénin / 14 h 50 Paris. Le compteur ne se réinitialise pas. Après expiration, affichage et emails reviennent à 71 000 F CFA, le pop-up ne s’ouvre plus. Le pop-up s’affiche après 12 secondes, avec fermeture, et reste masqué après fermeture pendant la session. Aucun paiement en ligne n’est configuré ; commande par email. Les mentions précédentes d’absence de prix décrivent l’état antérieur et sont remplacées par cette offre.
