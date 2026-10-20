@@ -1,4 +1,4 @@
-import { mkdir, rm, copyFile, readdir, readFile } from 'node:fs/promises';
+import { mkdir, rm, copyFile, readdir, readFile, cp } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { SITE } from '../site-config.js';
 import { packages } from '../catalog.js';
@@ -20,6 +20,7 @@ for(const file of assets) await copyFile(join(root,'assets',file),join(out,'asse
 await mkdir(join(out,'assets','rh'), {recursive:true});
 for (const file of ['pack-fr.webp','pack-en.webp','apercu-fr.pdf','dashboard-fr.webp','word-fr.webp']) await copyFile(join(root,'assets','rh',file),join(out,'assets','rh',file));
 await copyFile(join(root,'.nojekyll'),join(out,'.nojekyll'));
+await cp(join(root,'nova-clean-benin'),join(out,'nova-clean-benin'), {recursive:true});
 for(const list of Object.values(packages)) for(const pack of list) {
   if(!SITE.forms[pack.form])throw new Error(`Missing order brief for ${pack.id}`);
   const payment=SITE.payments[pack.id];
