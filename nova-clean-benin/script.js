@@ -68,29 +68,3 @@ for(const item of captures){
 }
 document.querySelector('#close').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>trigger?.focus());dialog.addEventListener('click',e=>{const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close()});document.querySelector('#zoom-in').addEventListener('click',()=>setZoom(scale+.25));document.querySelector('#zoom-out').addEventListener('click',()=>setZoom(scale-.25));document.querySelector('#zoom-reset').addEventListener('click',()=>setZoom(1));
 
-// Échéance fixe : ne se réinitialise pas lors des visites suivantes.
-const offerEndsAt=Date.parse('2026-10-23T12:50:00Z');
-const baseOrderUrl='mailto:contact@sackoconcept.com?subject=Commande+du+pack+NOVA+CLEAN+BENIN&body=Bonjour+SACKO+CONCEPT%2C%0A%0AJe+souhaite+commander+le+pack+personnalis%C3%A9+NOVA+CLEAN+BENIN+%C3%A0+71+000+F+CFA.+Merci+de+m%E2%80%99indiquer+les+modalit%C3%A9s+de+paiement+et+de+remise+des+fichiers.';
-const offerOrderUrl='mailto:contact@sackoconcept.com?subject=Offre+72+h+%E2%80%94+Pack+NOVA+CLEAN+BENIN&body=Bonjour+SACKO+CONCEPT%2C%0A%0AJe+souhaite+b%C3%A9n%C3%A9ficier+de+l%E2%80%99offre+%C3%A0+60+350+F+CFA+pour+le+pack+NOVA+CLEAN+BENIN%2C+valable+jusqu%E2%80%99au+23+octobre+2026+%C3%A0+13+h+50+%28B%C3%A9nin%29.+Merci+de+m%E2%80%99indiquer+les+modalit%C3%A9s+de+paiement+et+de+remise+des+fichiers.';
-const offerDialog=document.querySelector('#offer-dialog');
-function offerState(now=Date.now()){const remaining=Math.max(0,offerEndsAt-now);return {active:remaining>0,remaining,price:remaining>0?'60 350':'71 000'};}
-let previousOfferState;
-function updateOffer(){
- const state=offerState();
- if(previousOfferState!==state.active){
-  document.querySelectorAll('[data-current-price]').forEach(el=>el.textContent=state.price);
-  document.querySelectorAll('[data-order-link]').forEach(el=>el.href=state.active?offerOrderUrl:baseOrderUrl);
-  document.querySelector('[data-offer-label]').textContent=state.active?'15 % supplémentaires : économisez encore 10 650 F CFA.':'Offre de 72 heures terminée. Tarif du pack : 71 000 F CFA.';
-  document.querySelector('[data-offer-short]').textContent=state.active?'15 % supplémentaires pendant l’offre de 72 h':'Votre tarif personnalisé';
-  document.querySelector('[data-countdown-box]').hidden=!state.active;
-  if(!state.active&&offerDialog.open)offerDialog.close();
-  previousOfferState=state.active;
- }
- const seconds=Math.floor(state.remaining/1000),hours=Math.floor(seconds/3600),minutes=Math.floor((seconds%3600)/60),rest=seconds%60;
- document.querySelectorAll('[data-countdown]').forEach(el=>el.textContent=`${String(hours).padStart(2,'0')} h ${String(minutes).padStart(2,'0')} min ${String(rest).padStart(2,'0')} s`);
-}
-function dismissOffer(){offerDialog.close();try{sessionStorage.setItem('nova-offer-20261023','dismissed')}catch{}}
-document.querySelector('#close-offer').addEventListener('click',dismissOffer);document.querySelector('#later-offer').addEventListener('click',dismissOffer);
-offerDialog.addEventListener('cancel',()=>{try{sessionStorage.setItem('nova-offer-20261023','dismissed')}catch{}});
-updateOffer();setInterval(updateOffer,1000);
-setTimeout(()=>{let dismissed=false;try{dismissed=sessionStorage.getItem('nova-offer-20261023')==='dismissed'}catch{}if(offerState().active&&!dismissed&&!document.querySelector('dialog[open]'))offerDialog.showModal();},12000);

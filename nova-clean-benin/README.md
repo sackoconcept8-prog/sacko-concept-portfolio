@@ -1,14 +1,14 @@
-# Page de vente personnalisée NOVA CLEAN BENIN
-Conception : SACKO CONCEPT.
-URL : https://www.sackoconcept.com/nova-clean-benin/
+# Parcours commercial NOVA CLEAN BENIN — SACKO CONCEPT
 
-Contenu : présentation du pack, huit captures réelles avec zoom, informations pratiques et demande de tarif par email. Les captures fournies sont conservées sans modification ; un doublon du dossier opérations a été écarté. Les images de listes de dossiers sont identifiées comme telles. Les descriptions reposent sur les écrans visibles ; les fichiers métier eux-mêmes n’ont pas été audités.
+Présentation : https://www.sackoconcept.com/nova-clean-benin/
+Pack complet : https://www.sackoconcept.com/nova-clean-benin/pack-complet.html
 
-Le prix est affiché sur la page. Aucun lien de paiement fourni : le bouton ouvre une commande par email à contact@sackoconcept.com. Pour activer l’achat direct, remplacer le bouton par le lien officiel du produit. Aucun avis, résultat chiffré, garantie ou délai inventé.
+1. index.html : présentation et huit captures réelles, sans prix ni pop-up. Bouton final « Découvrir le pack complet ».
+2. pack-complet.html : contenu et utilité des fichiers, ressources et informations pratiques. Le tarif reste masqué au chargement.
+3. Un clic sur « Découvrir mon offre personnalisée » révèle le bloc tarifaire et le compteur en bas de cette seconde page. Aucun formulaire n’est nécessaire pour consulter le tarif. La commande ouvre un email, aucun paiement en ligne n’est configuré.
 
-Aucune vidéo fournie : aucun emplacement vide affiché. Logo de la page : SACKO CONCEPT. Le logo client reste dans les captures des fichiers.
+Prix de référence : 120 000 F CFA. Tarif du pack : 71 000 F CFA. Remise supplémentaire de 15 % : 60 350 F CFA jusqu’au 23 octobre 2026, 12 h 50 UTC / 13 h 50 Bénin / 14 h 50 Paris. Échéance fixe conservée. Aucun redémarrage au clic ou à la visite. Après l’échéance : retour à 71 000 F CFA et disparition du compteur. Aucun pop-up automatique.
 
-Publication : le workflow GitHub Pages copie ce dossier dans dist via scripts/build.mjs. La police provient du dossier assets du site parent, avec Arial en remplacement.
+Captures fournies sans modification, un doublon écarté. Les descriptions sont fondées sur les captures, sans audit des fichiers métier. Versions vierges, dossiers et exemples sont identifiés dans les légendes. Le logo SACKO CONCEPT identifie le concepteur ; le logo client reste dans les fichiers.
 
-## Offre commerciale confirmée
-Tarif de référence fourni : 120 000 F CFA. Tarif du pack : 71 000 F CFA. Remise supplémentaire de 15 % pendant 72 heures : 60 350 F CFA, soit 10 650 F CFA supplémentaires économisés. Échéance fixe : 23 octobre 2026 à 12 h 50 UTC / 13 h 50 Bénin / 14 h 50 Paris. Le compteur ne se réinitialise pas. Après expiration, affichage et emails reviennent à 71 000 F CFA, le pop-up ne s’ouvre plus. Le pop-up s’affiche après 12 secondes, avec fermeture, et reste masqué après fermeture pendant la session. Aucun paiement en ligne n’est configuré ; commande par email. Les mentions précédentes d’absence de prix décrivent l’état antérieur et sont remplacées par cette offre.
+Le dossier est copié intégralement dans dist par scripts/build.mjs et publié par GitHub Pages.
