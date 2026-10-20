@@ -1,6 +1,6 @@
 const offerEndsAt=Date.parse('2026-10-23T12:50:00Z');
-const baseOrderUrl='mailto:contact@sackoconcept.com?subject=Commande+du+pack+NOVA+CLEAN+BENIN&body=Bonjour+SACKO+CONCEPT%2C%0A%0AJe+souhaite+commander+le+pack+personnalis%C3%A9+NOVA+CLEAN+BENIN+%C3%A0+71+000+F+CFA.+Merci+de+m%E2%80%99indiquer+les+modalit%C3%A9s+de+paiement+et+de+remise+des+fichiers.';
-const offerOrderUrl='mailto:contact@sackoconcept.com?subject=Offre+72+h+%E2%80%94+Pack+NOVA+CLEAN+BENIN&body=Bonjour+SACKO+CONCEPT%2C%0A%0AJe+souhaite+b%C3%A9n%C3%A9ficier+de+l%E2%80%99offre+%C3%A0+60+350+F+CFA+pour+le+pack+NOVA+CLEAN+BENIN%2C+valable+jusqu%E2%80%99au+23+octobre+2026+%C3%A0+13+h+50+%28B%C3%A9nin%29.+Merci+de+m%E2%80%99indiquer+les+modalit%C3%A9s+de+paiement+et+de+remise+des+fichiers.';
+const baseOrderUrl='https://wa.me/15054642331?text=Bonjour%20SACKO%20CONCEPT%2C%20je%20souhaite%20commander%20le%20pack%20personnalis%C3%A9%20NOVA%20CLEAN%20BENIN%20%C3%A0%2071%20000%20F%20CFA.%20Pouvez-vous%20me%20transmettre%20les%20modalit%C3%A9s%20de%20paiement%20et%20de%20remise%20des%20fichiers%20%3F';
+const offerOrderUrl='https://wa.me/15054642331?text=Bonjour%20SACKO%20CONCEPT%2C%20je%20souhaite%20profiter%20de%20l%E2%80%99offre%20%C3%A0%2060%20350%20F%20CFA%20pour%20le%20pack%20personnalis%C3%A9%20NOVA%20CLEAN%20BENIN%2C%20valable%20jusqu%E2%80%99au%2023%20octobre%202026%20%C3%A0%2013%20h%2050%20%28B%C3%A9nin%29.%20Pouvez-vous%20me%20transmettre%20les%20modalit%C3%A9s%20de%20paiement%20et%20de%20remise%20des%20fichiers%20%3F';
 function offerState(now=Date.now()){const remaining=Math.max(0,offerEndsAt-now);return {active:remaining>0,remaining,price:remaining>0?'60 350':'71 000'};}
 
 let refreshTimer;
