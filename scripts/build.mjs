@@ -21,6 +21,7 @@ await mkdir(join(out,'assets','rh'), {recursive:true});
 for (const file of ['pack-fr.webp','pack-en.webp','apercu-fr.pdf','dashboard-fr.webp','word-fr.webp']) await copyFile(join(root,'assets','rh',file),join(out,'assets','rh',file));
 await copyFile(join(root,'.nojekyll'),join(out,'.nojekyll'));
 await cp(join(root,'nova-clean-benin'),join(out,'nova-clean-benin'), {recursive:true});
+await cp(join(root,'pack-nettoyage'),join(out,'pack-nettoyage'), {recursive:true});
 for(const list of Object.values(packages)) for(const pack of list) {
   if(!SITE.forms[pack.form])throw new Error(`Missing order brief for ${pack.id}`);
   const payment=SITE.payments[pack.id];
