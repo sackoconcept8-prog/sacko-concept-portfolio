@@ -13,3 +13,5 @@ Photographies téléchargées sur Pexels, optimisées localement en WebP. Licenc
 Le logo provient du fichier SACKO_Concept_Premium_Logo fourni par l’utilisatrice. Une version WebP réduite est intégrée.
 
 Les captures Excel et extraits Word proviennent de l’archive de travail fournie. Aucun fichier vendu n’est distribué avec ce mini-site. Les extraits Word ont été recadrés hors en-tête de démonstration ; aucune donnée de tableau n’a été inventée.
+
+Six extraits supplémentaires issus des aperçus APERCU_01 à APERCU_06 du dossier 10_AUDIT_21_OCTOBRE_2026 sont intégrés : évaluations, interventions, pointage, mouvements, inspections et produits utilisés. Les images ne sont pas recréées.

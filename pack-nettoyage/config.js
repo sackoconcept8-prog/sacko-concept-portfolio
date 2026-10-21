@@ -1,5 +1,2 @@
-/* Ajoutez ici l’URL HTTPS exacte du paiement Chariow de CE pack.
-   Aucun lien n’est inventé. Une valeur vide ouvre le message de disponibilité. */
-window.SACKO_CONFIG = Object.freeze({
-  chariowCheckoutUrl: ""
-});
+/* Les liens de commande WhatsApp figurent directement dans index.html,
+   pour fonctionner même sans JavaScript. Numéro SACKO CONCEPT : +1 505 464 2331. */
