@@ -15,3 +15,7 @@ Le logo provient du fichier SACKO_Concept_Premium_Logo fourni par l’utilisatri
 Les captures Excel et extraits Word proviennent de l’archive de travail fournie. Aucun fichier vendu n’est distribué avec ce mini-site. Les extraits Word ont été recadrés hors en-tête de démonstration ; aucune donnée de tableau n’a été inventée.
 
 Six extraits supplémentaires issus des aperçus APERCU_01 à APERCU_06 du dossier 10_AUDIT_21_OCTOBRE_2026 sont intégrés : évaluations, interventions, pointage, mouvements, inspections et produits utilisés. Les images ne sont pas recréées.
+
+Les quatre captures utilisateur NOVA1(2).PNG, NOVA3(2).PNG, Capture NOVA2(2).PNG et Capture NOVA4(2).PNG remplacent les quatre vignettes de la galerie Word. Elles présentent des listes et dossiers, pas le contenu des documents. Les deux captures opérationnelles montrent le même dossier sous deux vues. Images converties en WebP, sans modification du contenu.
+
+La démonstration téléchargeable est une copie binaire inchangée de 04_Stocks_equipements_DEMO.xlsx, issue du pack fourni. Elle conserve l’identité d’exemple NOVA CLEAN BENIN et ses données fictives, ce que la page signale explicitement.

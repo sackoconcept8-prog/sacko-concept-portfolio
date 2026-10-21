@@ -10,3 +10,8 @@ Six feuilles de registre distinctes sont affichées. Leurs tableaux de bord rest
 
 ## Validation
 La compilation complète du site doit réussir avant publication. Le paiement et la remise des fichiers se finalisent selon les modalités convenues lors de l’échange avec SACKO CONCEPT. La personnalisation avancée reste sur devis complémentaire.
+
+## Démonstration publique
+Un seul classeur de démonstration est volontairement distribué gratuitement dans downloads/SACKO_DEMO_Stocks_Equipements.xlsx. C’est le vrai fichier Stocks et équipements, copié sans modification. Il contient huit onglets et conserve l’identité d’exemple NOVA CLEAN BENIN. Le téléchargement est direct, sans formulaire. Les autres fichiers payants ne sont pas publiés.
+
+La galerie Word affiche désormais les quatre captures de dossiers fournies par l’utilisatrice. Les légendes distinguent les listes de documents et l’organisation du pack.
