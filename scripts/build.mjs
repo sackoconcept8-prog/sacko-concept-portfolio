@@ -22,6 +22,7 @@ for (const file of ['pack-fr.webp','pack-en.webp','apercu-fr.pdf','dashboard-fr.
 await copyFile(join(root,'.nojekyll'),join(out,'.nojekyll'));
 await cp(join(root,'nova-clean-benin'),join(out,'nova-clean-benin'), {recursive:true});
 await cp(join(root,'pack-nettoyage'),join(out,'pack-nettoyage'), {recursive:true});
+await cp(join(root,'branding-immobilier'),join(out,'branding-immobilier'), {recursive:true});
 for(const list of Object.values(packages)) for(const pack of list) {
   if(!SITE.forms[pack.form])throw new Error(`Missing order brief for ${pack.id}`);
   const payment=SITE.payments[pack.id];
@@ -63,3 +64,4 @@ for (const route of ['', 'legal.html']) {
 if (sitemap.includes('sackoconcept8-prog.github.io')) throw new Error('Sitemap still contains the old hosting domain');
 
 console.log(`Built ${files.length+assets.length+1} production files. All local references, custom-domain SEO metadata and order links resolved.`);
+
