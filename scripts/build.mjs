@@ -24,6 +24,7 @@ await cp(join(root,'nova-clean-benin'),join(out,'nova-clean-benin'), {recursive:
 await cp(join(root,'pack-nettoyage'),join(out,'pack-nettoyage'), {recursive:true});
 await cp(join(root,'branding-immobilier'),join(out,'branding-immobilier'), {recursive:true});
 await cp(join(root,'somaf'),join(out,'somaf'), {recursive:true});
+await cp(join(root,'somaf-livraison'),join(out,'somaf-livraison'), {recursive:true});
 for(const list of Object.values(packages)) for(const pack of list) {
   if(!SITE.forms[pack.form])throw new Error(`Missing order brief for ${pack.id}`);
   const payment=SITE.payments[pack.id];
