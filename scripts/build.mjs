@@ -12,7 +12,7 @@ const root = resolve(new URL('..', import.meta.url).pathname);
 const out = join(root, 'dist');
 await rm(out, {recursive:true,force:true});
 await mkdir(join(out,'assets'), {recursive:true});
-const files = ['relecture-pack-rh.html','solutions-rh-en.html','solutions-rh.html','solutions-rh.css','solutions-rh.js','index.html','legal.html','styles.css','design.css','script.js','legal.js','site-config.js','catalog.js','robots.txt','sitemap.xml','catalogue-1tpe.html','vente-suivi-ventes-1tpe.html','vente-gestion-stocks-1tpe.html','vente-conges-absences-rh-1tpe.html','vente-launchvault-1tpe.html','vente-launchvault-500-prompts-1tpe.html','apercu-launchvault-1tpe.html','vente-ia-au-bureau-1tpe.html','vente-pack-rh-documents-1tpe.html','1tpe-product-pages.css','launchvault-1tpe.css'];
+const files = ['relecture-pack-rh.html','solutions-rh-en.html','solutions-rh.html','solutions-rh.css','solutions-rh.js','signature.css','signature.js','index.html','legal.html','styles.css','design.css','script.js','legal.js','site-config.js','catalog.js','robots.txt','sitemap.xml','catalogue-1tpe.html','vente-suivi-ventes-1tpe.html','vente-gestion-stocks-1tpe.html','vente-conges-absences-rh-1tpe.html','vente-launchvault-1tpe.html','vente-launchvault-500-prompts-1tpe.html','apercu-launchvault-1tpe.html','vente-ia-au-bureau-1tpe.html','vente-pack-rh-documents-1tpe.html','1tpe-product-pages.css','launchvault-1tpe.css'];
 for (const file of files) await copyFile(join(root,file),join(out,file));
 const previewPdfs = ['ia-bureau-extrait.pdf','pack-rh-apercu.pdf'];
 const assets = (await readdir(join(root,'assets'))).filter(file=>(/\.(png|webp|woff2|svg)$/.test(file) || previewPdfs.includes(file)) && !file.endsWith('-source.png'));

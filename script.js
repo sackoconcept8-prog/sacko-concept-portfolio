@@ -47,11 +47,12 @@ function renderSocial() {
 
 function translatePage() {
   document.documentElement.lang = language;
+  document.querySelectorAll('[data-href-fr][data-href-en]').forEach(link => {link.href = link.dataset[language === 'fr' ? 'hrefFr' : 'hrefEn'];});
   document.querySelectorAll('[data-fr][data-en]').forEach(node => { node.textContent = node.dataset[language]; });
   document.querySelectorAll('[data-label-fr][data-label-en]').forEach(node => { node.setAttribute('aria-label', node.dataset[language === 'fr' ? 'labelFr' : 'labelEn']); });
   document.querySelectorAll('[data-alt-fr][data-alt-en]').forEach(node => { node.alt = node.dataset[language === 'fr' ? 'altFr' : 'altEn']; });
-  document.title = tr('SACKO CONCEPT — Design, identité & contenu', 'SACKO CONCEPT — Brand, design & content studio');
-  document.querySelector('meta[name="description"]').content = tr('Sacko Concept, le studio créatif de Hawa Sacko. Identités visuelles, contenu social, sites web et ressources pour designers. Découvrez les packs Impact à partir de 15 $.','Sacko Concept, the creative studio of Hawa Sacko. Brand identities, social content, websites and resources for designers. Explore Impact packages from $15.');
+  document.title = tr('SACKO CONCEPT — Design & outils business sur mesure', 'SACKO CONCEPT — Distinctive design. Thoughtful business tools.');
+  document.querySelector('meta[name="description"]').content = tr('Le studio de Hawa Sacko : identités visuelles, sites web, tableaux de bord Excel et ressources numériques pour votre entreprise.','The independent studio of Hawa Sacko. Brand identities, websites, custom Excel dashboards and digital business resources.');
   const toggle = document.querySelector('.language-toggle');
   toggle.textContent = language === 'fr' ? 'EN' : 'FR';
   toggle.setAttribute('aria-label', tr('Switch to English', 'Passer en français'));
