@@ -251,6 +251,7 @@ const IC={
  plus:'<path d="M12 5v14M5 12h14"/>',
  swap:'<path d="M7 7h13l-4-4M17 17H4l4 4"/>',
  shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+ help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7M12 17h.01"/>',
  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/>'};
 const svg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
 
@@ -320,12 +321,14 @@ function seed(){
  const A=(ci,d,text)=>({id:uid(),clientId:cl[ci].id,date:off(d),text});
  const act=[A(0,-2,"Intervention terminée · bon BI-2026-087 (80 %)"),A(0,-6,"Avis client : 5/5 « Impeccable comme toujours »"),A(0,-20,"Paiement reçu : 500 € (Virement)"),A(0,-148,"Contrat CTR-2026-004 signé"),A(1,-7,"Relance 1/3 (Suivi devis, WhatsApp) : Pas de réponse"),A(1,-9,"Devis DEV-2026-014 envoyé (1 008 €)"),A(5,-2,"Fiche de visite réalisée (420 m²)"),A(6,-2,"Devis DEV-2026-015 envoyé"),A(3,-1,"Contrat CTR-2026-005 envoyé pour signature"),A(3,-1,"Paiement reçu : 300 € (Mobile Money)"),A(2,-10,"Devis DEV-2026-013 accepté et signé")];
  const stock=[{id:uid(),name:"Détergent multi-surfaces",unit:"bidon 5 L",qty:12,min:5},{id:uid(),name:"Désinfectant virucide",unit:"bidon 5 L",qty:3,min:6},{id:uid(),name:"Sacs poubelle 100 L",unit:"rouleau",qty:8,min:10},{id:uid(),name:"Microfibres",unit:"pièce",qty:60,min:30},{id:uid(),name:"Nettoyant vitres",unit:"flacon",qty:9,min:4},{id:uid(),name:"Gants nitrile",unit:"boîte",qty:2,min:5},{id:uid(),name:"Papier toilette",unit:"colis",qty:6,min:4}];
+ const tickets=[{id:uid(),clientId:cl[0].id,date:off(-1),subject:"Intervention",msg:"Les vitres de la salle de réunion ont été oubliées lors du dernier passage.",urgent:false,status:"Ouvert",reply:""},{id:uid(),clientId:cl[3].id,date:off(-8),subject:"Facture ou paiement",msg:"Puis-je payer en deux fois la remise en état ?",urgent:false,status:"Résolu",reply:"Bien sûr, nous avons enregistré un paiement en deux fois. Merci pour votre confiance.",repliedAt:off(-7)}];
  const requests=[{id:uid(),clientId:cl[3].id,date:off(-1),wanted:off(5),service:catalog[6].name,notes:"Tapis du salon, environ 12 m².",status:"Nouvelle"}];
  return{settings:{name:"Éclat Pro Nettoyage",owner:"Awa",tva:20,delay:30,phone:"+33 6 00 00 00 00",addr:"12 avenue des Lilas, 75011 Paris",email:"contact@eclatpro.fr",siret:"RCS Paris 000 000 000",iban:"FR76 0000 0000 0000 0000 0000 000"},
-  clients:cl,team,jobs,catalog,docs,rel,act,stock,requests,seq:{devis:16,facture:34,contrat:6,bon:88,visite:12,avoir:3}};
+  clients:cl,team,jobs,catalog,docs,rel,act,stock,requests,tickets,seq:{devis:16,facture:34,contrat:6,bon:88,visite:12,avoir:3}};
 }
 let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
 if(!S||!S.clients)S=seed();
+S.tickets=S.tickets||[];
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 
 /* ---------- RÈGLES MÉTIER ---------- */
@@ -362,6 +365,7 @@ function notifs(){
  const fl=S.docs.filter(d=>d.type==="facture"&&reste(d)>0&&diff(due(d))<0);if(fl.length)out.push({t:pl(fl.length,"facture impayée en retard","factures impayées en retard"),cls:"p-red",go:"documents",tab:"facture"});
  const pd=S.docs.filter(d=>(d.pays||[]).some(p=>!p.ok));if(pd.length)out.push({t:pl(pd.length,"paiement déclaré par un client à confirmer","paiements déclarés par des clients à confirmer"),cls:"p-gold",go:"documents",tab:"facture"});
  const rq=S.requests.filter(r=>r.status==="Nouvelle");if(rq.length)out.push({t:pl(rq.length,"demande d'intervention reçue","demandes d'intervention reçues"),cls:"p-blue",go:"demandes"});
+ const tk=S.tickets.filter(t=>t.status==="Ouvert");if(tk.length)out.push({t:pl(tk.length,"message de support client à traiter","messages de support client à traiter"),cls:tk.some(t=>t.urgent)?"p-red":"p-blue",go:"demandes"});
  const sg=S.docs.filter(d=>d.status==="À signer");if(sg.length)out.push({t:pl(sg.length,"document en attente de signature","documents en attente de signature"),cls:"p-amber",go:"documents",tab:"contrat"});
  const st=S.stock.filter(s=>s.qty<s.min);if(st.length)out.push({t:pl(st.length,"produit sous le seuil de stock","produits sous le seuil de stock"),cls:"p-amber",go:"stock"});
  return out}
@@ -411,8 +415,8 @@ function vAccueil(){
  <div class="section"><div class="row between"><h2>Planning du jour</h2>${link("planning","Semaine")}</div>
   <div class="card">${jt.length?jt.map(jobRow).join(""):`<div class="empty">Aucune intervention aujourd'hui.</div>`}</div></div>
  <div class="section"><h2>Outils</h2>${toolsGrid()}</div>`}
-function toolsGrid(){const rq=S.requests.filter(r=>r.status==="Nouvelle").length,st=S.stock.filter(s=>s.qty<s.min).length;
- return`<div class="tools"><button data-go="rapports">${svg("chart")}Rapports</button><button data-go="demandes">${svg("inbox")}Demandes${rq?`<span class="badge">${rq}</span>`:""}</button><button data-go="stock">${svg("box")}Stock${st?`<span class="badge">${st}</span>`:""}</button><button data-go="equipe">${svg("team")}Équipe</button><button data-go="tarifs">${svg("tag")}Tarifs</button><button data-go="reglages">${svg("gear")}Réglages</button></div>`}
+function toolsGrid(){const rq=S.requests.filter(r=>r.status==="Nouvelle").length+S.tickets.filter(t=>t.status==="Ouvert").length,st=S.stock.filter(s=>s.qty<s.min).length;
+ return`<div class="tools"><button data-go="rapports">${svg("chart")}Rapports</button><button data-go="demandes">${svg("inbox")}Demandes &amp; support${rq?`<span class="badge">${rq}</span>`:""}</button><button data-go="stock">${svg("box")}Stock${st?`<span class="badge">${st}</span>`:""}</button><button data-go="equipe">${svg("team")}Équipe</button><button data-go="tarifs">${svg("tag")}Tarifs</button><button data-go="reglages">${svg("gear")}Réglages</button></div>`}
 function relItem(r){const c=client(r.clientId);const[tl,tc]=RTYPE[r.type];const n=diff(r.due);return`<button class="item" data-act="rel" data-id="${r.id}"><span class="dot" style="background:var(${r.status!=="open"?"--line":n<0?"--red":n===0?"--amber":"--line"})"></span><span class="grow"><div class="t">${esc(c.name)}</div><div class="row xs" style="gap:6px;margin-top:3px"><span class="pill ${tc}">${tl}</span><span class="muted">${r.total>1?`Relance ${r.step}/${r.total} · `:""}${esc(r.channel)}</span></div></span>${pill(relState(r))}</button>`}
 function jobRow(j){const c=client(j.clientId);const st={"Terminée":"p-green","En cours":"p-blue","Annulée":"p-red"}[j.status]||"p-grey";
  return`<div class="job"><div><div class="h">${j.start}</div><div class="xs muted">${j.end}</div></div><div class="stack" style="gap:6px;min-width:0"><div class="row between"><b class="t">${esc(c.name)}</b><span class="pill ${st}">${j.status}</span></div><div class="small muted">${esc(j.service)} · ${esc(j.agent)}</div><div class="xs muted">${esc(c.addr||"")}</div>${j.rating?`<div class="xs" style="color:var(--gold)">${"★".repeat(j.rating.stars)}<span class="muted"> ${esc(j.rating.comment||"")}</span></div>`:""}${mode==="admin"&&j.status!=="Terminée"&&j.status!=="Annulée"?`<div class="btns"><button class="btn sm primary" data-act="jobdone" data-id="${j.id}">Terminer et faire signer</button><button class="btn sm" data-act="jobcancel" data-id="${j.id}">Annuler</button></div>`:""}</div></div>`}
@@ -489,7 +493,9 @@ function vTarifs(){return`${back("Tarifs","Catalogue des prestations")}
  <div class="note" style="margin-bottom:12px">Modifiez un prix : il s'applique aux prochains devis et factures.</div>
  <div class="card list">${S.catalog.map((s,i)=>`<div class="item static"><span class="grow"><div class="t">${esc(s.name)}</div><div class="xs muted">HT par ${esc(s.unit)}</div></span><input id="price-${i}" type="number" step="any" inputmode="decimal" value="${s.price}" data-price="${i}" aria-label="Prix de ${esc(s.name)}" style="width:86px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;padding:8px;font:600 14px var(--body);text-align:right"><span class="small muted">€</span></div>`).join("")}</div>
  <div class="section btns"><button class="btn grow" data-act="addsvc">Ajouter une prestation</button><button class="btn grow" data-act="import" data-v="tarifs">Importer un fichier</button></div>`}
-function vDemandes(){const l=[...S.requests].sort((a,b)=>b.date.localeCompare(a.date));return`${back("Demandes clients","Envoyées depuis l'espace client")}
+function vDemandes(){const l=[...S.requests].sort((a,b)=>b.date.localeCompare(a.date));const tk=[...S.tickets].sort((a,b)=>(a.status===b.status?0:a.status==="Ouvert"?-1:1)||b.date.localeCompare(a.date));return`${back("Demandes &amp; support","Envoyés depuis l'espace client")}
+ <div class="section" style="margin-top:0"><h2>Messages de support</h2><div class="card list">${tk.length?tk.map(t=>`<div class="item static" style="align-items:flex-start"><span class="grow stack" style="gap:6px"><span class="row between"><b class="t">${esc(client(t.clientId).name)}</b><span class="row" style="gap:6px">${t.urgent?`<span class="pill p-red">Urgent</span>`:""}${pill([t.status,t.status==="Ouvert"?"p-blue":"p-green"])}</span></span><span class="xs muted">${esc(t.subject)} · ${fd(t.date)}</span><span class="small">${esc(t.msg)}</span>${t.reply?`<span class="note small"><b>Votre réponse :</b> ${esc(t.reply)}</span>`:""}${t.status==="Ouvert"?`<label class="f">Réponse<textarea id="rep-${t.id}" rows="2" placeholder="Votre réponse au client"></textarea></label><span class="btns"><button class="btn sm primary" data-act="tkreply" data-id="${t.id}">Répondre et clôturer</button></span>`:""}</span></div>`).join(""):`<div class="empty">Aucun message.</div>`}</div></div>
+ <div class="section"><h2>Demandes d'intervention</h2></div>
  <div class="card list">${l.length?l.map(r=>`<div class="item static" style="align-items:flex-start"><span class="grow stack" style="gap:4px"><span class="row between"><b class="t">${esc(client(r.clientId).name)}</b>${pill([r.status,r.status==="Nouvelle"?"p-blue":r.status==="Planifiée"?"p-green":"p-grey"])}</span><span class="small">${esc(r.service)} · souhaité le ${fd(r.wanted)}</span>${r.notes?`<span class="xs muted">${esc(r.notes)}</span>`:""}${r.status==="Nouvelle"?`<span class="btns" style="margin-top:4px"><button class="btn sm primary" data-act="planreq" data-id="${r.id}">Planifier</button><button class="btn sm" data-act="refusereq" data-id="${r.id}">Refuser</button></span>`:""}</span></div>`).join(""):`<div class="empty">Aucune demande.</div>`}</div>`}
 function vReglages(){const s=S.settings;return`${back("Réglages","Votre entreprise")}
  <div class="card pad"><form class="stack" id="setf">
@@ -519,7 +525,7 @@ function vCAccueil(){const c=client(me);
  ${todo.length?`<div class="section"><h2>À valider</h2><div class="card list">${todo.map(docItem).join("")}</div></div>`:""}
  ${unpaid.length?`<div class="section"><h2>Factures à régler</h2><div class="card list">${unpaid.map(docItem).join("")}</div></div>`:""}
  ${rate.length?`<div class="section"><h2>Donnez votre avis</h2><div class="card list">${rate.map(j=>`<button class="item" data-act="rate" data-id="${j.id}"><span class="grow"><div class="t">${esc(j.service)}</div><div class="xs muted">${fd(j.date)} · ${esc(j.agent)}</div></span><span style="color:var(--gold);font-size:18px">☆☆☆☆☆</span></button>`).join("")}</div></div>`:""}
- <div class="section"><div class="qa" style="grid-template-columns:repeat(3,1fr);margin-top:0"><button data-go="c-demande">${svg("plus")}Demander</button><button data-go="c-docs">${svg("doc")}Documents</button><button data-go="c-inter">${svg("cal")}Historique</button></div></div>
+ <div class="section"><div class="qa" style="margin-top:0"><button data-go="c-demande">${svg("plus")}Demander</button><button data-go="c-docs">${svg("doc")}Documents</button><button data-go="c-inter">${svg("cal")}Historique</button><button data-go="c-support">${svg("help")}Support</button></div></div>
  <div class="section"><div class="card pad stack" style="gap:6px"><div class="eyebrow">Votre contact</div><b>${esc(S.settings.name)}</b><span class="small muted num" style="user-select:all">${esc(S.settings.phone)} · ${esc(S.settings.email)}</span></div></div>`}
 function vCDocs(){const l=myDocs().sort((a,b)=>b.date.localeCompare(a.date));return`${cHeader("Espace client","Mes documents")}<div class="card list">${l.length?l.map(docItem).join(""):`<div class="empty">Aucun document.</div>`}</div>`}
 function vCInter(){const l=S.jobs.filter(j=>j.clientId===me).sort((a,b)=>(b.date+b.start).localeCompare(a.date+a.start));
@@ -529,6 +535,24 @@ function vCInter(){const l=S.jobs.filter(j=>j.clientId===me).sort((a,b)=>(b.date
 function vCDemande(){const mine=S.requests.filter(r=>r.clientId===me).sort((a,b)=>b.date.localeCompare(a.date));return`${cHeader("Espace client","Demander une intervention")}
  <div class="card pad"><form class="stack" id="reqf"><label class="f">Prestation<select id="r-s">${opts(S.catalog.map(s=>s.name))}</select></label><label class="f">Date souhaitée<input id="r-d" type="date" value="${off(3)}" required></label><label class="f">Précisions<textarea id="r-n" rows="3" placeholder="Surface, accès, horaires…"></textarea></label><button class="btn primary" type="submit">Envoyer la demande</button></form></div>
  ${mine.length?`<div class="section"><h2>Mes demandes</h2><div class="card list">${mine.map(r=>`<div class="item static"><span class="grow"><div class="t">${esc(r.service)}</div><div class="xs muted">Souhaité le ${fd(r.wanted)}</div></span>${pill([r.status==="Nouvelle"?"Envoyée":r.status,r.status==="Planifiée"?"p-green":r.status==="Refusée"?"p-red":"p-blue"])}</div>`).join("")}</div></div>`:""}`}
+
+
+function vCSupport(){const mine=S.tickets.filter(t=>t.clientId===me).sort((a,b)=>b.date.localeCompare(a.date));const ph=S.settings.phone,dig=ph.replace(/\D/g,"");
+ return`${cHeader("Espace client","Support")}
+ <div class="hero"><div class="eyebrow">Une question, un souci ?</div><div class="big" style="font-size:24px">L'équipe ${esc(S.settings.name)} vous répond</div><div class="sub"><span>Du lundi au samedi, 8 h – 19 h</span></div></div>
+ <div class="grid2" style="margin-top:14px"><a class="btn primary" href="https://wa.me/${dig}" target="_blank" rel="noopener">WhatsApp</a><a class="btn dark" href="mailto:${esc(S.settings.email)}">Email</a></div>
+ <div class="card pad" style="margin-top:10px"><dl class="kv"><dt>Téléphone</dt><dd class="num" style="user-select:all">${esc(ph)}</dd><dt>Email</dt><dd style="user-select:all">${esc(S.settings.email)}</dd></dl></div>
+ <div class="section"><h2>Envoyer un message</h2><div class="card pad"><form class="stack" id="tkf">
+ <label class="f">Sujet<select id="tk-s">${opts(["Intervention","Changer un rendez-vous","Facture ou paiement","Devis ou contrat","Réclamation qualité","Autre"])}</select></label>
+ <label class="f">Votre message<textarea id="tk-m" rows="4" required placeholder="Décrivez votre demande…"></textarea></label>
+ <label class="ck"><input type="checkbox" id="tk-u"> C'est urgent</label>
+ <button class="btn primary" type="submit">Envoyer au support</button></form></div></div>
+ ${mine.length?`<div class="section"><h2>Mes messages</h2><div class="card list">${mine.map(t=>`<div class="item static" style="align-items:flex-start"><span class="grow stack" style="gap:6px"><span class="row between"><b class="t">${esc(t.subject)}</b>${pill([t.status==="Ouvert"?"En cours":"Répondu",t.status==="Ouvert"?"p-blue":"p-green"])}</span><span class="xs muted">Envoyé le ${fd(t.date)}</span><span class="small">${esc(t.msg)}</span>${t.reply?`<span class="note small"><b>Réponse :</b> ${esc(t.reply)}</span>`:""}</span></div>`).join("")}</div></div>`:""}
+ <div class="section"><h2>Questions fréquentes</h2><div class="card list">
+ <details class="item static" style="display:block"><summary style="font-weight:600;cursor:pointer">Comment changer la date d'une intervention ?</summary><div class="small muted" style="margin-top:6px">Envoyez un message avec le sujet « Changer un rendez-vous ». Nous vous proposons un nouveau créneau.</div></details>
+ <details class="item static" style="display:block"><summary style="font-weight:600;cursor:pointer">Comment payer ma facture ?</summary><div class="small muted" style="margin-top:6px">Ouvrez la facture dans « Documents », réglez par virement ou Mobile Money, puis touchez « J'ai payé cette facture ».</div></details>
+ <details class="item static" style="display:block"><summary style="font-weight:600;cursor:pointer">Je ne suis pas satisfait d'un passage</summary><div class="small muted" style="margin-top:6px">Choisissez « Réclamation qualité ». Nous revenons gratuitement si une tâche prévue n'a pas été faite.</div></details>
+ </div></div>`}
 
 /* ---------- Connexion ---------- */
 function vLogin(){return`<div class="login"><div class="brand"><div class="mark">N</div><div><h1>NettoPro</h1><div class="small muted">Gestion premium pour entreprises de nettoyage</div></div></div>
@@ -778,9 +802,9 @@ function downloadTpl(kind){const I=IMPORT[kind];const csv="﻿"+[I.cols,I.ex].ma
 
 /* ================= RENDU & ROUTAGE ================= */
 const ADMIN={accueil:vAccueil,clients:vClients,planning:vPlanning,relances:vRelances,documents:vDocuments,rapports:vRapports,stock:vStock,equipe:vEquipe,tarifs:vTarifs,demandes:vDemandes,reglages:vReglages};
-const CLIENT={"c-accueil":vCAccueil,"c-docs":vCDocs,"c-inter":vCInter,"c-demande":vCDemande};
+const CLIENT={"c-accueil":vCAccueil,"c-docs":vCDocs,"c-inter":vCInter,"c-demande":vCDemande,"c-support":vCSupport};
 const ATABS=[["accueil","Accueil","home"],["clients","Clients","users"],["planning","Planning","cal"],["relances","Relances","send"],["documents","Documents","doc"]];
-const CTABS=[["c-accueil","Accueil","home"],["c-docs","Documents","doc"],["c-inter","Interventions","cal"],["c-demande","Demander","plus"]];
+const CTABS=[["c-accueil","Accueil","home"],["c-docs","Documents","doc"],["c-inter","Interventions","cal"],["c-demande","Demander","plus"],["c-support","Support","help"]];
 const FAB={clients:["Client","client"],planning:["Planifier","job"],relances:["Relance","rel"],documents:[null,"doc"]};
 function render(){
  if(!mode){$("#app").innerHTML=vLogin();$("#nav").hidden=true;$("#fab").hidden=true;return}
@@ -793,6 +817,7 @@ function render(){
  const q=$("#q");if(q)q.oninput=e=>{query=e.target.value;const pos=e.target.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos)};
  const sf=$("#setf");if(sf)sf.onsubmit=e=>{e.preventDefault();const g=k=>$("#s-"+k).value;Object.assign(S.settings,{name:g("name").trim()||S.settings.name,owner:g("owner"),tva:+g("tva")||0,addr:g("addr"),phone:g("phone"),email:g("email"),siret:g("siret"),delay:+g("delay")||30,iban:g("iban")});save();render();toast("Réglages enregistrés")};
  const rf=$("#reqf");if(rf)rf.onsubmit=e=>{e.preventDefault();S.requests.push({id:uid(),clientId:me,date:today(),wanted:$("#r-d").value,service:$("#r-s").value,notes:$("#r-n").value.trim(),status:"Nouvelle"});log(me,"Demande d'intervention envoyée : "+$("#r-s").value);save();render();toast("Demande envoyée à "+S.settings.name)};
+ const tf=$("#tkf");if(tf)tf.onsubmit=e=>{e.preventDefault();const m=$("#tk-m").value.trim();if(!m){toast("Écrivez votre message");return}S.tickets.push({id:uid(),clientId:me,date:today(),subject:$("#tk-s").value,msg:m,urgent:$("#tk-u").checked,status:"Ouvert",reply:""});log(me,"Message au support : "+$("#tk-s").value);save();render();toast("Message envoyé · réponse rapide de "+S.settings.name)};
  $$("[data-price]").forEach(inp=>inp.onchange=e=>{S.catalog[+e.target.dataset.price].price=+e.target.value||0;save();toast("Tarif mis à jour")});
 }
 let keepSheet=false;
@@ -858,6 +883,7 @@ document.addEventListener("click",e=>{
   case"addsvc":sheet(`<form class="stack" id="nsf"><h2>Nouvelle prestation</h2><label class="f">Nom<input id="v-n" required></label><div class="grid2"><label class="f">Unité<select id="v-u">${opts(["passage","heure","m²","forfait","unité"])}</select></label><label class="f">Prix HT<input id="v-p" type="number" step="any" required></label></div><button class="btn primary" type="submit">Ajouter</button></form>`);
    $("#nsf").onsubmit=ev=>{ev.preventDefault();S.catalog.push({name:$("#v-n").value.trim(),unit:$("#v-u").value,price:+$("#v-p").value||0});save();closeSheet();render();toast("Prestation ajoutée")};break;
   case"offer":sOffer();break;
+  case"tkreply":{const t=S.tickets.find(x=>x.id===id);const v=($("#rep-"+id)||{}).value||"";if(!v.trim()){toast("Écrivez une réponse");break}t.reply=v.trim();t.status="Résolu";t.repliedAt=today();log(t.clientId,"Support : réponse envoyée ("+t.subject+")");save();render();toast("Réponse envoyée au client");break}
   case"import":sImport(el.dataset.v);break; case"tpl":downloadTpl(el.dataset.v);break; case"doimport":doImport();break;
   case"reset":if(el.dataset.confirm){S=seed();save();filter="Tous";query="";weekOff=0;selDay=today();go("accueil");toast("Démo réinitialisée")}else{el.dataset.confirm="1";el.textContent="Touchez encore pour confirmer"}break;
  }
