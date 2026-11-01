@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>StockPro · L'application de stock et de ventes à votre nom pour votre boutique</title>
+<meta name="description" content="Stock, alertes de rupture et de péremption, ventes et tickets, inventaire, fournisseurs, crédits clients et catalogue en ligne avec commandes WhatsApp : StockPro, l'application des commerçants à votre nom. Démo gratuite.">
+<link rel="canonical" href="https://www.sackoconcept.com/stockpro/dollars/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.sackoconcept.com/stockpro/dollars/">
+<meta property="og:title" content="StockPro · Fini les ruptures surprises et le cahier de stock">
+<meta property="og:description" content="L'application premium des boutiques, supérettes et commerces. Testez la démo gratuitement.">
+<meta property="og:image" content="https://www.sackoconcept.com/stockpro/sacko-logo.jpg">
+<meta name="theme-color" content="#123D30">
+<link rel="icon" href="/stockpro/sacko-logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"StockPro","applicationCategory":"BusinessApplication","operatingSystem":"Android, iOS, Web","description":"Application de gestion de stock et de ventes pour commerçants : produits, alertes, inventaire, fournisseurs, crédits clients et catalogue en ligne.","publisher":{"@type":"Organization","name":"SACKO CONCEPT LLC","url":"https://www.sackoconcept.com/"},"offers":{"@type":"AggregateOffer","priceCurrency":"USD","lowPrice":"199","highPrice":"649"}}</script>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#F7F5EF;font-family:Figtree,ui-sans-serif,system-ui,sans-serif;color:#14302A;line-height:1.5;font-size:17px}
+img{max-width:100%}
+a{color:#1C5A45}a:hover{color:#123D30}
+a:focus-visible,summary:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #E2BC69;outline-offset:3px}
+h1,h2,h3{font-family:'Bricolage Grotesque',sans-serif;margin:0;text-wrap:balance}
+h2{font-weight:800;font-size:clamp(30px,4vw,44px);line-height:1.08;letter-spacing:-.015em}
+h3{font-size:19px;font-weight:700;font-family:Figtree,sans-serif}
+p{margin:0}
+section,footer{padding:88px max(24px,env(safe-area-inset-left,0px))}
+.in{max-width:1200px;margin:0 auto}
+.narrow{max-width:760px;margin:0 auto}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#B8892B}
+.lead{font-size:19px;color:#5C7268;max-width:40em}
+.head{display:flex;flex-direction:column;gap:14px;margin-bottom:44px}
+.center{text-align:center;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:18px}
+.card{background:#fff;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:10px}
+.soft{background:#F2F6F3}
+.card p{color:#5C7268;font-size:16px}
+.ico{width:44px;height:44px;border-radius:12px;background:#123D30;color:#E2BC69;display:grid;place-items:center;flex:none}
+.ico svg{width:22px;height:22px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;padding:16px 24px;border-radius:14px;font-weight:700;font-size:17px;border:0;cursor:pointer;font-family:inherit}
+.gold{background:#E2BC69;color:#14302A}.gold:hover{background:#EBCB86;color:#14302A}
+.ghost{background:transparent;color:#EAF6EF;border:1.5px solid rgba(234,246,239,.45)}.ghost:hover{color:#fff;border-color:#fff}
+.dark{background:#123D30;color:#EAF6EF}.dark:hover{background:#1C5A45;color:#fff}
+.line{background:#fff;color:#123D30;border:1.5px solid #D6E4DB}.line:hover{color:#123D30;border-color:#123D30}
+.forest{background:linear-gradient(160deg,#123D30 0%,#1C5A45 100%);color:#EAF6EF}
+.forest .lead{color:#CFE6DA}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;padding:8px 14px;border-radius:99px;background:#fff;border:1px solid #D6E4DB}
+/* header */
+header{background:#123D30;color:#EAF6EF;position:sticky;top:0;z-index:40}
+header .in{padding:14px max(24px,env(safe-area-inset-left,0px));display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+nav{display:flex;align-items:center;gap:22px;flex-wrap:wrap;font-size:15px;font-weight:600}
+nav a{color:#EAF6EF;text-decoration:none}nav a:hover{color:#E2BC69}
+@media (max-width:760px){nav .hide{display:none}}
+/* hero */
+.hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:56px;align-items:center}
+.hero h1{font-weight:800;font-size:clamp(36px,5vw,60px);line-height:1.04;letter-spacing:-.02em}
+.tag{align-self:flex-start;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E2BC69;border:1px solid rgba(226,188,105,.5);padding:6px 12px;border-radius:99px}
+.checks{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:#CFE6DA}
+.phone{width:330px;max-width:100%;background:#0B1A14;border-radius:42px;padding:12px;box-shadow:0 30px 80px rgba(0,0,0,.35);margin:0 auto}
+.screen{background:#F2F6F3;border-radius:32px;padding:18px 16px;display:flex;flex-direction:column;gap:10px;color:#14302A}
+.mini{background:#fff;border-radius:14px;padding:10px 12px}
+.mini .k{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5C7268}
+.mini .v{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tagm{font-size:10px;font-weight:700;padding:3px 7px;border-radius:99px}
+/* problème */
+.pain{border-left:4px solid #C2412D}
+.pain h3::before{content:"✕ ";color:#C2412D}
+/* comparatif */
+.cmp{width:100%;border-collapse:collapse;background:#fff;border-radius:20px;overflow:hidden;font-size:16px}
+@media (max-width:520px){.cmp{font-size:14px}.cmp th,.cmp td{padding:10px 8px!important}}
+.cmp th,.cmp td{padding:14px 16px;text-align:left;border-bottom:1px solid #E7F1EB;vertical-align:top}
+.cmp th.us{background:#123D30;color:#E2BC69}
+.cmp th{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#5C7268}
+.cmp td.us{background:#F2F6F3;font-weight:700;color:#123D30}
+.tw{overflow-x:auto;border-radius:20px}
+.calc{background:#123D30;color:#EAF6EF;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:16px}
+.calc input[type=range]{width:100%;accent-color:#E2BC69}
+.big{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(28px,7vw,38px);line-height:1.05;white-space:nowrap}
+.calc .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+/* offres */
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px;align-items:stretch}
+.plan{background:#fff;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:18px;border:1px solid #E1EBE4}
+.plan.reco{background:#123D30;color:#EAF6EF;border:2px solid #E2BC69;box-shadow:0 24px 60px rgba(18,61,48,.25)}
+.plan .price{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,8.5vw,44px);line-height:1.05;white-space:nowrap}
+.plan .old{display:block;text-decoration:line-through;opacity:.55;font-size:18px;font-weight:700;margin-bottom:4px}
+.plan ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;font-size:15.5px}
+.plan li{display:flex;gap:10px}
+.plan li b{flex:none;width:18px;color:#3FA877}
+.plan li.no{opacity:.5}.plan li.no b{color:inherit}
+.plan.reco li b{color:#E2BC69}
+.plan .sub{font-size:14px;color:#5C7268}.plan.reco .sub{color:#CFE6DA}
+.limit{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#B8892B}
+.plan.reco .limit{color:#E2BC69}
+.curbar{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;background:#fff;border:1px solid #D6E4DB;border-radius:16px;padding:14px 18px;max-width:640px;margin:0 auto 18px}
+.curbar a{text-decoration:none;padding:8px 14px;border-radius:99px;font-weight:700;font-size:15px;background:#F7F5EF;color:#14302A;border:1px solid #D6E4DB}
+.curbar a[aria-current]{background:#123D30;color:#EAF6EF;border-color:#123D30}
+.promo{background:#F6EBD2;border:1.5px solid #E2BC69;border-radius:20px;padding:18px 22px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center;text-align:center;max-width:940px;margin:0 auto 34px;font-size:16px}
+.promo .pt{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;color:#7A5A12}
+.promo a{background:#123D30;color:#EAF6EF;text-decoration:none;padding:10px 16px;border-radius:12px;font-weight:700;font-size:15px}
+.plans{max-width:940px;margin:0 auto}
+.plan{position:relative}
+.badge-reco{position:absolute;top:-14px;left:28px;background:#E2BC69;color:#14302A;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:99px}
+.from{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#5C7268;margin-bottom:6px}.plan.reco .from{color:#E2BC69}
+.plan .btn{margin-top:auto}
+.plan .btn,.serenite .btn{text-align:center}
+.serenite{max-width:940px;margin:20px auto 0;background:#fff;border:1.5px solid #E2BC69;border-radius:24px;padding:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:center}
+.serenite ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;font-size:15.5px}.serenite li{display:flex;gap:10px}.serenite li b{flex:none;width:18px;color:#3FA877}
+.serenite .price{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;line-height:1.05;white-space:nowrap}
+.serenite .sub{font-size:14px;color:#5C7268}
+/* faq */
+details{background:#fff;border-radius:16px;padding:18px 22px}
+details+details{margin-top:12px}
+summary{cursor:pointer;list-style:none;font-weight:700;font-size:18px;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:#B8892B;font-size:24px;line-height:1}
+details[open] summary::after{content:"–"}
+details p{margin-top:10px;color:#5C7268}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:18px;counter-reset:s}
+.step .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px;color:#E2BC69}
+.space{background:#fff;border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:12px;text-decoration:none;color:#14302A;border:1px solid #E1EBE4;transition:transform .15s,box-shadow .15s}
+.space:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(18,61,48,.12);color:#14302A}
+.space ul{margin:0;padding-left:18px;color:#5C7268;font-size:15.5px}
+.space .go{font-weight:700;color:#1C5A45;margin-top:auto}
+.bonus{display:flex;gap:14px;align-items:flex-start}
+.bonus .n{width:36px;height:36px;border-radius:50%;background:#E2BC69;color:#14302A;font-weight:800;display:grid;place-items:center;flex:none}
+.wa-float{position:fixed;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;align-items:center;gap:8px;background:#25D366;color:#fff;text-decoration:none;font:700 16px Figtree,system-ui,sans-serif;padding:12px 18px 12px 14px;border-radius:999px;box-shadow:0 10px 28px rgba(0,0,0,.25)}
+.wa-float:hover{color:#fff;background:#1EBE5B}
+@media (max-width:520px){.wa-float span{display:none}.wa-float{padding:14px}section{padding-top:64px;padding-bottom:64px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.space{transition:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="wa" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#25D366"/><path fill="#fff" d="M22.2 18.6c-.3-.15-1.77-.87-2.04-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.95 1.17-.18.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.9-.8-1.5-1.78-1.67-2.08-.18-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.68-.51h-.58c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.48 2.5 1.06 3.04.86 3.58.8.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.18-1.42-.08-.12-.28-.2-.58-.35z"/></symbol>
+</svg>
+
+<header><div class="in">
+<a href="#" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EAF6EF">
+<img src="/stockpro/sacko-logo.jpg" alt="SACKO CONCEPT" width="40" height="40" style="border-radius:50%">
+<span style="display:flex;flex-direction:column;line-height:1.15"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px">Stock<span style="color:#7FD1A6">Pro</span></span><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#E2BC69">par SACKO CONCEPT</span></span></a>
+<nav><a class="hide" href="#probleme">Le problème</a><a class="hide" href="#solution">La solution</a><a class="hide" href="#offres">Offres</a><a class="hide" href="#faq">Questions</a>
+<a href="https://wa.me/15054642331?text=Bonjour%2C%20je%20m%27int%C3%A9resse%20%C3%A0%20StockPro." target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px"><svg width="20" height="20"><use href="#wa"/></svg>WhatsApp</a>
+<a href="/stockpro/demo/" class="btn gold" style="padding:11px 18px;font-size:15px;border-radius:12px">Essayer gratuitement</a></nav>
+</div></header>
+
+<!-- HÉROS -->
+<section class="forest" style="padding-top:72px">
+<div class="in hero">
+<div style="display:flex;flex-direction:column;gap:22px">
+<span class="tag">Pour les boutiques et les commerces</span>
+<h1>Fini les ruptures surprises, le cahier de stock et les crédits oubliés.</h1>
+<p class="lead" style="font-size:20px">StockPro réunit vos produits, votre stock, vos ventes, vos fournisseurs et vos clients dans une application à votre nom. Vos vendeurs encaissent en 3 touches, vos clients commandent depuis votre catalogue en ligne, et vous savez enfin ce que vous gagnez.</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap"><a href="/stockpro/demo/" class="btn gold">Tester la démo gratuitement</a><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener" class="btn ghost">Réserver une démo de 15 min</a></div>
+<div class="checks"><span>✓ Android, iPhone et ordinateur</span><span>✓ Espace gérant, vendeur et client</span><span>✓ Code-barres</span><span>✓ Toutes devises</span></div>
+</div>
+<div aria-hidden="true">
+<div class="phone"><div class="screen">
+<div class="row"><div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5C7268">Samedi 7 novembre</div><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px">Bonjour Aminata</div></div><div style="width:36px;height:36px;border-radius:11px;background:#123D30;color:#EAF6EF;display:grid;place-items:center;font-weight:700">A</div></div>
+<div style="background:linear-gradient(145deg,#123D30,#1C5A45);color:#EAF6EF;border-radius:18px;padding:14px">
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.75">Ventes du jour</div>
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:28px">274,30 $</div>
+<div style="font-size:11px;opacity:.85">12 ventes · bénéfice inclus dans vos rapports</div>
+<div style="display:flex;align-items:flex-end;gap:5px;height:40px;margin-top:6px"><span style="flex:1;height:55%;background:rgba(234,246,239,.3);border-radius:4px"></span><span style="flex:1;height:70%;background:rgba(234,246,239,.3);border-radius:4px"></span><span style="flex:1;height:62%;background:rgba(234,246,239,.3);border-radius:4px"></span><span style="flex:1;height:80%;background:rgba(234,246,239,.3);border-radius:4px"></span><span style="flex:1;height:66%;background:rgba(234,246,239,.3);border-radius:4px"></span><span style="flex:1;height:100%;background:#E2BC69;border-radius:4px"></span></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div class="mini"><div class="k">Alertes stock</div><div class="v" style="color:#C2412D">4</div></div><div class="mini"><div class="k">Commandes en ligne</div><div class="v">2</div></div></div>
+<div class="mini" style="padding:4px 12px">
+<div class="row" style="padding:9px 0;border-bottom:1px solid #E7F1EB;font-size:12.5px"><span><b>Chargeur USB-C</b> · reste 2</span><span class="tagm" style="background:#FCEFD3;color:#A86A0C">Stock bas</span></div>
+<div class="row" style="padding:9px 0;border-bottom:1px solid #E7F1EB;font-size:12.5px"><span><b>Sandales tressées</b></span><span class="tagm" style="background:#FBE3DE;color:#C2412D">Rupture</span></div>
+<div class="row" style="padding:9px 0;font-size:12.5px"><span><b>Chocolat noir</b> · expire dans 21 j</span><span class="tagm" style="background:#F6EBD2;color:#B8892B">Péremption</span></div></div>
+<div style="background:#3FA877;color:#fff;border-radius:12px;padding:11px;text-align:center;font-weight:700;font-size:13px">Préparer les bons de commande</div>
+</div></div></div>
+</div>
+</section>
+
+<!-- SECTEURS -->
+<section style="padding-top:40px;padding-bottom:40px">
+<div class="in" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center">
+<span style="font-weight:700;color:#5C7268;margin-right:6px">Pensé pour :</span>
+<span class="pill">👗 Boutiques de mode</span><span class="pill">💄 Cosmétiques et parfumerie</span><span class="pill">🛒 Supérettes et épiceries</span><span class="pill">📱 Téléphonie et accessoires</span><span class="pill">🔧 Quincailleries</span><span class="pill">📚 Librairies et papeteries</span><span class="pill">🥤 Boissons et dépôts</span><span class="pill">🎁 Concept stores</span>
+</div></section>
+
+<!-- PROBLÈME -->
+<section id="probleme" style="padding-top:40px">
+<div class="in">
+<div class="head"><span class="eyebrow">Le problème</span><h2>Votre stock, c'est votre argent. Et il vous échappe.</h2><p class="lead">Si vous vous reconnaissez dans un seul de ces points, StockPro est fait pour vous.</p></div>
+<div class="grid">
+<div class="card pain"><h3>Les ruptures arrivent sans prévenir</h3><p>Le client demande un produit, il n'y en a plus. Il part chez le voisin, et vous ne l'aviez pas vu venir.</p></div>
+<div class="card pain"><h3>Le stock dort et se périme</h3><p>Des produits qui ne bougent pas pendant des mois, d'autres jetés après leur date. C'est de l'argent bloqué ou perdu.</p></div>
+<div class="card pain"><h3>Vous ne savez pas ce que vous gagnez</h3><p>Vous connaissez votre recette du jour, pas votre bénéfice. Quels produits rapportent vraiment ? Impossible à dire.</p></div>
+<div class="card pain"><h3>Les écarts passent inaperçus</h3><p>Inventaire au cahier, comptages approximatifs : la casse, les pertes et les erreurs de caisse ne se voient jamais.</p></div>
+<div class="card pain"><h3>Les crédits clients s'oublient</h3><p>L'ardoise est sur un bout de papier. On ne relance pas, on oublie qui doit combien, et l'argent ne revient pas.</p></div>
+<div class="card pain"><h3>Les commandes WhatsApp se perdent</h3><p>Photos, vocaux, messages à toute heure : une commande oubliée, c'est un client déçu qui ne revient pas.</p></div>
+</div></div></section>
+
+<!-- ESSAI -->
+<section id="essai" style="padding-top:0">
+<div class="in">
+<div class="head center"><span class="eyebrow">Essai gratuit, sans inscription</span><h2>Testez les 3 espaces sur votre téléphone</h2><p class="lead">La démo est remplie avec une boutique fictive et 3 mois de ventes. Un <b>parcours découverte en 6 missions</b> vous guide : encaisser une vente, réceptionner une livraison, traiter une commande client, faire un inventaire, commander côté client, voir vos bénéfices. En quelques minutes, vous avez tout vu.</p></div>
+<div class="grid">
+<a class="space" href="/stockpro/demo/#accueil"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Espace gérant</h3><ul><li>Produits avec photos et codes-barres</li><li>Entrées, sorties et inventaire</li><li>Alertes de rupture et de péremption</li><li>Fournisseurs et bons de commande</li><li>Bénéfices, crédits clients, rapports</li></ul><span class="go">Ouvrir l'espace gérant →</span></a>
+<a class="space" href="/stockpro/demo/#v-accueil"><div class="ico" style="background:#D5EFE1;color:#1C5A45"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h12L22 7H6.2"/></svg></div><h3>Espace vendeur</h3><ul><li>Encaisser en 3 touches</li><li>Scanner un code-barres</li><li>Ticket par WhatsApp ou PDF</li><li>Préparer les commandes clients</li><li>Signaler une rupture au gérant</li></ul><span class="go">Ouvrir l'espace vendeur →</span></a>
+<a class="space" href="/stockpro/demo/#c-boutique"><div class="ico" style="background:#F6EBD2;color:#B8892B"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l2-5h14l2 5"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v9h14v-9M10 21v-5h4v5"/></svg></div><h3>Catalogue client</h3><ul><li>Votre vitrine en ligne</li><li>Panier et commande en 1 minute</li><li>Retrait en boutique ou livraison</li><li>Confirmation sur WhatsApp</li><li>Suivi de la commande</li></ul><span class="go">Voir le catalogue →</span></a>
+</div></div></section>
+
+<!-- SOLUTION -->
+<section id="solution" style="background:#fff">
+<div class="in">
+<div class="head"><span class="eyebrow">La solution</span><h2>Toute votre boutique dans la poche</h2><p class="lead">Une seule application, à votre nom et à vos couleurs. Simple pour vous, encore plus simple pour vos vendeurs.</p></div>
+<div class="grid">
+<div class="card soft"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></svg></div><h3>Produits et codes-barres</h3><p>Photo, prix d'achat et de vente, marge, catégorie, fournisseur, date de péremption. Scan avec l'appareil photo du téléphone.</p></div>
+<div class="card soft"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></svg></div><h3>Alertes avant la rupture</h3><p>Un seuil par produit : stock bas, rupture et péremption proche vous sont signalés, avec la commande au fournisseur déjà préparée.</p></div>
+<div class="card soft"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></div><h3>Entrées, sorties et inventaire</h3><p>Livraisons, casse, pertes, produits périmés : tout est tracé. L'inventaire express calcule les écarts et leur valeur.</p></div>
+<div class="card soft"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></div><h3>Ventes et tickets</h3><p>Encaissement rapide, remise, monnaie à rendre, espèces, Mobile Money ou carte. Ticket envoyé sur WhatsApp ou en PDF, clôture de caisse du jour.</p></div>
+<div class="card soft"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l2-5h14l2 5"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v9h14v-9M10 21v-5h4v5"/></svg></div><h3>Catalogue et commandes en ligne</h3><p>Votre vitrine à partager sur WhatsApp, Facebook ou en QR code. Le client commande, vous préparez, le stock se met à jour à la remise.</p></div>
+<div class="card soft"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h12v10H2zM14 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg></div><h3>Fournisseurs et bons de commande</h3><p>Quantités proposées automatiquement, bon de commande envoyé par WhatsApp ou email, réception en un clic.</p></div>
+<div class="card soft"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/></svg></div><h3>Crédits clients</h3><p>L'ardoise de chaque client, les remboursements, et un message de relance poli prêt à envoyer sur WhatsApp.</p></div>
+<div class="card soft"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div><h3>Bénéfices et rapports</h3><p>Chiffre d'affaires, bénéfice, marge, produits qui rapportent le plus, produits qui dorment, ventes par vendeur, pertes.</p></div>
+<div class="card soft"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7 9l5-5 5 5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg></div><h3>Import Excel et toutes devises</h3><p>Importez vos produits depuis Excel ou CSV. Euro, dollar, franc CFA, dirham, naira… vous choisissez.</p></div>
+</div></div></section>
+
+<!-- ALERTES -->
+<section class="forest">
+<div class="in" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:48px;align-items:center">
+<div style="display:flex;flex-direction:column;gap:18px"><span class="eyebrow" style="color:#E2BC69">Votre gérant de stock qui ne dort jamais</span><h2>StockPro vous prévient avant que le client reparte les mains vides.</h2>
+<p class="lead">Chaque jour, l'application surveille vos rayons et vous dit quoi faire, avec l'action prête : commander au bon fournisseur, écouler un produit avant sa date, relancer un crédit, préparer une commande.</p>
+<p style="font-size:18px;color:#CFE6DA">Un produit en rupture, c'est un client qui part chez le voisin. Un carton périmé, c'est du bénéfice à la poubelle. Quelques ventes sauvées par mois suffisent à <strong style="color:#E2BC69">rembourser l'application</strong>.</p>
+<a href="/stockpro/demo/" class="btn gold" style="align-self:flex-start">Voir les alertes dans la démo</a></div>
+<div style="display:flex;flex-direction:column;gap:12px" aria-hidden="true">
+<div class="card" style="color:#14302A"><div class="row"><b>Chargeur rapide USB-C · reste 2</b><span class="tagm" style="background:#FCEFD3;color:#A86A0C;font-size:12px">Stock bas</span></div><p style="font-size:15px">Seuil d'alerte : 5 · Fournisseur : Global Access Import</p><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="tagm" style="background:#3FA877;color:#fff;font-size:13px;padding:6px 10px">Envoyer le bon de commande</span></div></div>
+<div class="card" style="color:#14302A"><div class="row"><b>Chocolat noir · expire dans 21 jours</b><span class="tagm" style="background:#F6EBD2;color:#B8892B;font-size:12px">Péremption</span></div><p style="font-size:15px">8 en stock · à mettre en avant cette semaine</p></div>
+<div class="card" style="color:#14302A"><div class="row"><b>Mariam Koné · crédit à relancer</b><span class="tagm" style="background:#FBE3DE;color:#C2412D;font-size:12px">Ardoise</span></div><p style="font-size:15px">Message de relance prêt sur WhatsApp</p></div>
+</div></div></section>
+
+<!-- COMPARATIF + CALCULATEUR -->
+<section>
+<div class="in">
+<div class="head center"><span class="eyebrow">Pourquoi StockPro</span><h2>Payez votre application une fois, pas chaque mois</h2><p class="lead">Les logiciels de caisse et de stock en abonnement coûtent en général de 20 à 100 $US par mois et par boutique, souvent avec des options payantes en plus. Avec StockPro, l’application est à vous.</p></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:28px;align-items:start">
+<div class="tw"><table class="cmp"><thead><tr><th></th><th class="us">StockPro</th><th>Logiciel en abonnement</th><th>Cahier et Excel</th></tr></thead><tbody>
+<tr><td>Prix</td><td class="us">Paiement unique (Premium)</td><td>Chaque mois, par boutique</td><td>Gratuit, mais erreurs et oublis</td></tr>
+<tr><td>À votre nom et à vos couleurs</td><td class="us">Oui, sur les stores</td><td>Non</td><td>—</td></tr>
+<tr><td>Catalogue client et commandes WhatsApp</td><td class="us">Inclus</td><td>Rarement ou en option</td><td>—</td></tr>
+<tr><td>Crédits clients et relances</td><td class="us">Inclus</td><td>Rarement</td><td>Sur papier</td></tr>
+<tr><td>Import de vos produits fait pour vous</td><td class="us">Oui</td><td>Rarement</td><td>—</td></tr>
+<tr><td>Assistance en français sur WhatsApp</td><td class="us">Oui</td><td>Chat ou email</td><td>—</td></tr>
+</tbody></table></div>
+<div class="calc"><span class="eyebrow" style="color:#E2BC69">Calculez votre économie sur 3 ans</span>
+<label for="nb" style="font-weight:700;font-size:18px">Nombre de boutiques : <span id="nbv">1</span></label>
+<input type="range" id="nb" min="1" max="5" value="1">
+<div class="two">
+<div><div style="font-size:14px;color:#CFE6DA">Logiciel à 45 $US / boutique / mois</div><div class="big" id="c-saas" style="color:#F3B0A4">—</div></div>
+<div><div style="font-size:14px;color:#CFE6DA">StockPro Premium (3 ans)</div><div class="big" id="c-rh" style="color:#E2BC69">—</div></div></div>
+<div style="font-size:18px">Vous économisez environ <strong id="c-gain" style="color:#E2BC69">—</strong>, et l'application porte votre nom.</div>
+<div style="font-size:13px;color:#CFE6DA">Estimation indicative : StockPro Premium au prix de départ, paiement unique + 2 renouvellements annuels. Plusieurs boutiques : prix final sur devis.</div></div>
+</div></div></section>
+
+<!-- OFFRES -->
+<section id="offres" style="padding-top:20px">
+<div class="in">
+<div class="head center"><span class="eyebrow">Nos offres</span><h2>Deux formules, une option. Un devis adapté à votre boutique.</h2><p class="lead">Chaque formule inclut votre logo, vos couleurs, votre devise, votre catalogue en ligne et l'import de vos produits.</p></div>
+<div class="curbar"><span style="font-weight:700">Prix en</span><span style="display:inline-flex;gap:6px;flex-wrap:wrap"><a href="/stockpro/#offres">Euros (€)</a><a href="/stockpro/dollars/#offres" aria-current="page">Dollars ($)</a><a href="/stockpro/fcfa/#offres">Francs CFA</a></span></div>
+<div class="promo"><span class="pt">Offre de fin d'année</span><span>−15 % sur votre formule jusqu'au 31 décembre 2026 si vous réglez via <b>Contra</b>, avec paiement sécurisé par la plateforme.</span><a href="https://wa.me/15054642331?text=Bonjour%20Hawa%2C%20je%20souhaite%20profiter%20de%20l%27offre%20de%20fin%20d%27ann%C3%A9e%20StockPro%20avec%20un%20paiement%20via%20Contra." target="_blank" rel="noopener">J'en profite</a></div>
+<div class="plans">
+<div class="plan">
+<div><div class="limit">Standard</div><h3 style="font-size:26px;font-family:'Bricolage Grotesque',sans-serif;margin-top:4px">Application web</h3></div>
+<p class="sub">Pour quitter le cahier dès maintenant. S'ouvre avec un lien, sur tous les téléphones et ordinateurs.</p>
+<div><div class="from">À partir de</div><div class="price">199 $US</div><div class="sub" style="margin-top:6px">paiement unique · hébergement 1 an inclus<br>livraison sous 3 semaines</div></div>
+<ul><li><b>✓</b>Espace gérant, espace vendeur et catalogue client</li><li><b>✓</b>1 boutique, jusqu'à 500 produits et 3 vendeurs</li><li><b>✓</b>Produits avec photos et codes-barres</li><li><b>✓</b>Entrées, sorties et inventaire</li><li><b>✓</b>Alertes de rupture et de péremption</li><li><b>✓</b>Ventes, tickets WhatsApp et PDF</li><li><b>✓</b>Commandes clients depuis le catalogue</li><li><b>✓</b>Crédits clients et relances</li><li><b>✓</b>Import Excel, votre logo, votre devise</li><li class="no"><b>—</b>Applications Android et iPhone</li><li class="no"><b>—</b>Fournisseurs et bons de commande automatiques</li><li class="no"><b>—</b>Rapports de bénéfices et de performance</li><li class="no"><b>—</b>Plusieurs boutiques</li></ul>
+<a class="btn line" href="https://wa.me/15054642331?text=Bonjour%20Hawa%2C%20je%20souhaite%20un%20devis%20pour%20StockPro%20Standard.%0ANom%20de%20la%20boutique%20%3A%20%0ANombre%20de%20produits%20%28environ%29%20%3A%20%0ANombre%20de%20boutiques%20%3A%20%0APays%20%3A%20%0APaiement%20souhait%C3%A9%20%28une%20fois%2C%20en%20plusieurs%20fois%20ou%20au%20mois%29%20%3A%20" target="_blank" rel="noopener">Demander mon devis Standard</a></div>
+<div class="plan reco"><span class="badge-reco">Recommandé</span>
+<div><div class="limit">Premium</div><h3 style="font-size:26px;font-family:'Bricolage Grotesque',sans-serif;color:#fff;margin-top:4px">Votre app de boutique sur les stores</h3></div>
+<p class="sub">Votre application complète, à votre nom sur Google Play et l'App Store. Pour piloter tout votre commerce.</p>
+<div><div class="from">À partir de</div><div class="price" style="color:#fff">649 $US</div><div class="sub" style="margin-top:6px">paiement unique · renouvellement dès 129 $US par an<br>livraison sous 6 à 8 semaines</div><div class="sub" style="margin-top:6px;font-weight:700;color:#E2BC69">soit moins de 26 $US par mois sur 3 ans, vendeurs illimités</div></div>
+<ul><li><b>✓</b>Tout Standard</li><li><b>✓</b>Applications Android et iPhone à votre nom</li><li><b>✓</b>Produits et vendeurs illimités, plusieurs boutiques</li><li><b>✓</b>Fournisseurs, bons de commande automatiques et réception en un clic</li><li><b>✓</b>Rapports : bénéfice, marge, produits qui dorment, ventes par vendeur, pertes</li><li><b>✓</b>Clôture de caisse du jour et exports Excel</li><li><b>✓</b>Code source livré (licence d'utilisation)</li><li><b>✓</b>Formation de 1 heure pour vous et vos vendeurs</li></ul>
+<a class="btn gold" href="https://wa.me/15054642331?text=Bonjour%20Hawa%2C%20je%20souhaite%20un%20devis%20pour%20StockPro%20Premium.%0ANom%20de%20la%20boutique%20%3A%20%0ANombre%20de%20produits%20%28environ%29%20%3A%20%0ANombre%20de%20boutiques%20%3A%20%0APays%20%3A%20%0APaiement%20souhait%C3%A9%20%28une%20fois%2C%20en%20plusieurs%20fois%20ou%20au%20mois%29%20%3A%20" target="_blank" rel="noopener">Demander mon devis Premium</a></div>
+</div>
+<div class="serenite">
+<div style="display:flex;flex-direction:column;gap:8px"><span class="limit">Option Sérénité</span><h3 style="font-size:26px;font-family:'Bricolage Grotesque',sans-serif">On gère tout pour vous</h3><p class="sub">À ajouter à votre formule. Vous vous occupez de vos clients, nous nous occupons de l'application.</p>
+<div class="from" style="margin-top:8px">À partir de</div><div class="price" style="font-size:36px">+ 29 $US<span style="font-size:16px;font-weight:700;color:#5C7268"> /mois</span></div><div class="sub">+ mise en place dès 199 $US</div></div>
+<div style="display:flex;flex-direction:column;gap:14px"><ul><li><b>✓</b>Vos nouveaux produits, photos et prix mis en ligne par notre équipe</li><li><b>✓</b>Catalogue client tenu à jour pour vos promotions</li><li><b>✓</b>Hébergement, sauvegardes et mises à jour des stores</li><li><b>✓</b>Nouvelles fonctions incluses</li><li><b>✓</b>Assistance prioritaire par WhatsApp</li><li><b>✓</b>Formation des nouveaux vendeurs</li></ul>
+<a class="btn dark" href="https://wa.me/15054642331?text=Bonjour%20Hawa%2C%20je%20souhaite%20un%20devis%20pour%20StockPro%20avec%20l%27option%20S%C3%A9r%C3%A9nit%C3%A9.%0ANom%20de%20la%20boutique%20%3A%20%0ANombre%20de%20produits%20%28environ%29%20%3A%20%0ANombre%20de%20boutiques%20%3A%20%0APays%20%3A%20%0APaiement%20souhait%C3%A9%20%28une%20fois%2C%20en%20plusieurs%20fois%20ou%20au%20mois%29%20%3A%20" target="_blank" rel="noopener">Demander mon devis Sérénité</a></div>
+</div>
+<p style="text-align:center;color:#5C7268;font-size:14px;margin:20px auto 0;max-width:900px"><b>Prévente</b> : acompte de 30 % à la commande, solde à la livraison, remboursement intégral si nous ne livrons pas dans les délais. Comptes développeur Apple et Google au nom de votre entreprise, à votre charge. Prix final sur devis, selon le nombre de produits et de boutiques et le mode de paiement : en une fois, en plusieurs fois ou au mois. Prix en dollars américains, hors frais bancaires.</p>
+</div></section>
+
+<!-- BONUS -->
+<section style="padding-top:0">
+<div class="in" style="background:#fff;border-radius:28px;padding:44px max(24px,4vw)">
+<div class="head" style="margin-bottom:28px"><span class="eyebrow">Offerts avec chaque formule</span><h2>Tout ce qu'il faut pour démarrer dès le premier jour</h2></div>
+<div class="grid">
+<div class="bonus"><span class="n">1</span><div><h3>Pack Commerçants Premium</h3><p style="color:#5C7268;font-size:16px">Modèles Excel de stock, de ventes et de fournisseurs prêts à l'emploi, en français et en anglais</p></div></div>
+<div class="bonus"><span class="n">2</span><div><h3>Import de vos produits</h3><p style="color:#5C7268;font-size:16px">Envoyez votre fichier Excel ou les photos de votre cahier : on saisit tout pour vous</p></div></div>
+<div class="bonus"><span class="n">3</span><div><h3>Affiche QR code pour votre vitrine</h3><p style="color:#5C7268;font-size:16px">Vos clients scannent et ouvrent votre catalogue en ligne</p></div></div>
+<div class="bonus"><span class="n">4</span><div><h3>Kit de lancement clients</h3><p style="color:#5C7268;font-size:16px">Message et statut WhatsApp prêts pour annoncer votre catalogue à vos clients</p></div></div>
+</div></div></section>
+
+<!-- ÉTAPES -->
+<section style="background:#fff">
+<div class="in">
+<div class="head center"><span class="eyebrow">Simple et rapide</span><h2>Votre application en 3 étapes</h2></div>
+<div class="steps">
+<div class="card soft step"><span class="n">01</span><h3>Testez la démo</h3><p>Gratuitement, sur votre téléphone, autant que vous voulez.</p></div>
+<div class="card soft step"><span class="n">02</span><h3>On personnalise</h3><p>Votre logo, vos couleurs, vos produits et leurs photos, vos vendeurs, vos fournisseurs. Vous validez chaque étape.</p></div>
+<div class="card soft step"><span class="n">03</span><h3>Vous lancez</h3><p>Formation, mise en ligne, partage du catalogue à vos clients. Les premières ventes s'enregistrent le jour même.</p></div>
+</div></div></section>
+
+<!-- FAQ -->
+<section id="faq">
+<div class="narrow">
+<div class="head center"><span class="eyebrow">Vos questions</span><h2>Tout ce que vous voulez savoir</h2></div>
+<details><summary>Mes vendeurs ne sont pas à l'aise avec la technologie. Ils vont s'en servir ?</summary><p>Oui. L'espace vendeur tient en 4 boutons : vendre, stock, commandes, signaler. On touche le produit, on choisit le paiement, c'est encaissé. Si votre vendeur sait envoyer un message WhatsApp, il sait utiliser StockPro.</p></details>
+<details><summary>Mes clients doivent-ils télécharger une application ?</summary><p>Non. Votre catalogue s'ouvre avec un simple lien, à partager sur WhatsApp, Facebook, Instagram ou avec l'affiche QR code de votre vitrine. Le client choisit, commande, et vous recevez la commande.</p></details>
+<details><summary>StockPro remplace-t-il ma caisse enregistreuse ?</summary><p>StockPro enregistre vos ventes, édite les tickets et suit votre caisse du jour. Dans les pays où la loi impose un logiciel de caisse certifié (comme la France, avec la norme NF525 pour les commerçants assujettis à la TVA), gardez votre caisse certifiée : StockPro gère alors votre stock, vos commandes, vos fournisseurs et vos rapports à côté. Nous vous conseillons de vérifier la règle de votre pays avec votre comptable.</p></details>
+<details><summary>Comment fonctionne le code-barres ?</summary><p>Sur téléphone, avec l'appareil photo. Sur ordinateur, avec une douchette USB ou Bluetooth classique. Vos produits sans code-barres se vendent aussi en un geste, depuis leur photo.</p></details>
+<details><summary>Faut-il une connexion internet ?</summary><p>Oui, une connexion mobile ou wifi classique suffit. C'est ce qui permet au gérant de voir les ventes en temps réel, même hors de la boutique, et à vos clients de commander en ligne.</p></details>
+<details><summary>Mes données sont-elles en sécurité ?</summary><p>Dans la version achetée, vos données sont sauvegardées en ligne sur un serveur sécurisé, avec un compte et un mot de passe pour chaque utilisateur. Les vendeurs ne voient ni vos prix d'achat ni vos bénéfices.</p></details>
+<details><summary>L'application sera vraiment à mon nom ?</summary><p>Oui, avec la formule Premium. Elle est publiée sur Google Play et l'App Store avec votre nom et votre logo, via vos comptes développeur. Nous nous occupons de toute la publication. La formule Standard s'ouvre avec un lien, sur tous les téléphones.</p></details>
+<details><summary>Que se passe-t-il après un an ?</summary><p>Vous renouvelez votre forfait pour garder l'hébergement, les sauvegardes et les mises à jour des stores. Vous continuez à utiliser l'application comme avant, sans interruption ni perte de données. Avec l'option Sérénité, tout est compris dans l'abonnement mensuel.</p></details>
+<details><summary>Et si j'ai plus de 500 produits ou plusieurs boutiques ?</summary><p>Vous passez simplement à Premium, sans limite de produits ni de vendeurs : seule la différence de prix est facturée et toutes vos données sont conservées.</p></details>
+<details><summary>Combien ça coûte exactement et comment je paie ?</summary><p>Les prix affichés sont des prix de départ en dollars américains. Votre devis précise le prix final selon le nombre de produits et de boutiques et le mode de paiement choisi : en une fois, en plusieurs fois ou au mois. Paiement par carte bancaire, virement, PayPal ou via Contra. En prévente, vous versez 30 % à la commande et le solde à la livraison.</p></details>
+</div></section>
+
+<!-- CTA FINAL -->
+<section class="forest">
+<div class="narrow" style="text-align:center;display:flex;flex-direction:column;gap:22px;align-items:center">
+<h2>Votre stock vaut de l'argent. Arrêtez de le compter au cahier.</h2>
+<p class="lead" style="font-size:19px">Testez StockPro gratuitement aujourd'hui. Quand vous êtes prêt, on construit votre application à votre nom.</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><a href="/stockpro/demo/" class="btn gold">Tester la démo gratuitement</a><a href="https://wa.me/15054642331?text=Bonjour%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20StockPro." target="_blank" rel="noopener" class="btn ghost"><svg width="20" height="20"><use href="#wa"/></svg>Nous écrire sur WhatsApp</a></div>
+<div style="display:flex;gap:22px;flex-wrap:wrap;justify-content:center;font-size:15px;color:#CFE6DA"><span>WhatsApp : <a href="https://wa.me/15054642331" style="color:#fff">+1 505 464 2331</a></span><span>Email : <a href="mailto:contact@sackoconcept.com" style="color:#fff">contact@sackoconcept.com</a></span><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener" style="color:#E2BC69">Réserver un appel</a></div>
+</div></section>
+
+<footer style="padding-top:28px;padding-bottom:90px;font-size:14px;color:#5C7268;text-align:center">
+<div>© 2026 SACKO CONCEPT LLC · StockPro · Application de gestion de stock et de ventes</div>
+<div style="margin-top:6px"><a href="/">sackoconcept.com</a> · <a href="/nettopro/dollars/">NettoPro, pour le nettoyage</a> · <a href="/rhpro/dollars/">RHPro, pour gérer vos salariés</a></div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/15054642331?text=Bonjour%2C%20je%20m%27int%C3%A9resse%20%C3%A0%20StockPro." target="_blank" rel="noopener" aria-label="Nous écrire sur WhatsApp"><svg width="26" height="26"><use href="#wa"/></svg><span>WhatsApp</span></a>
+
+<script>
+(function(){
+var CFG={"saas": 45, "pre": 649, "ren": 129, "step": 10, "suf": " $US"};
+function f(v){var r=Math.round(v/CFG.step)*CFG.step;return r.toLocaleString("fr-FR").replace(/[\u202f\u00a0]/g," ")+CFG.suf}
+var nb=document.getElementById("nb");if(!nb)return;
+function calc(){var n=+nb.value;document.getElementById("nbv").textContent=n;var saas=n*CFG.saas*36,sp=CFG.pre+CFG.ren*2;
+ document.getElementById("c-saas").textContent=f(saas);document.getElementById("c-rh").textContent=f(sp);document.getElementById("c-gain").textContent=saas>sp?f(saas-sp):"—"}
+nb.addEventListener("input",calc);calc();
+})();
+</script>
+</body>
+</html>
