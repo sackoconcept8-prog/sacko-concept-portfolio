@@ -144,7 +144,7 @@ section,footer{padding-left:max(24px,env(safe-area-inset-left,0px))!important;pa
 <span style="font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #E2BC69">Faites le calcul</span>
 <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(26px, 3vw, 36px); line-height: 1.15">Chaque devis non relancé est de l'argent laissé sur la table.</h3>
 </div>
-<p style="margin: 0; font-size: 18px; color: #CFE6DA">Récupérez <strong style="color: #fff">un seul contrat de 1 000 € par mois</strong> grâce aux relances automatiques, et c'est <strong style="color: #E2BC69">12 000 € de plus sur l'année</strong>. La formule Autonome de NettoPro coûte 1 490 € une seule fois. Faites le compte.</p>
+<p style="margin: 0; font-size: 18px; color: #CFE6DA">Récupérez <strong style="color: #fff">un seul contrat de <span data-eur="1000">1 000 €</span> par mois</strong> grâce aux relances automatiques, et c'est <strong style="color: #E2BC69"><span data-eur="12000">12 000 €</span> de plus sur l'année</strong>. La formule Autonome de NettoPro coûte <span data-eur="1490">1 490 €</span> une seule fois. Faites le compte.</p>
 </div>
 </div>
 </section>
@@ -237,6 +237,11 @@ section,footer{padding-left:max(24px,env(safe-area-inset-left,0px))!important;pa
 <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(30px, 3.6vw, 46px); line-height: 1.1; text-wrap: balance; max-width: 820px">Trois façons d'avoir votre application. Choisissez la vôtre.</h2>
 <p style="margin: 0; font-size: 18px; color: #5C7268; max-width: 680px">Chaque formule inclut votre logo, vos couleurs, vos tarifs et l'import de vos clients.</p>
 </div>
+<div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; background: #fff; border: 1px solid #D6E4DB; border-radius: 16px; padding: 14px 18px">
+<label for="fx-country" style="font-weight: 700; font-size: 16px">Votre pays</label>
+<select id="fx-country" style="font: 600 16px Figtree, system-ui, sans-serif; color: #14302A; background: #F7F5EF; border: 1px solid #D6E4DB; border-radius: 10px; padding: 10px 12px; min-width: 0; max-width: 100%"></select>
+<span style="font-size: 14px; color: #5C7268">Les prix s'affichent dans votre devise.</span>
+</div>
 <div style="background: #F6EBD2; border: 1.5px solid #E2BC69; border-radius: 20px; padding: 18px 22px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; justify-content: center; text-align: center">
 <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 20px; color: #7A5A12">Offre Fondateurs</span>
 <span style="font-size: 16px">−30 % sur toutes les formules pour les 20 premières entreprises, jusqu'au 31 décembre 2026.</span>
@@ -245,7 +250,7 @@ section,footer{padding-left:max(24px,env(safe-area-inset-left,0px))!important;pa
 
 <div style="background: #fff; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; gap: 18px; border: 1px solid #D6E4DB">
 <div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #5C7268">Démarrage</span><h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px">Application web</h3><p style="margin: 0; color: #5C7268; font-size: 15px">Pour démarrer vite avec un petit budget. S'ouvre avec un lien, sur tous les téléphones.</p></div>
-<div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 44px; line-height: 1">590 €</div><div style="color: #5C7268; font-size: 14px; margin-top: 6px">paiement unique · environ 390 000 FCFA</div></div>
+<div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 44px; line-height: 1"><span data-eur="590">590 €</span></div><div style="color: #5C7268; font-size: 14px; margin-top: 6px">paiement unique · hébergement 1 an inclus</div></div>
 <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 15px">
 <li style="display: flex; gap: 10px"><span style="color: #3FA877; font-weight: 800">✓</span>Toutes les fonctions NettoPro</li>
 <li style="display: flex; gap: 10px"><span style="color: #3FA877; font-weight: 800">✓</span>Espace client inclus</li>
@@ -259,7 +264,7 @@ section,footer{padding-left:max(24px,env(safe-area-inset-left,0px))!important;pa
 <div style="background: #123D30; color: #EAF6EF; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 24px 60px rgba(18,61,48,.3); position: relative">
 <span style="position: absolute; top: -14px; left: 30px; background: #E2BC69; color: #14302A; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 6px 12px; border-radius: 99px">Le plus choisi</span>
 <div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #E2BC69">Autonome</span><h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px; color: #fff">Votre app sur les stores</h3><p style="margin: 0; color: #CFE6DA; font-size: 15px">Vous prenez la main : vous gérez vous-même vos clients, vos prestations, vos tarifs et votre stock.</p></div>
-<div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 44px; line-height: 1; color: #fff">1 490 €</div><div style="color: #CFE6DA; font-size: 14px; margin-top: 6px">paiement unique · environ 980 000 FCFA<br>puis 290 €/an pour renouveler (environ 190 000 FCFA)</div></div>
+<div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 44px; line-height: 1; color: #fff"><span data-eur="1490">1 490 €</span></div><div style="color: #CFE6DA; font-size: 14px; margin-top: 6px">paiement unique<br>puis <span data-eur="290">290 €</span> par an pour renouveler</div></div>
 <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 15px">
 <li style="display: flex; gap: 10px"><span style="color: #E2BC69; font-weight: 800">✓</span>Tout Démarrage</li>
 <li style="display: flex; gap: 10px"><span style="color: #E2BC69; font-weight: 800">✓</span>Publication Google Play et App Store à votre nom</li>
@@ -272,7 +277,7 @@ section,footer{padding-left:max(24px,env(safe-area-inset-left,0px))!important;pa
 
 <div style="background: #fff; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; gap: 18px; border: 1.5px solid #E2BC69">
 <div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #B8892B">Sérénité</span><h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px">Avec maintenance</h3><p style="margin: 0; color: #5C7268; font-size: 15px">Vous ne touchez à rien. Vous nous envoyez vos nouveaux clients, vos tarifs et l'état de vos stocks, on met tout à jour pour vous.</p></div>
-<div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 44px; line-height: 1">79 €<span style="font-size: 18px; font-weight: 700; color: #5C7268"> /mois</span></div><div style="color: #5C7268; font-size: 14px; margin-top: 6px">+ 490 € d'installation · environ 52 000 FCFA/mois<br>et 320 000 FCFA d'installation</div></div>
+<div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 44px; line-height: 1"><span data-eur="79">79 €</span><span style="font-size: 18px; font-weight: 700; color: #5C7268"> /mois</span></div><div style="color: #5C7268; font-size: 14px; margin-top: 6px">+ <span data-eur="490">490 €</span> d'installation</div></div>
 <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 15px">
 <li style="display: flex; gap: 10px"><span style="color: #3FA877; font-weight: 800">✓</span>Tout Autonome, publication incluse</li>
 <li style="display: flex; gap: 10px"><span style="color: #3FA877; font-weight: 800">✓</span>Mise à jour de vos clients, tarifs et stocks</li>
@@ -283,7 +288,7 @@ section,footer{padding-left:max(24px,env(safe-area-inset-left,0px))!important;pa
 <a href="https://wa.me/15054642331" style="margin-top: auto; background: #123D30; color: #EAF6EF; text-decoration: none; padding: 15px; border-radius: 14px; font-weight: 700; text-align: center">Choisir Sérénité</a>
 </div>
 </div>
-<p style="margin: 0; text-align: center; font-size: 14px; color: #5C7268">Comptes développeur Apple et Google au nom de votre entreprise, à votre charge. Montants en FCFA indicatifs, arrondis.</p>
+<p style="margin: 0; text-align: center; font-size: 14px; color: #5C7268">Comptes développeur Apple et Google au nom de votre entreprise, à votre charge. <span id="fx-note">Prix en euros.</span></p>
 </div>
 </section>
 
@@ -325,7 +330,8 @@ section,footer{padding-left:max(24px,env(safe-area-inset-left,0px))!important;pa
 <details style="background: #fff; border-radius: 18px; padding: 20px 22px; border: 1px solid #D6E4DB"><summary style="font-weight: 700; font-size: 18px">Mes données sont-elles en sécurité ?</summary><p style="margin: 12px 0 0; color: #5C7268">Dans la version achetée, vos données sont sauvegardées en ligne sur un serveur sécurisé, avec un compte et un mot de passe pour chaque utilisateur. Vos clients ne voient que leurs propres documents.</p></details>
 <details style="background: #fff; border-radius: 18px; padding: 20px 22px; border: 1px solid #D6E4DB"><summary style="font-weight: 700; font-size: 18px">L'application sera vraiment à mon nom ?</summary><p style="margin: 12px 0 0; color: #5C7268">Oui, avec les formules Autonome et Sérénité. Elle est publiée sur Google Play et l'App Store avec votre nom et votre logo, via vos comptes développeur. Nous nous occupons de toute la publication.</p></details>
 <details style="background: #fff; border-radius: 18px; padding: 20px 22px; border: 1px solid #D6E4DB"><summary style="font-weight: 700; font-size: 18px">Que se passe-t-il après un an ?</summary><p style="margin: 12px 0 0; color: #5C7268">Vous renouvelez votre forfait pour garder l'hébergement et les mises à jour des stores. Vous continuez à utiliser l'application comme avant, sans interruption.</p></details>
-<details style="background: #fff; border-radius: 18px; padding: 20px 22px; border: 1px solid #D6E4DB"><summary style="font-weight: 700; font-size: 18px">Puis-je payer en FCFA ou par Mobile Money ?</summary><p style="margin: 12px 0 0; color: #5C7268">Oui. Contactez-nous sur WhatsApp et nous vous indiquons les moyens de paiement disponibles dans votre pays.</p></details>
+<details style="background: #fff; border-radius: 18px; padding: 20px 22px; border: 1px solid #D6E4DB"><summary style="font-weight: 700; font-size: 18px">Dans quelle devise et comment je paie NettoPro ?</summary><p style="margin: 12px 0 0; color: #5C7268">Nos prix sont fixés en euros et affichés dans votre devise à titre indicatif. Nous travaillons avec des entreprises du monde entier : carte bancaire, virement, PayPal ou Mobile Money selon votre pays. Le montant exact est confirmé sur votre devis.</p></details>
+<details style="background: #fff; border-radius: 18px; padding: 20px 22px; border: 1px solid #D6E4DB"><summary style="font-weight: 700; font-size: 18px">Comment mes clients me paient-ils ?</summary><p style="margin: 12px 0 0; color: #5C7268">Chaque facture affiche vos coordonnées de paiement. Votre client paie par virement ou Mobile Money, le signale dans son espace, et vous confirmez en un clic. En option, nous ajoutons un bouton « Payer maintenant » (carte ou Mobile Money) relié à votre propre compte de paiement : l'argent arrive directement chez vous, jamais chez nous.</p></details>
 <details style="background: #fff; border-radius: 18px; padding: 20px 22px; border: 1px solid #D6E4DB"><summary style="font-weight: 700; font-size: 18px">Et si j'ai d'autres besoins ?</summary><p style="margin: 12px 0 0; color: #5C7268">Parlez-nous de votre activité. Nous adaptons NettoPro à votre façon de travailler : nouvelles prestations, documents, champs ou rapports.</p></details>
 </div>
 </div>
@@ -356,5 +362,29 @@ section,footer{padding-left:max(24px,env(safe-area-inset-left,0px))!important;pa
 </div>
 <a href="https://wa.me/15054642331?text=Bonjour%20Hawa%2C%20je%20viens%20de%20voir%20NettoPro%20et%20j%27aimerais%20en%20savoir%20plus." target="_blank" rel="noopener" aria-label="Nous écrire sur WhatsApp" class="wa-float"><svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path fill="#fff" d="M16.04 3C9.4 3 4 8.36 4 14.97c0 2.11.56 4.17 1.62 5.99L4 29l8.25-2.15a12.1 12.1 0 0 0 3.79.6h.01C22.68 27.45 28 22.09 28 15.48 28 8.87 22.68 3 16.04 3zm0 22.4h-.01a10 10 0 0 1-5.1-1.4l-.36-.22-4.9 1.28 1.31-4.77-.24-.38a9.85 9.85 0 0 1-1.52-5.29c0-5.48 4.48-9.94 9.99-9.94 5.5 0 9.82 4.46 9.82 10.1 0 5.48-4.42 10.62-8.99 10.62zm5.47-7.43c-.3-.15-1.77-.87-2.04-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.95 1.17-.18.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.9-.8-1.5-1.78-1.67-2.08-.18-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.68-.51h-.58c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.48.71.31 1.27.49 1.7.63.71.23 1.36.2 1.88.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.18-1.42-.08-.12-.28-.2-.58-.35z"/></svg><span>WhatsApp</span></a>
 <style>.wa-float{position:fixed;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;align-items:center;gap:8px;background:#25D366;color:#fff;text-decoration:none;font:700 16px Figtree,system-ui,sans-serif;padding:12px 18px 12px 14px;border-radius:999px;box-shadow:0 10px 28px rgba(0,0,0,.25)}.wa-float:hover{color:#fff;background:#1EBE5B}.wa-float:focus-visible{outline:3px solid #E2BC69;outline-offset:3px}@media (max-width:520px){.wa-float span{display:none}.wa-float{padding:14px}}</style>
+<script>
+(function(){
+var C=[
+["Europe",[["FR","France","EUR"],["BE","Belgique","EUR"],["LU","Luxembourg","EUR"],["CH","Suisse","CHF"],["DE","Allemagne","EUR"],["ES","Espagne","EUR"],["IT","Italie","EUR"],["PT","Portugal","EUR"],["NL","Pays-Bas","EUR"],["IE","Irlande","EUR"],["GB","Royaume-Uni","GBP"]]],
+["Amérique du Nord",[["US","États-Unis","USD"],["CA","Canada","CAD"]]],
+["Afrique",[["BJ","Bénin","XOF"],["BF","Burkina Faso","XOF"],["CI","Côte d'Ivoire","XOF"],["GW","Guinée-Bissau","XOF"],["ML","Mali","XOF"],["NE","Niger","XOF"],["SN","Sénégal","XOF"],["TG","Togo","XOF"],["CM","Cameroun","XAF"],["CF","Centrafrique","XAF"],["CG","Congo","XAF"],["GA","Gabon","XAF"],["GQ","Guinée équatoriale","XAF"],["TD","Tchad","XAF"],["CD","RD Congo","USD"],["GN","Guinée","GNF"],["MA","Maroc","MAD"],["TN","Tunisie","TND"],["DZ","Algérie","DZD"],["MG","Madagascar","MGA"],["MU","Maurice","MUR"],["NG","Nigeria","NGN"],["GH","Ghana","GHS"],["ZA","Afrique du Sud","ZAR"]]],
+["Autres",[["HT","Haïti","HTG"],["AE","Émirats arabes unis","AED"],["XX","Autre pays (euros)","EUR"]]]];
+/* Taux indicatifs : 1 euro = ... (XOF et XAF : parité fixe). À mettre à jour de temps en temps. */
+var R={EUR:1,USD:1.08,CAD:1.5,GBP:0.85,CHF:0.94,XOF:655.957,XAF:655.957,GNF:9300,MAD:10.8,TND:3.35,DZD:145,MGA:4900,MUR:50,NGN:1650,GHS:16,ZAR:20,HTG:142,AED:3.97};
+var sel=document.getElementById("fx-country");if(!sel)return;
+C.forEach(function(g){var og=document.createElement("optgroup");og.label=g[0];g[1].forEach(function(c){var o=document.createElement("option");o.value=c[0];o.textContent=c[1];o.dataset.cur=c[2];og.appendChild(o)});sel.appendChild(og)});
+function nice(v,cur){if(cur==="EUR")return v;var a=Math.abs(v),step=a>=1e6?10000:a>=1e5?5000:a>=1e4?500:a>=1000?10:5;return Math.round(v/step)*step}
+function apply(){var o=sel.options[sel.selectedIndex],cur=o.dataset.cur,rate=R[cur]||1,fmt;
+ try{fmt=new Intl.NumberFormat("fr-FR",{style:"currency",currency:cur,currencyDisplay:(cur==="USD"||cur==="CAD")?"symbol":"narrowSymbol",maximumFractionDigits:0})}catch(e){fmt={format:function(v){return Math.round(v).toLocaleString("fr-FR")+" "+cur}}}
+ document.querySelectorAll("[data-eur]").forEach(function(el){var v=+el.dataset.eur;el.textContent=fmt.format(nice(v*rate,cur)).replace(/ /g," ")});
+ var n=document.getElementById("fx-note");if(n)n.textContent=cur==="EUR"?"Prix en euros.":"Prix indicatifs en "+cur+", convertis depuis l'euro. Montant exact confirmé sur devis.";
+ try{localStorage.setItem("np-country",o.value)}catch(e){}}
+var saved=null;try{saved=localStorage.getItem("np-country")}catch(e){}
+var guess=(navigator.language||"").split("-")[1];
+var pick=saved||(guess&&sel.querySelector('option[value="'+guess.toUpperCase()+'"]')?guess.toUpperCase():"FR");
+sel.value=pick;if(sel.selectedIndex<0)sel.value="FR";
+sel.addEventListener("change",apply);apply();
+})();
+</script>
 </body>
 </html>
