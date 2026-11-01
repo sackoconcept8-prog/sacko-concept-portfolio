@@ -237,7 +237,7 @@ details p{margin-top:10px;color:#5C7268}
 <!-- COMPARATIF + CALCULATEUR -->
 <section>
 <div class="in">
-<div class="head center"><span class="eyebrow">Pourquoi RHPro</span><h2>Payez votre application une fois, pas chaque mois pour chaque salarié</h2><p class="lead">Les logiciels RH en ligne facturent en général de 4 à 12 $US par salarié et par mois. Plus votre équipe grandit, plus la facture monte. Avec RHPro, l'application est à vous.</p></div>
+<div class="head center"><span class="eyebrow">Pourquoi RHPro</span><h2>Payez votre application une fois, pas chaque mois pour chaque salarié</h2><p class="lead">Les logiciels RH en ligne facturent en général de 3 à 10 $US par salarié et par mois. Plus votre équipe grandit, plus la facture monte. Avec RHPro, l'application est à vous.</p></div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:28px;align-items:start">
 <div class="tw"><table class="cmp"><thead><tr><th></th><th class="us">RHPro</th><th>Logiciel au salarié</th><th>Excel et WhatsApp</th></tr></thead><tbody>
 <tr><td>Prix</td><td class="us">Paiement unique (Premium)</td><td>Chaque mois, par salarié</td><td>Gratuit, mais des heures perdues</td></tr>
@@ -251,7 +251,7 @@ details p{margin-top:10px;color:#5C7268}
 <label for="nb" style="font-weight:700;font-size:18px">Nombre de salariés : <span id="nbv">25</span></label>
 <input type="range" id="nb" min="5" max="60" value="25">
 <div class="two">
-<div><div style="font-size:14px;color:#CFE6DA">Logiciel à 7 $US / salarié / mois</div><div class="big" id="c-saas" style="color:#F3B0A4">—</div></div>
+<div><div style="font-size:14px;color:#CFE6DA">Logiciel à 6 $US / salarié / mois</div><div class="big" id="c-saas" style="color:#F3B0A4">—</div></div>
 <div><div style="font-size:14px;color:#CFE6DA">RHPro Premium (3 ans)</div><div class="big" id="c-rh" style="color:#E2BC69">—</div></div></div>
 <div style="font-size:18px">Vous économisez environ <strong id="c-gain" style="color:#E2BC69">—</strong>, et l'application porte votre nom.</div>
 <div style="font-size:13px;color:#CFE6DA">Estimation indicative : RHPro Premium au prix de départ, paiement unique + 2 renouvellements annuels.</div></div>
@@ -340,7 +340,7 @@ details p{margin-top:10px;color:#5C7268}
 
 <script>
 (function(){
-var CFG={"saas": 7, "pre": 849, "ren": 199, "step": 10, "suf": " $US"};
+var CFG={"saas": 6, "pre": 849, "ren": 199, "step": 10, "suf": " $US"};
 function f(v){var r=Math.round(v/CFG.step)*CFG.step;return r.toLocaleString("fr-FR").replace(/[\u202f\u00a0]/g," ")+CFG.suf}
 try{localStorage.setItem("rhpro-page",location.pathname)}catch(e){}
 var nb=document.getElementById("nb");if(!nb)return;
