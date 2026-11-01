@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Démo gratuite de NettoPro : testez l'application de gestion pour entreprises de nettoyage, côté gérant et côté client.">
+<link rel="canonical" href="https://www.sackoconcept.com/nettopro/demo/">
+<meta property="og:title" content="NettoPro · Démo gratuite">
+<meta property="og:image" content="https://www.sackoconcept.com/nettopro/sacko-logo.jpg">
+<meta name="theme-color" content="#123D30">
+<link rel="icon" href="../sacko-logo.jpg">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+<title>NettoPro · Démo gratuite</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: colonne d'application mobile (max 480px), barre d'onglets fixe en bas, feuilles qui montent du bas ; carte héros vert forêt, touches dorées pour le premium */
+:root{
+  --bg:#F2F6F3; --surface:#FFFFFF; --surface2:#E7F1EB; --fg:#14302A; --muted:#5C7268; --line:#D6E4DB;
+  --accent:#3FA877; --accent-ink:#FFFFFF; --accent-soft:#D5EFE1;
+  --forest:#123D30; --forest2:#1C5A45; --on-forest:#EAF6EF;
+  --gold:#B8892B; --gold-soft:#F6EBD2;
+  --red:#C2412D; --red-soft:#FBE3DE; --amber:#A86A0C; --amber-soft:#FCEFD3; --blue:#2C63A8; --blue-soft:#E1ECF8;
+  --shadow:0 1px 2px rgba(20,48,42,.05),0 8px 24px rgba(20,48,42,.07);
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Figtree",ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --r:18px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1814; --surface:#14231D; --surface2:#1A2E26; --fg:#E3F0E9; --muted:#92AA9F; --line:#28403A;
+  --accent:#5CC594; --accent-ink:#0A1913; --accent-soft:#1E3D30;
+  --forest:#0F3528; --forest2:#17513E; --on-forest:#EAF6EF;
+  --gold:#E2BC69; --gold-soft:#3A3019;
+  --red:#F08A78; --red-soft:#3D2420; --amber:#E7B45A; --amber-soft:#3A2E17; --blue:#8DB6EA; --blue-soft:#1C2C40;
+  --shadow:0 1px 2px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1814; --surface:#14231D; --surface2:#1A2E26; --fg:#E3F0E9; --muted:#92AA9F; --line:#28403A;
+  --accent:#5CC594; --accent-ink:#0A1913; --accent-soft:#1E3D30;
+  --forest:#0F3528; --forest2:#17513E; --on-forest:#EAF6EF;
+  --gold:#E2BC69; --gold-soft:#3A3019;
+  --red:#F08A78; --red-soft:#3D2420; --amber:#E7B45A; --amber-soft:#3A2E17; --blue:#8DB6EA; --blue-soft:#1C2C40;
+  --shadow:0 1px 2px rgba(0,0,0,.35); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.app{max-width:480px;margin:0 auto;min-height:100%;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px calc(100px + env(safe-area-inset-bottom,0px))}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.015em}
+h1{font-size:27px;font-weight:800}
+h2{font-size:18px;font-weight:700}
+h3{font-size:15px;font-weight:600;font-family:var(--body);letter-spacing:0}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .small{font-size:13px} .xs{font-size:11.5px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.demo{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:7px 10px;font-size:12px;margin-bottom:14px}
+.demo b{font-weight:700;color:var(--gold)}
+.sclogo{width:22px;height:22px;border-radius:50%;flex:none}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.iconbtn{position:relative;width:42px;height:42px;border-radius:13px;border:1px solid var(--line);background:var(--surface);color:var(--fg);display:grid;place-items:center;cursor:pointer;flex:none}
+.iconbtn svg{width:20px;height:20px}
+.badge{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;border-radius:10px;background:var(--red);color:#fff;font:700 11px var(--body);display:grid;place-items:center;padding:0 5px}
+.avatar{width:42px;height:42px;border-radius:13px;background:var(--forest);color:var(--on-forest);display:grid;place-items:center;font-family:var(--display);font-weight:700;flex:none;border:0;cursor:pointer;font-size:16px}
+.av-s{width:36px;height:36px;border-radius:11px;font-size:14px;background:var(--surface2);color:var(--fg)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.section{display:flex;flex-direction:column;gap:10px;margin-top:24px}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between} .wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.hero{background:linear-gradient(145deg,var(--forest) 0%,var(--forest2) 100%);color:var(--on-forest);border-radius:22px;padding:18px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;border:1px solid rgba(226,188,105,.35)}
+.hero .eyebrow{color:var(--on-forest);opacity:.75}
+.hero .big{font-family:var(--display);font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:2px}
+.hero .sub{display:flex;gap:16px;margin-top:10px;font-size:12.5px;opacity:.9;flex-wrap:wrap}
+.bars{display:flex;align-items:flex-end;gap:6px;height:58px;margin-top:12px}
+.bars i{flex:1;background:var(--on-forest);opacity:.28;border-radius:5px 5px 2px 2px;min-height:4px}
+.bars i.on{opacity:1;background:var(--gold)}
+.blabels{display:flex;gap:6px;margin-top:4px}.blabels span{flex:1;text-align:center;font-size:10.5px;opacity:.7}
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.qa button{border:0;background:var(--surface);box-shadow:var(--shadow);border-radius:16px;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--fg);font:600 11.5px var(--body);cursor:pointer}
+.qa svg{width:22px;height:22px;color:var(--accent)}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--surface);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:3px;min-width:0}
+.kpi .v{font-family:var(--display);font-size:23px;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi.alert .v{color:var(--red)}
+.card{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow)}
+.pad{padding:14px}
+.list{display:flex;flex-direction:column}
+.item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;background:none;width:100%;text-align:left;color:inherit;font:inherit;cursor:pointer;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item.static{cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.p-green{background:var(--accent-soft);color:var(--accent)} .p-red{background:var(--red-soft);color:var(--red)}
+.p-amber{background:var(--amber-soft);color:var(--amber)} .p-blue{background:var(--blue-soft);color:var(--blue)}
+.p-grey{background:var(--surface2);color:var(--muted)} .p-gold{background:var(--gold-soft);color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:12px;padding:11px 14px;font:600 14px var(--body);cursor:pointer;background:var(--surface2);color:var(--fg);text-decoration:none}
+.btn svg{width:18px;height:18px}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.dark{background:var(--forest);color:var(--on-forest)}
+.btn.danger{background:var(--red-soft);color:var(--red)}
+.btn.gold{background:var(--gold);color:#fff}
+.btn.sm{padding:7px 11px;font-size:12.5px;border-radius:10px}
+.btn.block{width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:99px;padding:7px 12px;font:600 13px var(--body);white-space:nowrap;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip.on{background:var(--forest);color:var(--on-forest);border-color:var(--forest)}
+.chip .n{font-size:11px;opacity:.75}
+.search{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:12px;padding:11px 14px;font:15px var(--body);min-width:0}
+.fab{position:fixed;right:max(16px,calc(50vw - 224px),env(safe-area-inset-right,0px));bottom:calc(86px + env(safe-area-inset-bottom,0px));height:54px;padding:0 20px 0 16px;border-radius:18px;border:0;background:var(--forest);color:var(--on-forest);font:700 15px var(--body);box-shadow:0 10px 26px rgba(18,61,48,.35);cursor:pointer;z-index:15;display:flex;align-items:center;gap:8px}
+.fab span{font-size:24px;line-height:1;color:var(--gold)}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+nav.tabs .in{max-width:480px;margin:0 auto;display:grid;grid-auto-flow:column;grid-auto-columns:1fr}
+nav.tabs a{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;color:var(--muted);text-decoration:none;font-size:11px;font-weight:600}
+nav.tabs a.on{color:var(--accent)}
+nav.tabs a .badge{top:0;right:calc(50% - 22px)}
+nav.tabs svg{width:22px;height:22px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{border:0;background:var(--surface);color:var(--fg);border-radius:13px;padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:2px;font:600 11.5px var(--body);cursor:pointer;box-shadow:var(--shadow)}
+.day b{font-family:var(--display);font-size:18px}
+.day.on{background:var(--forest);color:var(--on-forest)}
+.day.today:not(.on){outline:2px solid var(--accent);outline-offset:-2px}
+.day .m{width:5px;height:5px;border-radius:50%;background:var(--accent)} .day .m.off{background:transparent}
+.job{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:12px 14px;border-top:1px solid var(--line)}
+.job:first-child{border-top:0}
+.job .h{font-variant-numeric:tabular-nums;font-weight:700}
+.empty{padding:22px 16px;text-align:center;color:var(--muted);font-size:14px}
+.overlay{position:fixed;inset:0;background:rgba(8,22,17,.5);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:480px;max-height:93%;overflow:auto;border-radius:24px 24px 0 0;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+.grab{width:40px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 12px}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:var(--muted);min-width:0}
+label.f input,label.f select,label.f textarea,.line select,.line input,textarea.ta{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;padding:10px 12px;font:15px var(--body);width:100%;min-width:0}
+textarea.ta{min-height:130px;resize:vertical;line-height:1.45}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.line{display:grid;grid-template-columns:1fr 64px 34px;gap:6px;align-items:center}
+.x{border:0;background:var(--surface2);color:var(--fg);border-radius:8px;height:40px;cursor:pointer;font-size:16px}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ck{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:13.5px;cursor:pointer;color:var(--fg)}
+.ck input{accent-color:var(--accent);width:18px;height:18px;flex:none}
+.tasks .ck{border-radius:0;border-width:0 0 1px;background:none;padding:10px 4px}
+.paper{background:#FFFFFF;color:#1d2a25;border-radius:14px;padding:18px;box-shadow:var(--shadow);font-size:12.8px;overflow:hidden}
+.paper .band{height:5px;background:#6BBF94;border-radius:4px;margin:-6px 0 14px}
+.paper .tw{overflow-x:auto}
+.paper table{width:100%;border-collapse:collapse;margin-top:12px}
+.paper th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:#6b7a72;border-bottom:1px solid #d5e4db;padding:6px 4px}
+.paper td{padding:7px 4px;border-bottom:1px solid #edf3ef;vertical-align:top}
+.paper .r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.paper .tot{width:auto;min-width:60%;margin-left:auto}
+.paper .tot td{border:0;padding:3px 6px}
+.paper .ttc td{background:#6BBF94;color:#fff;font-weight:700;padding:8px}
+.paper .title{font-family:var(--display);font-size:19px;color:#7a7a7a;font-weight:800;letter-spacing:.02em}
+.paper .lbl{font-size:10.5px;color:#6b7a72;text-transform:uppercase;letter-spacing:.05em;margin-top:12px}
+.paper .art{margin-top:10px} .paper .art b{color:#1E5B41}
+.paper .sigs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.paper .sig{border:1px solid #d5e4db;border-radius:8px;min-height:70px;padding:6px;font-size:10.5px;color:#6b7a72}
+.paper .sig img{max-height:56px;display:block;margin-top:2px}
+.paper .logo{width:42px;height:42px;border-radius:12px;background:#1E5B41;color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:19px;flex:none}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(156px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;z-index:70;max-width:90%;text-align:center}
+.timeline{display:flex;flex-direction:column}
+.tl{display:grid;grid-template-columns:18px 1fr;gap:10px;padding-bottom:12px;position:relative}
+.tl::before{content:"";position:absolute;left:8px;top:16px;bottom:0;width:2px;background:var(--line)}
+.tl:last-child::before{display:none}
+.tl i{width:18px;height:18px;border-radius:50%;background:var(--accent-soft);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line);margin-top:1px}
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tools button{border:0;background:var(--surface);box-shadow:var(--shadow);border-radius:16px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;font:600 12.5px var(--body);color:var(--fg);cursor:pointer;position:relative}
+.tools svg{width:24px;height:24px;color:var(--accent)}
+.stars{display:flex;gap:4px}
+.stars button{border:0;background:none;font-size:32px;cursor:pointer;color:var(--line);padding:0}
+.stars button.on{color:var(--gold)}
+.meter{height:8px;background:var(--surface2);border-radius:8px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:8px}
+.meter.low i{background:var(--red)}
+.chart{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;align-items:end;height:150px;padding-top:18px}
+.chart .c{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;min-width:0}
+.chart .c b{font-size:10px;font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600;white-space:nowrap}
+.chart .c i{width:100%;max-width:34px;background:var(--accent-soft);border-radius:6px 6px 3px 3px}
+.chart .c.on i{background:var(--accent)}
+.chart .c span{font-size:11px;color:var(--muted)}
+canvas.sigpad{width:100%;height:180px;background:#fff;border:1px dashed var(--line);border-radius:14px;touch-action:none;display:block}
+.login{min-height:calc(100vh - 40px);display:flex;flex-direction:column;justify-content:center;gap:16px;padding-block:20px}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:52px;height:52px;border-radius:16px;background:linear-gradient(145deg,var(--forest),var(--forest2));display:grid;place-items:center;color:var(--gold);font-family:var(--display);font-weight:800;font-size:24px;flex:none}
+.role{display:flex;gap:14px;align-items:center;padding:16px;border:1px solid var(--line);background:var(--surface);border-radius:18px;cursor:pointer;text-align:left;color:var(--fg);font:inherit;width:100%;box-shadow:var(--shadow)}
+.role .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none}
+.role svg{width:24px;height:24px}
+.splash{position:fixed;inset:0;z-index:100;background:#0B0B0B;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#E9D9AE;cursor:pointer;transition:opacity .5s}
+.splash img{width:110px;height:110px;border-radius:50%;animation:glow 1.6s ease-out both}
+.splash .p{font-size:12px;letter-spacing:.3em;text-transform:uppercase;opacity:0;animation:fade .8s .5s forwards}
+.splash .n{font-family:var(--display);font-size:36px;font-weight:800;color:#fff;opacity:0;animation:fade .8s 1s forwards}
+.splash .n em{font-style:normal;color:#6BBF94}
+@keyframes glow{from{transform:scale(.85);opacity:0;filter:brightness(.4)}to{transform:none;opacity:1;filter:none}}
+@keyframes fade{to{opacity:1}}
+@media (prefers-reduced-motion: reduce){.sheet,.splash img,.splash .p,.splash .n{animation:none;opacity:1}}
+.pitch{background:linear-gradient(145deg,#0E0E0E,#1E1A12);color:#F2E6C6;border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px}
+.pitch .eyebrow{color:#E2BC69}
+.note{background:var(--gold-soft);color:var(--fg);border-radius:12px;padding:10px 12px;font-size:13px}
+.note svg{width:20px;height:20px;flex:none}
+</style>
+
+</head>
+<body>
+<div id="splash" class="splash" role="button" aria-label="Passer l'introduction"><img src="data:image/jpeg;base64,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" alt="SACKO CONCEPT"><div class="p">SACKO CONCEPT présente</div><div class="n">Netto<em>Pro</em></div></div>
+<div class="app" id="app"></div>
+<button class="fab" id="fab" hidden></button>
+<nav class="tabs" id="nav" hidden><div class="in" id="tabs"></div></nav>
+<div id="layer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function(){
+const LOGO="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCACgAKADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD47FLSClpAFKKMUtAwxSgUCnhc0ANC09Uq3Z2FxcIZEjxEv3pHIVB9WPFWkXR7Y/6Tey3LDqlqnH/fbY/QGs5VEtEWomekZPapVt2PY1px65ptvxa+HrZyP4ruZ5SfwBVf0q3D411CHAg0vRIgP7umRH9WBNZSqVPsx+9/8OaKMOrMVbNz0Bp/2KQdVNdLb/ETWk+/p+hyj0fSoCP/AECtO0+IdhLhdU8D+HrpT95oYnt3/ONgP0rJ1a63h+P/AAxoqdJ/aOFNo3oaY1uw7V6xYX/wq1shLi31nw5M38Sst3CD7g7XA/E1p3PwjuNStXvfCeo2HiK2UZP2J8yqP9qJsOPyNZfX4xdppr1NVhHJXi7niJiI7VGVIrsdX8MX1jK0dxbyRspwQy4xWDdWTxnBWuqFeM1dMwnRlDdGURTSKtSRFe1QsOK2TMiAimEVMwqMiqTJaIqcKQU6mQApQKAKt2Fo1y7EusUMY3Syv92NfU+pPQAck9KUmkrspK42ztZ7qYQ28ZkcgnA7AdST0AHcngVaklsLD5YxHqFyOrHPkIfYdX+pwPY1FeXweA2VijQWeRuz9+Yj+JyP0UcD3PJqImKizlvsVdLYkuri6vHDXMzPj7o6KvsAOB+FNSMCnAU5RVpJKyFe4KtPAq9o+kalq0/k6fZy3DdCVGFX6seB+Neh+HfhHd3QWTVdVitwesdsnmN/30cD+dY1K0KfxM0hTlPZHmK1Ip9q+itF+DXhFUBuINQu27mW6Kg/ggFdDF8IfAITDaDk46/a5gf/AEKuN4+lskzoWEmup8sxkZ6VtaDrOoaTdx3WnXs1tNGcqyOVIP4V73qfwY8DupMEGoWp/wCmV4Tj8GBrifE/wi0zTbOa9t/E7WkEK7na+hBRR7shB/Sh1KdVWY1GdN3R1PhP4o6L4pij0r4j2CTyMAiarCoWdPd+zj68+9R/Ej4Qy2tiNa0KePUtKmGYriAZH0I/hPsa8LDm3l2pMsyEBkkUEBgehwQCPxFevfBH4rXnhO8FjfEXekXGEuLeXlSv0rzK+GqYd+0o/cd1KtGquSZ5Lq+lTWsrJIhUj1FYs8RU19c/GP4daNrfh4eMfB7LcWEw3SIvLRE9jXy9rNg9tM6suCDXo4HGqvHzOTE4bk1WxzzCo2FWpkINV2FemjgZWpRRSiqIRPY20l3crBFtDNklmOFUAZLE9gBkk+1TajcxyqtnZ7hZRNlSRgyv0MjD1PYdhx6kyTk2OnC1Xi4u0DznusXVE/Hhj7bfeqSris17zuU9NAVcU8CkAqSNHkkWONSzscKB3NaCCNGkcIilmY4AAySa7LQvC9pbQi/8QzpFEMHyi+0f8CP9BUNjDB4ftPtDos9/IML6L9Pb371kz/btXu/MupywXu33UHoBXNUqpdTenTb6Hodr4z0e3Mdlo9hLcgcIFURRj6DGT+VekeEbzUbhVkv2gskPSKC3M0p/An+YFcP8M9A8OafEmq+KNVi0awC7gfvXVwP9lf4VPqcD03V213+0P4H8LxGy8GeExcFOBc3ADsx9eeB+Ar5XH4jEYiXs8LF+b/rT8Ue5h6dKjHmrP+v67XOymvNVgg36bpmqXAHOZbWJQfwBz+tc/N8Sn029W28SeHrqyjLYNzB86r7sh5x9CfpXD337VXj2aQm2hS2j7LG2MfkMVPbftAnxBpstp4xgs9SRjg215a8kEgZjmX5kbBY5JHQcGssPhsxw/vVI8y+V/wAJMqVXC1dE0n6v9Uj0vxb4i0nRND/tm+vVFm6gxFPmMxIyAg7k/p3xXzZ4z8Y3XivVEvdaWWHRIX3W+nRSbTL6ZbuT3bHHIUd67X9oiXSrO+0uVr+K8SWwilsLCKQN5UTKCGkA4BbqR36njAPjJaa7uPtFw2W7DsK9/ASdemqiVr/1p/meZikqUuW9zTuLkXd09yLeG2WQ5WGFcJGvQKoOTgD1JqWF9uCKpJU6tiu6UFaxzRlrc9W+DHxQvPB2pi1u/wDS9Huv3d1bSHKsh6/Q+9Xvj14TtLG7g1vRX+0aNqaefaTD07qfRlPBH+NePb69c+D2vJ4k0W7+G2ryKRd5l0iWQ/6m6A4UHsHHyn32ntXlVaHsJ+2h8zvp1VVjySPFb2PaxFUHFdJ4lsZbK/mtp0aOSNyrKwwQQeRXOyjBr2aUlKN0ebUjyuxTFXdIhimvA1wM28KmaYeqL2/E4X8apDpV+P8Ac6G7dHu5tn/AIwCfzZl/75rWe1kZIgnmlurqW6mOZJXLt9T6e1ApAKcBVJCCum8F6abi7VsfOyls/wByMdT9T0/EVzkShpFB6dTXsH7PmkLrWo6wWALRW0YUexfn+Qrkxtf2FCVTsjfDU/aVYx7mHNodzfXgXbgt37Io/oBWb4mFv4bMaOqtOV3RQHqPRmH6/wCcD6Pj8Pad4e0XWvEuqxA2ml2T3DKf4yuNqf8AAm2j8a+P9YvrvWNWudSvnL3FxIXf0GT0HsOlfP5XUqY+pJy+CP4s9jGunhoqMfif4Db6+vtTnaa7neQsc4J4/wA+9OgiUdqbFHgVYQYr6ZQSVlseI5tu7JVRcdBUU1uj9sVc0yxvdRu1tNPtJrq4bpHEhZvrx0HvXeaH8L72YCTWtUt7Be8MA+0TfQ4IRf8Avo/Ss5zhT3ZUYynsjzNbYB8kk/WrAwo54+te8ad4C8F2KLnTbjUJB1e9uTj/AL4j2j9TWmINGsE22OiaRbY4BWwiJ/NgT+tc7xi+zE2WGfVnzssif31/76FSI6k8MD+Ne7ahrEkYIQwr6AQRgf8AoNcpqmrM5Pmw2kwP/PS0ib+a1cKsp/Z/H/gEypqHU85BxUtleTWN7De28jRywuGVlOCCDwa6G5n0yUnz9GsT7whoT/46QP0rB1D+zJBJ/Z/njYQrh2DqCc8BgAc8dx+NXOOmqFGVnozv/jQIdaj0vxraoqprdtvuAo4S6Q7Zh+Jw/wDwOvJrgYNej+Gbg6v8K9a0aQ7pdLmTUbcHspxFKB+DRn/gNed3YwxrLB3inB9GXidWpLqZlaF+NkdlAeAlsrY93Jc/oRWe3Qn2rU1oY1KROyJGn5RqK7n8SRyLYpinCgfSl7VYh0RxvPt/WvWP2YPEtpoXxBVNQcJZ3aeTOx6KpON34HafpmvI0PzOv+zn8jVvS7uWwvYrqE4eNsj0I7j8a569GNenKnLZlwm6cozXQ+8/2lPDN23wG8Trp6Fz5UMzhOcxJKjN06jAz+FfAxi2sa+yvgZ8crJ/DUXh7xQputNMXkRzsu9olIwY5F/iTBx6geo6eKfHD4Vv4e1CbXPC+L/w3cMZIjA3mG3B525HVR2PUd/WvEy6MMvl9WlpfVPpftc7qvPiE6m9vyPIhxXTaB4b84pPqrSQxHkQJxI49yfuD8z7d6s+CvD19e2g1O106a6/fGFJFXKo4AOB2LYOeuQOg71Z8cQeIvDztZ3On3WnzEZMk8ZVj/u5/nXqvFUnP2fMr9upzqhUUefl0/A6Nta0bQLL7IZILKAjP2aBcvJ7t3Y+7GoLXx5LdTi302wAVjhWmYlj/wABX/GvLdPsrm+u+S5LNhnILMxPYDqze1eneHT4Y8JRi4124laZRn7FaOpnPtLL92IH+6uT61yYuoqcbQ1l5HThoObvLRHqvhTTftkCSapd3ZlYDFvaoN35AEj8TW5q3w+1i+ti2keH9fGRw0xXn8MGvPNF/aQttLf7LY+H307TgNoj04okx9zLICxP4Cuf8d/H7WNS1BB4d/tW0s4xy93qDPPKx6ltvygegFfMwwWbVKt9V87L8/0PWliMHFaW/P8Ar7zT8Y+GvF/h/wCbVtBu0gz/AKwxlf16GuIvZA0e4blHowwRXZ+DvjzfWlpHHe+IdVS5ll2zx30YubQR+45LZ56jgDvmqXxs8S+D9d0DRdX0KG30+OYT/abWBvmM28ZVR1VOjc9N2BmvaweJxdKoqVeF79f63OHEUaFSDnTl/X6Hl+qXzTloo38q3X/WS9z7CoxqLXFrFbRqIrSDIhjA7n7zn1Y4GT7AdBWRPNJdyDICRj7qDoKsw/KuK97kb1keVzJaROy+GFxjxLLYE/u9QtJ7Vh2O+Nsf+PBa5O8OWPvWr4LnMPjDSJQel3H/AOhCsvVQFvJlHRZGA/A1lCNqr80v1LlK9NGWR8p+lbHiBMavMezBGH0KKayVHrW/4hiJGn3fa4somz7qNh/VK2k7TRkleLMgClOcUoFB6VqQVzIYZ0lAztOSPUVfu7XyTHInNvMu+F/Udx9QeD/9eqE68Vv+BtV0pJG0TxIkh0q5bKzRjMlpJ0EijuOxXuPQgEYVpSgueKvbdeRrSip+43YZompXWl3Intnxnh0P3WHv/jXrHgfxb9pPk2d69rK/37WRhtc/Q8N/OuT8TfDTXNI03+2bMxanpDKXivLdtyOg7g+w6qcMO4rj4CCFZSCOxBrKFShjINwd/wCuqKlCrhpWkrH054ThtNO1J77T45NNuZseeLbBgm95IG+U/UEGtv42eJoLjwvCdV02yuoXOxfs6kSM2Mk+SwIIA5JU8V8/eE/HWu6OVTz1vIF4EVzlsD0DDkfrXZ/GnWPI8Dadq1xGE1fUbVJLeEOSLCEt1B4y7kd+ig18/mOW0nXg5L3m7I9bCYpuDa2SPJ9U1aGwaU2Aa3jYsEkC7ZCD/Cg/hHqetcnNPLcyZc4APCjoP/r+9JNLPdzma4leWRurOck1JGmK+ioYeNJeZ5VWu6j8hY4x3FTeWuOlKq4p46VtymXMV3hU9qi8gbulXcUhFNITZDGgFSijiiqEanhMbvFGmL/09R/+hCsy+k8y4kf+85P5mtPws3lasbs9LWCWfPuqHH/jxFYrnAx6DFZJfvH8i2/dQxBmuxNodQ+H1veINz6bdNBIPSOQblP/AH0HH41x6V6V8EzbX+q3fhi+kVLfWrc2wZuiS5DRN+DgfgTWWLk4R510NcOlKXK+pwJjx2ppHat3xDo91pWp3FhdwtFNBI0cisMEEHBrIkTFawqKSujOcHF2ZUkXg06PTZH5dX3N9xFHzHjOT6DHNWxst5ApAafvnkR/4t/L69PRfHmmaPY/CHw5eeHm+13mprINWnUFmtimMxMf4SzHPP3gBjisa+IdNxil8TtculRUrtvY4vwh478T6HpGo6BYalJ/ZmoW7wz27gOhUqRnB6HHQ9R2NVP7PP8AZEM1qTHNljkdG5xg+vSsvT48XLg4BET4/AZrqvD5W40naOWikZSPTPI/nWkKcISbirX3InKU0lJ7GJod9K2rW9pcxHc8qpleDya2Pil4ibW9WW1jcGG3wODwAq7EX/gKgfixqez09RrdrcCIFllBUdie364rjI1bcTJneT82eue9RKlGddTf2Vp8y41HCk4LqLGmKlUcUKtSDpXUjnFwcUoBpBUkEZklWNcZY4HOKG7Dim3YYAaGzXqXhT4J+NPE+hjWNCt9Pv7PoZIb+JtpxnDDOQfY1n6r8IPHdm5jk0dCw7LdxH/2audYqlf4juWXYh6Rg2/LU86amCrms6feaVqM2nX8QiuYG2yJuDbT6ZBIqoilmCqCSTgAdTW6aaujilFxlytamlbEW3h68nPD3UiWyfQHe5/RB/wKsZzWr4kYQTw6WhBFihSQg8GYnMh/A4X/AIBWQxqaa0v3CfYctbHh27ez1CG4jYq8bBgQe9YoNWbaTawIpVI80WmVTlytM+mPiL4ei8feBLT4g6REHvERYNXjQciQDAl/4EBz759a8FurOW28+TZ88KZGR0JIAP4ZzXr37NXxCj8O6w2nalibS75fJuYn5Uqa3P2ifhtH4fkTxNoSfbdBvgSCh42t1UnsRwR7gV4FGvLDVHQnt0/r8P8Ah0evUpRrRU1/X9fkfM3Ktk5zV7T9WvrJy1pdTQMRg7HIyPQ+o9jWvF4VvdTjMujTW+oc7fJWVUuFPoY2IJ+q5FIPA/iJJfLuLC4tG/6eLeRB+e3Fey8XQa96SPM+r1k/dRQvIoIfEkEm0JaXRSRcdFSQYP5EsPwqbRnk0PxDPp2oAxKXMMm7ja4PBP8AnvXR674L1Gy8Bvfag1ruspB5Rjl3M8bn5lIwCMH5gfdvaovG0ll4r8H6b4mtQBq9nEtjrUYH32UYinx/tKAD/tA/jzU8ZTnJODvG/K2uj6f13sbzw04p8ys97fmb9tpbSyDAIIPGOtY/xE8E3tqv/CRWdrI1jOc3O1eIJT1z6Kx5B9SR6Zj+GXju1024g07xGkklkCFS5jGXiHoR/Ev6j3r7b+EmneF9e0bz9MvdP1a0mj2yrGwcMpHKuh5H0Irix+Lr4SrHlje/3GtGFGdJuTPzvaMocEGm19pfGL9mXwxftLqPhTUjoNwclrSVDLbk/wCzg7k+nIr5s8S/CTxZok7pJ/ZtyinG+G7AB/BgDXoYfH0q2l7NdDknQlbmWqOApjTvCRJHjcpyM9K3j4W1VXKyi2jx1Pnhsf8AfOaUaFBbW/2mZ/th/gVRiNj6k/xD6da651Ypajw+Fq158tNa/kdZ8H/HGoeD55bq0u5bVr2HZ5Qb5WTOcleh5HHtk967vX/ixcrpsly/kz3DDbCpX77np+Hc/SvDI7G+vrt5i2Bu+eVuFX0H17BRTPELtZv9lZ2a4AK7WPMY759G9u3Tsa8yWGjUqXTPuKeb1MFhHzwXMlZStqVtRupL29luZZDK8jEs56se5/E5P41d0jGn2smtSgbom8uzU/xz4zu9wg+Y++wd6paRZfanJeQQ28K755mGRGnrjuT0A7kgVHrWofbrhBDGYbSBfLtoiclEznJ9WJySe5PoBXptX9xfM+Ccm25y3ZSYkkkkkk5JJ5NNNKaQ1sZApqWM1ADT1OKTGma2m3r28gZGII9K97+FPxfS30mTwx4ohGo6Hcrslic8p/tKexFfOaNirdtcuhG0kVwYrBwrrXc7KGJlS9D174qfC0WkR8TeE7r+09ClbKTxffgJ/gkA5U/oexrzuy8QeLdFl/0DX9Ttip6LcNj8jW74G+Imu+FrvzbC6zG67JoJAHilXurKeGHsa7K5h8B/ECPzdNmt/C+tt960uHP2OZv9iQ8xk+jZHuK41z0lyV480e9r/edT5anvUnZnnWu/EXx3rWlS6TqviG5ubKZdssTKnzjOcE4z2Fcxp2oXOm3TSw4ZJFMc0bfdlQ9VYV1vi/wXrfhy58nVNPmt93MbEZSQeqsOGHuCa5K4gZSciu6hToKHLTikn2RxVZVVK8m7omltba6zPYM208mM8vH7H1HuK0vDuoeJtAmF7ol3dwOvO+0lP6gc/pXOYkikEkTsjDoVOCK0bTXriE/6TbQ3P+0co/5rVzpztZe8vMUZwvd6M9Af48/FKKL7NP4huJlxjbcRhz/48M1UXxz8QPEsm1riyjU9ZpoY0VffJH9K4rU9Xt75UDR3ERU5yX38eg6Gqi3Nov8AyzeT/ez/AI1nGioq8YJP0Oui6LknWm2u17foz2fRtM8JQQC68XeL49ZvRytqpJt4z/1zX7x+vHtTvEF1o00ZuY48QkfLLdnyYvwA+Z/oteOx63LB/wAecEcJHRlQA/mcn9arzXGo6lcfvJJppX4xksze2eSayeCnOXNOR70OI6OEpOlhKaSf9at6s6bXPE8Nu5j0p2lnUELOUCLF/wBc0H3Pr97/AHa5/TbGW8eS4mlWKFOZriT7qe3uT2UcmnLaWdh82oSb5R0toWBb/gTdF/U+wqvf3095tRgsUEefKgjGETPXA7n1JyT61106airQ+8+axeMq4mfNVfoixqmoJNEtjZI0NjG24K33pX6b3x39B0UcDqSc+joKTNdEYqKsjibuGaTNBNJTEKKUUwHinZpgPBp4aoqXNS0VcsJKfWp47l1IKsQRVEGnBqlxTKUmjuPDnxF8SaLaGxivRdae337K7QTwN/wBsgfUYNXrnxB4F1pc6l4eutHuG6y6ZNviz/1yk6fg4rzrd70bq53hYXutH5GyxErWep2s+geGLr5tN8Y2Yz0S+tpYGH4gMv61nz+EZ+TBquiXA7GPUYuf++iDXNbvek3H1NWqdRbSIc4PeJtS+GLmP/WXemIPe/i/o1V20qzh/wCPjWLBfaItKf8Ax0Y/Wsw9aQjPerUZ9WQ5R6I0GfRrc/Il1esP72Ik/TJ/lUM2p3TxtDAEtIW4KQDbke56n8TVQikyKpU111E5PoIFApc0UlWQLmkozSUwCiikJoEf/9k=";
+const KEY="nettopro-premium-v2";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const iso=d=>{const x=new Date(d);x.setMinutes(x.getMinutes()-x.getTimezoneOffset());return x.toISOString().slice(0,10)};
+const today=()=>iso(new Date());
+const addDays=(s,n)=>{const d=new Date(s+"T12:00:00");d.setDate(d.getDate()+n);return iso(d)};
+const off=n=>addDays(today(),n);
+const diff=s=>Math.round((new Date(s+"T12:00:00")-new Date(today()+"T12:00:00"))/864e5);
+const MOIS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+const JOURS=["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
+const fd=s=>{if(!s)return"—";const d=new Date(s+"T12:00:00");return d.getDate()+" "+MOIS[d.getMonth()]};
+const fdy=s=>{if(!s)return"—";const d=new Date(s+"T12:00:00");return d.getDate()+" "+MOIS[d.getMonth()]+" "+d.getFullYear()};
+const eur=n=>(Math.round(n*100)/100).toLocaleString("fr-FR",{minimumFractionDigits:0,maximumFractionDigits:2})+" €";
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9);
+const toH=s=>{const[a,b]=s.split(":").map(Number);return a+b/60};
+const first=s=>(s||"").split(" ")[0];
+
+const IC={
+ home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.8c1.6.8 2.6 2.6 3 5.2"/>',
+ cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+ bell:'<path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>',
+ doc:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+ send:'<path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"/>',
+ euro:'<path d="M18 6.5A7 7 0 1 0 18 17.5M4 10h10M4 14h10"/>',
+ chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+ box:'<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>',
+ team:'<circle cx="12" cy="7" r="3.5"/><path d="M5 21c.8-4 3.6-6 7-6s6.2 2 7 6"/>',
+ tag:'<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="8" cy="8" r="1.5"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+ inbox:'<path d="M3 13l3-8h12l3 8v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 13h5l1 3h6l1-3h5"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ swap:'<path d="M7 7h13l-4-4M17 17H4l4 4"/>',
+ shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/>'};
+const svg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
+
+/* ---------- MESSAGES DE RELANCE ---------- */
+const TPL={
+ devis:[
+  c=>`Bonjour ${c.p}, je me permets de revenir vers vous au sujet de notre devis ${c.num} de ${c.mt}. Avez-vous pu le consulter ? Je peux l'ajuster à votre budget ou à vos horaires.\n\n${c.ent}`,
+  c=>`Bonjour ${c.p}, pour bloquer votre créneau de démarrage, il me faudrait votre accord sur le devis ${c.num} d'ici vendredi. Voulez-vous qu'on en parle 5 minutes par téléphone ?\n\n${c.ent}`,
+  c=>`Bonjour ${c.p}, sans retour de votre part, je clôture le devis ${c.num} cette semaine. Si le besoin revient, je serai ravie de vous accompagner. Belle journée !\n\n${c.ent}`],
+ paiement:[
+  c=>`Bonjour ${c.p}, sauf erreur de notre part, la facture ${c.num} de ${c.mt} arrivée à échéance le ${c.ech} reste à régler. Vous pouvez payer par virement ou Mobile Money. Merci d'avance !\n\n${c.ent}`,
+  c=>`Bonjour ${c.p}, deuxième rappel : la facture ${c.num} (${c.mt}) est en retard depuis le ${c.ech}. Merci de régulariser sous 48 h ou de me contacter pour convenir d'un échéancier.\n\n${c.ent}`],
+ satisfaction:[c=>`Bonjour ${c.p}, notre équipe est intervenue chez vous récemment. Êtes-vous satisfait(e) du résultat ? Une note de 1 à 5 nous aide beaucoup à progresser. Merci !\n\n${c.ent}`],
+ prospect:[
+  c=>`Bonjour ${c.p}, suite à notre échange, je vous propose une visite gratuite de vos locaux pour établir un devis précis. Quel jour vous arrange cette semaine ?\n\n${c.ent}`,
+  c=>`Bonjour ${c.p}, je reviens vers vous pour la visite gratuite. Nous avons encore deux créneaux libres cette semaine. Je vous en réserve un ?\n\n${c.ent}`],
+ renouvellement:[c=>`Bonjour ${c.p}, votre contrat d'entretien arrive à échéance le ${c.ech}. Je vous propose de le reconduire aux mêmes conditions, avec un passage offert le premier mois. On en parle ?\n\n${c.ent}`]};
+const RTYPE={devis:["Suivi devis","p-amber"],paiement:["Impayé","p-red"],satisfaction:["Satisfaction","p-green"],prospect:["Prospection","p-blue"],renouvellement:["Renouvellement","p-gold"]};
+const CHECK={"Entrée":["Sol aspiré et lavé","Poignées désinfectées"],"Bureaux":["Surfaces dépoussiérées","Corbeilles vidées","Sols aspirés et lavés"],"Sanitaires":["WC désinfectés","Lavabos et miroirs","Consommables réassortis"],"Cuisine":["Plan de travail et évier","Électroménager essuyé"],"Final":["Matériel rangé","Photos avant / après","Portes fermées"]};
+const TPLCTX={p:"[Prénom]",num:"[N°]",mt:"[montant]",ech:"[date]"};
+
+/* ---------- DONNÉES DE DÉMO ---------- */
+function seed(){
+ const catalog=[
+  {name:"Bureaux – passage standard",unit:"passage",price:80},{name:"Bureaux – au m²",unit:"m²",price:1.5},
+  {name:"Ménage à domicile",unit:"heure",price:25},{name:"Grand ménage / remise en état",unit:"forfait",price:250},
+  {name:"Fin de chantier",unit:"m²",price:4},{name:"Nettoyage des vitres",unit:"m²",price:3},
+  {name:"Shampooing moquette",unit:"m²",price:6},{name:"Désinfection complète",unit:"forfait",price:180},
+  {name:"Parties communes",unit:"passage",price:60},{name:"Après déménagement",unit:"forfait",price:200}];
+ const C=(name,contact,phone,email,type,status,value,addr,notes)=>({id:uid(),name,contact,phone,email,type,status,value,addr,notes:notes||"",created:off(-60)});
+ const cl=[
+  C("Cabinet Dupont Avocats","Marie Dupont","+33 6 11 22 33 44","m.dupont@cabinet-dupont.fr","Entreprise","Client actif",960,"8 rue Victor Hugo, Paris","Contrat 3 passages / semaine. Clés à l'accueil."),
+  C("Résidence Les Acacias","Ibrahim Koné","+33 6 22 33 44 55","syndic@acacias.fr","Syndic","Devis envoyé",480,"45 bd Voltaire, Paris","Décision en conseil syndical."),
+  C("Boulangerie Le Fournil","Paul Martin","+33 6 33 44 55 66","lefournil@mail.com","Commerce","Client actif",304,"3 place du Marché, Lyon"),
+  C("Sophie Bernard","Sophie Bernard","+33 6 44 55 66 77","s.bernard@mail.com","Particulier","Client actif",200,"21 allée des Roses, Paris","Allergie aux produits parfumés."),
+  C("Agence ImmoPlus","Karim Diallo","+33 6 55 66 77 88","k.diallo@immoplus.fr","Entreprise","Prospect",600,"17 rue de la Paix, Marseille","Rencontré au salon des pros."),
+  C("Clinique Santé Plus","Dr Aïcha Traoré","+33 6 66 77 88 99","direction@santeplus.fr","Entreprise","Prospect",900,"90 av. de la République, Lille","Exige un protocole de désinfection."),
+  C("Hôtel Le Belvédère","Julien Morel","+33 6 77 88 99 00","contact@belvedere.fr","Commerce","Devis envoyé",750,"5 quai des Arts, Nice"),
+  C("Mairie de Saint-Clair","Service achats","+33 1 00 00 00 00","achats@saintclair.fr","Administration","Perdu",0,"1 place de la Mairie")];
+ const team=[{id:uid(),name:"Fatou Diop",role:"Cheffe d'équipe",rate:15},{id:uid(),name:"Jean Koffi",role:"Agent d'entretien",rate:12.5},{id:uid(),name:"Lina Mensah",role:"Agente d'entretien",rate:12.5},{id:uid(),name:"Moussa Bah",role:"Laveur de vitres",rate:13}];
+ const J=(d,s,e,ci,svc,ai,st)=>({id:uid(),date:off(d),start:s,end:e,clientId:cl[ci].id,service:catalog[svc].name,agent:team[ai].name,status:st});
+ const jobs=[J(-6,"08:00","11:00",0,0,0,"Terminée"),J(-2,"08:00","11:00",0,0,2,"Terminée"),J(-1,"14:00","16:00",3,2,1,"Terminée"),J(0,"08:00","10:00",0,0,0,"En cours"),J(0,"14:00","17:00",6,5,3,"Planifiée"),J(1,"09:00","12:00",1,8,2,"Planifiée"),J(2,"07:00","09:00",2,7,1,"Planifiée"),J(3,"08:00","11:00",0,0,0,"Planifiée"),J(4,"10:00","15:00",4,3,3,"Planifiée"),J(6,"09:00","11:00",3,2,1,"Planifiée")];
+ jobs[0].rating={stars:5,comment:"Impeccable comme toujours, merci à Fatou."};
+ const L=(i,q)=>({s:catalog[i].name,u:catalog[i].unit,p:catalog[i].price,q});
+ const D=(type,num,ci,d,extra)=>Object.assign({id:uid(),type,num,clientId:cl[ci].id,date:off(d)},extra);
+ const docs=[
+  D("devis","DEV-2026-014",1,-9,{lines:[L(8,12),L(5,40)],status:"Envoyé"}),
+  D("devis","DEV-2026-015",6,-2,{lines:[L(5,120),L(7,1)],status:"Envoyé"}),
+  D("devis","DEV-2026-013",2,-12,{lines:[L(0,4)],status:"Accepté",remise:5,signedAt:off(-10)}),
+  D("facture","FAC-2026-031",0,-38,{lines:[L(0,12)],pays:[{id:uid(),date:off(-20),amount:500,mode:"Virement",ok:true}]}),
+  D("facture","FAC-2026-032",3,-12,{lines:[L(2,8)],pays:[]}),
+  D("facture","FAC-2026-030",0,-60,{lines:[L(0,12)],pays:[{id:uid(),date:off(-35),amount:1152,mode:"Virement",ok:true}]}),
+  D("facture","FAC-2026-033",3,-3,{lines:[L(3,1)],pays:[{id:uid(),date:off(0),amount:300,mode:"Mobile Money",ok:true}]}),
+  D("facture","FAC-2026-029",0,-90,{lines:[L(0,12)],pays:[{id:uid(),date:off(-70),amount:1152,mode:"Virement",ok:true}]}),
+  D("facture","FAC-2026-028",3,-120,{lines:[L(2,8),L(5,10)],pays:[{id:uid(),date:off(-100),amount:276,mode:"Espèces",ok:true}]}),
+  D("contrat","CTR-2026-004",0,-150,{status:"Signé",signedAt:off(-148),start:off(-150),months:6,freq:"3 passages par semaine (lun., mer., ven.)",monthly:960,notice:1,services:"Entretien des bureaux, sanitaires, vidage des corbeilles, vitres intérieures une fois par mois."}),
+  D("bon","BI-2026-087",0,-2,{status:"Signé",signedAt:off(-2),job:{start:"08:00",end:"11:00",agent:team[2].name,service:catalog[0].name},checks:{"Bureaux · Surfaces dépoussiérées":true,"Bureaux · Corbeilles vidées":true,"Sanitaires · WC désinfectés":true,"Sanitaires · Consommables réassortis":false,"Final · Portes fermées":true},score:80,obs:"Stock de papier toilette épuisé : signalé au client."}),
+  D("visite","FV-2026-011",5,-2,{status:"Réalisée",locaux:"Clinique / cabinet médical",surface:420,sanitaires:6,freq:"Tous les jours",horaires:"Après 19 h",besoins:["Sols","Sanitaires","Désinfection","Poubelles"],notes:"Protocole hospitalier demandé. Prévoir des produits virucides EN 14476."}),
+  D("contrat","CTR-2026-005",3,-1,{status:"À signer",start:off(7),months:12,freq:"1 passage par semaine (jeudi)",monthly:180,notice:1,services:"Ménage complet du logement, produits sans parfum fournis."})];
+ const R=(ci,type,d,docId,step,total,status,result)=>({id:uid(),clientId:cl[ci].id,type,due:off(d),docId:docId||null,step,total,status:status||"open",result:result||"",channel:"WhatsApp"});
+ const rel=[
+  R(1,"devis",-7,docs[0].id,1,3,"done","Pas de réponse"),R(1,"devis",-2,docs[0].id,2,3),R(1,"devis",6,docs[0].id,3,3),
+  R(6,"devis",0,docs[1].id,1,3),R(6,"devis",5,docs[1].id,2,3),R(6,"devis",13,docs[1].id,3,3),
+  R(0,"paiement",-8,docs[3].id,1,2,"done","Promet de payer"),R(0,"paiement",-1,docs[3].id,2,2),
+  R(3,"paiement",18,docs[4].id,1,2),R(4,"prospect",0,null,1,2),R(5,"prospect",2,null,1,2),
+  R(3,"satisfaction",0,null,1,1),R(0,"renouvellement",10,docs[9].id,1,1)];
+ const A=(ci,d,text)=>({id:uid(),clientId:cl[ci].id,date:off(d),text});
+ const act=[A(0,-2,"Intervention terminée · bon BI-2026-087 (80 %)"),A(0,-6,"Avis client : 5/5 « Impeccable comme toujours »"),A(0,-20,"Paiement reçu : 500 € (Virement)"),A(0,-148,"Contrat CTR-2026-004 signé"),A(1,-7,"Relance 1/3 (Suivi devis, WhatsApp) : Pas de réponse"),A(1,-9,"Devis DEV-2026-014 envoyé (1 008 €)"),A(5,-2,"Fiche de visite réalisée (420 m²)"),A(6,-2,"Devis DEV-2026-015 envoyé"),A(3,-1,"Contrat CTR-2026-005 envoyé pour signature"),A(3,-1,"Paiement reçu : 300 € (Mobile Money)"),A(2,-10,"Devis DEV-2026-013 accepté et signé")];
+ const stock=[{id:uid(),name:"Détergent multi-surfaces",unit:"bidon 5 L",qty:12,min:5},{id:uid(),name:"Désinfectant virucide",unit:"bidon 5 L",qty:3,min:6},{id:uid(),name:"Sacs poubelle 100 L",unit:"rouleau",qty:8,min:10},{id:uid(),name:"Microfibres",unit:"pièce",qty:60,min:30},{id:uid(),name:"Nettoyant vitres",unit:"flacon",qty:9,min:4},{id:uid(),name:"Gants nitrile",unit:"boîte",qty:2,min:5},{id:uid(),name:"Papier toilette",unit:"colis",qty:6,min:4}];
+ const requests=[{id:uid(),clientId:cl[3].id,date:off(-1),wanted:off(5),service:catalog[6].name,notes:"Tapis du salon, environ 12 m².",status:"Nouvelle"}];
+ return{settings:{name:"Éclat Pro Nettoyage",owner:"Awa",tva:20,delay:30,phone:"+33 6 00 00 00 00",addr:"12 avenue des Lilas, 75011 Paris",email:"contact@eclatpro.fr",siret:"RCS Paris 000 000 000",iban:"FR76 0000 0000 0000 0000 0000 000"},
+  clients:cl,team,jobs,catalog,docs,rel,act,stock,requests,seq:{devis:16,facture:34,contrat:6,bon:88,visite:12,avoir:3}};
+}
+let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+if(!S||!S.clients)S=seed();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+/* ---------- RÈGLES MÉTIER ---------- */
+const client=id=>S.clients.find(c=>c.id===id)||{name:"Client supprimé",contact:"",phone:"",addr:""};
+const gross=d=>(d.lines||[]).reduce((a,l)=>a+l.p*l.q,0);
+const ht=d=>gross(d)*(1-(d.remise||0)/100);
+const tva=d=>d.type==="contrat"?d.monthly*S.settings.tva/100:ht(d)*S.settings.tva/100;
+const ttc=d=>d.type==="contrat"?d.monthly+tva(d):ht(d)+tva(d);
+const due=d=>addDays(d.date,S.settings.delay);
+const paid=f=>(f.pays||[]).filter(p=>p.ok).reduce((a,p)=>a+p.amount,0);
+const reste=f=>f.type!=="facture"||f.cancelled?0:Math.max(0,Math.round((ttc(f)-paid(f))*100)/100);
+function fState(f){if(f.cancelled)return["Annulée · avoir","p-grey"];if(reste(f)<=0)return["Payée","p-green"];const n=diff(due(f));if(n<0)return[`En retard · ${-n} j`,"p-red"];if(paid(f)>0)return["Partielle","p-blue"];return["À payer","p-amber"]}
+function dState(d){
+ if(d.type==="facture")return fState(d);
+ if(d.type==="avoir")return["Avoir","p-gold"];
+ const map={"Envoyé":"p-amber","Accepté":"p-green","Facturé":"p-grey","Refusé":"p-red","Signé":"p-green","À signer":"p-amber","Réalisée":"p-blue"};
+ return[d.status,map[d.status]||"p-grey"]}
+const pill=([t,c])=>`<span class="pill ${c}">${esc(t)}</span>`;
+const STATUS={"Prospect":"p-blue","Devis envoyé":"p-amber","Négociation":"p-amber","Client actif":"p-green","Perdu":"p-grey"};
+const openRels=cid=>S.rel.filter(r=>r.status==="open"&&(!cid||r.clientId===cid)).sort((a,b)=>a.due.localeCompare(b.due));
+function relState(r){if(r.status==="done")return["Faite","p-green"];if(r.status==="cancel")return["Annulée","p-grey"];const n=diff(r.due);if(n<0)return[`Retard ${-n} j`,"p-red"];if(n===0)return["Aujourd'hui","p-amber"];return[fd(r.due),"p-grey"]}
+function nextRelPill(cid){const r=openRels(cid)[0];return r?pill(relState(r)):""}
+function addRel(cid,type,dueDate,docId,step,total){S.rel.push({id:uid(),clientId:cid,type,due:dueDate,docId:docId||null,step,total,status:"open",result:"",channel:"WhatsApp"})}
+const cancelRels=docId=>S.rel.forEach(r=>{if(r.docId===docId&&r.status==="open")r.status="cancel"});
+const log=(cid,text)=>S.act.unshift({id:uid(),clientId:cid,date:today(),text});
+function seqDevis(d){[2,7,15].forEach((n,i)=>addRel(d.clientId,"devis",addDays(d.date,n),d.id,i+1,3))}
+function seqFacture(f){addRel(f.clientId,"paiement",due(f),f.id,1,2);addRel(f.clientId,"paiement",addDays(due(f),7),f.id,2,2)}
+function msgFor(r){const c=client(r.clientId),d=S.docs.find(x=>x.id===r.docId);const arr=TPL[r.type];const t=arr[Math.min(r.step,arr.length)-1];
+ return t({p:first(c.contact)||"",ent:S.settings.name+" · "+S.settings.phone,num:d?d.num:"",mt:d?eur(d.type==="facture"?reste(d):ttc(d)):"",ech:d?fdy(d.type==="contrat"?addDays(d.start,d.months*30):due(d)):""})}
+function nextNum(type){const p={devis:"DEV",facture:"FAC",contrat:"CTR",bon:"BI",visite:"FV",avoir:"AV"}[type];return p+"-"+new Date().getFullYear()+"-"+String(S.seq[type]++).padStart(3,"0")}
+function notifs(){
+ const out=[],pl=(n,s,p)=>n+" "+(n>1?p:s);
+ const rl=S.rel.filter(r=>r.status==="open"&&diff(r.due)<0);if(rl.length)out.push({t:pl(rl.length,"relance en retard","relances en retard"),cls:"p-red",go:"relances"});
+ const fl=S.docs.filter(d=>d.type==="facture"&&reste(d)>0&&diff(due(d))<0);if(fl.length)out.push({t:pl(fl.length,"facture impayée en retard","factures impayées en retard"),cls:"p-red",go:"documents",tab:"facture"});
+ const pd=S.docs.filter(d=>(d.pays||[]).some(p=>!p.ok));if(pd.length)out.push({t:pl(pd.length,"paiement déclaré par un client à confirmer","paiements déclarés par des clients à confirmer"),cls:"p-gold",go:"documents",tab:"facture"});
+ const rq=S.requests.filter(r=>r.status==="Nouvelle");if(rq.length)out.push({t:pl(rq.length,"demande d'intervention reçue","demandes d'intervention reçues"),cls:"p-blue",go:"demandes"});
+ const sg=S.docs.filter(d=>d.status==="À signer");if(sg.length)out.push({t:pl(sg.length,"document en attente de signature","documents en attente de signature"),cls:"p-amber",go:"documents",tab:"contrat"});
+ const st=S.stock.filter(s=>s.qty<s.min);if(st.length)out.push({t:pl(st.length,"produit sous le seuil de stock","produits sous le seuil de stock"),cls:"p-amber",go:"stock"});
+ return out}
+
+/* ---------- ÉTAT D'INTERFACE ---------- */
+let mode=null,me=null,view="",filter="Tous",query="",weekOff=0,selDay=today(),docTab="devis",relTab="retard";
+try{const s=JSON.parse(sessionStorage.getItem(KEY+"-ui")||"null");if(s){mode=s.mode;me=s.me}}catch(e){}
+const saveUI=()=>{try{sessionStorage.setItem(KEY+"-ui",JSON.stringify({mode,me}))}catch(e){}};
+function toast(t){$$(".toast").forEach(x=>x.remove());const el=document.createElement("div");el.className="toast";el.setAttribute("role","status");el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),2400)}
+function copyText(text){const ok=()=>toast("Copié · collez-le dans WhatsApp, SMS ou email");
+ const fb=()=>{const box=$("#msg");if(box&&box.select){box.focus();box.select();toast("Texte sélectionné : copiez-le")}else toast("Copie impossible ici : sélectionnez le texte")};
+ try{navigator.clipboard.writeText(text).then(ok,fb)}catch(e){fb()}}
+const demoBar=()=>`<div class="demo"><span><b>DÉMO</b> · données d'exemple</span><span class="row" style="gap:6px"><span class="muted">par SACKO CONCEPT</span><img src="${LOGO}" alt="" class="sclogo"></span></div>`;
+const opts=(arr,sel)=>arr.map(v=>`<option ${v===sel?"selected":""}>${esc(v)}</option>`).join("");
+const clientOpts=sel=>S.clients.filter(c=>c.status!=="Perdu").map(c=>`<option value="${c.id}" ${c.id===sel?"selected":""}>${esc(c.name)}</option>`).join("");
+const link=(go,txt)=>`<a href="#${go}" class="small" style="color:var(--accent);font-weight:700;text-decoration:none">${txt}</a>`;
+
+/* ================= ESPACE GÉRANT ================= */
+function header(eyebrow,title){const n=notifs().length;return`${demoBar()}<div class="top"><div class="grow"><div class="eyebrow">${eyebrow}</div><h1>${title}</h1></div><div class="row" style="gap:8px"><button class="iconbtn" data-act="notifs" aria-label="Notifications">${svg("bell")}${n?`<span class="badge">${n}</span>`:""}</button><button class="avatar" data-act="menu" aria-label="Menu">${esc(S.settings.name[0])}</button></div></div>`}
+function months6(){const m=[];for(let i=5;i>=0;i--){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-i);m.push(iso(d).slice(0,7))}return m}
+const allPays=()=>S.docs.filter(d=>d.type==="facture").flatMap(f=>(f.pays||[]).filter(p=>p.ok).map(p=>({...p,cid:f.clientId})));
+
+function vAccueil(){
+ const t=today(),m=t.slice(0,7),pays=allPays();
+ const cash=pays.filter(p=>p.date.slice(0,7)===m).reduce((a,p)=>a+p.amount,0);
+ const owed=S.docs.reduce((a,f)=>a+reste(f),0);
+ const months=months6();const mv=months.map(mm=>pays.filter(p=>p.date.slice(0,7)===mm).reduce((a,p)=>a+p.amount,0));const mx=Math.max(...mv,1);
+ const pr=openRels().filter(r=>diff(r.due)<=0);
+ const jt=S.jobs.filter(j=>j.date===t).sort((a,b)=>a.start.localeCompare(b.start));
+ const pipe=S.clients.filter(c=>["Prospect","Devis envoyé","Négociation"].includes(c.status));
+ const act=S.clients.filter(c=>c.status==="Client actif");
+ const dv=S.docs.filter(d=>d.type==="devis"&&d.status==="Envoyé");
+ const h=new Date().getHours();
+ return`${header(new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}),(h<18?"Bonjour ":"Bonsoir ")+esc(S.settings.owner))}
+ <div class="hero"><div class="eyebrow">Encaissé ce mois</div><div class="big">${eur(cash)}</div>
+  <div class="sub"><span>À encaisser <b class="num">${eur(owed)}</b></span><span>Devis en attente <b class="num">${eur(dv.reduce((a,d)=>a+ttc(d),0))}</b></span></div>
+  <div class="bars" role="img" aria-label="Encaissements des 6 derniers mois">${mv.map((v,i)=>`<i class="${i===5?"on":""}" style="height:${Math.max(6,v/mx*100)}%" title="${eur(v)}"></i>`).join("")}</div>
+  <div class="blabels">${months.map(mm=>`<span>${MOIS[+mm.slice(5)-1]}</span>`).join("")}</div></div>
+ <div class="qa"><button data-act="qa-devis">${svg("doc")}Devis</button><button data-act="qa-facture">${svg("euro")}Facture</button><button data-act="qa-job">${svg("cal")}Planifier</button><button data-act="qa-client">${svg("users")}Client</button></div>
+ <div class="kpis" style="margin-top:14px">
+  <div class="kpi ${pr.some(r=>diff(r.due)<0)?"alert":""}"><div class="eyebrow">Relances du jour</div><div class="v">${pr.length}</div><div class="xs muted">dont ${pr.filter(r=>diff(r.due)<0).length} en retard</div></div>
+  <div class="kpi"><div class="eyebrow">Interventions</div><div class="v">${jt.length}</div><div class="xs muted">aujourd'hui · ${jt.reduce((a,j)=>a+toH(j.end)-toH(j.start),0)} h</div></div>
+  <div class="kpi"><div class="eyebrow">Pipeline</div><div class="v">${eur(pipe.reduce((a,c)=>a+(+c.value||0),0))}</div><div class="xs muted">${pipe.length} prospects · par mois</div></div>
+  <div class="kpi"><div class="eyebrow">Clients actifs</div><div class="v">${act.length}</div><div class="xs muted">${eur(act.reduce((a,c)=>a+(+c.value||0),0))} / mois</div></div></div>
+ <div class="section"><div class="row between"><h2>Priorités du jour</h2>${link("relances","Tout voir")}</div>
+  <div class="card list">${pr.length?pr.slice(0,5).map(relItem).join(""):`<div class="empty">Aucune relance à faire aujourd'hui.</div>`}</div></div>
+ <div class="section"><div class="row between"><h2>Planning du jour</h2>${link("planning","Semaine")}</div>
+  <div class="card">${jt.length?jt.map(jobRow).join(""):`<div class="empty">Aucune intervention aujourd'hui.</div>`}</div></div>
+ <div class="section"><h2>Outils</h2>${toolsGrid()}</div>`}
+function toolsGrid(){const rq=S.requests.filter(r=>r.status==="Nouvelle").length,st=S.stock.filter(s=>s.qty<s.min).length;
+ return`<div class="tools"><button data-go="rapports">${svg("chart")}Rapports</button><button data-go="demandes">${svg("inbox")}Demandes${rq?`<span class="badge">${rq}</span>`:""}</button><button data-go="stock">${svg("box")}Stock${st?`<span class="badge">${st}</span>`:""}</button><button data-go="equipe">${svg("team")}Équipe</button><button data-go="tarifs">${svg("tag")}Tarifs</button><button data-go="reglages">${svg("gear")}Réglages</button></div>`}
+function relItem(r){const c=client(r.clientId);const[tl,tc]=RTYPE[r.type];const n=diff(r.due);return`<button class="item" data-act="rel" data-id="${r.id}"><span class="dot" style="background:var(${r.status!=="open"?"--line":n<0?"--red":n===0?"--amber":"--line"})"></span><span class="grow"><div class="t">${esc(c.name)}</div><div class="row xs" style="gap:6px;margin-top:3px"><span class="pill ${tc}">${tl}</span><span class="muted">${r.total>1?`Relance ${r.step}/${r.total} · `:""}${esc(r.channel)}</span></div></span>${pill(relState(r))}</button>`}
+function jobRow(j){const c=client(j.clientId);const st={"Terminée":"p-green","En cours":"p-blue","Annulée":"p-red"}[j.status]||"p-grey";
+ return`<div class="job"><div><div class="h">${j.start}</div><div class="xs muted">${j.end}</div></div><div class="stack" style="gap:6px;min-width:0"><div class="row between"><b class="t">${esc(c.name)}</b><span class="pill ${st}">${j.status}</span></div><div class="small muted">${esc(j.service)} · ${esc(j.agent)}</div><div class="xs muted">${esc(c.addr||"")}</div>${j.rating?`<div class="xs" style="color:var(--gold)">${"★".repeat(j.rating.stars)}<span class="muted"> ${esc(j.rating.comment||"")}</span></div>`:""}${mode==="admin"&&j.status!=="Terminée"&&j.status!=="Annulée"?`<div class="btns"><button class="btn sm primary" data-act="jobdone" data-id="${j.id}">Terminer et faire signer</button><button class="btn sm" data-act="jobcancel" data-id="${j.id}">Annuler</button></div>`:""}</div></div>`}
+
+function vClients(){
+ const f=["Tous","Prospect","Devis envoyé","Négociation","Client actif","Perdu"];
+ const list=S.clients.filter(c=>(filter==="Tous"||c.status===filter)&&(c.name+" "+c.contact).toLowerCase().includes(query.toLowerCase()));
+ list.sort((a,b)=>((openRels(a.id)[0]||{}).due||"9").localeCompare((openRels(b.id)[0]||{}).due||"9"));
+ return`${header("CRM","Clients")}<div class="stack"><div class="row"><input class="search" id="q" placeholder="Rechercher un client ou un contact" value="${esc(query)}" aria-label="Rechercher"><button class="btn" data-act="import" data-v="clients" style="flex:none">Importer</button></div>
+ <div class="chips">${f.map(x=>`<button class="chip ${x===filter?"on":""}" data-act="filter" data-v="${x}">${x}<span class="n">${x==="Tous"?S.clients.length:S.clients.filter(c=>c.status===x).length}</span></button>`).join("")}</div>
+ <div class="card list">${list.length?list.map(c=>`<button class="item" data-act="client" data-id="${c.id}"><div class="avatar av-s">${esc(c.name[0])}</div><span class="grow"><div class="t">${esc(c.name)}</div><div class="row wrap" style="gap:6px;margin-top:3px"><span class="pill ${STATUS[c.status]}">${c.status}</span>${nextRelPill(c.id)}</div></span><span class="xs muted num">${c.value?eur(c.value)+"/m":""}</span></button>`).join(""):`<div class="empty">Aucun client trouvé.</div>`}</div></div>`}
+
+function weekDays(){const base=addDays(today(),weekOff*7);const wd=(new Date(base+"T12:00:00").getDay()+6)%7;const mon=addDays(base,-wd);return[...Array(7)].map((_,i)=>addDays(mon,i))}
+function vPlanning(){
+ const days=weekDays();if(!days.includes(selDay))selDay=days.includes(today())?today():days[0];
+ const list=S.jobs.filter(j=>j.date===selDay).sort((a,b)=>a.start.localeCompare(b.start));
+ const wk=S.jobs.filter(j=>days.includes(j.date)&&j.status!=="Annulée");
+ const rq=S.requests.filter(r=>r.status==="Nouvelle");
+ return`${header("Semaine du "+fd(days[0]),"Planning")}
+ <div class="row between" style="margin-bottom:10px"><button class="btn sm" data-act="wk" data-v="-1">‹ Préc.</button><span class="small muted num">${wk.length} interventions · ${wk.reduce((a,j)=>a+toH(j.end)-toH(j.start),0)} h</span><button class="btn sm" data-act="wk" data-v="1">Suiv. ›</button></div>
+ <div class="week">${days.map(d=>{const dt=new Date(d+"T12:00:00");const has=S.jobs.some(j=>j.date===d&&j.status!=="Annulée");return`<button class="day ${d===selDay?"on":""} ${d===today()?"today":""}" data-act="day" data-v="${d}">${JOURS[dt.getDay()]}<b>${dt.getDate()}</b><span class="m ${has?"":"off"}"></span></button>`}).join("")}</div>
+ ${rq.length?`<button class="note row" style="margin-top:12px;border:0;width:100%;cursor:pointer;text-align:left" data-go="demandes">${svg("inbox")}<span class="grow"><b>${rq.length} demande${rq.length>1?"s":""} client</b> à planifier</span><span>›</span></button>`:""}
+ <div class="section"><div class="row between"><h2>${selDay===today()?"Aujourd'hui":JOURS[new Date(selDay+"T12:00:00").getDay()]+" "+fd(selDay)}</h2><span class="small muted num">${list.length} · ${list.reduce((a,j)=>a+toH(j.end)-toH(j.start),0)} h</span></div>
+ <div class="card">${list.length?list.map(jobRow).join(""):`<div class="empty">Rien de prévu ce jour-là.</div>`}</div></div>`}
+
+function vRelances(){
+ const all=S.rel;const g={retard:all.filter(r=>r.status==="open"&&diff(r.due)<0),jour:all.filter(r=>r.status==="open"&&diff(r.due)===0),avenir:all.filter(r=>r.status==="open"&&diff(r.due)>0),faites:all.filter(r=>r.status!=="open")};
+ const lab={retard:"En retard",jour:"Aujourd'hui",avenir:"À venir",faites:"Faites",modeles:"Modèles"};
+ let body;
+ if(relTab==="modeles"){body=`<div class="stack">${Object.entries(TPL).map(([k,arr])=>arr.map((f,i)=>`<div class="card pad stack" style="gap:8px"><div class="row between"><span class="pill ${RTYPE[k][1]}">${RTYPE[k][0]}</span><span class="xs muted">Étape ${i+1}/${arr.length}</span></div><div class="small" style="white-space:pre-wrap">${esc(f({...TPLCTX,ent:S.settings.name}))}</div><button class="btn sm" style="align-self:flex-start" data-act="copytpl" data-k="${k}" data-i="${i}">Copier</button></div>`).join("")).join("")}</div>`}
+ else{const l=g[relTab].sort((a,b)=>relTab==="faites"?b.due.localeCompare(a.due):a.due.localeCompare(b.due));body=`<div class="card list">${l.length?l.map(relItem).join(""):`<div class="empty">${relTab==="retard"?"Aucune relance en retard. Excellent suivi !":"Rien dans cette liste."}</div>`}</div>`}
+ return`${header("Suivi commercial","Relances")}
+ <div class="note" style="margin-bottom:12px">Les relances se créent seules : 3 après chaque devis, 2 après chaque facture, 1 de satisfaction après chaque intervention.</div>
+ <div class="chips" style="margin-bottom:12px">${Object.keys(lab).map(k=>`<button class="chip ${k===relTab?"on":""}" data-act="reltab" data-v="${k}">${lab[k]}${g[k]?`<span class="n">${g[k].length}</span>`:""}</button>`).join("")}</div>${body}`}
+
+const DTABS=[["devis","Devis"],["facture","Factures"],["contrat","Contrats"],["bon","Bons d'intervention"],["visite","Fiches de visite"]];
+function vDocuments(){
+ const list=S.docs.filter(d=>d.type===docTab||(docTab==="facture"&&d.type==="avoir")).sort((a,b)=>b.date.localeCompare(a.date));
+ let sum="";
+ if(docTab==="facture"){const f=S.docs.filter(d=>d.type==="facture");const late=f.filter(x=>reste(x)>0&&diff(due(x))<0);sum=`<div class="kpis"><div class="kpi"><div class="eyebrow">Reste à encaisser</div><div class="v">${eur(f.reduce((a,x)=>a+reste(x),0))}</div><div class="xs muted">${f.filter(x=>reste(x)>0).length} factures ouvertes</div></div><div class="kpi ${late.length?"alert":""}"><div class="eyebrow">En retard</div><div class="v">${eur(late.reduce((a,x)=>a+reste(x),0))}</div><div class="xs muted">${late.length} facture${late.length>1?"s":""}</div></div></div>`}
+ else if(docTab==="devis"){const d=S.docs.filter(x=>x.type==="devis");const dec=d.filter(x=>x.status!=="Envoyé"),acc=d.filter(x=>["Accepté","Facturé"].includes(x.status)).length;sum=`<div class="kpis"><div class="kpi"><div class="eyebrow">En attente</div><div class="v">${eur(d.filter(x=>x.status==="Envoyé").reduce((a,x)=>a+ttc(x),0))}</div></div><div class="kpi"><div class="eyebrow">Taux d'acceptation</div><div class="v">${dec.length?Math.round(acc/dec.length*100):0} %</div><div class="xs muted">sur les devis tranchés</div></div></div>`}
+ else if(docTab==="contrat"){const c=S.docs.filter(x=>x.type==="contrat"&&x.status==="Signé");sum=`<div class="kpi"><div class="eyebrow">Revenu récurrent signé</div><div class="v">${eur(c.reduce((a,x)=>a+x.monthly,0))} <span class="small muted">HT / mois</span></div></div>`}
+ else if(docTab==="bon"){const b=S.docs.filter(x=>x.type==="bon");sum=`<div class="kpi"><div class="eyebrow">Score qualité moyen</div><div class="v">${b.length?Math.round(b.reduce((a,x)=>a+x.score,0)/b.length):0} %</div><div class="xs muted">Les bons se créent en terminant une intervention au planning</div></div>`}
+ return`${header("Devis, factures, contrats","Documents")}
+ <div class="chips" style="margin-bottom:12px">${DTABS.map(([k,l])=>`<button class="chip ${k===docTab?"on":""}" data-act="doctab" data-v="${k}">${l}</button>`).join("")}</div>
+ ${sum}<div class="card list" style="margin-top:12px">${list.length?list.map(docItem).join(""):`<div class="empty">Aucun document pour l'instant.</div>`}</div>`}
+function docItem(d){const amt=["devis","facture","avoir"].includes(d.type)?eur(d.type==="avoir"?-ttc(d):ttc(d)):d.type==="contrat"?eur(d.monthly)+" HT/m":d.type==="bon"?d.score+" %":"";
+ const lbl={contrat:"Contrat",bon:"Bon",visite:"Visite",avoir:"Avoir"}[d.type];
+ return`<button class="item" data-act="doc" data-id="${d.id}"><span class="grow"><div class="t">${esc(client(d.clientId).name)}</div><div class="xs muted num">${lbl&&mode==="client"?lbl+" · ":""}${d.num} · ${fd(d.date)}${d.type==="facture"&&reste(d)>0&&paid(d)>0?" · reste "+eur(reste(d)):""}</div></span><span class="stack" style="gap:4px;align-items:flex-end">${amt?`<b class="num small">${amt}</b>`:""}${pill(dState(d))}</span></button>`}
+
+/* ----- Outils ----- */
+function back(title,eyebrow){return`${demoBar()}<div class="top"><div class="grow">${link("accueil","‹ Accueil")}<div class="eyebrow" style="margin-top:6px">${eyebrow}</div><h1>${title}</h1></div><button class="avatar" data-act="menu" aria-label="Menu">${esc(S.settings.name[0])}</button></div>`}
+function vRapports(){
+ const pays=allPays();const y=today().slice(0,4);const ytd=pays.filter(p=>p.date.slice(0,4)===y).reduce((a,p)=>a+p.amount,0);
+ const months=months6();const mv=months.map(mm=>pays.filter(p=>p.date.slice(0,7)===mm).reduce((a,p)=>a+p.amount,0));const mx=Math.max(...mv,1);
+ const fac=S.docs.filter(d=>d.type==="facture"&&!d.cancelled);const avg=fac.length?fac.reduce((a,f)=>a+ttc(f),0)/fac.length:0;
+ const dv=S.docs.filter(d=>d.type==="devis"&&d.status!=="Envoyé");const conv=dv.length?Math.round(dv.filter(x=>["Accepté","Facturé"].includes(x.status)).length/dv.length*100):0;
+ const by={};pays.forEach(p=>by[p.cid]=(by[p.cid]||0)+p.amount);const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,5);const tmx=top.length?top[0][1]:1;
+ const rated=S.jobs.filter(j=>j.rating);const sat=rated.length?(rated.reduce((a,j)=>a+j.rating.stars,0)/rated.length).toFixed(1):"—";
+ const rd=S.rel.filter(r=>r.status==="done").length;
+ return`${back("Rapports","Pilotage de l'activité")}
+ <div class="kpis"><div class="kpi"><div class="eyebrow">Encaissé ${y}</div><div class="v">${eur(ytd)}</div></div><div class="kpi"><div class="eyebrow">Facture moyenne</div><div class="v">${eur(avg)}</div></div><div class="kpi"><div class="eyebrow">Devis acceptés</div><div class="v">${conv} %</div></div><div class="kpi"><div class="eyebrow">Satisfaction</div><div class="v" style="color:var(--gold)">${sat} ★</div><div class="xs muted">${rated.length} avis client${rated.length>1?"s":""}</div></div></div>
+ <div class="section"><h2>Encaissements sur 6 mois</h2><div class="card pad"><div class="chart">${mv.map((v,i)=>`<div class="c ${i===5?"on":""}"><b>${v?Math.round(v).toLocaleString("fr-FR"):""}</b><i style="height:${Math.max(3,v/mx*100)}%"></i><span>${MOIS[+months[i].slice(5)-1]}</span></div>`).join("")}</div><div class="xs muted" style="margin-top:8px">Montants en euros, paiements confirmés</div></div></div>
+ <div class="section"><h2>Meilleurs clients</h2><div class="card pad stack">${top.map(([cid,v])=>`<div class="stack" style="gap:5px"><div class="row between small"><b class="t">${esc(client(cid).name)}</b><span class="num">${eur(v)}</span></div><div class="meter"><i style="width:${v/tmx*100}%"></i></div></div>`).join("")||`<div class="empty">Pas encore de paiement.</div>`}</div></div>
+ <div class="section"><h2>Pipeline par statut</h2><div class="card pad stack">${Object.keys(STATUS).map(s=>`<div class="row between small"><span class="pill ${STATUS[s]}">${s}</span><b class="num">${S.clients.filter(c=>c.status===s).length}</b></div>`).join("")}</div></div>
+ <div class="section"><h2>Suivi commercial</h2><div class="kpis"><div class="kpi"><div class="eyebrow">Relances faites</div><div class="v">${rd}</div></div><div class="kpi"><div class="eyebrow">Relances ouvertes</div><div class="v">${openRels().length}</div></div></div></div>`}
+function vStock(){return`${back("Stock produits","Logistique")}
+ <div class="card list">${S.stock.map(s=>{const low=s.qty<s.min;return`<div class="item static"><span class="grow stack" style="gap:6px"><span class="row between"><b class="t">${esc(s.name)}</b>${low?`<span class="pill p-red">À commander</span>`:`<span class="pill p-green">OK</span>`}</span><span class="xs muted num">${s.qty} ${esc(s.unit)} · seuil ${s.min}</span><span class="meter ${low?"low":""}"><i style="width:${Math.min(100,s.qty/(s.min*2||1)*100)}%"></i></span></span><span class="row" style="gap:4px"><button class="x" style="width:38px" data-act="stk" data-id="${s.id}" data-v="-1" aria-label="Retirer un ${esc(s.name)}">−</button><button class="x" style="width:38px" data-act="stk" data-id="${s.id}" data-v="1" aria-label="Ajouter un ${esc(s.name)}">+</button></span></div>`}).join("")}</div>
+ <div class="section"><button class="btn block" data-act="addstock">Ajouter un produit</button></div>`}
+function vEquipe(){const m=today().slice(0,7);return`${back("Équipe","Agents et heures du mois")}
+ <div class="card list">${S.team.map(a=>{const js=S.jobs.filter(j=>j.agent===a.name&&j.date.slice(0,7)===m&&j.status!=="Annulée");const h=js.reduce((x,j)=>x+toH(j.end)-toH(j.start),0);const rt=S.jobs.filter(j=>j.agent===a.name&&j.rating);return`<div class="item static"><div class="avatar av-s">${esc(a.name[0])}</div><span class="grow"><div class="t">${esc(a.name)}</div><div class="xs muted">${esc(a.role)} · ${eur(a.rate)}/h${rt.length?` · <span style="color:var(--gold)">★ ${(rt.reduce((x,j)=>x+j.rating.stars,0)/rt.length).toFixed(1)}</span>`:""}</div></span><span class="stack xs" style="gap:2px;align-items:flex-end"><b class="num">${js.length} interv. · ${h} h</b><span class="muted num">${eur(h*a.rate)} ce mois</span></span></div>`}).join("")}</div>
+ <div class="section"><button class="btn block" data-act="addagent">Ajouter un agent</button></div>`}
+function vTarifs(){return`${back("Tarifs","Catalogue des prestations")}
+ <div class="note" style="margin-bottom:12px">Modifiez un prix : il s'applique aux prochains devis et factures.</div>
+ <div class="card list">${S.catalog.map((s,i)=>`<div class="item static"><span class="grow"><div class="t">${esc(s.name)}</div><div class="xs muted">HT par ${esc(s.unit)}</div></span><input id="price-${i}" type="number" step="any" inputmode="decimal" value="${s.price}" data-price="${i}" aria-label="Prix de ${esc(s.name)}" style="width:86px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;padding:8px;font:600 14px var(--body);text-align:right"><span class="small muted">€</span></div>`).join("")}</div>
+ <div class="section btns"><button class="btn grow" data-act="addsvc">Ajouter une prestation</button><button class="btn grow" data-act="import" data-v="tarifs">Importer un fichier</button></div>`}
+function vDemandes(){const l=[...S.requests].sort((a,b)=>b.date.localeCompare(a.date));return`${back("Demandes clients","Envoyées depuis l'espace client")}
+ <div class="card list">${l.length?l.map(r=>`<div class="item static" style="align-items:flex-start"><span class="grow stack" style="gap:4px"><span class="row between"><b class="t">${esc(client(r.clientId).name)}</b>${pill([r.status,r.status==="Nouvelle"?"p-blue":r.status==="Planifiée"?"p-green":"p-grey"])}</span><span class="small">${esc(r.service)} · souhaité le ${fd(r.wanted)}</span>${r.notes?`<span class="xs muted">${esc(r.notes)}</span>`:""}${r.status==="Nouvelle"?`<span class="btns" style="margin-top:4px"><button class="btn sm primary" data-act="planreq" data-id="${r.id}">Planifier</button><button class="btn sm" data-act="refusereq" data-id="${r.id}">Refuser</button></span>`:""}</span></div>`).join(""):`<div class="empty">Aucune demande.</div>`}</div>`}
+function vReglages(){const s=S.settings;return`${back("Réglages","Votre entreprise")}
+ <div class="card pad"><form class="stack" id="setf">
+ <label class="f">Nom de l'entreprise<input id="s-name" value="${esc(s.name)}"></label>
+ <div class="grid2"><label class="f">Votre prénom<input id="s-owner" value="${esc(s.owner)}"></label><label class="f">TVA (%)<input id="s-tva" type="number" step="any" value="${s.tva}"></label></div>
+ <label class="f">Adresse<input id="s-addr" value="${esc(s.addr)}"></label>
+ <div class="grid2"><label class="f">Téléphone<input id="s-phone" value="${esc(s.phone)}"></label><label class="f">Email<input id="s-email" value="${esc(s.email)}"></label></div>
+ <div class="grid2"><label class="f">Immatriculation<input id="s-siret" value="${esc(s.siret)}"></label><label class="f">Délai paiement (j)<input id="s-delay" type="number" value="${s.delay}"></label></div>
+ <label class="f">IBAN / Mobile Money<input id="s-iban" value="${esc(s.iban)}"></label>
+ <button class="btn primary" type="submit">Enregistrer</button></form></div>
+ <div class="section">${pitch()}</div>
+ <div class="section"><button class="btn danger block" data-act="reset">Remettre la démo à zéro</button></div>`}
+const pitch=()=>`<div class="pitch"><div class="row" style="gap:10px"><img src="${LOGO}" alt="" style="width:44px;height:44px;border-radius:50%"><div class="eyebrow">Version complète · SACKO CONCEPT</div></div><h2 style="color:#fff">Votre application, à votre nom</h2><div class="small" style="opacity:.85">Logo et couleurs de votre entreprise, comptes pour toute l'équipe, espace client sécurisé, sauvegarde en ligne, application Android et iPhone.</div><button class="btn gold" style="align-self:flex-start" data-act="offer">Voir les formules</button></div>`;
+
+/* ================= ESPACE CLIENT ================= */
+function cHeader(eyebrow,title){const c=client(me);return`${demoBar()}<div class="top"><div class="grow"><div class="eyebrow">${eyebrow}</div><h1>${title}</h1></div><button class="avatar" data-act="cmenu" aria-label="Mon compte" style="background:var(--accent);color:var(--accent-ink)">${esc(c.name[0])}</button></div>`}
+const myDocs=()=>S.docs.filter(d=>d.clientId===me&&d.type!=="visite");
+function vCAccueil(){const c=client(me);
+ const nx=S.jobs.filter(j=>j.clientId===me&&j.date>=today()&&!["Annulée","Terminée"].includes(j.status)).sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start))[0];
+ const owe=S.docs.filter(d=>d.clientId===me).reduce((a,f)=>a+reste(f),0);
+ const todo=myDocs().filter(d=>(d.type==="devis"&&d.status==="Envoyé")||d.status==="À signer");
+ const unpaid=myDocs().filter(d=>reste(d)>0);
+ const rate=S.jobs.filter(j=>j.clientId===me&&j.status==="Terminée"&&!j.rating);
+ return`${cHeader("Espace client · "+esc(S.settings.name),"Bonjour "+esc(first(c.contact)))}
+ <div class="hero"><div class="eyebrow">Prochaine intervention</div>${nx?`<div class="big" style="font-size:26px">${JOURS[new Date(nx.date+"T12:00:00").getDay()]} ${fd(nx.date)} · ${nx.start}</div><div class="sub"><span>${esc(nx.service)}</span><span>Agent : ${esc(first(nx.agent))}</span></div>`:`<div class="big" style="font-size:22px">Aucune prévue</div><div class="sub"><a href="#c-demande" style="color:var(--gold);font-weight:700">Demander une intervention ›</a></div>`}</div>
+ <div class="kpis" style="margin-top:14px"><div class="kpi ${owe?"alert":""}"><div class="eyebrow">Solde à régler</div><div class="v">${eur(owe)}</div></div><div class="kpi"><div class="eyebrow">À signer</div><div class="v">${todo.length}</div><div class="xs muted">document${todo.length>1?"s":""}</div></div></div>
+ ${todo.length?`<div class="section"><h2>À valider</h2><div class="card list">${todo.map(docItem).join("")}</div></div>`:""}
+ ${unpaid.length?`<div class="section"><h2>Factures à régler</h2><div class="card list">${unpaid.map(docItem).join("")}</div></div>`:""}
+ ${rate.length?`<div class="section"><h2>Donnez votre avis</h2><div class="card list">${rate.map(j=>`<button class="item" data-act="rate" data-id="${j.id}"><span class="grow"><div class="t">${esc(j.service)}</div><div class="xs muted">${fd(j.date)} · ${esc(j.agent)}</div></span><span style="color:var(--gold);font-size:18px">☆☆☆☆☆</span></button>`).join("")}</div></div>`:""}
+ <div class="section"><div class="qa" style="grid-template-columns:repeat(3,1fr);margin-top:0"><button data-go="c-demande">${svg("plus")}Demander</button><button data-go="c-docs">${svg("doc")}Documents</button><button data-go="c-inter">${svg("cal")}Historique</button></div></div>
+ <div class="section"><div class="card pad stack" style="gap:6px"><div class="eyebrow">Votre contact</div><b>${esc(S.settings.name)}</b><span class="small muted num" style="user-select:all">${esc(S.settings.phone)} · ${esc(S.settings.email)}</span></div></div>`}
+function vCDocs(){const l=myDocs().sort((a,b)=>b.date.localeCompare(a.date));return`${cHeader("Espace client","Mes documents")}<div class="card list">${l.length?l.map(docItem).join(""):`<div class="empty">Aucun document.</div>`}</div>`}
+function vCInter(){const l=S.jobs.filter(j=>j.clientId===me).sort((a,b)=>(b.date+b.start).localeCompare(a.date+a.start));
+ const up=l.filter(j=>j.date>=today()&&!["Terminée","Annulée"].includes(j.status)).reverse(),past=l.filter(j=>!up.includes(j));
+ const row=j=>`<div class="item static"><span class="grow"><div class="t">${esc(j.service)}</div><div class="xs muted">${JOURS[new Date(j.date+"T12:00:00").getDay()]} ${fd(j.date)} · ${j.start}–${j.end} · ${esc(first(j.agent))}</div>${j.rating?`<div class="xs" style="color:var(--gold)">${"★".repeat(j.rating.stars)}</div>`:""}</span>${j.status==="Terminée"&&!j.rating?`<button class="btn sm gold" data-act="rate" data-id="${j.id}">Noter</button>`:pill([j.status,{"Terminée":"p-green","Annulée":"p-red","En cours":"p-blue"}[j.status]||"p-grey"])}</div>`;
+ return`${cHeader("Espace client","Interventions")}<div class="section" style="margin-top:0"><h2>À venir</h2><div class="card list">${up.map(row).join("")||`<div class="empty">Rien de prévu.</div>`}</div></div><div class="section"><h2>Historique</h2><div class="card list">${past.map(row).join("")||`<div class="empty">Pas encore d'intervention.</div>`}</div></div>`}
+function vCDemande(){const mine=S.requests.filter(r=>r.clientId===me).sort((a,b)=>b.date.localeCompare(a.date));return`${cHeader("Espace client","Demander une intervention")}
+ <div class="card pad"><form class="stack" id="reqf"><label class="f">Prestation<select id="r-s">${opts(S.catalog.map(s=>s.name))}</select></label><label class="f">Date souhaitée<input id="r-d" type="date" value="${off(3)}" required></label><label class="f">Précisions<textarea id="r-n" rows="3" placeholder="Surface, accès, horaires…"></textarea></label><button class="btn primary" type="submit">Envoyer la demande</button></form></div>
+ ${mine.length?`<div class="section"><h2>Mes demandes</h2><div class="card list">${mine.map(r=>`<div class="item static"><span class="grow"><div class="t">${esc(r.service)}</div><div class="xs muted">Souhaité le ${fd(r.wanted)}</div></span>${pill([r.status==="Nouvelle"?"Envoyée":r.status,r.status==="Planifiée"?"p-green":r.status==="Refusée"?"p-red":"p-blue"])}</div>`).join("")}</div></div>`:""}`}
+
+/* ---------- Connexion ---------- */
+function vLogin(){return`<div class="login"><div class="brand"><div class="mark">N</div><div><h1>NettoPro</h1><div class="small muted">Gestion premium pour entreprises de nettoyage</div></div></div>
+ <div class="demo" style="margin:0"><span><b>DÉMO</b> · choisissez un espace</span><span class="row" style="gap:6px"><span class="muted">par SACKO CONCEPT</span><img src="${LOGO}" alt="" class="sclogo"></span></div>
+ <button class="role" data-act="login-admin"><span class="ic" style="background:var(--forest);color:var(--gold)">${svg("shield")}</span><span class="grow"><h2>Espace gérant</h2><span class="small muted">Clients, relances, planning, devis, factures, contrats, équipe et rapports</span></span><span aria-hidden="true">›</span></button>
+ <div class="role" style="flex-direction:column;align-items:stretch;cursor:default"><div class="row" style="gap:14px"><span class="ic" style="background:var(--accent-soft);color:var(--accent)">${svg("user")}</span><span class="grow"><h2>Espace client</h2><span class="small muted">Le client suit ses interventions, signe ses devis et contrats, consulte et règle ses factures</span></span></div>
+ <label class="f">Se connecter en tant que<select id="login-c">${S.clients.filter(c=>c.status!=="Perdu").map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("")}</select></label><button class="btn primary" data-act="login-client">Entrer dans l'espace client</button></div>
+ <div class="xs muted" style="text-align:center">Dans la version complète, chaque utilisateur se connecte avec son email et un mot de passe.</div></div>`}
+
+/* ================= FEUILLES ================= */
+function sheet(html){$("#layer").innerHTML=`<div class="overlay" data-act="close"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`}
+function closeSheet(){$("#layer").innerHTML=""}
+
+function sClient(id){const c=S.clients.find(x=>x.id===id);if(!c)return;
+ const docs=S.docs.filter(d=>d.clientId===id).sort((a,b)=>b.date.localeCompare(a.date));const rels=openRels(id);const acts=S.act.filter(a=>a.clientId===id);
+ const ca=S.docs.filter(d=>d.clientId===id&&d.type==="facture").reduce((a,f)=>a+paid(f),0);
+ sheet(`<div class="stack"><div class="row"><div class="avatar">${esc(c.name[0])}</div><div class="grow"><h2>${esc(c.name)}</h2><div class="row wrap" style="gap:6px;margin-top:4px"><span class="pill ${STATUS[c.status]}">${c.status}</span><span class="pill p-grey">${esc(c.type)}</span></div></div></div>
+ <div class="kpis"><div class="kpi"><div class="eyebrow">CA encaissé</div><div class="v" style="font-size:19px">${eur(ca)}</div></div><div class="kpi"><div class="eyebrow">Potentiel</div><div class="v" style="font-size:19px">${c.value?eur(c.value):"—"}</div><div class="xs muted">par mois</div></div></div>
+ <div class="card pad"><dl class="kv"><dt>Contact</dt><dd>${esc(c.contact)}</dd><dt>Téléphone</dt><dd class="num" style="user-select:all">${esc(c.phone)}</dd><dt>Email</dt><dd style="user-select:all">${esc(c.email||"—")}</dd><dt>Adresse</dt><dd>${esc(c.addr)}</dd>${c.notes?`<dt>Notes</dt><dd>${esc(c.notes)}</dd>`:""}</dl></div>
+ <label class="f">Statut<select id="c-status">${opts(Object.keys(STATUS),c.status)}</select></label>
+ <div class="btns"><button class="btn primary" data-act="newdoc" data-type="devis" data-id="${id}">Devis</button><button class="btn" data-act="newdoc" data-type="facture" data-id="${id}">Facture</button><button class="btn" data-act="newcontrat" data-id="${id}">Contrat</button><button class="btn" data-act="newvisite" data-id="${id}">Fiche de visite</button><button class="btn" data-act="newjob" data-id="${id}">Planifier</button><button class="btn" data-act="newrel" data-id="${id}">Relance</button></div>
+ <div class="eyebrow" style="margin-top:6px">Relances à venir</div><div class="card list">${rels.length?rels.map(relItem).join(""):`<div class="empty">Aucune relance prévue.</div>`}</div>
+ ${docs.length?`<div class="eyebrow">Documents</div><div class="card list">${docs.map(docItem).join("")}</div>`:""}
+ <div class="eyebrow">Historique</div><form class="row" id="notef"><input id="note" class="search" placeholder="Ajouter une note (appel, visite…)" aria-label="Note"><button class="btn primary" type="submit">OK</button></form>
+ <div class="card pad"><div class="timeline">${acts.length?acts.map(a=>`<div class="tl"><i></i><div><div class="small">${esc(a.text)}</div><div class="xs muted">${fdy(a.date)}</div></div></div>`).join(""):`<div class="empty">Pas encore d'historique.</div>`}</div></div></div>`);
+ $("#c-status").onchange=e=>{c.status=e.target.value;log(id,"Statut changé : "+c.status);save();render();sClient(id)};
+ $("#notef").onsubmit=e=>{e.preventDefault();const v=$("#note").value.trim();if(!v)return;log(id,v);save();sClient(id);toast("Note ajoutée")};
+}
+
+function sRel(id){const r=S.rel.find(x=>x.id===id);if(!r)return;const c=client(r.clientId);const d=S.docs.find(x=>x.id===r.docId);const[tl,tc]=RTYPE[r.type];
+ sheet(`<div class="stack"><div><h2>${esc(c.name)}</h2><div class="row wrap" style="gap:6px;margin-top:4px"><span class="pill ${tc}">${tl}</span>${r.total>1?`<span class="pill p-grey">Relance ${r.step}/${r.total}</span>`:""}${pill(relState(r))}</div></div>
+ ${d?`<button class="item card" data-act="doc" data-id="${d.id}"><span class="grow"><div class="t">${d.num}</div><div class="xs muted">${fd(d.date)}</div></span><b class="num small">${eur(d.type==="facture"?reste(d):ttc(d))}</b>${pill(dState(d))}</button>`:""}
+ <div class="card pad"><dl class="kv"><dt>Contact</dt><dd>${esc(c.contact)}</dd><dt>Téléphone</dt><dd class="num" style="user-select:all">${esc(c.phone)}</dd><dt>Email</dt><dd style="user-select:all">${esc(c.email||"—")}</dd></dl></div>
+ ${r.status==="open"?`<label class="f">Canal<select id="r-ch">${opts(["WhatsApp","SMS","Email","Appel","Visite"],r.channel)}</select></label>
+ <label class="f">Message (modifiable)<textarea id="msg" class="ta">${esc(msgFor(r))}</textarea></label>
+ <button class="btn dark block" data-act="copymsg">Copier le message</button>
+ <div class="eyebrow">Résultat de la relance</div>
+ <div class="btns"><button class="btn primary" data-act="relres" data-id="${r.id}" data-v="Intéressé">Intéressé</button><button class="btn" data-act="relres" data-id="${r.id}" data-v="Pas de réponse">Pas de réponse</button><button class="btn" data-act="relres" data-id="${r.id}" data-v="Rappeler plus tard">Rappeler</button><button class="btn danger" data-act="relres" data-id="${r.id}" data-v="Refus">Refus</button></div>
+ <button class="btn block" data-act="relpush" data-id="${r.id}">Reporter de 2 jours</button>`:`<div class="note">Relance ${r.status==="done"?"faite":"annulée"}${r.result?" · "+esc(r.result):""}.</div>`}
+ <button class="btn block" data-act="client" data-id="${c.id}">Ouvrir la fiche client</button></div>`);
+ const ch=$("#r-ch");if(ch)ch.onchange=e=>{r.channel=e.target.value;save()};
+}
+
+function sNewClient(){sheet(`<form class="stack" id="ncf"><h2>Nouveau client</h2>
+ <label class="f">Nom ou entreprise<input id="n-name" required></label>
+ <div class="grid2"><label class="f">Contact<input id="n-contact"></label><label class="f">Téléphone<input id="n-phone" inputmode="tel"></label></div>
+ <label class="f">Email<input id="n-email" type="email"></label><label class="f">Adresse<input id="n-addr"></label>
+ <div class="grid2"><label class="f">Type<select id="n-type">${opts(["Particulier","Entreprise","Syndic","Commerce","Administration"],"Entreprise")}</select></label><label class="f">Statut<select id="n-status">${opts(Object.keys(STATUS),"Prospect")}</select></label></div>
+ <label class="f">Potentiel mensuel (€)<input id="n-value" type="number" inputmode="decimal"></label>
+ <label class="ck"><input type="checkbox" id="n-seq" checked> Programmer 2 relances de prospection (J+2 et J+7)</label>
+ <button class="btn primary" type="submit">Ajouter le client</button></form>`);
+ $("#ncf").onsubmit=e=>{e.preventDefault();const nm=$("#n-name").value.trim();const c={id:uid(),name:nm,contact:$("#n-contact").value.trim()||nm,phone:$("#n-phone").value.trim(),email:$("#n-email").value.trim(),addr:$("#n-addr").value.trim(),type:$("#n-type").value,status:$("#n-status").value,value:+$("#n-value").value||0,notes:"",created:today()};S.clients.unshift(c);log(c.id,"Fiche client créée");
+  if($("#n-seq").checked){addRel(c.id,"prospect",off(2),null,1,2);addRel(c.id,"prospect",off(7),null,2,2)}save();closeSheet();go("clients");toast("Client ajouté avec ses relances")}}
+
+function sNewRel(cid){sheet(`<form class="stack" id="nrf"><h2>Programmer une relance</h2><label class="f">Client<select id="nr-c">${clientOpts(cid)}</select></label>
+ <div class="grid2"><label class="f">Type<select id="nr-t">${Object.entries(RTYPE).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join("")}</select></label><label class="f">Date<input id="nr-d" type="date" value="${off(1)}"></label></div>
+ <button class="btn primary" type="submit">Programmer</button></form>`);
+ $("#nrf").onsubmit=e=>{e.preventDefault();const dd=$("#nr-d").value||off(1);addRel($("#nr-c").value,$("#nr-t").value,dd,null,1,1);save();closeSheet();relTab=diff(dd)>0?"avenir":diff(dd)<0?"retard":"jour";go("relances");toast("Relance programmée")}}
+
+function sNewJob(cid,req){sheet(`<form class="stack" id="njf"><h2>Planifier une intervention</h2>
+ <label class="f">Client<select id="j-c">${clientOpts(cid)}</select></label>
+ <label class="f">Prestation<select id="j-s">${opts(S.catalog.map(s=>s.name),req?req.service:"")}</select></label>
+ <div class="grid2"><label class="f">Date<input id="j-d" type="date" value="${req?req.wanted:selDay||today()}" required></label><label class="f">Agent<select id="j-a">${opts(S.team.map(a=>a.name))}</select></label></div>
+ <div class="grid2"><label class="f">Début<input id="j-st" type="time" value="09:00" required></label><label class="f">Fin<input id="j-en" type="time" value="11:00" required></label></div>
+ <label class="f">Répétition<select id="j-r"><option value="1">Une seule fois</option><option value="4">Chaque semaine · 4 semaines</option><option value="8">Chaque semaine · 8 semaines</option><option value="12">Chaque semaine · 12 semaines</option></select></label>
+ <button class="btn primary" type="submit">Planifier</button></form>`);
+ $("#njf").onsubmit=e=>{e.preventDefault();const d0=$("#j-d").value;if($("#j-en").value<=$("#j-st").value){toast("L'heure de fin doit être après le début");return}const n=+$("#j-r").value;for(let i=0;i<n;i++)S.jobs.push({id:uid(),clientId:$("#j-c").value,service:$("#j-s").value,date:addDays(d0,i*7),agent:$("#j-a").value,start:$("#j-st").value,end:$("#j-en").value,status:"Planifiée"});
+  if(req){req.status="Planifiée";log(req.clientId,"Demande planifiée le "+fd(d0))}else log($("#j-c").value,(n>1?n+" interventions planifiées dès le ":"Intervention planifiée le ")+fd(d0));
+  selDay=d0;const wdT=(new Date(today()+"T12:00:00").getDay()+6)%7;weekOff=Math.floor((diff(d0)+wdT)/7);save();closeSheet();go("planning");toast(n>1?n+" interventions planifiées":"Intervention planifiée")}}
+
+function lineHTML(sel,q){return`<div class="line"><select class="l-s" aria-label="Prestation">${S.catalog.map((s,i)=>`<option value="${i}" ${s.name===sel?"selected":""}>${esc(s.name)} · ${eur(s.price)}/${esc(s.unit)}</option>`).join("")}</select><input class="l-q" type="number" inputmode="decimal" value="${q||1}" min="0" step="any" aria-label="Quantité"><button type="button" class="x" data-rm="1" aria-label="Retirer la ligne">×</button></div>`}
+function sDocForm(type,cid){const isF=type==="facture";
+ sheet(`<form class="stack" id="ndf"><h2>${isF?"Nouvelle facture":"Nouveau devis"}</h2>
+ <label class="f">Client<select id="d-c">${clientOpts(cid)}</select></label>
+ <div class="row between"><span class="eyebrow">Prestations</span><span class="eyebrow">Quantité</span></div>
+ <div class="stack" id="lines" style="gap:8px">${lineHTML()}</div>
+ <button type="button" class="btn sm" id="addl" style="align-self:flex-start">+ Ajouter une ligne</button>
+ <div class="grid2"><label class="f">Remise (%)<input id="d-rem" type="number" min="0" max="100" step="any" value="0"></label><label class="f">Date<input id="d-date" type="date" value="${today()}"></label></div>
+ <div class="card pad"><div class="row between small muted"><span>Total HT</span><span class="num" id="t-ht"></span></div><div class="row between small muted"><span>TVA ${S.settings.tva} %</span><span class="num" id="t-tva"></span></div><div class="row between" style="margin-top:6px"><b>Total TTC</b><b class="num" id="t-ttc" style="font-family:var(--display);font-size:21px"></b></div></div>
+ <div class="note">${isF?"2 relances de paiement seront programmées : à l'échéance, puis 7 jours après.":"3 relances seront programmées automatiquement : J+2, J+7 et J+15."}</div>
+ <button class="btn primary" type="submit">${isF?"Émettre la facture":"Créer et envoyer le devis"}</button></form>`);
+ const recalc=()=>{let h=0;$$("#lines .line").forEach(l=>{h+=S.catalog[l.querySelector(".l-s").value].price*(+l.querySelector(".l-q").value||0)});h*=1-(+$("#d-rem").value||0)/100;const t=h*S.settings.tva/100;$("#t-ht").textContent=eur(h);$("#t-tva").textContent=eur(t);$("#t-ttc").textContent=eur(h+t)};
+ $("#ndf").addEventListener("input",recalc);$("#ndf").addEventListener("change",recalc);
+ $("#addl").onclick=()=>{$("#lines").insertAdjacentHTML("beforeend",lineHTML());recalc()};
+ $("#lines").addEventListener("click",e=>{if(e.target.dataset.rm&&$$("#lines .line").length>1){e.target.closest(".line").remove();recalc()}});
+ recalc();
+ $("#ndf").onsubmit=e=>{e.preventDefault();const lines=$$("#lines .line").map(l=>{const s=S.catalog[l.querySelector(".l-s").value];return{s:s.name,u:s.unit,p:s.price,q:+l.querySelector(".l-q").value||0}}).filter(l=>l.q>0);
+  if(!lines.length){toast("Ajoutez au moins une prestation");return}
+  const c=S.clients.find(x=>x.id===$("#d-c").value);const d={id:uid(),type,num:nextNum(type),clientId:c.id,date:$("#d-date").value||today(),lines,remise:+$("#d-rem").value||0};
+  if(isF){d.pays=[];seqFacture(d);log(c.id,`Facture ${d.num} émise (${eur(ttc(d))})`)}else{d.status="Envoyé";seqDevis(d);if(["Prospect","Négociation"].includes(c.status))c.status="Devis envoyé";S.rel.forEach(r=>{if(r.clientId===c.id&&r.type==="prospect"&&r.status==="open")r.status="cancel"});log(c.id,`Devis ${d.num} envoyé (${eur(ttc(d))})`)}
+  S.docs.push(d);save();docTab=type;go("documents");sDoc(d.id);toast(isF?"Facture émise · relances programmées":"Devis créé · 3 relances programmées")}}
+
+function sContrat(cid){sheet(`<form class="stack" id="nctf"><h2>Nouveau contrat d'entretien</h2>
+ <label class="f">Client<select id="ct-c">${clientOpts(cid)}</select></label>
+ <label class="f">Fréquence<input id="ct-f" value="2 passages par semaine" required></label>
+ <label class="f">Prestations incluses<textarea id="ct-s" rows="3">Entretien des sols et surfaces, sanitaires, vidage des corbeilles, vitres intérieures une fois par mois.</textarea></label>
+ <div class="grid2"><label class="f">Montant HT / mois<input id="ct-m" type="number" step="any" value="640" required></label><label class="f">Durée (mois)<input id="ct-d" type="number" value="12"></label></div>
+ <div class="grid2"><label class="f">Début<input id="ct-st" type="date" value="${off(7)}"></label><label class="f">Préavis (mois)<input id="ct-n" type="number" value="1"></label></div>
+ <div class="note">Le contrat apparaît dans l'espace client, prêt à être signé.</div>
+ <button class="btn primary" type="submit">Générer le contrat</button></form>`);
+ $("#nctf").onsubmit=e=>{e.preventDefault();const d={id:uid(),type:"contrat",num:nextNum("contrat"),clientId:$("#ct-c").value,date:today(),status:"À signer",freq:$("#ct-f").value,services:$("#ct-s").value,monthly:+$("#ct-m").value||0,months:+$("#ct-d").value||12,start:$("#ct-st").value||today(),notice:+$("#ct-n").value||1};
+  S.docs.push(d);log(d.clientId,`Contrat ${d.num} envoyé pour signature`);save();docTab="contrat";go("documents");sDoc(d.id);toast("Contrat généré · visible dans l'espace client")}}
+
+function sVisite(cid){const B=["Sols","Vitres","Sanitaires","Cuisine","Désinfection","Moquette","Poubelles","Parties communes"];
+ sheet(`<form class="stack" id="nvf"><h2>Fiche de visite</h2><label class="f">Client<select id="v-c">${clientOpts(cid)}</select></label>
+ <div class="grid2"><label class="f">Type de locaux<select id="v-l">${opts(["Bureaux","Commerce","Clinique / cabinet médical","Copropriété","Hôtel / restaurant","Logement"])}</select></label><label class="f">Surface (m²)<input id="v-s" type="number" value="150"></label></div>
+ <div class="grid2"><label class="f">Sanitaires<input id="v-w" type="number" value="2"></label><label class="f">Fréquence souhaitée<select id="v-f">${opts(["Ponctuelle","1 fois par semaine","2 à 3 fois par semaine","Tous les jours"])}</select></label></div>
+ <label class="f">Horaires possibles<input id="v-h" value="Avant 8 h ou après 18 h"></label>
+ <div class="eyebrow">Besoins</div><div class="checks">${B.map(b=>`<label class="ck"><input type="checkbox" value="${b}" class="v-b" ${["Sols","Sanitaires"].includes(b)?"checked":""}>${b}</label>`).join("")}</div>
+ <label class="f">Observations<textarea id="v-n" rows="3" placeholder="Accès, matériel, contraintes…"></textarea></label>
+ <button class="btn primary" type="submit">Enregistrer la visite</button></form>`);
+ $("#nvf").onsubmit=e=>{e.preventDefault();const d={id:uid(),type:"visite",num:nextNum("visite"),clientId:$("#v-c").value,date:today(),status:"Réalisée",locaux:$("#v-l").value,surface:+$("#v-s").value||0,sanitaires:+$("#v-w").value||0,freq:$("#v-f").value,horaires:$("#v-h").value,besoins:$$(".v-b:checked").map(x=>x.value),notes:$("#v-n").value};
+  S.docs.push(d);log(d.clientId,`Fiche de visite réalisée (${d.surface} m²)`);save();docTab="visite";go("documents");sDoc(d.id);toast("Visite enregistrée")}}
+
+function initPad(cv){const r=window.devicePixelRatio||1;const w=cv.clientWidth,h=cv.clientHeight;cv.width=w*r;cv.height=h*r;const x=cv.getContext("2d");x.scale(r,r);x.lineWidth=2.4;x.lineCap="round";x.lineJoin="round";x.strokeStyle="#14302A";let draw=false,has=false,last=null;
+ const p=e=>{const b=cv.getBoundingClientRect();return[e.clientX-b.left,e.clientY-b.top]};
+ cv.addEventListener("pointerdown",e=>{draw=true;last=p(e);try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+ cv.addEventListener("pointermove",e=>{if(!draw)return;const q=p(e);x.beginPath();x.moveTo(last[0],last[1]);x.lineTo(q[0],q[1]);x.stroke();last=q;has=true});
+ ["pointerup","pointercancel","pointerleave"].forEach(t=>cv.addEventListener(t,()=>draw=false));
+ return{clear:()=>{x.clearRect(0,0,w,h);has=false},empty:()=>!has,data:()=>cv.toDataURL("image/png")}}
+function sBon(jid){const j=S.jobs.find(x=>x.id===jid);const c=client(j.clientId);
+ sheet(`<div class="stack"><h2>Fin d'intervention</h2><div class="small muted">${esc(c.name)} · ${esc(j.service)} · ${j.start}–${j.end} · ${esc(j.agent)}</div>
+ <div class="eyebrow">Contrôle qualité</div><div class="card pad tasks">${Object.entries(CHECK).map(([z,ts])=>`<div class="eyebrow" style="margin-top:6px;color:var(--accent)">${z}</div>${ts.map(t=>`<label class="ck"><input type="checkbox" class="bk" value="${esc(z+" · "+t)}" checked>${esc(t)}</label>`).join("")}`).join("")}</div>
+ <label class="f">Observations<textarea id="b-obs" rows="2" placeholder="RAS"></textarea></label>
+ <div class="eyebrow">Signature du client</div><canvas class="sigpad" id="pad" aria-label="Zone de signature"></canvas><div class="row between"><button class="btn sm" id="clr" type="button">Effacer</button><span class="xs muted">Signez avec le doigt</span></div>
+ <button class="btn primary block" id="bok">Valider et générer le bon d'intervention</button></div>`);
+ const pad=initPad($("#pad"));$("#clr").onclick=()=>pad.clear();
+ $("#bok").onclick=()=>{const checks={};$$(".bk").forEach(x=>checks[x.value]=x.checked);const tot=Object.keys(checks).length,ok=Object.values(checks).filter(Boolean).length;const sg=!pad.empty();
+  j.status="Terminée";const d={id:uid(),type:"bon",num:nextNum("bon"),clientId:j.clientId,date:j.date,status:sg?"Signé":"À signer",sig:sg?pad.data():null,signedAt:sg?today():null,job:{start:j.start,end:j.end,agent:j.agent,service:j.service},checks,score:Math.round(ok/tot*100),obs:$("#b-obs").value.trim()||"RAS"};
+  S.docs.push(d);addRel(j.clientId,"satisfaction",off(1),null,1,1);log(j.clientId,`Intervention terminée · bon ${d.num} (${d.score} %)`);save();render();sDoc(d.id);toast("Bon généré · relance satisfaction demain")}}
+function sSign(docId){const d=S.docs.find(x=>x.id===docId);sheet(`<div class="stack"><h2>Signer ${d.type==="devis"?"le devis":d.type==="contrat"?"le contrat":"le bon d'intervention"}</h2><div class="small muted">${d.num} · ${esc(client(d.clientId).name)}${d.type==="devis"?" · "+eur(ttc(d))+" TTC":d.type==="contrat"?" · "+eur(d.monthly)+" HT / mois":""}</div>
+ <div class="note">En signant, vous acceptez ${d.type==="devis"?"le devis et ses conditions (acompte de 30 % à la signature)":d.type==="contrat"?"les conditions du contrat":"la bonne réalisation de l'intervention"}.</div>
+ <canvas class="sigpad" id="pad" aria-label="Zone de signature"></canvas><div class="row between"><button class="btn sm" id="clr" type="button">Effacer</button><span class="xs muted">Signez avec le doigt</span></div>
+ <button class="btn primary block" id="sok">Signer et valider</button></div>`);
+ const pad=initPad($("#pad"));$("#clr").onclick=()=>pad.clear();
+ $("#sok").onclick=()=>{if(pad.empty()){toast("Signez dans le cadre pour valider");return}d.sig=pad.data();d.signedAt=today();
+  if(d.type==="devis")acceptDevis(d);else{d.status="Signé";log(d.clientId,`${d.num} signé électroniquement`);if(d.type==="contrat"){addRel(d.clientId,"renouvellement",addDays(d.start,d.months*30-30),d.id,1,1);const c=S.clients.find(x=>x.id===d.clientId);if(c){c.status="Client actif";c.value=Math.max(c.value||0,d.monthly)}}}
+  save();render();sDoc(d.id);toast("Document signé")}}
+function acceptDevis(d){d.status="Accepté";cancelRels(d.id);const c=S.clients.find(x=>x.id===d.clientId);if(c)c.status="Client actif";log(d.clientId,`Devis ${d.num} accepté${d.sig?" et signé":""}`)}
+
+function paperHead(d,title){const c=client(d.clientId);return`<div class="band"></div>
+ <div class="row between" style="align-items:flex-start;gap:8px"><div class="row" style="align-items:flex-start;gap:10px;min-width:0"><div class="logo">${esc(S.settings.name[0])}</div><div style="min-width:0"><b style="font-size:13.5px;color:#1E5B41">${esc(S.settings.name)}</b><div style="color:#6b7a72;font-size:10.5px">${esc(S.settings.addr)}<br>${esc(S.settings.phone)}</div></div></div><div style="text-align:right;flex:none"><div class="title">${title}</div><div style="font-size:10.5px;color:#6b7a72">${d.num}<br>${fdy(d.date)}</div></div></div>
+ <div class="lbl">${d.type==="visite"?"Prospect / client":"Client"}</div><b>${esc(c.name)}</b><div style="color:#555;font-size:11.5px">${esc(c.contact)} · ${esc(c.addr||"")}</div>`}
+function sigBlock(d,left){return`<div class="sigs"><div class="sig">${left||"Pour "+esc(S.settings.name)}<div style="font-family:var(--display);font-size:16px;color:#1E5B41;margin-top:14px">${esc(left?"":S.settings.owner)}</div></div><div class="sig">Signature du client${d.sig?`<img src="${d.sig}" alt="Signature du client"><div>Signé le ${fdy(d.signedAt)}</div>`:d.signedAt?`<div style="margin-top:14px;color:#1E5B41;font-weight:700">Signé électroniquement le ${fdy(d.signedAt)}</div>`:`<div style="margin-top:14px">En attente de signature</div>`}</div></div>`}
+function paper(d){const T={devis:"DEVIS",facture:d.kind==="acompte"?"FACTURE D'ACOMPTE":"FACTURE",avoir:"AVOIR",contrat:"CONTRAT",bon:"BON D'INTERVENTION",visite:"FICHE DE VISITE"}[d.type];
+ let b=paperHead(d,T);
+ if(["devis","facture","avoir"].includes(d.type)){const sg=d.type==="avoir"?-1:1;
+  b+=`${d.ref?`<div style="font-size:11px;color:#6b7a72;margin-top:6px">Réf. ${esc(d.ref)}</div>`:""}<div class="tw"><table><thead><tr><th>Prestation</th><th class="r">Qté</th><th class="r">P.U. HT</th><th class="r">Total HT</th></tr></thead><tbody>${d.lines.map(l=>`<tr><td>${esc(l.s)}</td><td class="r">${l.q} ${esc(l.u)}</td><td class="r">${eur(l.p)}</td><td class="r">${eur(sg*l.p*l.q)}</td></tr>`).join("")}</tbody></table></div>
+  <table class="tot">${d.remise?`<tr><td>Remise ${d.remise} %</td><td class="r">−${eur(gross(d)*d.remise/100)}</td></tr>`:""}<tr><td>Total HT</td><td class="r">${eur(sg*ht(d))}</td></tr><tr><td>TVA ${S.settings.tva} %</td><td class="r">${eur(sg*tva(d))}</td></tr><tr class="ttc"><td>TOTAL TTC</td><td class="r">${eur(sg*ttc(d))}</td></tr>
+  ${d.type==="facture"&&!d.cancelled?(d.pays||[]).map(p=>`<tr><td style="color:#1E5B41">${p.ok?"Réglé":"Déclaré"} le ${fd(p.date)} · ${esc(p.mode)}</td><td class="r" style="color:#1E5B41">−${eur(p.amount)}</td></tr>`).join("")+`<tr><td><b>Reste à payer</b></td><td class="r"><b>${eur(reste(d))}</b></td></tr>`:""}</table>
+  <div class="lbl">Conditions</div><div style="font-size:11px;color:#555">${d.type==="devis"?"Devis valable 30 jours. Acompte de 30 % à la signature, solde à la fin de la prestation. Produits et matériel fournis. Assurance responsabilité civile professionnelle.":d.type==="avoir"?"Avoir émis en annulation de la facture "+esc(d.ref||"")+". Montant déduit de votre compte client.":d.cancelled?"Facture annulée par avoir.":"Échéance le "+fdy(due(d))+". Règlement par virement ("+esc(S.settings.iban)+") ou Mobile Money. Pénalités de retard selon la réglementation en vigueur."}</div>
+  ${d.type==="devis"?sigBlock(d):""}`}
+ else if(d.type==="contrat"){const end=addDays(d.start,d.months*30);
+  b+=`<div class="art"><b>Article 1 · Objet.</b> Le prestataire assure l'entretien des locaux du client situés au ${esc(client(d.clientId).addr)}.</div>
+  <div class="art"><b>Article 2 · Prestations.</b> ${esc(d.services)}</div>
+  <div class="art"><b>Article 3 · Fréquence.</b> ${esc(d.freq)}, selon un planning convenu avec le client.</div>
+  <div class="art"><b>Article 4 · Prix.</b> ${eur(d.monthly)} HT par mois, soit ${eur(ttc(d))} TTC, facturé en début de mois et payable à ${S.settings.delay} jours.</div>
+  <div class="art"><b>Article 5 · Durée.</b> ${d.months} mois à compter du ${fdy(d.start)}, jusqu'au ${fdy(end)}, renouvelable par tacite reconduction.</div>
+  <div class="art"><b>Article 6 · Résiliation.</b> Chaque partie peut résilier par écrit avec un préavis de ${d.notice} mois.</div>
+  <div class="art"><b>Article 7 · Assurances et qualité.</b> Le prestataire est couvert par une assurance RC professionnelle. Chaque passage fait l'objet d'un bon d'intervention et d'un contrôle qualité.</div>${sigBlock(d)}`}
+ else if(d.type==="bon"){const ent=Object.entries(d.checks||{});
+  b+=`<div class="lbl">Intervention</div><div>${esc(d.job.service)} · ${d.job.start}–${d.job.end} · Agent : ${esc(d.job.agent)}</div>
+  ${ent.length?`<div class="tw"><table><thead><tr><th>Contrôle qualité</th><th class="r">État</th></tr></thead><tbody>${ent.map(([k,v])=>`<tr><td>${esc(k)}</td><td class="r" style="color:${v?"#1E5B41":"#C2412D"};font-weight:700">${v?"✓ Fait":"✗ Non fait"}</td></tr>`).join("")}</tbody></table></div>`:""}
+  <table class="tot"><tr class="ttc"><td>Score qualité</td><td class="r">${d.score} %</td></tr></table>
+  <div class="lbl">Observations</div><div>${esc(d.obs)}</div>${sigBlock(d,"Agent : "+esc(d.job.agent))}`}
+ else if(d.type==="visite"){b+=`<div class="tw"><table><tbody><tr><td>Type de locaux</td><td class="r">${esc(d.locaux)}</td></tr><tr><td>Surface</td><td class="r">${d.surface} m²</td></tr><tr><td>Sanitaires</td><td class="r">${d.sanitaires}</td></tr><tr><td>Fréquence souhaitée</td><td class="r">${esc(d.freq)}</td></tr>${d.horaires?`<tr><td>Horaires</td><td class="r">${esc(d.horaires)}</td></tr>`:""}</tbody></table></div><div class="lbl">Besoins identifiés</div><div>${(d.besoins||[]).map(esc).join(" · ")||"—"}</div>${d.notes?`<div class="lbl">Observations</div><div>${esc(d.notes)}</div>`:""}`}
+ b+=`<div style="margin-top:14px;padding-top:8px;border-top:1px solid #edf3ef;font-size:10px;color:#8a9a92;text-align:center">${esc(S.settings.name)} · ${esc(S.settings.siret)} · ${esc(S.settings.email)}</div>`;
+ return`<div class="paper">${b}</div>`}
+
+function sDoc(id){const d=S.docs.find(x=>x.id===id);if(!d)return;const A=mode==="admin";let act="";
+ if(A){
+  if(d.type==="devis"&&d.status==="Envoyé")act=`<button class="btn primary" data-act="accept" data-id="${d.id}">Client a accepté</button><button class="btn" data-act="signdoc" data-id="${d.id}">Faire signer maintenant</button><button class="btn danger" data-act="refuse" data-id="${d.id}">Refusé</button>`;
+  if(d.type==="devis"&&d.status==="Accepté")act=`<button class="btn primary" data-act="invoice" data-id="${d.id}">Facturer${d.deposit?" le solde":""}</button>${d.deposit?"":`<button class="btn" data-act="deposit" data-id="${d.id}">Facture d'acompte 30 %</button>`}<button class="btn" data-act="tocontrat" data-id="${d.id}">Créer un contrat</button><button class="btn" data-act="tojob" data-id="${d.id}">Planifier</button>`;
+  if(d.type==="facture"&&!d.cancelled){const pend=(d.pays||[]).filter(p=>!p.ok);act=pend.map(p=>`<button class="btn gold" data-act="confirmpay" data-id="${d.id}" data-p="${p.id}">Confirmer ${eur(p.amount)} reçu</button>`).join("")+(reste(d)>0?`<button class="btn primary" data-act="pay" data-id="${d.id}">Enregistrer un paiement</button><button class="btn" data-act="remind" data-id="${d.id}">Rappel de paiement</button>`:"")+`<button class="btn" data-act="avoir" data-id="${d.id}">Émettre un avoir</button>`}
+  if(["contrat","bon"].includes(d.type)&&d.status==="À signer")act=`<button class="btn primary" data-act="signdoc" data-id="${d.id}">Faire signer maintenant</button>`;
+  if(d.type==="visite")act=`<button class="btn primary" data-act="newdoc" data-type="devis" data-id="${d.clientId}">Créer le devis</button><button class="btn" data-act="newcontrat" data-id="${d.clientId}">Proposer un contrat</button>`;
+ }else{
+  if(d.type==="devis"&&d.status==="Envoyé")act=`<button class="btn primary" data-act="signdoc" data-id="${d.id}">Accepter et signer</button>`;
+  if(d.status==="À signer")act=`<button class="btn primary" data-act="signdoc" data-id="${d.id}">Signer</button>`;
+  if(d.type==="facture"&&reste(d)>0)act=(d.pays||[]).some(p=>!p.ok)?`<div class="note">Paiement déclaré, en attente de confirmation.</div>`:`<button class="btn primary" data-act="cpay" data-id="${d.id}">J'ai payé cette facture</button>`;
+ }
+ sheet(`<div class="stack">${paper(d)}<div class="row between">${pill(dState(d))}<button class="btn sm" data-act="close-btn">Fermer</button></div>${act?`<div class="btns">${act}</div>`:""}<div id="extra"></div>${A?`<div class="xs muted">Version complète : envoi par email et WhatsApp, export PDF, lien de paiement en ligne.</div>`:""}</div>`)}
+
+function sPay(id){const d=S.docs.find(x=>x.id===id);sheet(`<form class="stack" id="pf"><h2>Enregistrer un paiement</h2><div class="small muted">${d.num} · reste ${eur(reste(d))}</div>
+ <div class="grid2"><label class="f">Montant (€)<input id="p-a" type="number" step="any" value="${reste(d)}" required></label><label class="f">Date<input id="p-d" type="date" value="${today()}"></label></div>
+ <label class="f">Mode<select id="p-m">${opts(["Virement","Mobile Money","Espèces","Chèque","Carte"])}</select></label><button class="btn primary" type="submit">Enregistrer</button></form>`);
+ $("#pf").onsubmit=e=>{e.preventDefault();const a=+$("#p-a").value;if(!(a>0)){toast("Indiquez un montant");return}d.pays=d.pays||[];d.pays.push({id:uid(),date:$("#p-d").value||today(),amount:a,mode:$("#p-m").value,ok:true});if(reste(d)<=0)cancelRels(d.id);log(d.clientId,`Paiement reçu : ${eur(a)} (${$("#p-m").value})`);save();render();sDoc(d.id);toast(reste(d)<=0?"Facture soldée":"Paiement partiel enregistré")}}
+function sCPay(id){const d=S.docs.find(x=>x.id===id);sheet(`<form class="stack" id="cpf"><h2>Déclarer un paiement</h2><div class="small muted">${d.num} · ${eur(reste(d))} à régler</div><div class="note">Coordonnées de paiement : ${esc(S.settings.iban)}</div>
+ <label class="f">Montant payé (€)<input id="cp-a" type="number" step="any" value="${reste(d)}"></label><label class="f">Mode<select id="cp-m">${opts(["Virement","Mobile Money","Chèque","Espèces"])}</select></label><button class="btn primary" type="submit">Envoyer</button></form>`);
+ $("#cpf").onsubmit=e=>{e.preventDefault();const a=+$("#cp-a").value||0;if(!(a>0)){toast("Indiquez un montant");return}d.pays=d.pays||[];d.pays.push({id:uid(),date:today(),amount:a,mode:$("#cp-m").value,ok:false});log(d.clientId,`Paiement déclaré par le client : ${eur(a)}`);save();render();sDoc(d.id);toast("Merci ! L'entreprise va confirmer la réception")}}
+function sRate(jid){const j=S.jobs.find(x=>x.id===jid);let n=5;sheet(`<form class="stack" id="rtf"><h2>Votre avis</h2><div class="small muted">${esc(j.service)} · ${fd(j.date)} · ${esc(j.agent)}</div>
+ <div class="stars" id="stars">${[1,2,3,4,5].map(i=>`<button type="button" class="on" data-s="${i}" aria-label="${i} étoile${i>1?"s":""}">★</button>`).join("")}</div>
+ <label class="f">Commentaire<textarea id="rt-c" rows="3" placeholder="Qu'avez-vous apprécié ?"></textarea></label><button class="btn primary" type="submit">Envoyer mon avis</button></form>`);
+ $("#stars").onclick=e=>{const s=e.target.dataset.s;if(!s)return;n=+s;$$("#stars button").forEach(b=>b.classList.toggle("on",+b.dataset.s<=n))};
+ $("#rtf").onsubmit=e=>{e.preventDefault();j.rating={stars:n,comment:$("#rt-c").value.trim()};S.rel.forEach(r=>{if(r.clientId===j.clientId&&r.type==="satisfaction"&&r.status==="open"){r.status="done";r.result="Note "+n+"/5"}});log(j.clientId,`Avis client : ${n}/5${j.rating.comment?" « "+j.rating.comment+" »":""}`);save();closeSheet();render();toast("Merci pour votre avis !")}}
+
+function sNotifs(){const n=notifs();sheet(`<div class="stack"><h2>Notifications</h2><div class="card list">${n.length?n.map(x=>`<button class="item" data-act="notifgo" data-go2="${x.go}" data-tab="${x.tab||""}"><span class="dot" style="background:var(${x.cls==="p-red"?"--red":x.cls==="p-gold"?"--gold":x.cls==="p-blue"?"--blue":"--amber"})"></span><span class="grow small" style="font-weight:600">${esc(x.t)}</span><span aria-hidden="true">›</span></button>`).join(""):`<div class="empty">Tout est à jour.</div>`}</div></div>`)}
+function sMenu(){sheet(`<div class="stack"><div class="row"><div class="avatar">${esc(S.settings.name[0])}</div><div class="grow"><h2>${esc(S.settings.name)}</h2><div class="xs muted">Espace gérant · ${esc(S.settings.owner)}</div></div></div>${toolsGrid()}
+ <button class="btn block" data-act="switch">${svg("swap")} Voir l'espace client</button><button class="btn block" data-act="logout">Se déconnecter</button>${pitch()}</div>`)}
+function sCMenu(){const c=client(me);sheet(`<div class="stack"><div class="row"><div class="avatar" style="background:var(--accent);color:var(--accent-ink)">${esc(c.name[0])}</div><div class="grow"><h2>${esc(c.name)}</h2><div class="xs muted">${esc(c.email||c.contact)}</div></div></div>
+ <div class="card pad"><dl class="kv"><dt>Adresse</dt><dd>${esc(c.addr)}</dd><dt>Téléphone</dt><dd>${esc(c.phone)}</dd></dl></div>
+ <button class="btn block" data-act="switch">${svg("swap")} Revenir à l'espace gérant</button><button class="btn block" data-act="logout">Se déconnecter</button></div>`)}
+function sOffer(){sheet(`<div class="stack"><div class="row" style="gap:12px"><img src="${LOGO}" alt="SACKO CONCEPT" style="width:56px;height:56px;border-radius:50%"><h2>Version complète NettoPro</h2></div><div class="small muted">Préparée et installée pour votre entreprise par SACKO CONCEPT.</div>
+ ${[["Essentiel","Votre logo et vos couleurs · 1 gérant · espace client · sauvegarde en ligne"],["Équipe","Tout Essentiel · jusqu'à 10 agents · planning partagé · bons signés sur mobile"],["Entreprise","Tout Équipe · utilisateurs illimités · application Android et iPhone à votre nom · paiement en ligne"]].map(([n,d],i)=>`<div class="card pad stack" style="gap:4px;${i===1?"outline:2px solid var(--gold)":""}"><div class="row between"><h3>${n}</h3>${i===1?`<span class="pill p-gold">Le plus choisi</span>`:""}</div><div class="small muted">${d}</div></div>`).join("")}
+ <a class="btn gold block" href="../#offres">Voir les tarifs</a><a class="btn primary block" href="https://wa.me/15054642331" target="_blank" rel="noopener">Nous écrire sur WhatsApp</a><div class="xs muted" style="text-align:center">WhatsApp +1 505 464 2331 · sackoconcept8@gmail.com</div></div>`)}
+function sAddStock(){sheet(`<form class="stack" id="asf"><h2>Nouveau produit</h2><label class="f">Nom<input id="as-n" required></label><div class="grid2"><label class="f">Quantité<input id="as-q" type="number" value="10"></label><label class="f">Seuil d'alerte<input id="as-m" type="number" value="5"></label></div><label class="f">Unité<input id="as-u" value="pièce"></label><button class="btn primary" type="submit">Ajouter</button></form>`);
+ $("#asf").onsubmit=e=>{e.preventDefault();S.stock.push({id:uid(),name:$("#as-n").value.trim(),qty:+$("#as-q").value||0,min:+$("#as-m").value||0,unit:$("#as-u").value});save();closeSheet();render();toast("Produit ajouté")}}
+
+
+/* ---------- IMPORT EXCEL / CSV ---------- */
+const IMPORT={
+ clients:{title:"Importer vos clients",cols:["Nom","Contact","Téléphone","Email","Adresse","Type","Statut","Potentiel mensuel"],ex:["Hôtel Atlantique","Marc Diallo","+229 97 00 00 00","contact@atlantique.bj","Boulevard de la Marina, Cotonou","Commerce","Prospect","450"],
+  map:{name:["nom","name","entreprise","société","societe","raison sociale","client"],contact:["contact","interlocuteur","responsable","prénom","prenom"],phone:["téléphone","telephone","tel","tél","phone","mobile","whatsapp"],email:["email","e-mail","mail","courriel"],addr:["adresse","address","ville","localisation"],type:["type","catégorie","categorie"],status:["statut","status","étape","etape"],value:["potentiel","montant","valeur","budget"]}},
+ tarifs:{title:"Importer vos tarifs",cols:["Prestation","Unité","Prix HT"],ex:["Nettoyage de bureaux","passage","80"],
+  map:{name:["prestation","service","nom","désignation","designation"],unit:["unité","unite","unit"],price:["prix","price","tarif","montant"]}}};
+const norm=s=>String(s??"").trim().toLowerCase();
+function parseCSV(t){t=t.replace(/^﻿/,"");const first=t.split(/\r?\n/)[0]||"";const sep=(first.match(/;/g)||[]).length>(first.match(/,/g)||[]).length?";":(first.includes("\t")?"\t":",");
+ const rows=[];let row=[],cur="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){cur+='"';i++}else q=false}else cur+=ch}else if(ch==='"')q=true;else if(ch===sep){row.push(cur);cur=""}else if(ch==="\n"||ch==="\r"){if(ch==="\r"&&t[i+1]==="\n")i++;row.push(cur);rows.push(row);row=[];cur=""}else cur+=ch}
+ if(cur!==""||row.length){row.push(cur);rows.push(row)}return rows.filter(r=>r.some(c=>String(c).trim()!==""))}
+function mapRows(kind,rows){const spec=IMPORT[kind].map;const head=rows[0].map(norm);const idx={};
+ for(const[k,al]of Object.entries(spec)){const i=head.findIndex(h=>al.some(a=>h===a||h.startsWith(a)));if(i>=0)idx[k]=i}
+ const hasHead=Object.keys(idx).length>0;const body=hasHead?rows.slice(1):rows;
+ if(!hasHead){Object.keys(spec).forEach((k,i)=>idx[k]=i)}
+ return body.map(r=>{const o={};for(const k in idx)o[k]=String(r[idx[k]]??"").trim();return o}).filter(o=>o.name)}
+let pending=null;
+function sImport(kind){const I=IMPORT[kind];pending=null;
+ sheet(`<div class="stack"><h2>${I.title}</h2><div class="small muted">Fichier Excel (.xlsx) ou CSV. La première ligne contient les titres des colonnes, dans n'importe quel ordre.</div>
+ <div class="card pad"><div class="eyebrow" style="margin-bottom:8px">Colonnes reconnues</div><div class="row wrap" style="gap:6px">${I.cols.map(c=>`<span class="pill p-grey">${esc(c)}</span>`).join("")}</div></div>
+ <button class="btn" data-act="tpl" data-v="${kind}">Télécharger le modèle à remplir</button>
+ <label class="f">Choisir votre fichier<input type="file" id="imp-file" accept=".csv,.xlsx,.xls,text/csv"></label>
+ <div id="imp-prev"></div>
+ <div class="note">Dans la version complète, SACKO CONCEPT importe vos données pour vous : envoyez simplement votre fichier ou une photo de votre carnet.</div></div>`);
+ $("#imp-file").onchange=async e=>{const f=e.target.files[0];if(!f)return;let rows=[];
+  try{if(/\.xlsx?$/i.test(f.name)){if(!window.XLSX){toast("Lecture Excel indisponible ici : enregistrez le fichier en CSV");return}const wb=XLSX.read(await f.arrayBuffer(),{type:"array"});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:""})}else rows=parseCSV(await f.text())}catch(err){toast("Fichier illisible : vérifiez le format");return}
+  if(!rows.length){toast("Le fichier est vide");return}
+  const items=mapRows(kind,rows);pending={kind,items};
+  $("#imp-prev").innerHTML=items.length?`<div class="stack"><div class="eyebrow">${items.length} ligne${items.length>1?"s":""} prête${items.length>1?"s":""} à importer</div><div class="card list">${items.slice(0,5).map(o=>`<div class="item static"><span class="grow"><div class="t">${esc(o.name)}</div><div class="xs muted">${esc(kind==="clients"?[o.contact,o.phone,o.addr].filter(Boolean).join(" · "):(o.price||"?")+" € / "+(o.unit||"forfait"))}</div></span></div>`).join("")}${items.length>5?`<div class="item static xs muted">et ${items.length-5} autre${items.length-5>1?"s":""}…</div>`:""}</div><button class="btn primary block" data-act="doimport">Importer ${items.length} ligne${items.length>1?"s":""}</button></div>`:`<div class="note">Aucune ligne reconnue. Vérifiez que la colonne « ${kind==="clients"?"Nom":"Prestation"} » est remplie.</div>`};
+}
+function doImport(){if(!pending)return;const{kind,items}=pending;let n=0;
+ if(kind==="clients"){const ST=Object.keys(STATUS),TY=["Particulier","Entreprise","Syndic","Commerce","Administration"];
+  items.forEach(o=>{if(S.clients.some(c=>norm(c.name)===norm(o.name)))return;const st=ST.find(x=>norm(x)===norm(o.status))||"Prospect";const ty=TY.find(x=>norm(x)===norm(o.type))||"Entreprise";
+   const c={id:uid(),name:o.name,contact:o.contact||o.name,phone:o.phone||"",email:o.email||"",addr:o.addr||"",type:ty,status:st,value:parseFloat(String(o.value||"").replace(/\s/g,"").replace(",","."))||0,notes:"",created:today()};S.clients.push(c);log(c.id,"Client importé depuis un fichier");n++})}
+ else items.forEach(o=>{const p=parseFloat(String(o.price||"").replace(/\s/g,"").replace(",","."));if(!(p>=0))return;const ex=S.catalog.find(s=>norm(s.name)===norm(o.name));if(ex){ex.price=p;if(o.unit)ex.unit=o.unit}else S.catalog.push({name:o.name,unit:o.unit||"forfait",price:p});n++});
+ pending=null;save();closeSheet();render();toast(n?`${n} ligne${n>1?"s":""} importée${n>1?"s":""}`:"Rien de nouveau à importer (doublons ignorés)")}
+function downloadTpl(kind){const I=IMPORT[kind];const csv="﻿"+[I.cols,I.ex].map(r=>r.map(c=>/[;"\n]/.test(c)?`"${c.replace(/"/g,'""')}"`:c).join(";")).join("\r\n");
+ try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download=`modele-${kind}-nettopro.csv`;document.body.appendChild(a);a.click();a.remove();toast("Modèle téléchargé")}catch(e){toast("Téléchargement impossible ici")}}
+
+/* ================= RENDU & ROUTAGE ================= */
+const ADMIN={accueil:vAccueil,clients:vClients,planning:vPlanning,relances:vRelances,documents:vDocuments,rapports:vRapports,stock:vStock,equipe:vEquipe,tarifs:vTarifs,demandes:vDemandes,reglages:vReglages};
+const CLIENT={"c-accueil":vCAccueil,"c-docs":vCDocs,"c-inter":vCInter,"c-demande":vCDemande};
+const ATABS=[["accueil","Accueil","home"],["clients","Clients","users"],["planning","Planning","cal"],["relances","Relances","send"],["documents","Documents","doc"]];
+const CTABS=[["c-accueil","Accueil","home"],["c-docs","Documents","doc"],["c-inter","Interventions","cal"],["c-demande","Demander","plus"]];
+const FAB={clients:["Client","client"],planning:["Planifier","job"],relances:["Relance","rel"],documents:[null,"doc"]};
+function render(){
+ if(!mode){$("#app").innerHTML=vLogin();$("#nav").hidden=true;$("#fab").hidden=true;return}
+ const V=mode==="admin"?ADMIN:CLIENT;if(!V[view])view=mode==="admin"?"accueil":"c-accueil";
+ $("#app").innerHTML=V[view]();$("#nav").hidden=false;
+ const tabs=mode==="admin"?ATABS:CTABS;const rl=S.rel.filter(r=>r.status==="open"&&diff(r.due)<=0).length;
+ $("#tabs").innerHTML=tabs.map(([k,l,i])=>`<a href="#${k}" class="${k===view?"on":""}" ${k===view?'aria-current="page"':""}>${svg(i)}<span>${l}</span>${k==="relances"&&rl?`<span class="badge">${rl}</span>`:""}</a>`).join("");
+ const f=mode==="admin"&&FAB[view];$("#fab").hidden=!f;
+ if(f){const lab=f[0]||{devis:"Devis",facture:"Facture",contrat:"Contrat",bon:"Planning",visite:"Visite"}[docTab];$("#fab").innerHTML=`<span>+</span>${lab}`}
+ const q=$("#q");if(q)q.oninput=e=>{query=e.target.value;const pos=e.target.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos)};
+ const sf=$("#setf");if(sf)sf.onsubmit=e=>{e.preventDefault();const g=k=>$("#s-"+k).value;Object.assign(S.settings,{name:g("name").trim()||S.settings.name,owner:g("owner"),tva:+g("tva")||0,addr:g("addr"),phone:g("phone"),email:g("email"),siret:g("siret"),delay:+g("delay")||30,iban:g("iban")});save();render();toast("Réglages enregistrés")};
+ const rf=$("#reqf");if(rf)rf.onsubmit=e=>{e.preventDefault();S.requests.push({id:uid(),clientId:me,date:today(),wanted:$("#r-d").value,service:$("#r-s").value,notes:$("#r-n").value.trim(),status:"Nouvelle"});log(me,"Demande d'intervention envoyée : "+$("#r-s").value);save();render();toast("Demande envoyée à "+S.settings.name)};
+ $$("[data-price]").forEach(inp=>inp.onchange=e=>{S.catalog[+e.target.dataset.price].price=+e.target.value||0;save();toast("Tarif mis à jour")});
+}
+let keepSheet=false;
+function go(v){if(location.hash!=="#"+v){keepSheet=true;location.hash=v}else{view=v;render();scrollTo(0,0)}}
+function route(){view=location.hash.slice(1);if(!keepSheet)closeSheet();keepSheet=false;render();scrollTo(0,0)}
+addEventListener("hashchange",route);
+
+$("#fab").onclick=()=>{const f=FAB[view];if(!f)return;if(f[1]==="client")sNewClient();else if(f[1]==="job")sNewJob();else if(f[1]==="rel")sNewRel();
+ else if(docTab==="contrat")sContrat();else if(docTab==="visite")sVisite();else if(docTab==="bon")go("planning");else sDocForm(docTab)};
+
+document.addEventListener("click",e=>{
+ const g=e.target.closest("[data-go]");if(g){closeSheet();go(g.dataset.go);return}
+ const el=e.target.closest("[data-act]");if(!el)return;const a=el.dataset.act,id=el.dataset.id;
+ if(a==="close"){if(e.target===el)closeSheet();return}
+ const D=()=>S.docs.find(x=>x.id===id);
+ switch(a){
+  case"close-btn":closeSheet();break;
+  case"login-admin":mode="admin";me=null;saveUI();go("accueil");break;
+  case"login-client":mode="client";me=$("#login-c").value;saveUI();go("c-accueil");break;
+  case"switch":closeSheet();if(mode==="admin"){mode="client";me=me||S.clients[0].id;saveUI();go("c-accueil")}else{mode="admin";saveUI();go("accueil")}break;
+  case"logout":closeSheet();mode=null;saveUI();if(location.hash)location.hash="";render();break;
+  case"menu":sMenu();break; case"cmenu":sCMenu();break; case"notifs":sNotifs();break;
+  case"notifgo":closeSheet();if(el.dataset.tab)docTab=el.dataset.tab;if(el.dataset.go2==="relances")relTab="retard";go(el.dataset.go2);break;
+  case"client":sClient(id);break;
+  case"filter":filter=el.dataset.v;render();break;
+  case"day":selDay=el.dataset.v;render();break;
+  case"wk":weekOff+=+el.dataset.v;selDay="";render();break;
+  case"reltab":relTab=el.dataset.v;render();break;
+  case"doctab":docTab=el.dataset.v;render();break;
+  case"doc":sDoc(id);break;
+  case"rel":sRel(id);break;
+  case"copymsg":copyText($("#msg").value);break;
+  case"copytpl":copyText(TPL[el.dataset.k][+el.dataset.i]({...TPLCTX,ent:S.settings.name}));break;
+  case"relres":{const r=S.rel.find(x=>x.id===id);r.status="done";r.result=el.dataset.v;if(r.due>today())r.due=today();const c=S.clients.find(x=>x.id===r.clientId);log(r.clientId,`Relance${r.total>1?" "+r.step+"/"+r.total:""} (${RTYPE[r.type][0]}, ${r.channel}) : ${r.result}`);
+   if(r.result==="Refus"){if(r.docId)S.rel.forEach(x=>{if(x.docId===r.docId&&x.status==="open")x.status="cancel"});else S.rel.forEach(x=>{if(x.clientId===r.clientId&&x.type===r.type&&x.status==="open")x.status="cancel"});if(r.type==="devis"){const d=S.docs.find(x=>x.id===r.docId);if(d)d.status="Refusé"}if(r.type==="prospect"&&c)c.status="Perdu"}
+   if(r.result==="Rappeler plus tard")addRel(r.clientId,r.type,off(3),r.docId,r.step,r.total);
+   if(r.result==="Intéressé"&&c&&c.status==="Prospect")c.status="Négociation";
+   save();closeSheet();render();toast("Relance enregistrée dans l'historique");break}
+  case"relpush":{const r=S.rel.find(x=>x.id===id);r.due=addDays(r.due<today()?today():r.due,2);save();closeSheet();render();toast("Reportée au "+fd(r.due));break}
+  case"newdoc":sDocForm(el.dataset.type,id);break;
+  case"newcontrat":sContrat(id);break; case"newvisite":sVisite(id);break; case"newjob":sNewJob(id);break; case"newrel":sNewRel(id);break;
+  case"qa-devis":sDocForm("devis");break; case"qa-facture":sDocForm("facture");break; case"qa-job":sNewJob();break; case"qa-client":sNewClient();break;
+  case"jobdone":sBon(id);break;
+  case"jobcancel":{const j=S.jobs.find(x=>x.id===id);j.status="Annulée";log(j.clientId,"Intervention du "+fd(j.date)+" annulée");save();render();break}
+  case"accept":{const d=D();acceptDevis(d);save();render();sDoc(id);toast("Devis accepté · relances arrêtées");break}
+  case"refuse":{const d=D();d.status="Refusé";cancelRels(d.id);log(d.clientId,`Devis ${d.num} refusé`);save();render();sDoc(id);break}
+  case"signdoc":sSign(id);break;
+  case"deposit":{const d=D();const amt=Math.round(ht(d)*0.3*100)/100;const f={id:uid(),type:"facture",kind:"acompte",num:nextNum("facture"),clientId:d.clientId,date:today(),ref:d.num,lines:[{s:"Acompte 30 % sur devis "+d.num,u:"forfait",p:amt,q:1}],pays:[]};d.deposit=f.id;S.docs.push(f);seqFacture(f);log(d.clientId,`Facture d'acompte ${f.num} émise (${eur(ttc(f))})`);save();docTab="facture";render();sDoc(f.id);toast("Facture d'acompte émise");break}
+  case"invoice":{const d=D();const lines=JSON.parse(JSON.stringify(d.lines)).map(l=>({...l,p:Math.round(l.p*(1-(d.remise||0)/100)*100)/100}));const dep=S.docs.find(x=>x.id===d.deposit);if(dep)lines.push({s:"Acompte déjà facturé ("+dep.num+")",u:"forfait",p:-ht(dep),q:1});
+   const f={id:uid(),type:"facture",num:nextNum("facture"),clientId:d.clientId,date:today(),ref:d.num,lines,pays:[]};d.status="Facturé";S.docs.push(f);seqFacture(f);log(d.clientId,`Facture ${f.num} émise depuis ${d.num}`);save();docTab="facture";render();sDoc(f.id);toast("Facture "+f.num+" émise");break}
+  case"tocontrat":sContrat(D().clientId);break; case"tojob":sNewJob(D().clientId);break;
+  case"pay":sPay(id);break; case"cpay":sCPay(id);break;
+  case"confirmpay":{const d=D();const p=d.pays.find(x=>x.id===el.dataset.p);p.ok=true;if(reste(d)<=0)cancelRels(d.id);log(d.clientId,`Paiement confirmé : ${eur(p.amount)}`);save();render();sDoc(id);toast("Paiement confirmé");break}
+  case"remind":{const d=D();const r={type:"paiement",step:diff(due(d))<-7?2:1,clientId:d.clientId,docId:d.id};$("#extra").innerHTML=`<div class="stack"><textarea id="msg" class="ta" aria-label="Message de rappel">${esc(msgFor(r))}</textarea><button class="btn dark" data-act="copymsg">Copier le message</button></div>`;break}
+  case"avoir":{const d=D();const av={id:uid(),type:"avoir",num:nextNum("avoir"),clientId:d.clientId,date:today(),ref:d.num,lines:JSON.parse(JSON.stringify(d.lines)),remise:d.remise||0};d.cancelled=true;cancelRels(d.id);S.docs.push(av);log(d.clientId,`Avoir ${av.num} émis sur ${d.num}`);save();render();sDoc(av.id);toast("Avoir émis · facture annulée");break}
+  case"rate":sRate(id);break;
+  case"planreq":{const r=S.requests.find(x=>x.id===id);sNewJob(r.clientId,r);break}
+  case"refusereq":{const r=S.requests.find(x=>x.id===id);r.status="Refusée";log(r.clientId,"Demande d'intervention refusée");save();render();break}
+  case"stk":{const s=S.stock.find(x=>x.id===id);s.qty=Math.max(0,s.qty+ +el.dataset.v);save();render();break}
+  case"addstock":sAddStock();break;
+  case"addagent":sheet(`<form class="stack" id="aaf"><h2>Nouvel agent</h2><label class="f">Nom<input id="aa-n" required></label><div class="grid2"><label class="f">Poste<input id="aa-r" value="Agent d'entretien"></label><label class="f">Taux horaire (€)<input id="aa-t" type="number" step="any" value="12.5"></label></div><button class="btn primary" type="submit">Ajouter</button></form>`);
+   $("#aaf").onsubmit=ev=>{ev.preventDefault();S.team.push({id:uid(),name:$("#aa-n").value.trim(),role:$("#aa-r").value,rate:+$("#aa-t").value||0});save();closeSheet();render();toast("Agent ajouté")};break;
+  case"addsvc":sheet(`<form class="stack" id="nsf"><h2>Nouvelle prestation</h2><label class="f">Nom<input id="v-n" required></label><div class="grid2"><label class="f">Unité<select id="v-u">${opts(["passage","heure","m²","forfait","unité"])}</select></label><label class="f">Prix HT<input id="v-p" type="number" step="any" required></label></div><button class="btn primary" type="submit">Ajouter</button></form>`);
+   $("#nsf").onsubmit=ev=>{ev.preventDefault();S.catalog.push({name:$("#v-n").value.trim(),unit:$("#v-u").value,price:+$("#v-p").value||0});save();closeSheet();render();toast("Prestation ajoutée")};break;
+  case"offer":sOffer();break;
+  case"import":sImport(el.dataset.v);break; case"tpl":downloadTpl(el.dataset.v);break; case"doimport":doImport();break;
+  case"reset":if(el.dataset.confirm){S=seed();save();filter="Tous";query="";weekOff=0;selDay=today();go("accueil");toast("Démo réinitialisée")}else{el.dataset.confirm="1";el.textContent="Touchez encore pour confirmer"}break;
+ }
+});
+addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
+
+const sp=$("#splash");let shown=false;try{shown=sessionStorage.getItem(KEY+"-splash")==="1"}catch(e){}
+const hideSplash=()=>{if(!sp.isConnected)return;sp.style.opacity="0";setTimeout(()=>sp.remove(),500);try{sessionStorage.setItem(KEY+"-splash","1")}catch(e){}};
+if(shown)sp.remove();else{sp.onclick=hideSplash;setTimeout(hideSplash,2600)}
+view=location.hash.slice(1);render();
+})();
+</script>
+
+</body>
+</html>
