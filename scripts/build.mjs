@@ -28,6 +28,8 @@ await cp(join(root,'somaf'),join(out,'somaf'), {recursive:true});
 await cp(join(root,'somaf-livraison'),join(out,'somaf-livraison'), {recursive:true});
 await cp(join(root,'nettopro'),join(out,'nettopro'), {recursive:true});
 for (const file of ['nettopro/index.html','nettopro/demo/index.html','nettopro/sacko-logo.jpg']) await readFile(join(out,file));
+await cp(join(root,'rhpro'),join(out,'rhpro'), {recursive:true});
+for (const file of ['rhpro/index.html','rhpro/dollars/index.html','rhpro/fcfa/index.html','rhpro/demo/index.html','rhpro/sacko-logo.jpg']) await readFile(join(out,file));
 for(const list of Object.values(packages)) for(const pack of list) {
   if(!SITE.forms[pack.form])throw new Error(`Missing order brief for ${pack.id}`);
   const payment=SITE.payments[pack.id];
