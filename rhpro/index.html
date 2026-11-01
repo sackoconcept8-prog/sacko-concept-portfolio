@@ -12,11 +12,11 @@
 <meta property="og:description" content="L'application RH premium pour PME, commerces, hôtels, écoles et cliniques. Testez la démo gratuitement.">
 <meta property="og:image" content="https://www.sackoconcept.com/rhpro/sacko-logo.jpg">
 <meta name="theme-color" content="#123D30">
-<link rel="icon" href="./sacko-logo.jpg">
+<link rel="icon" href="/rhpro/sacko-logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"RHPro","applicationCategory":"BusinessApplication","operatingSystem":"Android, iOS, Web","description":"Application de gestion du personnel : congés, planning, pointage, documents RH signés, rappels et recrutement.","publisher":{"@type":"Organization","name":"SACKO CONCEPT LLC","url":"https://www.sackoconcept.com/"},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"99","highPrice":"1690"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"RHPro","applicationCategory":"BusinessApplication","operatingSystem":"Android, iOS, Web","description":"Application de gestion du personnel : congés, planning, pointage, documents RH signés, rappels et recrutement.","publisher":{"@type":"Organization","name":"SACKO CONCEPT LLC","url":"https://www.sackoconcept.com/"},"offers":{"@type":"AggregateOffer","priceCurrency":"EUR","lowPrice":"290","highPrice":"790"}}</script>
 <style>
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -94,12 +94,24 @@ nav a{color:#EAF6EF;text-decoration:none}nav a:hover{color:#E2BC69}
 .plan li.no{opacity:.5}.plan li.no b{color:inherit}
 .plan.reco li b{color:#E2BC69}
 .plan .sub{font-size:14px;color:#5C7268}.plan.reco .sub{color:#CFE6DA}
-.limit{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#B8892B}
+.limit{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#B8892B}
 .plan.reco .limit{color:#E2BC69}
-.country{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;background:#fff;border:1px solid #D6E4DB;border-radius:16px;padding:14px 18px;max-width:640px;margin:0 auto 18px}
-.country select{font:600 16px Figtree,system-ui,sans-serif;color:#14302A;background:#F7F5EF;border:1px solid #D6E4DB;border-radius:10px;padding:10px 12px;max-width:100%}
-.found{background:linear-gradient(135deg,#F6EBD2,#FBF5E6);border:1px solid #E2BC69;border-radius:16px;padding:14px 18px;text-align:center;max-width:760px;margin:0 auto 30px;font-size:16px}
-.found b{color:#8A6418}
+.curbar{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;background:#fff;border:1px solid #D6E4DB;border-radius:16px;padding:14px 18px;max-width:640px;margin:0 auto 18px}
+.curbar a{text-decoration:none;padding:8px 14px;border-radius:99px;font-weight:700;font-size:15px;background:#F7F5EF;color:#14302A;border:1px solid #D6E4DB}
+.curbar a[aria-current]{background:#123D30;color:#EAF6EF;border-color:#123D30}
+.promo{background:#F6EBD2;border:1.5px solid #E2BC69;border-radius:20px;padding:18px 22px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center;text-align:center;max-width:940px;margin:0 auto 34px;font-size:16px}
+.promo .pt{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;color:#7A5A12}
+.promo a{background:#123D30;color:#EAF6EF;text-decoration:none;padding:10px 16px;border-radius:12px;font-weight:700;font-size:15px}
+.plans{max-width:940px;margin:0 auto}
+.plan{position:relative}
+.badge-reco{position:absolute;top:-14px;left:28px;background:#E2BC69;color:#14302A;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:99px}
+.from{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#5C7268;margin-bottom:6px}.plan.reco .from{color:#E2BC69}
+.plan .btn{margin-top:auto}
+.plan .btn,.serenite .btn{text-align:center}
+.serenite{max-width:940px;margin:20px auto 0;background:#fff;border:1.5px solid #E2BC69;border-radius:24px;padding:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:center}
+.serenite ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;font-size:15.5px}.serenite li{display:flex;gap:10px}.serenite li b{flex:none;width:18px;color:#3FA877}
+.serenite .price{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;line-height:1.05;white-space:nowrap}
+.serenite .sub{font-size:14px;color:#5C7268}
 /* faq */
 details{background:#fff;border-radius:16px;padding:18px 22px}
 details+details{margin-top:12px}
@@ -129,11 +141,11 @@ details p{margin-top:10px;color:#5C7268}
 
 <header><div class="in">
 <a href="#" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EAF6EF">
-<img src="./sacko-logo.jpg" alt="SACKO CONCEPT" width="40" height="40" style="border-radius:50%">
+<img src="/rhpro/sacko-logo.jpg" alt="SACKO CONCEPT" width="40" height="40" style="border-radius:50%">
 <span style="display:flex;flex-direction:column;line-height:1.15"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px">RH<span style="color:#7FD1A6">Pro</span></span><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#E2BC69">par SACKO CONCEPT</span></span></a>
 <nav><a class="hide" href="#probleme">Le problème</a><a class="hide" href="#solution">La solution</a><a class="hide" href="#offres">Offres</a><a class="hide" href="#faq">Questions</a>
 <a href="https://wa.me/15054642331?text=Bonjour%2C%20je%20m%27int%C3%A9resse%20%C3%A0%20RHPro." target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px"><svg width="20" height="20"><use href="#wa"/></svg>WhatsApp</a>
-<a href="./demo/" class="btn gold" style="padding:11px 18px;font-size:15px;border-radius:12px">Essayer gratuitement</a></nav>
+<a href="/rhpro/demo/" class="btn gold" style="padding:11px 18px;font-size:15px;border-radius:12px">Essayer gratuitement</a></nav>
 </div></header>
 
 <!-- HÉROS -->
@@ -143,7 +155,7 @@ details p{margin-top:10px;color:#5C7268}
 <span class="tag">Pour les entreprises qui gèrent leurs salariés</span>
 <h1>Fini les congés sur papier, les plannings WhatsApp et les contrats oubliés.</h1>
 <p class="lead" style="font-size:20px">RHPro réunit vos salariés, contrats, congés, planning, pointage et documents RH dans une seule application à votre nom. Vos équipes demandent et signent depuis leur téléphone. Vous ne ratez plus aucune échéance.</p>
-<div style="display:flex;gap:12px;flex-wrap:wrap"><a href="./demo/" class="btn gold">Tester la démo gratuitement</a><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener" class="btn ghost">Réserver une démo de 15 min</a></div>
+<div style="display:flex;gap:12px;flex-wrap:wrap"><a href="/rhpro/demo/" class="btn gold">Tester la démo gratuitement</a><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener" class="btn ghost">Réserver une démo de 15 min</a></div>
 <div class="checks"><span>✓ Android, iPhone et ordinateur</span><span>✓ Espace dirigeant, employé et candidat</span><span>✓ Signature électronique</span><span>✓ Toutes devises</span></div>
 </div>
 <div aria-hidden="true">
@@ -188,9 +200,9 @@ details p{margin-top:10px;color:#5C7268}
 <div class="in">
 <div class="head center"><span class="eyebrow">Essai gratuit, sans inscription</span><h2>Testez les 3 espaces sur votre téléphone</h2><p class="lead">La démo est remplie avec un hôtel fictif de 12 salariés. Un <b>parcours découverte en 5 missions</b> vous guide : valider un congé, générer un document, voir les rappels, signer côté employé, postuler. En 3 minutes, vous avez tout vu.</p></div>
 <div class="grid">
-<a class="space" href="./demo/#accueil"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Espace dirigeant / RH</h3><ul><li>Dossiers des salariés et contrats</li><li>Congés à valider avec soldes</li><li>Planning, pointage, heures sup</li><li>Documents signés en ligne</li><li>Rappels, recrutement, rapports</li></ul><span class="go">Ouvrir l'espace dirigeant →</span></a>
-<a class="space" href="./demo/#e-accueil"><div class="ico" style="background:#D5EFE1;color:#1C5A45"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/></svg></div><h3>Espace employé</h3><ul><li>Demander un congé en 10 secondes</li><li>Voir son planning et son solde</li><li>Pointer son arrivée et son départ</li><li>Signer ses documents</li><li>Signaler une absence, contacter les RH</li></ul><span class="go">Ouvrir l'espace employé →</span></a>
-<a class="space" href="./demo/#c-offres"><div class="ico" style="background:#F6EBD2;color:#B8892B"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg></div><h3>Espace candidature</h3><ul><li>Votre page carrières publique</li><li>CV, lettre et poste visé en 2 minutes</li><li>Numéro de suivi pour le candidat</li><li>Tri par étape côté RH</li><li>Réponses prêtes à envoyer</li></ul><span class="go">Voir la page candidats →</span></a>
+<a class="space" href="/rhpro/demo/#accueil"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Espace dirigeant / RH</h3><ul><li>Dossiers des salariés et contrats</li><li>Congés à valider avec soldes</li><li>Planning, pointage, heures sup</li><li>Documents signés en ligne</li><li>Rappels, recrutement, rapports</li></ul><span class="go">Ouvrir l'espace dirigeant →</span></a>
+<a class="space" href="/rhpro/demo/#e-accueil"><div class="ico" style="background:#D5EFE1;color:#1C5A45"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/></svg></div><h3>Espace employé</h3><ul><li>Demander un congé en 10 secondes</li><li>Voir son planning et son solde</li><li>Pointer son arrivée et son départ</li><li>Signer ses documents</li><li>Signaler une absence, contacter les RH</li></ul><span class="go">Ouvrir l'espace employé →</span></a>
+<a class="space" href="/rhpro/demo/#c-offres"><div class="ico" style="background:#F6EBD2;color:#B8892B"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg></div><h3>Espace candidature</h3><ul><li>Votre page carrières publique</li><li>CV, lettre et poste visé en 2 minutes</li><li>Numéro de suivi pour le candidat</li><li>Tri par étape côté RH</li><li>Réponses prêtes à envoyer</li></ul><span class="go">Voir la page candidats →</span></a>
 </div></div></section>
 
 <!-- SOLUTION -->
@@ -215,7 +227,7 @@ details p{margin-top:10px;color:#5C7268}
 <div style="display:flex;flex-direction:column;gap:18px"><span class="eyebrow" style="color:#E2BC69">Votre assistant RH qui ne dort jamais</span><h2>RHPro vous prévient avant qu'il ne soit trop tard.</h2>
 <p class="lead">Chaque matin, l'application vérifie tous vos dossiers et vous dit quoi faire, avec le bon document déjà prêt : renouveler un CDD, confirmer une embauche, programmer une visite médicale, souhaiter un anniversaire.</p>
 <p style="font-size:18px;color:#CFE6DA">Un seul CDD oublié ou une seule période d'essai mal gérée peut coûter bien plus cher que <strong style="color:#E2BC69">l'application entière</strong>. Sans compter les heures gagnées chaque semaine sur les congés, les plannings et les attestations.</p>
-<a href="./demo/" class="btn gold" style="align-self:flex-start">Voir les rappels dans la démo</a></div>
+<a href="/rhpro/demo/" class="btn gold" style="align-self:flex-start">Voir les rappels dans la démo</a></div>
 <div style="display:flex;flex-direction:column;gap:12px" aria-hidden="true">
 <div class="card" style="color:#14302A"><div class="row"><b>Fin de CDD dans 21 jours</b><span class="tagm" style="background:#FCEFD3;color:#A86A0C;font-size:12px">CDD</span></div><p style="font-size:15px">Kevin Mensah · Réceptionniste de nuit</p><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="tagm" style="background:#3FA877;color:#fff;font-size:13px;padding:6px 10px">Renouveler</span><span class="tagm" style="background:#E7F1EB;font-size:13px;padding:6px 10px">Passer en CDI</span><span class="tagm" style="background:#E7F1EB;font-size:13px;padding:6px 10px">Préparer la sortie</span></div></div>
 <div class="card" style="color:#14302A"><div class="row"><b>Visite médicale en retard</b><span class="tagm" style="background:#FBE3DE;color:#C2412D;font-size:12px">Urgent</span></div><p style="font-size:15px">Sophie Lambert · Cheffe de cuisine</p></div>
@@ -239,39 +251,39 @@ details p{margin-top:10px;color:#5C7268}
 <label for="nb" style="font-weight:700;font-size:18px">Nombre de salariés : <span id="nbv">25</span></label>
 <input type="range" id="nb" min="5" max="60" value="25">
 <div class="two">
-<div><div style="font-size:14px;color:#CFE6DA">Logiciel à 6 € / salarié / mois</div><div class="big" id="c-saas" style="color:#F3B0A4">5 400 €</div></div>
-<div><div style="font-size:14px;color:#CFE6DA">RHPro Premium (3 ans)</div><div class="big" id="c-rh" style="color:#E2BC69">2 270 €</div></div></div>
-<div style="font-size:18px">Vous économisez environ <strong id="c-gain" style="color:#E2BC69">3 130 €</strong>, et l'application porte votre nom.</div>
-<div style="font-size:13px;color:#CFE6DA">Estimation indicative : RHPro Premium = paiement unique + 2 renouvellements annuels, au prix public sans l'offre Fondateurs.</div></div>
+<div><div style="font-size:14px;color:#CFE6DA">Logiciel à 6 € / salarié / mois</div><div class="big" id="c-saas" style="color:#F3B0A4">—</div></div>
+<div><div style="font-size:14px;color:#CFE6DA">RHPro Premium (3 ans)</div><div class="big" id="c-rh" style="color:#E2BC69">—</div></div></div>
+<div style="font-size:18px">Vous économisez environ <strong id="c-gain" style="color:#E2BC69">—</strong>, et l'application porte votre nom.</div>
+<div style="font-size:13px;color:#CFE6DA">Estimation indicative : RHPro Premium au prix de départ, paiement unique + 2 renouvellements annuels.</div></div>
 </div></div></section>
 
 <!-- OFFRES -->
 <section id="offres" style="padding-top:20px">
 <div class="in">
-<div class="head center"><span class="eyebrow">Nos offres</span><h2>Trois formules. Chaque niveau débloque plus de puissance.</h2><p class="lead">Chaque formule inclut votre logo, vos couleurs, votre devise et l'import de vos salariés.</p></div>
-<div class="country"><label for="fx-country" style="font-weight:700;font-size:16px">Votre pays</label><select id="fx-country"></select><span style="color:#5C7268;font-size:14px">Les prix s'affichent dans votre devise.</span></div>
-<div class="found">🎁 <b>Offre Fondateurs</b> : −30 % sur toutes les formules pour les 20 premières entreprises, jusqu'au 31 décembre 2026.</div>
+<div class="head center"><span class="eyebrow">Nos offres</span><h2>Deux formules, une option. Un devis adapté à votre équipe.</h2><p class="lead">Chaque formule inclut votre logo, vos couleurs, votre devise, vos règles de congés et l'import de vos salariés.</p></div>
+<div class="curbar"><span style="font-weight:700">Prix en</span><span style="display:inline-flex;gap:6px;flex-wrap:wrap"><a href="/rhpro/#offres" aria-current="page">Euros (€)</a><a href="/rhpro/dollars/#offres">Dollars ($)</a><a href="/rhpro/fcfa/#offres">Francs CFA</a></span></div>
+<div class="promo"><span class="pt">Offre de fin d'année</span><span>−15 % sur votre formule jusqu'au 31 décembre 2026 si vous réglez via <b>Contra</b>, avec paiement sécurisé par la plateforme.</span><a href="https://wa.me/15054642331?text=Bonjour%20Hawa%2C%20je%20souhaite%20profiter%20de%20l%27offre%20de%20fin%20d%27ann%C3%A9e%20RHPro%20avec%20un%20paiement%20via%20Contra." target="_blank" rel="noopener">J'en profite</a></div>
 <div class="plans">
 <div class="plan">
-<div><h3 style="font-size:24px;font-family:'Bricolage Grotesque',sans-serif">Standard</h3><div class="limit">Jusqu'à 15 salariés</div></div>
-<p class="sub">Pour les petites équipes qui veulent en finir avec le papier. Application web, s'ouvre avec un lien sur tous les téléphones.</p>
-<div><div class="price"><span class="old" data-eur="690">690 €</span><span data-eur="483">483 €</span></div><div class="sub" style="margin-top:6px">paiement unique · hébergement 1 an inclus<br>puis <span data-eur="190">190 €</span> par an</div><div class="sub" style="margin-top:4px;font-weight:700;color:#1C5A45">soit environ <span data-eur="24">24 €</span> par mois sur 3 ans</div></div>
-<ul><li><b>✓</b>Espace dirigeant et espace employé</li><li><b>✓</b>Dossiers, contrats CDI, CDD, stage</li><li><b>✓</b>Congés, absences et soldes automatiques</li><li><b>✓</b>Planning partagé</li><li><b>✓</b>Documents RH signés en ligne</li><li><b>✓</b>Rappels : essai, CDD, visite médicale, anniversaires</li><li><b>✓</b>Import Excel, toutes devises</li><li class="no"><b>—</b>Recrutement et page carrières</li><li class="no"><b>—</b>Pointage, entretiens, rapports, export de paie</li><li class="no"><b>—</b>Applications Android et iPhone</li></ul>
-<a class="btn line" href="https://wa.me/15054642331?text=Bonjour%2C%20je%20choisis%20RHPro%20Standard.%20Mon%20entreprise%20%3A%20" target="_blank" rel="noopener">Choisir Standard</a></div>
-<div class="plan reco">
-<div class="row" style="align-items:flex-start"><div><h3 style="font-size:24px;font-family:'Bricolage Grotesque',sans-serif;color:#fff">Premium</h3><div class="limit">Jusqu'à 60 salariés</div></div><span style="background:#E2BC69;color:#14302A;font-size:12px;font-weight:800;padding:5px 10px;border-radius:99px;letter-spacing:.06em;text-transform:uppercase">Recommandé</span></div>
-<p class="sub">Votre application RH complète, à votre nom sur Google Play et l'App Store. Pour piloter toute l'équipe.</p>
-<div><div class="price" style="color:#fff"><span class="old" data-eur="1690">1 690 €</span><span data-eur="1183">1 183 €</span></div><div class="sub" style="margin-top:6px">paiement unique<br>puis <span data-eur="290">290 €</span> par an pour renouveler</div><div class="sub" style="margin-top:4px;font-weight:700;color:#E2BC69">soit environ <span data-eur="49">49 €</span> par mois sur 3 ans, pour toute l'équipe</div></div>
-<ul><li><b>✓</b>Tout Standard</li><li><b>✓</b>Applications Android et iPhone à votre nom</li><li><b>✓</b>Recrutement : page carrières, tri, réponses prêtes</li><li><b>✓</b>Pointage géolocalisé, retards, heures sup</li><li><b>✓</b>Entretiens annuels et comptes rendus</li><li><b>✓</b>Rapports : absentéisme, turnover, masse salariale</li><li><b>✓</b>Export des variables de paie</li><li><b>✓</b>Notes de frais avec justificatif</li><li><b>✓</b>Code source livré (licence d'utilisation)</li><li><b>✓</b>Formation de 1 heure</li></ul>
-<a class="btn gold" href="https://wa.me/15054642331?text=Bonjour%2C%20je%20choisis%20RHPro%20Premium.%20Mon%20entreprise%20%3A%20" target="_blank" rel="noopener">Choisir Premium</a></div>
-<div class="plan">
-<div><h3 style="font-size:24px;font-family:'Bricolage Grotesque',sans-serif">Sérénité</h3><div class="limit">Salariés illimités · multi-sites</div></div>
-<p class="sub">Vous vous occupez de vos équipes. Nous nous occupons de l'application, des mises à jour et de l'assistance.</p>
-<div><div class="price"><span class="old" data-eur="99">99 €</span><span data-eur="69">69 €</span><span style="font-size:18px;font-weight:700;color:#5C7268"> /mois</span></div><div class="sub" style="margin-top:6px">+ <span data-eur="490">490 €</span> d'installation</div></div>
-<ul><li><b>✓</b>Tout Premium, publication incluse</li><li><b>✓</b>Plusieurs établissements et services</li><li><b>✓</b>Modèles de documents adaptés au droit de votre pays</li><li><b>✓</b>Import et mise à jour de vos données</li><li><b>✓</b>Hébergement, sauvegardes, mises à jour des stores</li><li><b>✓</b>Nouvelles fonctions incluses</li><li><b>✓</b>Assistance prioritaire par WhatsApp</li><li><b>✓</b>Formation de vos managers</li></ul>
-<a class="btn dark" href="https://wa.me/15054642331?text=Bonjour%2C%20je%20choisis%20RHPro%20S%C3%A9r%C3%A9nit%C3%A9.%20Mon%20entreprise%20%3A%20" target="_blank" rel="noopener">Choisir Sérénité</a></div>
+<div><div class="limit">Standard</div><h3 style="font-size:26px;font-family:'Bricolage Grotesque',sans-serif;margin-top:4px">Application web</h3></div>
+<p class="sub">Pour en finir avec le papier. S'ouvre avec un lien, sur tous les téléphones et ordinateurs.</p>
+<div><div class="from">À partir de</div><div class="price">290 €</div><div class="sub" style="margin-top:6px">paiement unique · hébergement 1 an inclus<br>livraison sous 4 semaines</div></div>
+<ul><li><b>✓</b>Espace dirigeant, espace employé et page candidature</li><li><b>✓</b>Jusqu'à 50 salariés</li><li><b>✓</b>Dossiers, contrats CDI, CDD, stage</li><li><b>✓</b>Congés, absences et soldes automatiques</li><li><b>✓</b>Planning partagé et tâches</li><li><b>✓</b>Documents RH signés en ligne</li><li><b>✓</b>Rappels : essai, CDD, visite médicale, anniversaires</li><li><b>✓</b>Tri des candidats et réponses prêtes</li><li><b>✓</b>Import Excel, votre logo, votre devise</li><li class="no"><b>—</b>Applications Android et iPhone</li><li class="no"><b>—</b>Pointage géolocalisé et heures sup</li><li class="no"><b>—</b>Entretiens annuels, rapports, export de paie</li></ul>
+<a class="btn line" href="https://wa.me/15054642331?text=Bonjour%20Hawa%2C%20je%20souhaite%20un%20devis%20pour%20RHPro%20Standard.%0ANombre%20de%20salari%C3%A9s%20%3A%20%0APays%20%3A%20%0APaiement%20souhait%C3%A9%20%28une%20fois%2C%20en%20plusieurs%20fois%20ou%20au%20mois%29%20%3A%20" target="_blank" rel="noopener">Demander mon devis Standard</a></div>
+<div class="plan reco"><span class="badge-reco">Recommandé</span>
+<div><div class="limit">Premium</div><h3 style="font-size:26px;font-family:'Bricolage Grotesque',sans-serif;color:#fff;margin-top:4px">Votre app RH sur les stores</h3></div>
+<p class="sub">Votre application complète, à votre nom sur Google Play et l'App Store. Pour piloter toute l'équipe.</p>
+<div><div class="from">À partir de</div><div class="price" style="color:#fff">790 €</div><div class="sub" style="margin-top:6px">paiement unique · renouvellement dès 190 € par an<br>livraison sous 6 à 8 semaines</div><div class="sub" style="margin-top:6px;font-weight:700;color:#E2BC69">soit moins de 33 € par mois sur 3 ans, pour toute l'équipe</div></div>
+<ul><li><b>✓</b>Tout Standard</li><li><b>✓</b>Applications Android et iPhone à votre nom</li><li><b>✓</b>Salariés illimités, plusieurs établissements</li><li><b>✓</b>Pointage géolocalisé, retards, heures sup</li><li><b>✓</b>Entretiens annuels et comptes rendus signés</li><li><b>✓</b>Rapports : absentéisme, turnover, masse salariale</li><li><b>✓</b>Export des variables de paie et notes de frais</li><li><b>✓</b>Code source livré (licence d'utilisation)</li><li><b>✓</b>Formation de 1 heure</li></ul>
+<a class="btn gold" href="https://wa.me/15054642331?text=Bonjour%20Hawa%2C%20je%20souhaite%20un%20devis%20pour%20RHPro%20Premium.%0ANombre%20de%20salari%C3%A9s%20%3A%20%0APays%20%3A%20%0APaiement%20souhait%C3%A9%20%28une%20fois%2C%20en%20plusieurs%20fois%20ou%20au%20mois%29%20%3A%20" target="_blank" rel="noopener">Demander mon devis Premium</a></div>
 </div>
-<p style="text-align:center;color:#5C7268;font-size:14px;margin-top:20px">Comptes développeur Apple et Google au nom de votre entreprise, à votre charge. <span id="fx-note">Prix en euros.</span></p>
+<div class="serenite">
+<div style="display:flex;flex-direction:column;gap:8px"><span class="limit">Option Sérénité</span><h3 style="font-size:26px;font-family:'Bricolage Grotesque',sans-serif">On gère tout pour vous</h3><p class="sub">À ajouter à votre formule. Vous vous occupez de vos équipes, nous nous occupons de l'application.</p>
+<div class="from" style="margin-top:8px">À partir de</div><div class="price" style="font-size:36px">+ 49 €<span style="font-size:16px;font-weight:700;color:#5C7268"> /mois</span></div><div class="sub">+ mise en place dès 290 €</div></div>
+<div style="display:flex;flex-direction:column;gap:14px"><ul><li><b>✓</b>Import et mise à jour de vos données par notre équipe</li><li><b>✓</b>Modèles de documents adaptés au droit du travail de votre pays</li><li><b>✓</b>Hébergement, sauvegardes et mises à jour des stores</li><li><b>✓</b>Nouvelles fonctions incluses</li><li><b>✓</b>Assistance prioritaire par WhatsApp</li><li><b>✓</b>Formation de vos managers</li></ul>
+<a class="btn dark" href="https://wa.me/15054642331?text=Bonjour%20Hawa%2C%20je%20souhaite%20un%20devis%20pour%20RHPro%20avec%20l%27option%20S%C3%A9r%C3%A9nit%C3%A9.%0ANombre%20de%20salari%C3%A9s%20%3A%20%0APays%20%3A%20%0APaiement%20souhait%C3%A9%20%28une%20fois%2C%20en%20plusieurs%20fois%20ou%20au%20mois%29%20%3A%20" target="_blank" rel="noopener">Demander mon devis Sérénité</a></div>
+</div>
+<p style="text-align:center;color:#5C7268;font-size:14px;margin:20px auto 0;max-width:900px"><b>Prévente</b> : acompte de 30 % à la commande, solde à la livraison, remboursement intégral si nous ne livrons pas dans les délais. Comptes développeur Apple et Google au nom de votre entreprise, à votre charge. Prix final sur devis, selon la taille de votre équipe et le mode de paiement : en une fois, en plusieurs fois ou au mois. Prix en euros, hors frais bancaires.</p>
 </div></section>
 
 <!-- BONUS -->
@@ -304,10 +316,10 @@ details p{margin-top:10px;color:#5C7268}
 <details><summary>Ça marche dans mon pays ?</summary><p>Oui. RHPro est conçu pour l'international : vous choisissez votre devise, le nombre de jours de congés acquis par mois, les jours travaillés (lundi à vendredi ou lundi à samedi) et la durée du travail. Les documents sont repris selon votre pays.</p></details>
 <details><summary>Est-ce que RHPro fait les fiches de paie ?</summary><p>RHPro prépare tout ce qu'il faut pour la paie : heures pointées, heures supplémentaires, absences, congés et frais par salarié, en un fichier à envoyer à votre comptable ou à importer dans votre logiciel de paie. Vos bulletins peuvent ensuite être déposés dans l'espace de chaque salarié.</p></details>
 <details><summary>Mes données sont-elles en sécurité ?</summary><p>Dans la version achetée, vos données sont sauvegardées en ligne sur un serveur sécurisé, avec un compte et un mot de passe pour chaque utilisateur. Chaque salarié ne voit que ses propres informations. Les salaires ne sont visibles que par la direction.</p></details>
-<details><summary>L'application sera vraiment à mon nom ?</summary><p>Oui, avec les formules Premium et Sérénité. Elle est publiée sur Google Play et l'App Store avec votre nom et votre logo, via vos comptes développeur. Nous nous occupons de toute la publication. La formule Standard s'ouvre avec un lien, sur tous les téléphones.</p></details>
-<details><summary>Que se passe-t-il après un an ?</summary><p>Vous renouvelez votre forfait pour garder l'hébergement, les sauvegardes et les mises à jour des stores. Vous continuez à utiliser l'application comme avant, sans interruption ni perte de données.</p></details>
-<details><summary>Et si mon équipe dépasse la limite de salariés ?</summary><p>Vous passez simplement à la formule supérieure : seule la différence de prix est facturée, et toutes vos données sont conservées.</p></details>
-<details><summary>Dans quelle devise et comment je paie ?</summary><p>Nos prix sont fixés en euros et affichés dans votre devise à titre indicatif. Nous travaillons avec des entreprises du monde entier : carte bancaire, virement, PayPal ou Mobile Money selon votre pays. Le montant exact est confirmé sur votre devis.</p></details>
+<details><summary>L'application sera vraiment à mon nom ?</summary><p>Oui, avec la formule Premium. Elle est publiée sur Google Play et l'App Store avec votre nom et votre logo, via vos comptes développeur. Nous nous occupons de toute la publication. La formule Standard s'ouvre avec un lien, sur tous les téléphones.</p></details>
+<details><summary>Que se passe-t-il après un an ?</summary><p>Vous renouvelez votre forfait pour garder l'hébergement, les sauvegardes et les mises à jour des stores. Vous continuez à utiliser l'application comme avant, sans interruption ni perte de données. Avec l'option Sérénité, tout est compris dans l'abonnement mensuel.</p></details>
+<details><summary>Et si mon équipe dépasse 50 salariés ?</summary><p>Vous passez simplement à Premium, sans limite de salariés : seule la différence de prix est facturée et toutes vos données sont conservées.</p></details>
+<details><summary>Combien ça coûte exactement et comment je paie ?</summary><p>Les prix affichés sont des prix de départ en euros. Votre devis précise le prix final selon la taille de votre équipe et le mode de paiement choisi : en une fois, en plusieurs fois ou au mois. Paiement par carte bancaire, virement, PayPal ou via Contra. En prévente, vous versez 30 % à la commande et le solde à la livraison.</p></details>
 </div></section>
 
 <!-- CTA FINAL -->
@@ -315,49 +327,26 @@ details p{margin-top:10px;color:#5C7268}
 <div class="narrow" style="text-align:center;display:flex;flex-direction:column;gap:22px;align-items:center">
 <h2>Vos salariés méritent mieux qu'un cahier. Vous aussi.</h2>
 <p class="lead" style="font-size:19px">Testez RHPro gratuitement aujourd'hui. Quand vous êtes prêt, on construit votre application à votre nom.</p>
-<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><a href="./demo/" class="btn gold">Tester la démo gratuitement</a><a href="https://wa.me/15054642331?text=Bonjour%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20RHPro." target="_blank" rel="noopener" class="btn ghost"><svg width="20" height="20"><use href="#wa"/></svg>Nous écrire sur WhatsApp</a></div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><a href="/rhpro/demo/" class="btn gold">Tester la démo gratuitement</a><a href="https://wa.me/15054642331?text=Bonjour%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20RHPro." target="_blank" rel="noopener" class="btn ghost"><svg width="20" height="20"><use href="#wa"/></svg>Nous écrire sur WhatsApp</a></div>
 <div style="display:flex;gap:22px;flex-wrap:wrap;justify-content:center;font-size:15px;color:#CFE6DA"><span>WhatsApp : <a href="https://wa.me/15054642331" style="color:#fff">+1 505 464 2331</a></span><span>Email : <a href="mailto:contact@sackoconcept.com" style="color:#fff">contact@sackoconcept.com</a></span><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener" style="color:#E2BC69">Réserver un appel</a></div>
 </div></section>
 
 <footer style="padding-top:28px;padding-bottom:90px;font-size:14px;color:#5C7268;text-align:center">
 <div>© 2026 SACKO CONCEPT LLC · RHPro · Application de gestion du personnel</div>
-<div style="margin-top:6px"><a href="../">sackoconcept.com</a> · <a href="../nettopro/">NettoPro, pour les entreprises de nettoyage</a></div>
+<div style="margin-top:6px"><a href="/">sackoconcept.com</a> · <a href="/nettopro/">NettoPro, pour les entreprises de nettoyage</a></div>
 </footer>
 
 <a class="wa-float" href="https://wa.me/15054642331?text=Bonjour%2C%20je%20m%27int%C3%A9resse%20%C3%A0%20RHPro." target="_blank" rel="noopener" aria-label="Nous écrire sur WhatsApp"><svg width="26" height="26"><use href="#wa"/></svg><span>WhatsApp</span></a>
 
 <script>
 (function(){
-var C=[
-["Europe",[["FR","France","EUR"],["BE","Belgique","EUR"],["LU","Luxembourg","EUR"],["CH","Suisse","CHF"],["DE","Allemagne","EUR"],["ES","Espagne","EUR"],["IT","Italie","EUR"],["PT","Portugal","EUR"],["NL","Pays-Bas","EUR"],["IE","Irlande","EUR"],["GB","Royaume-Uni","GBP"]]],
-["Amérique du Nord",[["US","États-Unis","USD"],["CA","Canada","CAD"]]],
-["Afrique",[["BJ","Bénin","XOF"],["BF","Burkina Faso","XOF"],["CI","Côte d'Ivoire","XOF"],["GW","Guinée-Bissau","XOF"],["ML","Mali","XOF"],["NE","Niger","XOF"],["SN","Sénégal","XOF"],["TG","Togo","XOF"],["CM","Cameroun","XAF"],["CF","Centrafrique","XAF"],["CG","Congo","XAF"],["GA","Gabon","XAF"],["GQ","Guinée équatoriale","XAF"],["TD","Tchad","XAF"],["CD","RD Congo","USD"],["GN","Guinée","GNF"],["MA","Maroc","MAD"],["TN","Tunisie","TND"],["DZ","Algérie","DZD"],["MG","Madagascar","MGA"],["MU","Maurice","MUR"],["NG","Nigeria","NGN"],["GH","Ghana","GHS"],["ZA","Afrique du Sud","ZAR"]]],
-["Autres",[["HT","Haïti","HTG"],["AE","Émirats arabes unis","AED"],["XX","Autre pays (euros)","EUR"]]]];
-/* Taux indicatifs : 1 euro = ... (XOF et XAF : parité fixe). À mettre à jour de temps en temps. */
-var R={EUR:1,USD:1.08,CAD:1.5,GBP:0.85,CHF:0.94,XOF:655.957,XAF:655.957,GNF:9300,MAD:10.8,TND:3.35,DZD:145,MGA:4900,MUR:50,NGN:1650,GHS:16,ZAR:20,HTG:142,AED:3.97};
-/* Fuseau horaire du visiteur -> pays (détection sans service externe) */
-var TZ={"Europe/Paris":"FR","Europe/Brussels":"BE","Europe/Luxembourg":"LU","Europe/Zurich":"CH","Europe/Berlin":"DE","Europe/Madrid":"ES","Atlantic/Canary":"ES","Europe/Rome":"IT","Europe/Lisbon":"PT","Europe/Amsterdam":"NL","Europe/Dublin":"IE","Europe/London":"GB","America/Toronto":"CA","America/Montreal":"CA","America/Vancouver":"CA","America/Edmonton":"CA","America/Winnipeg":"CA","America/Halifax":"CA","America/Port-au-Prince":"HT","Africa/Porto-Novo":"BJ","Africa/Ouagadougou":"BF","Africa/Abidjan":"CI","Africa/Bissau":"GW","Africa/Bamako":"ML","Africa/Niamey":"NE","Africa/Dakar":"SN","Africa/Lome":"TG","Africa/Douala":"CM","Africa/Bangui":"CF","Africa/Brazzaville":"CG","Africa/Libreville":"GA","Africa/Malabo":"GQ","Africa/Ndjamena":"TD","Africa/Kinshasa":"CD","Africa/Lubumbashi":"CD","Africa/Conakry":"GN","Africa/Casablanca":"MA","Africa/Tunis":"TN","Africa/Algiers":"DZ","Indian/Antananarivo":"MG","Indian/Mauritius":"MU","Africa/Lagos":"NG","Africa/Accra":"GH","Africa/Johannesburg":"ZA","Asia/Dubai":"AE"};
-var sel=document.getElementById("fx-country");if(!sel)return;
-C.forEach(function(g){var og=document.createElement("optgroup");og.label=g[0];g[1].forEach(function(c){var o=document.createElement("option");o.value=c[0];o.textContent=c[1];o.dataset.cur=c[2];og.appendChild(o)});sel.appendChild(og)});
-function nice(v,cur){if(cur==="EUR")return Math.round(v);var a=Math.abs(v),step=a>=1e6?10000:a>=1e5?5000:a>=1e4?500:a>=1000?10:5;return Math.round(v/step)*step}
-var fmt,rate=1,cur="EUR";
-function f(v){return fmt.format(nice(v*rate,cur)).replace(/ | /g," ")}
-function apply(){var o=sel.options[sel.selectedIndex];cur=o.dataset.cur;rate=R[cur]||1;
- try{fmt=new Intl.NumberFormat("fr-FR",{style:"currency",currency:cur,currencyDisplay:(cur==="USD"||cur==="CAD")?"symbol":"narrowSymbol",maximumFractionDigits:0})}catch(e){fmt={format:function(v){return Math.round(v).toLocaleString("fr-FR")+" "+cur}}}
- document.querySelectorAll("[data-eur]").forEach(function(el){el.textContent=f(+el.dataset.eur)});
- var n=document.getElementById("fx-note");if(n)n.textContent=cur==="EUR"?"Prix en euros.":"Prix indicatifs en "+cur+", convertis depuis l'euro. Montant exact confirmé sur devis.";
- calc();try{localStorage.setItem("rh-country",o.value)}catch(e){}}
-var nb=document.getElementById("nb");
-function calc(){if(!nb||!fmt)return;var n=+nb.value;document.getElementById("nbv").textContent=n;var saas=n*6*36,rh=1690+290*2;
+var CFG={"saas": 6, "pre": 790, "ren": 190, "step": 10, "suf": " €"};
+function f(v){var r=Math.round(v/CFG.step)*CFG.step;return r.toLocaleString("fr-FR").replace(/[\u202f\u00a0]/g," ")+CFG.suf}
+try{localStorage.setItem("rhpro-page",location.pathname)}catch(e){}
+var nb=document.getElementById("nb");if(!nb)return;
+function calc(){var n=+nb.value;document.getElementById("nbv").textContent=n;var saas=n*CFG.saas*36,rh=CFG.pre+CFG.ren*2;
  document.getElementById("c-saas").textContent=f(saas);document.getElementById("c-rh").textContent=f(rh);document.getElementById("c-gain").textContent=saas>rh?f(saas-rh):"—"}
-if(nb)nb.addEventListener("input",calc);
-var saved=null;try{saved=localStorage.getItem("rh-country")}catch(e){}
-var tz="";try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||""}catch(e){}
-var byTz=TZ[tz]||(/^America\//.test(tz)?"US":"");
-var lang=(navigator.language||"").split("-")[1];lang=lang?lang.toUpperCase():"";
-var has=function(c){return c&&sel.querySelector('option[value="'+c+'"]')};
-sel.value=has(saved)?saved:has(byTz)?byTz:has(lang)?lang:"FR";if(sel.selectedIndex<0)sel.value="FR";
-sel.addEventListener("change",apply);apply();
+nb.addEventListener("input",calc);calc();
 })();
 </script>
 </body>
