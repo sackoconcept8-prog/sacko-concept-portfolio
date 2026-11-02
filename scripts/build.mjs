@@ -32,6 +32,8 @@ await cp(join(root,'rhpro'),join(out,'rhpro'), {recursive:true});
 for (const file of ['rhpro/index.html','rhpro/dollars/index.html','rhpro/fcfa/index.html','rhpro/demo/index.html','rhpro/sacko-logo.jpg']) await readFile(join(out,file));
 await cp(join(root,'stockpro'),join(out,'stockpro'), {recursive:true});
 for (const file of ['stockpro/index.html','stockpro/dollars/index.html','stockpro/fcfa/index.html','stockpro/demo/index.html','stockpro/sacko-logo.jpg']) await readFile(join(out,file));
+await cp(join(root,'phonepro'),join(out,'phonepro'), {recursive:true});
+for (const file of ['phonepro/index.html','phonepro/dollars/index.html','phonepro/fcfa/index.html','phonepro/demo/index.html','phonepro/sacko-logo.jpg']) await readFile(join(out,file));
 for(const list of Object.values(packages)) for(const pack of list) {
   if(!SITE.forms[pack.form])throw new Error(`Missing order brief for ${pack.id}`);
   const payment=SITE.payments[pack.id];
