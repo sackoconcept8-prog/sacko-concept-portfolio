@@ -57,8 +57,8 @@
       '<button class="scp-x" type="button" aria-label="Fermer">×</button>' +
       '<div class="scp-top">' + snow + scene + '</div>' +
       '<div class="scp-body"><div class="scp-eyebrow">Cadeau de fin d\'année</div>' +
-      '<h2 id="scpT">Avant de partir : <em>−15 % sur votre application</em></h2>' +
-      '<p>Commandez NettoPro, RH Pro, StockPro ou PhonePro avant le 31 décembre et profitez de −15 % avec un paiement sécurisé via Contra.</p>' +
+      '<h2 id="scpT">Avant de partir : <em>−15 % sur toutes nos applications</em></h2>' +
+      '<p>−15 % sur toutes nos applications pour toute commande avant le 31 décembre, avec un paiement sécurisé via Contra.</p>' +
       '<div class="scp-acts"><a class="scp-main" href="' + WA + '" target="_blank" rel="noopener">J\'en profite</a><a class="scp-sec" href="commencer.html">Tester une démo gratuite d\'abord</a></div>' +
       '<small>Offre valable jusqu\'au 31 décembre 2026.</small></div></div>';
     document.body.appendChild(w);
