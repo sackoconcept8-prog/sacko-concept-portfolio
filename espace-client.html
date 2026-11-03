@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mon espace SACKO CONCEPT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex">
+<meta name="description" content="Espace client SACKO CONCEPT : devis, factures et paiements.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="sacko-apps.css">
+<link rel="icon" href="assets/sacko-logo-96.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="logo" href="index.html"><img src="assets/sacko-logo-96.png" alt="" width="38" height="38"><b>SACKO CONCEPT</b></a>
+    <div class="navlinks">
+      <a href="index.html">Accueil</a>
+      <a href="applications.html">Applications</a>
+      <a href="offres.html">Offres</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="navcta"><a class="navlink-client hide-sm" href="espace-client.html">Espace client</a><a class="btn btn-ghost hide-sm" href="devis.html">Demander un devis</a><a class="btn btn-gold" href="commencer.html">Commencer gratuitement</a></div>
+  </div>
+</nav>
+<style>
+.ec-login{max-width:440px;margin:0 auto;border:1px solid var(--line);border-radius:22px;background:#fff;padding:30px;box-shadow:0 24px 70px rgba(30,30,60,.08);display:flex;flex-direction:column;gap:14px;text-align:center}
+.ec-login img{width:64px;height:64px;margin:0 auto}
+.ec-login input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:var(--ink-2);font:inherit}
+.ec-login .btn{justify-content:center}
+.ec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.ec-head h2{font-size:clamp(26px,4vw,36px)}
+.ec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.ec-doc{border:1px solid var(--line);border-radius:16px;background:#fff;padding:18px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit}
+.ec-doc:hover{border-color:#C9C9D2}
+.ec-doc .top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.ec-doc b{font-size:20px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ec-doc small{color:var(--muted)}
+.pill2{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;background:#E8F0FE;color:#2563EB;white-space:nowrap}
+.pill2.ok{background:#E6F6EE;color:#13814F}.pill2.wait{background:#FFF1DE;color:#A35E00}
+.ec-sec{margin-top:34px}
+.ec-sec h3{font-size:20px;margin-bottom:12px}
+.ec-req{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px 16px;font-size:14px}
+.ec-list{display:flex;flex-direction:column;gap:8px}
+.ec-empty{border:1px dashed var(--line);border-radius:14px;padding:24px;text-align:center;color:var(--muted)}
+</style>
+<header class="pagehead"><div class="wrap"><div class="eyebrow">Espace client</div><h1>Votre espace SACKO CONCEPT</h1><p>Vos devis, vos factures, vos paiements et vos demandes de mise à jour, au même endroit.</p></div></header>
+<section style="padding-top:24px"><div class="wrap">
+  <form class="ec-login" id="login" novalidate>
+    <img src="assets/sacko-logo-512.png" alt="">
+    <h3 style="font-size:20px">Connexion</h3>
+    <p style="color:var(--muted);font-size:14px">Utilisez l'e-mail et le code reçus avec votre devis.</p>
+    <label for="em" style="position:absolute;left:-9999px">E-mail</label><input id="em" type="email" placeholder="Votre e-mail" autocomplete="email" required>
+    <label for="cd" style="position:absolute;left:-9999px">Code</label><input id="cd" type="text" placeholder="Votre code (6 caractères)" autocomplete="one-time-code" required style="text-transform:uppercase;letter-spacing:.15em;font-family:var(--mono)">
+    <button class="btn btn-gold" type="submit">Accéder à mon espace</button>
+    <span class="msg err" id="lerr" aria-live="polite"></span>
+    <small style="color:var(--muted)">Pas encore client ? <a href="devis.html">Demandez votre devis</a></small>
+  </form>
+  <div id="dash" hidden></div>
+</div></section>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div><a class="logo" href="index.html"><img src="assets/sacko-logo-96.png" alt="" width="38" height="38"><b>SACKO CONCEPT</b></a><p>Applications de gestion et identité de marque pour les PME, en français et en anglais.</p></div>
+      <div><h4>Applications</h4><ul><li><a href="applications.html#nettopro">NettoPro</a></li><li><a href="applications.html#rhpro">RH Pro</a></li><li><a href="applications.html#stockpro">StockPro</a></li><li><a href="applications.html#phonepro">PhonePro</a></li></ul></div>
+      <div><h4>Studio</h4><ul><li><a href="index.html#methode">Méthode</a></li><li><a href="offres.html">Offres</a></li><li><a href="contact.html#faq">FAQ</a></li><li><a href="espace-client.html">Espace client</a></li><li><a href="client.html">Demande de mise à jour</a></li><li><a href="studio.html">Boutique et packs</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Réserver un appel</a></li><li><a href="contact.html">sackoconcept8@gmail.com</a></li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 SACKO CONCEPT LLC · Albuquerque, NM</span><span>sackoconcept.com</span></div>
+  </div>
+</footer>
+<script data-goatcounter="https://sackoconcept.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="sacko-config.js"></script>
+<script src="sacko-docs.js"></script>
+<script>
+const API=window.SACKO_SCRIPT_URL,S=SackoDocs;
+const st={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+async function call(p){const u=new URL(API);Object.entries(p).forEach(([k,v])=>u.searchParams.set(k,v));return (await fetch(u)).json()}
+function pill(s){const ok=["Payée","Accepté","Terminé"].includes(s),w=["Paiement à vérifier","En cours"].includes(s);return '<span class="pill2'+(ok?" ok":w?" wait":"")+'">'+S.esc(s||"")+'</span>'}
+function draw(j){
+  const docs=j.docs.sort((a,b)=>new Date(b.Date)-new Date(a.Date));
+  const card=d=>'<a class="ec-doc" href="document.html?t='+encodeURIComponent(d.Jeton)+'"><div class="top"><span>'+S.esc(d.Type)+' '+S.esc(d["Numéro"])+'</span>'+pill(d.Statut)+'</div><b>'+S.money(S.total(d),d.Devise)+'</b><small>'+S.esc(S.date(d.Date))+'</small></a>';
+  const q=docs.filter(d=>d.Type==="Devis"),f=docs.filter(d=>d.Type==="Facture");
+  const due=f.filter(d=>d.Statut!=="Payée"&&d.Statut!=="Annulé");
+  document.getElementById("dash").innerHTML=
+   '<div class="ec-head"><div><div class="eyebrow">Bonjour '+S.esc(j.client.contact||"")+'</div><h2>'+S.esc(j.client.entreprise||"Votre espace")+'</h2></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-gold" href="client.html">Demander une mise à jour</a><button class="btn btn-ghost" id="out">Se déconnecter</button></div></div>'+
+   (due.length?'<div class="ec-sec" style="margin-top:0"><h3>À régler</h3><div class="ec-grid">'+due.map(card).join("")+'</div></div>':'')+
+   '<div class="ec-sec"><h3>Factures</h3>'+(f.length?'<div class="ec-grid">'+f.map(card).join("")+'</div>':'<div class="ec-empty">Aucune facture pour le moment.</div>')+'</div>'+
+   '<div class="ec-sec"><h3>Devis</h3>'+(q.length?'<div class="ec-grid">'+q.map(card).join("")+'</div>':'<div class="ec-empty">Aucun devis pour le moment.</div>')+'</div>'+
+   '<div class="ec-sec"><h3>Demandes de mise à jour</h3>'+(j.demandes.length?'<div class="ec-list">'+j.demandes.reverse().map(r=>'<div class="ec-req"><span>'+S.esc(r.demande||"")+' · '+S.esc(r.application||"")+'<br><small style="color:var(--muted)">'+S.esc(S.date(r.date))+'</small></span>'+pill(r.statut)+'</div>').join("")+'</div>':'<div class="ec-empty">Aucune demande. Besoin d\'un changement ? <a href="client.html">Envoyez-le ici</a>.</div>')+'</div>';
+  document.getElementById("login").hidden=true;document.getElementById("dash").hidden=false;
+  document.getElementById("out").onclick=()=>{st.del("sc_client");location.reload()};
+}
+async function enter(email,code,silent){
+  const e=document.getElementById("lerr");e.textContent="";
+  try{const j=await call({action:"espace",email,code});if(!j.ok){if(!silent)e.textContent="E-mail ou code incorrect.";st.del("sc_client");return}st.set("sc_client",JSON.stringify({email,code}));draw(j)}
+  catch(err){if(!silent)e.textContent="Connexion impossible. Vérifiez votre réseau."}
+}
+document.getElementById("login").onsubmit=ev=>{ev.preventDefault();const em=document.getElementById("em").value.trim(),cd=document.getElementById("cd").value.trim().toUpperCase();if(!em||!cd){document.getElementById("lerr").textContent="Entrez votre e-mail et votre code.";return}enter(em,cd)};
+const prm=new URLSearchParams(location.search);
+if(prm.get("email"))document.getElementById("em").value=prm.get("email");
+try{const s=JSON.parse(st.get("sc_client")||"null");if(s)enter(s.email,s.code,true)}catch(e){}
+</script>
+</body>
+</html>

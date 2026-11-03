@@ -58,7 +58,8 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rg
 
 main{padding-block:20px 60px}
 .banner{border:1px solid #FDE2B8;background:#FFF7EA;color:#7A4A00;border-radius:14px;padding:12px 14px;font-size:13.5px;margin-bottom:16px}
-.counters{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.counters{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:760px){.counters{grid-template-columns:1fr 1fr}}
 .counter{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:left}
 .counter[aria-pressed="true"]{border-color:var(--fg);box-shadow:0 10px 30px rgba(30,30,60,.08)}
 .counter small{display:block;color:var(--muted);font-size:12.5px}
@@ -112,6 +113,22 @@ dl.fields dd{margin:0;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
 .notifs button{display:block;width:100%;text-align:left;border:0;background:none;padding:10px;border-radius:10px;cursor:pointer;font-size:14px}
 .notifs button:hover{background:var(--soft)}
 .notifs small{display:block;color:var(--muted);font-size:12px}
+.ed{display:flex;flex-direction:column;gap:14px}
+.ed .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ed label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:500;min-width:0}
+.ed input,.ed select,.ed textarea{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--soft);font-size:14px;width:100%}
+.ed textarea{min-height:70px;resize:vertical}
+.lines{display:flex;flex-direction:column;gap:8px}
+.line{display:grid;grid-template-columns:1fr 64px 110px 32px;gap:6px;align-items:center}
+.line input{padding:9px 10px}
+.line button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:18px}
+.presets{display:flex;gap:6px;flex-wrap:wrap}
+.presets button{border:1px dashed var(--line);background:#fff;border-radius:999px;padding:6px 11px;font-size:12.5px;cursor:pointer}
+.totbar{display:flex;justify-content:space-between;align-items:center;background:var(--soft);border-radius:12px;padding:12px 14px;font-weight:600;font-variant-numeric:tabular-nums}
+.docprev{transform-origin:top left}
+.docprev .sdoc{padding:20px;font-size:12.5px;gap:16px}
+.docprev .sdoc-title h1{font-size:22px}
+@media(max-width:480px){.ed .row2{grid-template-columns:1fr}.line{grid-template-columns:1fr 54px 90px 28px}}
 .foot-note{margin-top:24px;color:var(--muted);font-size:12.5px;text-align:center}
 @media(prefers-reduced-motion:no-preference){.sheet{animation:slide .2s ease-out}@keyframes slide{from{transform:translateX(30px);opacity:.6}}}
 </style>
@@ -137,6 +154,7 @@ dl.fields dd{margin:0;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
       <div class="brand"><img src="../assets/sacko-logo-96.png" alt=""><div>SACKO CONCEPT<small id="sync">Synchronisation…</small></div></div>
       <div class="hact">
         <button class="icon-btn" id="bell" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="dot" id="bellDot" hidden>0</span></button>
+        <button class="icon-btn" id="settings" aria-label="Mes informations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
         <button class="icon-btn" id="refresh" aria-label="Actualiser"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
         <button class="icon-btn" id="logout" aria-label="Se déconnecter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></button>
       </div>
@@ -152,8 +170,9 @@ dl.fields dd{margin:0;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
         <button class="counter" data-tab="devis" aria-pressed="true"><small>Devis</small><b id="n-devis">0</b><span id="s-devis"></span></button>
         <button class="counter" data-tab="inscriptions" aria-pressed="false"><small>Inscriptions démo</small><b id="n-inscriptions">0</b><span id="s-inscriptions"></span></button>
         <button class="counter" data-tab="clients" aria-pressed="false"><small>Demandes clients</small><b id="n-clients">0</b><span id="s-clients"></span></button>
+        <button class="counter" data-tab="documents" aria-pressed="false"><small>Devis &amp; factures</small><b id="n-documents">0</b><span id="s-documents"></span></button>
       </div>
-      <div class="toolbar"><h2 id="tabTitle">Devis</h2><input class="search" id="q" type="search" placeholder="Rechercher un nom, une entreprise…"></div>
+      <div class="toolbar"><h2 id="tabTitle">Devis</h2><button class="btn dark sm" id="newDoc">+ Nouveau devis</button><input class="search" id="q" type="search" placeholder="Rechercher un nom, une entreprise…"></div>
       <div class="filters" id="filters"></div>
       <div class="list" id="list"></div>
       <p class="foot-note">Actualisation automatique chaque minute. Les données viennent de votre feuille Google « SACKO CONCEPT – Demandes de devis ».</p>
@@ -169,15 +188,19 @@ dl.fields dd{margin:0;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
 <div class="toast" id="toast" hidden></div>
 
 <script src="../sacko-config.js"></script>
+<script src="../sacko-docs.js"></script>
+<script>document.head.insertAdjacentHTML("beforeend","<style>"+SackoDocs.CSS.replace(/@media print\{[^}]*\}[^}]*\}[^}]*\}/,"")+"</style>")</script>
 <script>
 const URL_API = window.SACKO_SCRIPT_URL || "COLLER";
 const TABS = {
   devis:{title:"Devis", statuses:["Nouveau","Devis envoyé","En discussion","Gagné","Perdu"], name:"Entreprise", sub:["Application","Pays"], person:"Nom et prénom"},
   inscriptions:{title:"Inscriptions démo", statuses:["À relancer","Relancé","Intéressé","Devis demandé","Pas intéressé"], name:"Nom et prénom", sub:["Démo ouverte","Entreprise"], person:"Nom et prénom"},
-  clients:{title:"Demandes clients", statuses:["À faire","En cours","Terminé"], name:"Entreprise", sub:["Application","Type de demande"], person:"Contact"}
+  clients:{title:"Demandes clients", statuses:["À faire","En cours","Terminé"], name:"Entreprise", sub:["Application","Type de demande"], person:"Contact"},
+  documents:{title:"Devis & factures", statuses:["Brouillon","Envoyé","Accepté","Paiement à vérifier","Payée","Annulé"], name:"Entreprise", sub:["Numéro","Total"], person:"Contact"}
 };
-const OPEN = {"Nouveau":"c-new","À relancer":"c-new","À faire":"c-new","Devis envoyé":"c-wip","En discussion":"c-wip","Relancé":"c-wip","Intéressé":"c-wip","En cours":"c-wip","Devis demandé":"c-wip","Gagné":"c-ok","Terminé":"c-ok","Perdu":"c-off","Pas intéressé":"c-off"};
-const FIRST = {devis:"Nouveau",inscriptions:"À relancer",clients:"À faire"};
+let V={}, codes={};
+const OPEN = {"Nouveau":"c-new","À relancer":"c-new","À faire":"c-new","Devis envoyé":"c-wip","En discussion":"c-wip","Relancé":"c-wip","Intéressé":"c-wip","En cours":"c-wip","Devis demandé":"c-wip","Gagné":"c-ok","Terminé":"c-ok","Perdu":"c-off","Pas intéressé":"c-off","Brouillon":"c-off","Envoyé":"c-wip","Accepté":"c-new","Paiement à vérifier":"c-new","Payée":"c-ok","Annulé":"c-off"};
+const FIRST = {devis:"Nouveau",inscriptions:"À relancer",clients:"À faire",documents:"Brouillon"};
 
 let key=null, demo=false, data=null, tab="devis", filter="Tous", seen={}, timer=null, notifs=[];
 const $=id=>document.getElementById(id);
@@ -200,7 +223,10 @@ function sample(){
       {row:4,values:[t(30),"Sarah Johnson","SJ Realty","sarah@sjrealty.com","+1 505 000 0000","RH Pro","Relancé"]}]},
     clients:{headers:["Date","Entreprise","Contact","E-mail","WhatsApp","Application","Type de demande","Détail","Urgence","Fichiers","Statut"],rows:[
       {row:2,values:[t(2),"Mensah Phones","Koffi Mensah","koffi@gmail.com","+229 97 00 00 00","PhonePro","Ajouter ou modifier des produits, prix ou stock","Ajouter les 6 nouveaux iPhone 17 et baisser le prix du S25.","Urgente (sous 24 h)","","À faire"]},
-      {row:3,values:[t(48),"Hôtel Djoliba","Moussa Traoré","rh@djoliba.ml","+223 70 00 00 00","RH Pro","Ajouter ou retirer des salariés ou utilisateurs","3 nouveaux salariés, fichier joint.","Normale (sous 48 h)","","Terminé"]}]}
+      {row:3,values:[t(48),"Hôtel Djoliba","Moussa Traoré","rh@djoliba.ml","+223 70 00 00 00","RH Pro","Ajouter ou retirer des salariés ou utilisateurs","3 nouveaux salariés, fichier joint.","Normale (sous 48 h)","","Terminé"]}]},
+    documents:{headers:["Numéro","Type","Date","Échéance","Entreprise","Contact","E-mail","WhatsApp","Pays","Devise","Lignes","Total","Acompte %","Lien Mobile Money","Notes","Statut","Jeton","Origine","Payé"],rows:[
+      {row:2,values:["DEV-2026-001","Devis",t(20),"","Hôtel Djoliba","Moussa Traoré","rh@djoliba.ml","+223 70 00 00 00","Mali","XOF",JSON.stringify([{desc:"Application RH Pro – formule Premium",qte:1,prix:850000},{desc:"Option Sérénité – 3 mois",qte:3,prix:45000}]),985000,50,"","","Accepté","exemple","",""]},
+      {row:3,values:["FAC-2026-001","Facture",t(6),"","Hôtel Djoliba","Moussa Traoré","rh@djoliba.ml","+223 70 00 00 00","Mali","XOF",JSON.stringify([{desc:"Application RH Pro – formule Premium",qte:1,prix:850000},{desc:"Option Sérénité – 3 mois",qte:3,prix:45000}]),985000,50,"","","Paiement à vérifier","exemple2","DEV-2026-001",""]}]}
   };
 }
 
@@ -215,8 +241,8 @@ async function api(params){
 async function load(first){
   $("sync").textContent="Synchronisation…";
   try{
-    if(demo){data=data||sample()}
-    else{const j=await api();if(!j.ok){if(j.erreur==="code"){logout();$("loginErr").textContent="Code d'accès incorrect.";return}throw new Error(j.erreur)}data=j.data}
+    if(demo){data=data||sample();V=Object.keys(V).length?V:{"Nom légal":"SACKO CONCEPT LLC","Adresse":"8206 Louisiana Blvd NE, Ste A 8694, Albuquerque, NM 87113, USA","EIN":"35-2950833","E-mail":"sackoconcept8@gmail.com","Site":"www.sackoconcept.com","PayPal":"sackoconcept8@gmail.com","Acompte par défaut (%)":"50","Validité devis (jours)":"15","Conditions":"Acompte à la commande, solde à la livraison."}}
+    else{const j=await api();if(!j.ok){if(j.erreur==="code"){logout();$("loginErr").textContent="Code d'accès incorrect.";return}throw new Error(j.erreur)}data=j.data;V=j.vendeur||{};codes={};(j.data.clientsCodes||[]).forEach(c=>codes[String(c.email).toLowerCase()]=c.code)}
     detectNew(first);render();
     $("sync").textContent="À jour · "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
   }catch(e){$("sync").textContent="Hors ligne · nouvel essai dans 1 min"}
@@ -224,12 +250,14 @@ async function load(first){
 function detectNew(first){
   let prev={};try{prev=JSON.parse(store.get(SEEN())||"{}")}catch(e){}
   const fresh=[];
-  Object.keys(TABS).forEach(k=>rowsOf(k).forEach(r=>{const id=idOf(k,r);if(!prev[id]){fresh.push({k,r,id})}}));
+  Object.keys(TABS).forEach(k=>rowsOf(k).forEach(r=>{
+    if(k==="documents"){const id="doc:"+r["Jeton"]+":"+r.Statut;if(!prev[id]){prev[id]=1;if(["Accepté","Paiement à vérifier"].includes(r.Statut))fresh.push({k,r,id})}return}
+    const id=idOf(k,r);if(!prev[id]){fresh.push({k,r,id})}}));
   if(first&&!store.get(SEEN())){fresh.forEach(f=>prev[f.id]=1);store.set(SEEN(),JSON.stringify(prev));return}
   fresh.forEach(f=>{prev[f.id]=1;notifs.unshift(f)});
   store.set(SEEN(),JSON.stringify(prev));
   if(fresh.length){
-    const f=fresh[0];const label=f.k==="devis"?"Nouveau devis":f.k==="inscriptions"?"Nouvelle inscription démo":"Nouvelle demande client";
+    const f=fresh[0];const label=lab(f);
     const who=f.r[TABS[f.k].name]||f.r[TABS[f.k].person]||"";
     toast(label+(fresh.length>1?" (+"+(fresh.length-1)+")":"")+" · "+who);
     beep();
@@ -239,6 +267,7 @@ function detectNew(first){
   }
   updateBell();
 }
+function lab(f){return f.k==="devis"?"Nouveau devis":f.k==="inscriptions"?"Nouvelle inscription démo":f.k==="documents"?(f.r.Statut==="Accepté"?"Devis accepté":"Paiement signalé")+" "+(f.r["Numéro"]||""):"Nouvelle demande client"}
 function beep(){try{const a=new (window.AudioContext||window.webkitAudioContext)();const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.setValueAtTime(.08,a.currentTime);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+.35);o.start();o.stop(a.currentTime+.35)}catch(e){}}
 function updateBell(){const n=notifs.length;$("bellDot").hidden=!n;$("bellDot").textContent=n>9?"9+":n;document.title=(n?"("+n+") ":"")+"SACKO CONCEPT Pilotage"}
 
@@ -247,6 +276,7 @@ function render(){
   Object.keys(TABS).forEach(k=>{
     const rs=rowsOf(k), open=rs.filter(r=>(r.Statut||FIRST[k])===FIRST[k]).length;
     $("n-"+k).textContent=rs.length;
+    if(k==="documents"){const act=rs.filter(r=>["Accepté","Paiement à vérifier"].includes(r.Statut)).length,unpaid=rs.filter(r=>r.Type==="Facture"&&!["Payée","Annulé"].includes(r.Statut)).length;$("s-"+k).innerHTML=act?"<em>"+act+" à traiter</em>":unpaid?unpaid+" facture"+(unpaid>1?"s":"")+" en attente":"tout est à jour";return}
     $("s-"+k).innerHTML=open?"<em>"+open+" "+(k==="clients"?"à faire":k==="inscriptions"?"à relancer":"nouveau"+(open>1?"x":""))+"</em>":"tout est traité";
   });
   document.querySelectorAll(".counter").forEach(c=>c.setAttribute("aria-pressed",c.dataset.tab===tab?"true":"false"));
@@ -259,13 +289,14 @@ function render(){
   $("list").innerHTML=rs.length?rs.map(r=>{
     const st=r.Statut||FIRST[tab], T=TABS[tab];
     const title=r[T.name]||r[T.person]||"Sans nom";
-    const sub=T.sub.map(h=>r[h]).filter(Boolean).join(" · ");
+    const sub=tab==="documents"?[r.Type+" "+r["Numéro"],SackoDocs.money(SackoDocs.total(r),r.Devise)].join(" · "):T.sub.map(h=>r[h]).filter(Boolean).join(" · ");
     return '<button class="item'+(freshIds.has(idOf(tab,r))?' fresh':'')+'" data-row="'+r._row+'"><span class="t">'+esc(title)+'</span><span class="chip '+(OPEN[st]||"c-off")+'">'+esc(st)+'</span><span class="s">'+esc(sub)+'</span><span class="d">'+esc(fmtDate(r.Date))+'</span></button>';
   }).join(""):'<div class="empty">Aucune demande ici pour l\'instant. Les nouvelles apparaîtront automatiquement.</div>';
 }
 function digits(p){return String(p||"").replace(/[^\d]/g,"")}
 function openItem(row){
   const r=rowsOf(tab).find(x=>x._row===row);if(!r)return;
+  if(tab==="documents")return openDoc(r);
   const T=TABS[tab], st=r.Statut||FIRST[tab];
   notifs=notifs.filter(n=>n.id!==idOf(tab,r));updateBell();
   $("sheetTitle").textContent=r[T.name]||r[T.person]||"Demande";
@@ -281,22 +312,133 @@ function openItem(row){
       (r["E-mail"]?'<a class="btn" href="mailto:'+esc(r["E-mail"])+'">E-mail</a>':'')+
       (files?'<a class="btn" href="'+esc(files)+'" target="_blank" rel="noopener">Fichiers</a>':'')+
       (tab==="devis"?'<a class="btn" href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Calendly</a>':'')+
+      '<button class="btn" id="mkDoc">Créer un devis</button>'+
     '</div>'+
     '<div><div class="label" style="margin-bottom:8px">Statut</div><div class="status-row">'+T.statuses.map(s=>'<button type="button" data-s="'+esc(s)+'" aria-pressed="'+(s===st)+'">'+esc(s)+'</button>').join("")+'</div></div>'+
     '<div><div class="label" style="margin-bottom:8px">Détails</div><dl class="fields">'+Object.keys(r).filter(k=>k!=="_row"&&!skip.includes(k)&&r[k]!=="").map(k=>'<div><dt>'+esc(k)+'</dt><dd>'+esc(k==="Date"?fmtDate(r[k]):r[k])+'</dd></div>').join("")+'</dl></div>'+
     (wa?'<div><div class="label" style="margin-bottom:8px">Message WhatsApp préparé</div><p style="margin:0;color:var(--muted);font-size:14px">'+esc(msg)+'</p></div>':'');
   $("sheetBody").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>setStatus(r,b.dataset.s));
+  $("mkDoc").onclick=()=>editDoc(fromRequest(r));
   $("scrim").hidden=false;$("sheet").hidden=false;$("close").focus();
   $("sheet").dataset.row=row;
   render();
 }
+/* ---------- devis & factures ---------- */
+const SITE="https://www.sackoconcept.com/";
+const PRESETS=[["NettoPro – formule Standard",1],["NettoPro – formule Premium",1],["RH Pro – formule Standard",1],["RH Pro – formule Premium",1],["StockPro – formule Standard",1],["PhonePro – formule Standard",1],["Option Sérénité (par mois)",3],["Personnalisation à votre image",1],["Import de vos données Excel",1]];
+function docLink(d){return SITE+"document.html?t="+encodeURIComponent(d["Jeton"])}
+function curFrom(v){return SackoDocs.curCode(v)}
+function fromRequest(r){
+  const app=String(r["Application"]||r["Démo ouverte"]||"").split(" – ")[0];
+  const formule=r["Formule"]&&r["Formule"]!=="Je ne sais pas encore"?r["Formule"]:"Standard";
+  const L=[];if(app&&app!=="Sur mesure")L.push({desc:app+" – formule "+formule,qte:1,prix:0});
+  if(r["Option Sérénité"]==="Oui")L.push({desc:"Option Sérénité (par mois)",qte:3,prix:0});
+  return {Type:"Devis",Entreprise:r["Entreprise"]||"",Contact:r["Nom et prénom"]||r["Contact"]||"","E-mail":r["E-mail"]||"",WhatsApp:r["WhatsApp"]||"",Pays:r["Pays"]||"",Devise:curFrom(r["Devise"]||(r["Pays"]&&/France|Belgique|Suisse/.test(r["Pays"])?"EUR":/États-Unis|Canada|Royaume/.test(r["Pays"]||"")?"USD":"XOF")),Lignes:L.length?L:[{desc:"",qte:1,prix:0}],"Acompte %":Number(V["Acompte par défaut (%)"])||50,Notes:"",Origine:(r["Application"]||"")};
+}
+function addDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+function editDoc(d){
+  d=JSON.parse(JSON.stringify(d||{Type:"Devis",Devise:"XOF",Lignes:[{desc:"",qte:1,prix:0}],"Acompte %":Number(V["Acompte par défaut (%)"])||50}));
+  if(typeof d.Lignes==="string"){try{d.Lignes=JSON.parse(d.Lignes)}catch(e){d.Lignes=[]}}
+  if(!d["Échéance"])d["Échéance"]=d.Type==="Devis"?addDays(Number(V["Validité devis (jours)"])||15):addDays(7);
+  else d["Échéance"]=String(d["Échéance"]).slice(0,10);
+  d.Devise=curFrom(d.Devise);
+  $("sheetTitle").textContent=d["Numéro"]?"Modifier "+d["Numéro"]:"Nouveau "+(d.Type==="Facture"?"document":"devis");
+  const f=(id,label,val,type)=>'<label>'+label+'<input id="'+id+'" type="'+(type||"text")+'" value="'+esc(val||"")+'"></label>';
+  $("sheetBody").innerHTML='<form class="ed" id="edf">'+
+    '<div class="row2"><label>Type<select id="e_type"><option'+(d.Type==="Devis"?" selected":"")+'>Devis</option><option'+(d.Type==="Facture"?" selected":"")+'>Facture</option></select></label><label>Devise<select id="e_cur"><option value="XOF"'+(d.Devise==="XOF"?" selected":"")+'>Franc CFA</option><option value="EUR"'+(d.Devise==="EUR"?" selected":"")+'>Euro (€)</option><option value="USD"'+(d.Devise==="USD"?" selected":"")+'>Dollar ($)</option></select></label></div>'+
+    '<div class="row2">'+f("e_ent","Entreprise",d.Entreprise)+f("e_con","Contact",d.Contact)+'</div>'+
+    '<div class="row2">'+f("e_mail","E-mail",d["E-mail"],"email")+f("e_wa","WhatsApp",d.WhatsApp,"tel")+'</div>'+
+    '<div class="row2">'+f("e_pays","Pays",d.Pays)+f("e_ech",d.Type==="Facture"?"À payer avant le":"Valable jusqu'au",d["Échéance"],"date")+'</div>'+
+    '<div><div class="label" style="margin-bottom:8px">Lignes</div><div class="lines" id="lines"></div><div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button type="button" class="btn sm" id="addLine">+ Ajouter une ligne</button></div><div class="presets" style="margin-top:8px">'+PRESETS.map((p,i)=>'<button type="button" data-p="'+i+'">+ '+esc(p[0])+'</button>').join("")+'</div></div>'+
+    '<div class="row2">'+f("e_dep","Acompte (%) — 0 pour tout payer d\'un coup",d["Acompte %"],"number")+f("e_momo","Lien Mobile Money (FedaPay, KKiaPay…)",d["Lien Mobile Money"]||"")+'</div>'+
+    '<label>Note pour le client<textarea id="e_notes">'+esc(d.Notes||"")+'</textarea></label>'+
+    '<div class="totbar"><span>Total</span><span id="e_tot"></span></div>'+
+    '<div class="acts"><button class="btn dark" type="submit" id="e_save">Enregistrer</button><button class="btn" type="button" id="e_cancel">Annuler</button></div><span class="err" id="e_err"></span></form>';
+  const drawLines=()=>{$("lines").innerHTML=d.Lignes.map((l,i)=>'<div class="line"><input aria-label="Description" data-i="'+i+'" data-k="desc" value="'+esc(l.desc)+'" placeholder="Description"><input aria-label="Quantité" data-i="'+i+'" data-k="qte" type="number" min="0" step="any" value="'+esc(l.qte)+'"><input aria-label="Prix unitaire" data-i="'+i+'" data-k="prix" type="number" min="0" step="any" value="'+esc(l.prix)+'" placeholder="Prix"><button type="button" data-del="'+i+'" aria-label="Retirer">×</button></div>').join("");tot()};
+  const tot=()=>{d.Devise=$("e_cur").value;$("e_tot").textContent=SackoDocs.money(SackoDocs.total(d),d.Devise)};
+  drawLines();
+  $("lines").oninput=e=>{const x=e.target;if(x.dataset.i==null)return;const l=d.Lignes[+x.dataset.i];l[x.dataset.k]=x.dataset.k==="desc"?x.value:Number(x.value);tot()};
+  $("lines").onclick=e=>{const b=e.target.closest("[data-del]");if(b){d.Lignes.splice(+b.dataset.del,1);if(!d.Lignes.length)d.Lignes.push({desc:"",qte:1,prix:0});drawLines()}};
+  $("addLine").onclick=()=>{d.Lignes.push({desc:"",qte:1,prix:0});drawLines()};
+  $("sheetBody").querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{const p=PRESETS[+b.dataset.p];const empty=d.Lignes.findIndex(l=>!l.desc);const L={desc:p[0],qte:p[1],prix:0};if(empty>=0)d.Lignes[empty]=L;else d.Lignes.push(L);drawLines()});
+  $("e_cur").onchange=tot;
+  $("e_cancel").onclick=()=>d.row?openDoc(rowsOf("documents").find(x=>x._row===d.row)):closeSheet();
+  $("edf").onsubmit=async e=>{
+    e.preventDefault();
+    const out=Object.assign({},d,{Type:$("e_type").value,Devise:$("e_cur").value,Entreprise:$("e_ent").value.trim(),Contact:$("e_con").value.trim(),"E-mail":$("e_mail").value.trim(),WhatsApp:$("e_wa").value.trim(),Pays:$("e_pays").value.trim(),"Échéance":$("e_ech").value,"Acompte %":Number($("e_dep").value)||0,"Lien Mobile Money":$("e_momo").value.trim(),Notes:$("e_notes").value.trim()});
+    out.Lignes=d.Lignes.filter(l=>l.desc);out.Total=SackoDocs.total(out);
+    if(!out.Entreprise&&!out.Contact){$("e_err").textContent="Indiquez au moins l'entreprise ou le contact.";return}
+    if(!out.Lignes.length){$("e_err").textContent="Ajoutez au moins une ligne.";return}
+    $("e_save").disabled=true;$("e_save").textContent="Enregistrement…";
+    try{
+      let saved;
+      if(demo){saved=Object.assign({},out,{"Numéro":out["Numéro"]||(out.Type==="Facture"?"FAC":"DEV")+"-2026-00"+(rowsOf("documents").length+1),Jeton:out.Jeton||"exemple"+Date.now(),Date:out.Date||new Date().toISOString(),Statut:out.Statut||"Brouillon"});saved.row=out.row||(100+rowsOf("documents").length)}
+      else{const j=await api({action:"enregistrer",data:JSON.stringify(Object.assign({},out,{row:d.row||""}))});if(!j.ok)throw new Error(j.erreur);saved=j.doc;if(j.code&&out["E-mail"])codes[out["E-mail"].toLowerCase()]=j.code}
+      upsertDoc(saved);toast((saved.Type||"Document")+" "+saved["Numéro"]+" enregistré");tab="documents";filter="Tous";render();openDoc(rowsOf("documents").find(x=>x._row===saved.row));
+    }catch(err){$("e_save").disabled=false;$("e_save").textContent="Enregistrer";$("e_err").textContent="L'enregistrement n'a pas abouti. Vérifiez votre connexion et réessayez."}
+  };
+  $("scrim").hidden=false;$("sheet").hidden=false;$("e_ent").focus();
+}
+function upsertDoc(o){
+  const t=data.documents;const vals=t.headers.map(h=>h==="Lignes"&&typeof o[h]!=="string"?JSON.stringify(o[h]||[]):(o[h]??""));
+  const ex=t.rows.find(x=>x.row===o.row);if(ex)ex.values=vals;else t.rows.push({row:o.row,values:vals});
+}
+function docMsg(d){
+  const first=String(d.Contact||"").split(" ")[0]||"";const code=codes[String(d["E-mail"]||"").toLowerCase()];
+  const amt=SackoDocs.money(SackoDocs.total(d),d.Devise);
+  return "Bonjour "+first+", c'est Hawa de SACKO CONCEPT. Voici votre "+(d.Type==="Facture"?"facture":"devis")+" "+d["Numéro"]+" ("+amt+") : "+docLink(d)+
+    (d.Type==="Facture"?"\nVous pouvez la régler directement depuis ce lien.":"\nVous pouvez l'accepter directement depuis ce lien.")+
+    (code?"\n\nVotre espace client : "+SITE+"espace-client.html\nE-mail : "+d["E-mail"]+"\nCode : "+code:"");
+}
+function openDoc(r){
+  if(!r)return closeSheet();
+  tab="documents";
+  const st=r.Statut||"Brouillon", wa=digits(r.WhatsApp), msg=docMsg(r);
+  $("sheetTitle").textContent=r.Type+" "+r["Numéro"];
+  $("sheetBody").innerHTML=
+    '<div class="acts">'+
+      (wa?'<a class="btn dark" id="d_wa" href="https://wa.me/'+wa+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener">Envoyer par WhatsApp</a>':'')+
+      (r["E-mail"]?'<a class="btn" id="d_mail" href="mailto:'+esc(r["E-mail"])+'?subject='+encodeURIComponent((r.Type==="Facture"?"Facture ":"Devis ")+r["Numéro"]+" – SACKO CONCEPT")+'&body='+encodeURIComponent(msg)+'">E-mail</a>':'')+
+      '<button class="btn" id="d_copy">Copier le lien</button>'+
+      '<a class="btn" href="'+esc(docLink(r))+'" target="_blank" rel="noopener">Voir comme le client</a>'+
+      '<button class="btn" id="d_edit">Modifier</button>'+
+      (r.Type==="Devis"?'<button class="btn" id="d_inv">Transformer en facture</button>':'')+
+    '</div>'+
+    '<div><div class="label" style="margin-bottom:8px">Statut</div><div class="status-row">'+TABS.documents.statuses.filter(s=>r.Type==="Devis"?!["Paiement à vérifier","Payée"].includes(s):s!=="Accepté").map(s=>'<button type="button" data-s="'+esc(s)+'" aria-pressed="'+(s===st)+'">'+esc(s)+'</button>').join("")+'</div></div>'+
+    (st==="Paiement à vérifier"?'<div class="banner" style="margin:0">Le client dit avoir payé. Vérifiez votre PayPal ou Mobile Money, puis touchez « Payée ».</div>':'')+
+    (st==="Accepté"?'<div class="banner" style="margin:0">Le client a accepté ce devis. Touchez « Transformer en facture » pour lui envoyer la facture.</div>':'')+
+    (r["E-mail"]&&codes[String(r["E-mail"]).toLowerCase()]?'<div style="font-size:13px;color:var(--muted)">Code espace client : <b style="font-family:var(--mono);color:var(--fg)">'+esc(codes[String(r["E-mail"]).toLowerCase()])+'</b></div>':'')+
+    '<div class="docprev">'+SackoDocs.render(r,V,{logo:"../assets/sacko-logo-512.png"})+'</div>';
+  $("sheetBody").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>setStatus(r,b.dataset.s));
+  $("d_copy").onclick=async()=>{try{await navigator.clipboard.writeText(docLink(r));toast("Lien copié")}catch(e){prompt("Copiez ce lien :",docLink(r))}};
+  $("d_edit").onclick=()=>editDoc(Object.assign({},r,{row:r._row}));
+  const inv=$("d_inv");if(inv)inv.onclick=()=>{const c=Object.assign({},r);["Numéro","Jeton","Date","Statut","Échéance","Payé","_row","row"].forEach(k=>delete c[k]);c.Type="Facture";c.Origine=r["Numéro"];editDoc(c)};
+  const markSent=()=>{if(st==="Brouillon")setStatus(r,"Envoyé",true)};
+  ["d_wa","d_mail"].forEach(id=>{const el=$(id);if(el)el.addEventListener("click",markSent)});
+  $("scrim").hidden=false;$("sheet").hidden=false;
+  render();
+}
+/* ---------- Mes informations ---------- */
+const SETTINGS=["Nom légal","Adresse","EIN","E-mail","Téléphone / WhatsApp","Site","PayPal","Lien Mobile Money par défaut","Acompte par défaut (%)","Validité devis (jours)","Conditions","Virement bancaire"];
+function openSettings(){
+  $("sheetTitle").textContent="Mes informations";
+  $("sheetBody").innerHTML='<form class="ed" id="sf"><p style="margin:0;color:var(--muted);font-size:14px">Ces informations apparaissent sur tous vos devis et factures, avec votre logo.</p>'+
+    SETTINGS.map((k,i)=>'<label>'+esc(k)+(["Conditions","Virement bancaire","Adresse"].includes(k)?'<textarea id="s'+i+'">'+esc(V[k]||"")+'</textarea>':'<input id="s'+i+'" value="'+esc(V[k]||"")+'">')+'</label>').join("")+
+    '<small style="color:var(--muted)">« Virement bancaire » : laissez vide si vous ne l\'utilisez pas. Ce texte s\'affiche sur les factures.</small>'+
+    '<div class="acts"><button class="btn dark" type="submit" id="s_save">Enregistrer</button></div><span class="err" id="s_err"></span></form>';
+  $("sf").onsubmit=async e=>{e.preventDefault();const vals={};SETTINGS.forEach((k,i)=>vals[k]=$("s"+i).value.trim());
+    if(demo){Object.assign(V,vals);toast("Enregistré (exemple)");closeSheet();return}
+    $("s_save").disabled=true;try{const j=await api({action:"parametres",data:JSON.stringify(vals)});if(!j.ok)throw 0;V=j.vendeur;toast("Informations enregistrées");closeSheet()}catch(err){$("s_save").disabled=false;$("s_err").textContent="L'enregistrement n'a pas abouti. Réessayez."}};
+  $("scrim").hidden=false;$("sheet").hidden=false;
+}
+
 function closeSheet(){$("scrim").hidden=true;$("sheet").hidden=true}
-async function setStatus(r,s){
+async function setStatus(r,s,quiet){
   const old=r.Statut;
   const t=data[tab];const i=t.headers.indexOf("Statut");const raw=t.rows.find(x=>x.row===r._row);
   if(i>=0&&raw)raw.values[i]=s;
-  openItem(r._row);
-  if(demo){toast("Statut : "+s+" (exemple)");return}
+  if(!quiet)openItem(r._row);
+  if(demo){if(!quiet)toast("Statut : "+s+" (exemple)");return}
   try{const j=await api({action:"statut",feuille:tab,row:r._row,statut:s});if(!j.ok)throw 0;toast("Statut enregistré : "+s)}
   catch(e){if(i>=0&&raw)raw.values[i]=old;openItem(r._row);toast("Le statut n'a pas pu être enregistré. Vérifiez votre connexion.")}
 }
@@ -309,8 +451,10 @@ $("q").oninput=render;
 $("close").onclick=closeSheet;$("scrim").onclick=closeSheet;
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 $("refresh").onclick=()=>load(false);
+$("settings").onclick=openSettings;
+$("newDoc").onclick=()=>editDoc();
 $("bell").onclick=()=>{const p=$("notifs");if(!p.hidden){p.hidden=true;return}
-  p.innerHTML=notifs.length?notifs.slice(0,12).map((n,i)=>'<button data-i="'+i+'">'+esc(n.k==="devis"?"Nouveau devis":n.k==="inscriptions"?"Inscription démo":"Demande client")+'<small>'+esc((n.r[TABS[n.k].name]||n.r[TABS[n.k].person]||"")+" · "+fmtDate(n.r.Date))+'</small></button>').join(""):'<div style="padding:14px;color:var(--muted);font-size:14px">Aucune nouvelle notification.</div>';
+  p.innerHTML=notifs.length?notifs.slice(0,12).map((n,i)=>'<button data-i="'+i+'">'+esc(lab(n))+'<small>'+esc((n.r[TABS[n.k].name]||n.r[TABS[n.k].person]||"")+" · "+fmtDate(n.r.Date))+'</small></button>').join(""):'<div style="padding:14px;color:var(--muted);font-size:14px">Aucune nouvelle notification.</div>';
   p.hidden=false;
   p.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{const n=notifs[+b.dataset.i];p.hidden=true;tab=n.k;filter="Tous";render();openItem(n.r._row)});
 };

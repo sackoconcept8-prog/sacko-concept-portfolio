@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Document SACKO CONCEPT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex">
+<meta name="description" content="Devis et factures SACKO CONCEPT.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="sacko-apps.css">
+<link rel="icon" href="assets/sacko-logo-96.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="logo" href="index.html"><img src="assets/sacko-logo-96.png" alt="" width="38" height="38"><b>SACKO CONCEPT</b></a>
+    <div class="navlinks">
+      <a href="index.html">Accueil</a>
+      <a href="applications.html">Applications</a>
+      <a href="offres.html">Offres</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="navcta"><a class="navlink-client hide-sm" href="espace-client.html">Espace client</a><a class="btn btn-ghost hide-sm" href="devis.html">Demander un devis</a><a class="btn btn-gold" href="commencer.html">Commencer gratuitement</a></div>
+  </div>
+</nav>
+<style id="sdoc-css"></style>
+<style>
+.docpage{padding-block:40px 80px}
+.doc-grid{display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start}
+.doc-grid>*{min-width:0}
+.paybox{border:1px solid var(--line);border-radius:18px;background:#fff;padding:22px;display:flex;flex-direction:column;gap:12px;position:sticky;top:96px;box-shadow:0 20px 50px rgba(30,30,60,.08)}
+.paybox h3{font-size:19px}
+.paybox .amt{font-size:28px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.paybox small{color:var(--muted)}
+.paybox .btn{justify-content:center;width:100%}
+.paybox .sep{height:1px;background:var(--line);margin:4px 0}
+.paybox .bank{font-family:var(--mono);font-size:12.5px;white-space:pre-wrap;background:var(--ink-2);border-radius:10px;padding:10px;user-select:all}
+.state{display:inline-block;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:#E8F0FE;color:#2563EB}
+.state.ok{background:#E6F6EE;color:#13814F}
+.doc-msg{text-align:center;padding:80px 20px;color:var(--muted)}
+@media(max-width:900px){.doc-grid{grid-template-columns:1fr}.paybox{position:static}}
+@media print{nav,footer,.paybox{display:none!important}}
+</style>
+<section class="docpage"><div class="wrap">
+  <div id="docview" class="doc-msg">Chargement du document…</div>
+</div></section>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div><a class="logo" href="index.html"><img src="assets/sacko-logo-96.png" alt="" width="38" height="38"><b>SACKO CONCEPT</b></a><p>Applications de gestion et identité de marque pour les PME, en français et en anglais.</p></div>
+      <div><h4>Applications</h4><ul><li><a href="applications.html#nettopro">NettoPro</a></li><li><a href="applications.html#rhpro">RH Pro</a></li><li><a href="applications.html#stockpro">StockPro</a></li><li><a href="applications.html#phonepro">PhonePro</a></li></ul></div>
+      <div><h4>Studio</h4><ul><li><a href="index.html#methode">Méthode</a></li><li><a href="offres.html">Offres</a></li><li><a href="contact.html#faq">FAQ</a></li><li><a href="espace-client.html">Espace client</a></li><li><a href="client.html">Demande de mise à jour</a></li><li><a href="studio.html">Boutique et packs</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Réserver un appel</a></li><li><a href="contact.html">sackoconcept8@gmail.com</a></li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 SACKO CONCEPT LLC · Albuquerque, NM</span><span>sackoconcept.com</span></div>
+  </div>
+</footer>
+<script data-goatcounter="https://sackoconcept.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="sacko-config.js"></script>
+<script src="sacko-docs.js"></script>
+<script>
+document.getElementById("sdoc-css").textContent=SackoDocs.CSS;
+const API=window.SACKO_SCRIPT_URL, S=SackoDocs, view=document.getElementById("docview");
+const t=new URLSearchParams(location.search).get("t")||(location.hash||"").slice(1);
+let D=null,V=null;
+async function call(params){const u=new URL(API);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));return (await fetch(u)).json()}
+function show(){
+  const tot=S.total(D),dep=S.deposit(D),isQ=D["Type"]==="Devis",cur=D["Devise"];
+  const paid=D["Statut"]==="Payée", accepted=D["Statut"]==="Accepté";
+  const due=dep&&!paid?dep:tot;
+  const pp=S.paypalUrl(V,D,due), ppAll=dep?S.paypalUrl(V,D,tot):"";
+  const momo=D["Lien Mobile Money"]||V["Lien Mobile Money par défaut"]||"";
+  let box='<aside class="paybox">';
+  if(isQ){
+    box+='<h3>Votre devis</h3><div class="amt">'+S.money(tot,cur)+'</div>'+(dep?'<small>Acompte de '+S.esc(D["Acompte %"])+' % à la commande : '+S.money(dep,cur)+'</small>':'')+
+      (accepted?'<span class="state ok">Devis accepté, merci !</span><small>Vous recevez votre facture très bientôt.</small>':'<button class="btn btn-gold" id="accept">Accepter le devis</button><small>En acceptant, vous validez ce devis et ses conditions.</small>')+
+      '<div class="sep"></div><a class="btn btn-ghost" href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Poser une question</a>';
+  }else if(paid){
+    box+='<h3>Facture réglée</h3><div class="amt">'+S.money(tot,cur)+'</div><span class="state ok">Payée, merci !</span>';
+  }else{
+    box+='<h3>'+(dep?"Acompte à régler":"Montant à régler")+'</h3><div class="amt">'+S.money(due,cur)+'</div>'+(dep?'<small>Total '+S.money(tot,cur)+' · solde à la livraison</small>':'')+
+      (D["Statut"]==="Paiement à vérifier"?'<span class="state">Paiement signalé, en cours de vérification</span>':'')+
+      (pp?'<a class="btn btn-gold" href="'+pp+'" target="_blank" rel="noopener">Payer par carte ou PayPal</a>':'')+
+      (ppAll?'<a class="btn btn-ghost" href="'+ppAll+'" target="_blank" rel="noopener">Payer la totalité ('+S.money(tot,cur)+')</a>':'')+
+      (momo?'<a class="btn '+(pp?'btn-ghost':'btn-gold')+'" href="'+S.esc(momo)+'" target="_blank" rel="noopener">Payer par Mobile Money</a>':'')+
+      (V["Virement bancaire"]?'<div class="sep"></div><small>Ou par virement bancaire :</small><div class="bank">'+S.esc(V["Virement bancaire"])+'</div>':'')+
+      (!pp&&!momo&&!V["Virement bancaire"]?'<small>Les moyens de paiement vous sont envoyés par WhatsApp.</small>':'')+
+      '<div class="sep"></div><button class="btn btn-ghost" id="paid">J\'ai payé, prévenir SACKO CONCEPT</button><span class="msg" id="pmsg" aria-live="polite"></span>';
+  }
+  box+='<div class="sep"></div><button class="btn btn-ghost" id="pdf">Télécharger en PDF</button><a class="btn btn-ghost" href="espace-client.html">Mon espace client</a></aside>';
+  view.className="";
+  view.innerHTML='<div class="doc-grid"><div>'+S.render(D,V,{logo:"assets/sacko-logo-512.png"})+'</div>'+box+'</div>';
+  document.title=D["Type"]+" "+D["Numéro"]+" · SACKO CONCEPT";
+  const a=document.getElementById("accept");
+  if(a)a.onclick=async()=>{a.disabled=true;a.textContent="Validation…";try{const j=await call({action:"accepter",t});if(!j.ok)throw 0;D["Statut"]="Accepté";show()}catch(e){a.disabled=false;a.textContent="Accepter le devis";alertBox("La validation n'a pas abouti. Réessayez ou écrivez à sackoconcept8@gmail.com.")}};
+  const p=document.getElementById("paid");
+  if(p)p.onclick=async()=>{p.disabled=true;try{const j=await call({action:"paiement_signale",t,moyen:"site"});if(!j.ok)throw 0;D["Statut"]="Paiement à vérifier";show()}catch(e){p.disabled=false;document.getElementById("pmsg").textContent="Envoi impossible, réessayez."}};
+  document.getElementById("pdf").onclick=()=>window.print();
+}
+function alertBox(m){const el=document.createElement("p");el.className="msg err";el.textContent=m;view.querySelector(".paybox").appendChild(el)}
+(async()=>{
+  if(!t){view.textContent="Lien incomplet. Ouvrez le lien reçu par WhatsApp ou par e-mail.";return}
+  try{const j=await call({action:"doc",t});if(!j.ok){view.textContent="Ce document est introuvable. Vérifiez le lien ou contactez sackoconcept8@gmail.com.";return}D=j.doc;V=j.vendeur||{};show()}
+  catch(e){view.textContent="Connexion impossible. Vérifiez votre réseau et rechargez la page."}
+})();
+</script>
+</body>
+</html>
