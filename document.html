@@ -56,7 +56,7 @@
       <div><h4>Studio</h4><ul><li><a href="index.html#methode">Méthode</a></li><li><a href="offres.html">Offres</a></li><li><a href="contact.html#faq">FAQ</a></li><li><a href="espace-client.html">Espace client</a></li><li><a href="client.html">Demande de mise à jour</a></li><li><a href="studio.html">Boutique et packs</a></li></ul></div>
       <div><h4>Contact</h4><ul><li><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Réserver un appel</a></li><li><a href="contact.html">sackoconcept8@gmail.com</a></li></ul></div>
     </div>
-    <div class="legal"><span>© 2026 SACKO CONCEPT LLC · Albuquerque, NM</span><span>sackoconcept.com</span></div>
+    <div class="legal"><span>© 2026 SACKO CONCEPT LLC · Albuquerque, NM</span><span><a href="cgv.html">Conditions de vente</a> · <a href="confidentialite.html">Confidentialité</a></span></div>
   </div>
 </footer>
 <script data-goatcounter="https://sackoconcept.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
@@ -77,7 +77,7 @@ function show(){
   let box='<aside class="paybox">';
   if(isQ){
     box+='<h3>Votre devis</h3><div class="amt">'+S.money(tot,cur)+'</div>'+(dep?'<small>Acompte de '+S.esc(D["Acompte %"])+' % à la commande : '+S.money(dep,cur)+'</small>':'')+
-      (accepted?'<span class="state ok">Devis accepté, merci !</span><small>Vous recevez votre facture très bientôt.</small>':'<button class="btn btn-gold" id="accept">Accepter le devis</button><small>En acceptant, vous validez ce devis et ses conditions.</small>')+
+      (accepted?'<span class="state ok">Devis accepté, merci !</span><small>Vous recevez votre facture très bientôt.</small>':'<button class="btn btn-gold" id="accept">Accepter le devis</button><small>En acceptant, vous validez ce devis et nos <a href="cgv.html" target="_blank" rel="noopener">conditions de vente</a>.</small>')+
       '<div class="sep"></div><a class="btn btn-ghost" href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Poser une question</a>';
   }else if(paid){
     box+='<h3>Facture réglée</h3><div class="amt">'+S.money(tot,cur)+'</div><span class="state ok">Payée, merci !</span>';
