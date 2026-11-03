@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>SACKO CONCEPT</title>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:-apple-system,"Segoe UI",Roboto,sans-serif;background:#fff;color:#62626C}img{width:64px;height:64px;display:block;margin:0 auto 12px}</style>
+</head>
+<body>
+<div style="text-align:center"><img src="assets/sacko-logo-96.png" alt="">Ouverture…</div>
+<script src="sacko-config.js"></script>
+<script>
+(function(){
+  var c=new URLSearchParams(location.search).get("l")||(location.hash||"").slice(1);
+  var home="https://www.sackoconcept.com/";
+  var vid="";try{vid=localStorage.getItem("sc_vid")||"";if(!vid){vid=Math.random().toString(36).slice(2,12);localStorage.setItem("sc_vid",vid)}}catch(e){}
+  var ref="";try{ref=document.referrer?new URL(document.referrer).hostname:""}catch(e){}
+  var done=false,go=function(u){if(done)return;done=true;location.replace(u||home)};
+  setTimeout(function(){go(home)},4000);
+  if(!c||!window.SACKO_SCRIPT_URL){go(home);return}
+  var u=new URL(window.SACKO_SCRIPT_URL);u.searchParams.set("action","lien");u.searchParams.set("c",c);u.searchParams.set("vid",vid);u.searchParams.set("ref",ref);
+  fetch(u).then(function(r){return r.json()}).then(function(j){var d=j.destination||home;try{var x=new URL(d,home);x.searchParams.set("src","lien-"+c);d=x.toString()}catch(e){}go(d)}).catch(function(){go(home)});
+})();
+</script>
+</body>
+</html>

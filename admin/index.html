@@ -6,7 +6,7 @@
 <title>SACKO CONCEPT Pilotage</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#16151A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SACKO">
 <link rel="manifest" href="manifest.json">
@@ -14,132 +14,202 @@
 <link rel="apple-touch-icon" href="../assets/sacko-logo-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
 <style>
-/* Layout: mobile-first app — header, 3 counters, tabs, request list; detail opens as a sheet */
+/* SACKO CONCEPT Pilotage · même famille que NettoPro, RH Pro, StockPro.
+   Layout: header + views; tab bar fixed at bottom on phones, left rail on desktop; sheets slide up from the bottom (side panel on desktop). Charcoal hero with gold touches from the logo. */
 :root{
-  --bg:#FFFFFF; --soft:#F7F7F9; --soft-2:#EFEFF3; --line:#E7E7EC;
-  --fg:#0D0D12; --muted:#62626C; --new:#2563EB; --ok:#13814F; --warn:#A35E00; --bad:#B42318;
-  --font:"Geist",-apple-system,"Segoe UI",Roboto,sans-serif; --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --bg:#F4F4F6; --surface:#FFFFFF; --surface2:#EEEEF2; --fg:#16151A; --muted:#64636D; --line:#E2E2E8;
+  --ink:#16151A; --ink2:#2A2830; --on-ink:#F5F1E8;
+  --gold:#B8892B; --gold-2:#D9B25E; --gold-soft:#F6EBD2;
+  --green:#1F8A5B; --green-soft:#DDF3E8; --amber:#A86A0C; --amber-soft:#FCEFD3; --red:#C2412D; --red-soft:#FBE3DE; --blue:#2C63A8; --blue-soft:#E1ECF8; --violet:#6D4BC4; --violet-soft:#ECE6FA;
+  --shadow:0 1px 2px rgba(22,21,26,.05),0 8px 24px rgba(22,21,26,.07);
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Figtree",ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --r:18px;
   color-scheme:light;
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--soft);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
 [hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
 button,input,select,textarea{font:inherit;color:inherit}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
-.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.wrap{max-width:980px;margin:0 auto}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:11px 18px;border:1px solid var(--line);background:var(--bg);font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;color:var(--fg)}
-.btn.dark{background:var(--fg);color:#fff;border-color:var(--fg)}
-.btn.sm{padding:7px 12px;font-size:13px}
-
-/* login */
-.login{min-height:100vh;display:grid;place-items:center;padding-block:40px;background:radial-gradient(closest-side at 30% 30%,rgba(255,170,120,.25),transparent),radial-gradient(closest-side at 75% 40%,rgba(110,180,255,.25),transparent),var(--bg)}
-.login-card{width:100%;max-width:400px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:0 30px 80px rgba(30,30,60,.12);display:flex;flex-direction:column;gap:16px;text-align:center}
-.login-card img{width:72px;height:72px;margin:0 auto}
-.login-card h1{margin:0;font-size:24px;letter-spacing:-.02em}
-.login-card p{margin:0;color:var(--muted);font-size:14px}
-.login-card input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:var(--soft);text-align:center;font-family:var(--mono);letter-spacing:.1em}
-.err{color:var(--bad);font-size:13px;min-height:1.2em}
-
-/* header */
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.hrow{display:flex;align-items:center;justify-content:space-between;height:62px;gap:12px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.01em}
-.brand img{width:34px;height:34px}
-.brand small{display:block;font-weight:500;color:var(--muted);font-size:12px;letter-spacing:0}
-.hact{display:flex;gap:8px;align-items:center}
-.icon-btn{position:relative;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}
-.icon-btn svg{width:18px;height:18px}
-.dot{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:9px;background:var(--bad);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px}
-
-main{padding-block:20px 60px}
-.banner{border:1px solid #FDE2B8;background:#FFF7EA;color:#7A4A00;border-radius:14px;padding:12px 14px;font-size:13.5px;margin-bottom:16px}
-.counters{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-@media(max-width:760px){.counters{grid-template-columns:1fr 1fr}}
-.counter{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:left}
-.counter[aria-pressed="true"]{border-color:var(--fg);box-shadow:0 10px 30px rgba(30,30,60,.08)}
-.counter small{display:block;color:var(--muted);font-size:12.5px}
-.counter b{display:block;font-size:30px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:4px}
-.counter span{font-size:12px;color:var(--muted)}
-.counter span em{font-style:normal;color:var(--new);font-weight:600}
-@media(max-width:520px){.counter b{font-size:24px}.counter{padding:12px}}
-
-.toolbar{display:flex;gap:10px;align-items:center;margin:22px 0 12px;flex-wrap:wrap}
-.toolbar h2{margin:0;font-size:20px;letter-spacing:-.02em;flex:1;min-width:140px}
-.search{flex:1;min-width:180px;max-width:300px;border:1px solid var(--line);border-radius:999px;padding:9px 14px;background:#fff}
-.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.filters button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--muted)}
-.filters button[aria-pressed="true"]{background:var(--fg);color:#fff;border-color:var(--fg)}
-
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);margin:0;letter-spacing:-.015em;text-wrap:balance}
+h1{font-size:26px;font-weight:800} h2{font-size:19px;font-weight:700} h3{font-size:15px;font-weight:600;font-family:var(--body);letter-spacing:0}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .small{font-size:13px} .xs{font-size:11.5px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:12px;padding:10px 15px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;color:var(--fg);white-space:nowrap}
+.btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.gold{background:var(--gold);color:#fff;border-color:var(--gold)}
+.btn.sm{padding:7px 11px;font-size:13px;border-radius:10px}
+.iconbtn{position:relative;width:42px;height:42px;border-radius:13px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer;flex:none}
+.iconbtn svg{width:19px;height:19px}
+.badge{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;border-radius:10px;background:var(--red);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px;border:2px solid var(--bg)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.pill{display:inline-flex;align-items:center;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.p-new{background:var(--blue-soft);color:var(--blue)} .p-wip{background:var(--amber-soft);color:var(--amber)} .p-ok{background:var(--green-soft);color:var(--green)} .p-off{background:var(--surface2);color:var(--muted)} .p-gold{background:var(--gold-soft);color:var(--gold)} .p-vio{background:var(--violet-soft);color:var(--violet)} .p-red{background:var(--red-soft);color:var(--red)}
+.avatar{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:14px;flex:none;color:#fff}
+.empty{border:1px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--muted);font-size:14px;background:var(--surface)}
+.login{min-height:100vh;display:grid;place-items:center;padding:40px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px));background:radial-gradient(closest-side at 25% 25%,rgba(217,178,94,.22),transparent),radial-gradient(closest-side at 80% 70%,rgba(44,99,168,.12),transparent),var(--bg)}
+.login-card{width:100%;max-width:400px;padding:30px;display:flex;flex-direction:column;gap:14px;text-align:center}
+.login-card img{width:76px;height:76px;margin:0 auto}
+.login-card input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:var(--surface2);text-align:center;font-family:var(--mono);letter-spacing:.12em}
+.err{color:var(--red);font-size:13px;min-height:1.2em}
+.shell{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px calc(96px + env(safe-area-inset-bottom,0px))}
+.wrap{max-width:1080px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.who{display:flex;align-items:center;gap:12px;min-width:0}
+.who img{width:44px;height:44px;flex:none}
+.who h1{font-size:22px}
+.who .sync{font-size:12px;color:var(--muted)}
+.tacts{display:flex;gap:8px}
+.demo-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--gold-soft);color:#6B4E14;border-radius:12px;padding:9px 12px;font-size:13px;margin-bottom:14px}
+.perm-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:13px;margin-bottom:14px}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:25;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+.tab{position:relative;flex:1;max-width:110px;display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;padding:6px 4px;border-radius:12px;font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer}
+.tab svg{width:22px;height:22px}
+.tab[aria-current="page"]{color:var(--fg)}
+.tab[aria-current="page"] svg{color:var(--gold)}
+.tab .badge{top:0;right:18%}
+@media(min-width:960px){
+  .tabs{top:0;bottom:0;right:auto;width:92px;flex-direction:column;justify-content:flex-start;gap:6px;padding:calc(20px + env(safe-area-inset-top,0px)) 10px 20px max(10px,env(safe-area-inset-left,0px));border-top:0;border-right:1px solid var(--line)}
+  .tab{flex:none;max-width:none;padding:10px 4px}
+  .shell{padding-left:calc(92px + 28px);padding-right:28px;padding-bottom:40px}
+}
+.hero{background:linear-gradient(135deg,var(--ink) 0%,var(--ink2) 100%);color:var(--on-ink);border-radius:22px;padding:22px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;border:1.5px solid rgba(217,178,94,.35);box-shadow:0 0 60px rgba(217,178,94,.18) inset}
+.hero .eyebrow{color:var(--gold-2)}
+.hero h2{font-size:22px;margin:8px 0 10px;color:#fff;max-width:34ch;position:relative;z-index:1}
+.hero p{margin:0;color:rgba(245,241,232,.82);font-size:14.5px;max-width:60ch;position:relative;z-index:1}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;position:relative;z-index:1}
+.hs{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px}
+.hs b{display:block;font-family:var(--display);font-size:24px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums}
+.hs span{font-size:12px;color:rgba(245,241,232,.75)}
+@media(max-width:620px){.hero-stats{grid-template-columns:1fr 1fr}}
+.grid2{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:14px}
+.grid2>*{min-width:0}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+.panel{padding:18px}
+.panel-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.kpi{padding:14px;min-width:0}
+.kpi small{display:block;color:var(--muted);font-size:12.5px}
+.kpi b{display:block;font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px;overflow-wrap:anywhere}
+.kpi span{font-size:12px;color:var(--muted)}
+@media(max-width:760px){.kpis{grid-template-columns:1fr 1fr}.kpi b{font-size:18px}.hero h2{font-size:19px}}
+.todo{display:flex;flex-direction:column;gap:8px}
+.todo button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:12px;cursor:pointer}
+.todo .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none}
+.todo .ic svg{width:18px;height:18px}
+.todo .tx{flex:1;min-width:0}
+.todo .tx b{display:block;font-size:14px}
+.todo .tx span{font-size:12.5px;color:var(--muted)}
+.chart svg{width:100%;height:auto;max-height:260px;display:block}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:6px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.funnel{display:flex;flex-direction:column;gap:8px}
+.fn{display:grid;grid-template-columns:130px 1fr 44px;gap:10px;align-items:center;font-size:13px}
+.fn .bar{height:12px;border-radius:6px;background:var(--surface2);overflow:hidden}
+.fn .bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--gold),var(--gold-2))}
+.fn b{text-align:right;font-variant-numeric:tabular-nums}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:4px 0 12px}
+.toolbar h1{flex:1;min-width:150px}
+.search{flex:1;min-width:180px;max-width:320px;border:1px solid var(--line);border-radius:12px;padding:10px 13px;background:var(--surface)}
+.seg{display:inline-flex;background:var(--surface2);border-radius:12px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:none;border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:var(--shadow)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
 .list{display:flex;flex-direction:column;gap:8px}
-.item{display:grid;grid-template-columns:1fr auto;gap:4px 12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;cursor:pointer;text-align:left;width:100%}
+.item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;text-align:left;width:100%}
 .item:hover{border-color:#C9C9D2}
-.item.fresh{border-left:3px solid var(--new)}
-.item .t{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.item .s{color:var(--muted);font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.item .d{color:var(--muted);font-size:12px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.chip{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap;justify-self:end}
-.c-new{background:#E8F0FE;color:var(--new)}
-.c-wip{background:#FFF1DE;color:var(--warn)}
-.c-ok{background:#E6F6EE;color:var(--ok)}
-.c-off{background:var(--soft-2);color:var(--muted)}
-.empty{background:#fff;border:1px dashed var(--line);border-radius:14px;padding:30px;text-align:center;color:var(--muted)}
-
-/* detail sheet */
-.scrim{position:fixed;inset:0;background:rgba(13,13,18,.35);z-index:40}
-.sheet{position:fixed;z-index:41;background:#fff;display:flex;flex-direction:column;
-  right:0;top:0;bottom:0;width:min(520px,100%);box-shadow:-20px 0 60px rgba(30,30,60,.15)}
-.sheet-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:14px;border-bottom:1px solid var(--line)}
-.sheet-h h3{margin:0;font-size:19px;letter-spacing:-.02em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sheet-b{overflow:auto;padding-block:16px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px}
+.item.fresh{box-shadow:inset 3px 0 0 var(--blue)}
+.item .mid{flex:1;min-width:0}
+.item .t{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .s{display:block;color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .end{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
+.item .d{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.item .amt{font-weight:700;font-variant-numeric:tabular-nums;font-size:14px}
+.pipe{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:12px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory}
+.col{background:var(--surface2);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:8px;scroll-snap-align:start;min-height:120px}
+.col-h{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 2px;font-weight:700;font-size:13.5px}
+.col-h span{font-size:12px;color:var(--muted);font-weight:600}
+.deal{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:4px;width:100%}
+.deal b{font-size:14px}
+.deal span{font-size:12.5px;color:var(--muted)}
+.deal .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.bars-list{display:flex;flex-direction:column;gap:9px}
+.bl{display:grid;grid-template-columns:minmax(0,1fr) 46px;gap:10px;align-items:center;font-size:13.5px}
+.bl .lab{min-width:0}
+.bl .lab span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bl .lab i{display:block;height:6px;border-radius:3px;background:var(--gold-soft);margin-top:5px;overflow:hidden}
+.bl .lab i em{display:block;height:100%;background:var(--gold);border-radius:3px}
+.bl b{text-align:right;font-variant-numeric:tabular-nums}
+.link-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface)}
+.link-row .mid{flex:1;min-width:0}
+.link-row .mid b{display:block;font-size:14px}
+.link-row .mid span{display:block;font-size:12px;color:var(--muted);font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link-row .n{font-family:var(--display);font-weight:800;font-size:20px;font-variant-numeric:tabular-nums}
+.scrim{position:fixed;inset:0;background:rgba(22,21,26,.38);z-index:40}
+.sheet{position:fixed;z-index:41;background:var(--surface);display:flex;flex-direction:column;left:0;right:0;bottom:0;max-height:92vh;border-radius:22px 22px 0 0;box-shadow:0 -20px 60px rgba(22,21,26,.18)}
+@media(min-width:760px){.sheet{left:auto;top:0;bottom:0;width:min(560px,100%);max-height:none;border-radius:0}}
+.sheet-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+@media(min-width:760px){.sheet-h{padding-top:calc(16px + env(safe-area-inset-top,0px))}}
+.sheet-h h2{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet-b{overflow:auto;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:16px}
 .acts{display:flex;gap:8px;flex-wrap:wrap}
 .status-row{display:flex;gap:6px;flex-wrap:wrap}
-.status-row button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer}
-.status-row button[aria-pressed="true"]{background:var(--fg);color:#fff;border-color:var(--fg)}
+.status-row button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer}
+.status-row button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
 dl.fields{margin:0;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden}
 dl.fields div{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:10px 14px;border-top:1px solid var(--line);font-size:14px}
 dl.fields div:first-child{border-top:0}
 dl.fields dt{color:var(--muted)}
 dl.fields dd{margin:0;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
 @media(max-width:480px){dl.fields div{grid-template-columns:1fr;gap:2px}}
-.label{font-size:12px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:#fff;padding:12px 18px;border-radius:999px;font-size:14px;z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:calc(100% - 32px)}
-.notifs{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:58px;width:min(360px,calc(100vw - 32px));background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(30,30,60,.15);padding:8px;z-index:25}
-.notifs button{display:block;width:100%;text-align:left;border:0;background:none;padding:10px;border-radius:10px;cursor:pointer;font-size:14px}
-.notifs button:hover{background:var(--soft)}
-.notifs small{display:block;color:var(--muted);font-size:12px}
+.note{background:var(--gold-soft);color:#6B4E14;border-radius:12px;padding:11px 13px;font-size:13.5px}
+.timeline{display:flex;flex-direction:column;border-left:2px solid var(--line);margin-left:6px}
+.ev{position:relative;padding:0 0 14px 16px}
+.ev::before{content:"";position:absolute;left:-7px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--gold)}
+.ev button{border:0;padding:0;background:none;font-weight:600;font-size:14px;text-align:left;cursor:pointer;display:block}
+.ev span{font-size:12.5px;color:var(--muted)}
 .ed{display:flex;flex-direction:column;gap:14px}
 .ed .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ed label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:500;min-width:0}
-.ed input,.ed select,.ed textarea{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--soft);font-size:14px;width:100%}
+.ed label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;min-width:0}
+.ed input,.ed select,.ed textarea{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface2);font-size:14px;width:100%;font-weight:400}
 .ed textarea{min-height:70px;resize:vertical}
 .lines{display:flex;flex-direction:column;gap:8px}
 .line{display:grid;grid-template-columns:1fr 64px 110px 32px;gap:6px;align-items:center}
 .line input{padding:9px 10px}
 .line button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:18px}
 .presets{display:flex;gap:6px;flex-wrap:wrap}
-.presets button{border:1px dashed var(--line);background:#fff;border-radius:999px;padding:6px 11px;font-size:12.5px;cursor:pointer}
-.totbar{display:flex;justify-content:space-between;align-items:center;background:var(--soft);border-radius:12px;padding:12px 14px;font-weight:600;font-variant-numeric:tabular-nums}
-.docprev{transform-origin:top left}
-.docprev .sdoc{padding:20px;font-size:12.5px;gap:16px}
+.presets button{border:1px dashed var(--line);background:var(--surface);border-radius:999px;padding:6px 11px;font-size:12.5px;cursor:pointer}
+.totbar{display:flex;justify-content:space-between;align-items:center;background:var(--surface2);border-radius:12px;padding:12px 14px;font-weight:700;font-variant-numeric:tabular-nums}
+.docprev .sdoc{padding:20px;font-size:12.5px;gap:16px;box-shadow:none}
 .docprev .sdoc-title h1{font-size:22px}
 @media(max-width:480px){.ed .row2{grid-template-columns:1fr}.line{grid-template-columns:1fr 54px 90px 28px}}
-.foot-note{margin-top:24px;color:var(--muted);font-size:12.5px;text-align:center}
-@media(prefers-reduced-motion:no-preference){.sheet{animation:slide .2s ease-out}@keyframes slide{from{transform:translateX(30px);opacity:.6}}}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px));background:var(--ink);color:#fff;padding:12px 18px;border-radius:14px;font-size:14px;z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:calc(100% - 32px)}
+.notifs{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(70px + env(safe-area-inset-top,0px));width:min(360px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(22,21,26,.15);padding:8px;z-index:35}
+.notifs button{display:block;width:100%;text-align:left;border:0;background:none;padding:10px;border-radius:10px;cursor:pointer;font-size:14px}
+.notifs button:hover{background:var(--surface2)}
+.notifs small{display:block;color:var(--muted);font-size:12px}
+.sec{margin-top:14px}
+@media(prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}}}
 </style>
 </head>
 <body>
 
-<section class="login pad" id="login">
-  <form class="login-card" id="loginForm">
+<section class="login" id="login">
+  <form class="login-card card" id="loginForm">
     <img src="../assets/sacko-logo-512.png" alt="">
     <h1>SACKO CONCEPT</h1>
-    <p>Votre application de pilotage : devis, inscriptions et demandes clients.</p>
+    <p class="muted small" style="margin:0">Votre application de pilotage : CRM, devis, factures, ventes et statistiques.</p>
     <label for="code" style="position:absolute;left:-9999px">Code d'accès</label>
     <input id="code" type="password" placeholder="Code d'accès" autocomplete="current-password">
     <button class="btn dark" type="submit">Entrer</button>
@@ -149,337 +219,43 @@ dl.fields dd{margin:0;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
 </section>
 
 <div id="app" hidden>
-  <header class="pad">
-    <div class="wrap hrow">
-      <div class="brand"><img src="../assets/sacko-logo-96.png" alt=""><div>SACKO CONCEPT<small id="sync">Synchronisation…</small></div></div>
-      <div class="hact">
-        <button class="icon-btn" id="bell" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="dot" id="bellDot" hidden>0</span></button>
-        <button class="icon-btn" id="settings" aria-label="Mes informations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
-        <button class="icon-btn" id="refresh" aria-label="Actualiser"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
-        <button class="icon-btn" id="logout" aria-label="Se déconnecter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></button>
-      </div>
-    </div>
-    <div class="notifs" id="notifs" hidden></div>
-  </header>
+  <nav class="tabs" aria-label="Navigation">
+    <button class="tab" data-v="home" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>Accueil</button>
+    <button class="tab" data-v="crm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M17 4a4 4 0 0 1 0 8M22 21a6 6 0 0 0-4-5.6"/></svg>CRM<span class="badge" id="b-crm" hidden></span></button>
+    <button class="tab" data-v="req"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H5.2L4 17.2z"/><path d="M8 9h8M8 12h5"/></svg>Demandes<span class="badge" id="b-req" hidden></span></button>
+    <button class="tab" data-v="sales"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h7M9 17h5"/></svg>Ventes<span class="badge" id="b-sales" hidden></span></button>
+    <button class="tab" data-v="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Stats</button>
+  </nav>
 
-  <main class="pad">
-    <div class="wrap">
-      <div class="banner" id="demoBanner" hidden>Mode exemple : ces demandes sont fictives. Entrez votre code d'accès pour voir les vraies.</div>
-      <div class="banner" id="permBanner" hidden>Activez les notifications pour être prévenue même quand l'application est en arrière-plan. <button class="btn sm" id="allow" style="margin-left:6px">Activer</button></div>
-      <div class="counters" role="tablist">
-        <button class="counter" data-tab="devis" aria-pressed="true"><small>Devis</small><b id="n-devis">0</b><span id="s-devis"></span></button>
-        <button class="counter" data-tab="inscriptions" aria-pressed="false"><small>Inscriptions démo</small><b id="n-inscriptions">0</b><span id="s-inscriptions"></span></button>
-        <button class="counter" data-tab="clients" aria-pressed="false"><small>Demandes clients</small><b id="n-clients">0</b><span id="s-clients"></span></button>
-        <button class="counter" data-tab="documents" aria-pressed="false"><small>Devis &amp; factures</small><b id="n-documents">0</b><span id="s-documents"></span></button>
+  <div class="shell"><div class="wrap">
+    <div class="top">
+      <div class="who"><img src="../assets/sacko-logo-96.png" alt=""><div><h1 id="hello">Bonjour Hawa</h1><div class="sync" id="sync">Synchronisation…</div></div></div>
+      <div class="tacts">
+        <button class="iconbtn" id="bell" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge" id="bellDot" hidden>0</span></button>
+        <button class="iconbtn" id="settings" aria-label="Mes informations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></button>
+        <button class="iconbtn" id="refresh" aria-label="Actualiser"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
       </div>
-      <div class="toolbar"><h2 id="tabTitle">Devis</h2><button class="btn dark sm" id="newDoc">+ Nouveau devis</button><input class="search" id="q" type="search" placeholder="Rechercher un nom, une entreprise…"></div>
-      <div class="filters" id="filters"></div>
-      <div class="list" id="list"></div>
-      <p class="foot-note">Actualisation automatique chaque minute. Les données viennent de votre feuille Google « SACKO CONCEPT – Demandes de devis ».</p>
     </div>
-  </main>
+    <div class="demo-bar" id="demoBar" hidden><span>Mode exemple : les données sont fictives.</span><button class="btn sm" id="exitDemo">Entrer mon code</button></div>
+    <div class="perm-bar" id="permBar" hidden><span>Activez les notifications pour être prévenue même en arrière-plan.</span><button class="btn sm dark" id="allow">Activer</button></div>
+    <main id="v-home"></main>
+    <main id="v-crm" hidden></main>
+    <main id="v-req" hidden></main>
+    <main id="v-sales" hidden></main>
+    <main id="v-stats" hidden></main>
+  </div></div>
+  <div class="notifs" id="notifs" hidden></div>
 </div>
 
 <div class="scrim" id="scrim" hidden></div>
 <aside class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
-  <div class="sheet-h pad"><h3 id="sheetTitle"></h3><button class="icon-btn" id="close" aria-label="Fermer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
-  <div class="sheet-b pad" id="sheetBody"></div>
+  <div class="sheet-h"><h2 id="sheetTitle"></h2><button class="iconbtn" id="close" aria-label="Fermer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+  <div class="sheet-b" id="sheetBody"></div>
 </aside>
 <div class="toast" id="toast" hidden></div>
 
 <script src="../sacko-config.js"></script>
 <script src="../sacko-docs.js"></script>
-<script>document.head.insertAdjacentHTML("beforeend","<style>"+SackoDocs.CSS.replace(/@media print\{[^}]*\}[^}]*\}[^}]*\}/,"")+"</style>")</script>
-<script>
-const URL_API = window.SACKO_SCRIPT_URL || "COLLER";
-const TABS = {
-  devis:{title:"Devis", statuses:["Nouveau","Devis envoyé","En discussion","Gagné","Perdu"], name:"Entreprise", sub:["Application","Pays"], person:"Nom et prénom"},
-  inscriptions:{title:"Inscriptions démo", statuses:["À relancer","Relancé","Intéressé","Devis demandé","Pas intéressé"], name:"Nom et prénom", sub:["Démo ouverte","Entreprise"], person:"Nom et prénom"},
-  clients:{title:"Demandes clients", statuses:["À faire","En cours","Terminé"], name:"Entreprise", sub:["Application","Type de demande"], person:"Contact"},
-  documents:{title:"Devis & factures", statuses:["Brouillon","Envoyé","Accepté","Paiement à vérifier","Payée","Annulé"], name:"Entreprise", sub:["Numéro","Total"], person:"Contact"}
-};
-let V={}, codes={};
-const OPEN = {"Nouveau":"c-new","À relancer":"c-new","À faire":"c-new","Devis envoyé":"c-wip","En discussion":"c-wip","Relancé":"c-wip","Intéressé":"c-wip","En cours":"c-wip","Devis demandé":"c-wip","Gagné":"c-ok","Terminé":"c-ok","Perdu":"c-off","Pas intéressé":"c-off","Brouillon":"c-off","Envoyé":"c-wip","Accepté":"c-new","Paiement à vérifier":"c-new","Payée":"c-ok","Annulé":"c-off"};
-const FIRST = {devis:"Nouveau",inscriptions:"À relancer",clients:"À faire",documents:"Brouillon"};
-
-let key=null, demo=false, data=null, tab="devis", filter="Tous", seen={}, timer=null, notifs=[];
-const $=id=>document.getElementById(id);
-const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
-function toast(t){const el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
-function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-function fmtDate(v){if(!v)return"";const d=new Date(v);if(isNaN(d))return String(v);const now=new Date();const same=d.toDateString()===now.toDateString();return same?"Aujourd'hui "+d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}):d.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})+" "+d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}
-
-/* ---------- sample data for demo mode ---------- */
-function sample(){
-  const t=h=>new Date(Date.now()-h*3600e3).toISOString();
-  return {
-    devis:{headers:["Date","Nom et prénom","Entreprise","E-mail","WhatsApp","Pays","Application","Secteur","Utilisateurs","Formule","Option Sérénité","Devise","Besoins","Date de mise en service","Source","Fichiers joints","Statut"],rows:[
-      {row:2,values:[t(1),"Aminata Koné","Clean Plus Abidjan","contact@cleanplus.ci","+225 07 00 00 00","Côte d'Ivoire","NettoPro – Nettoyage","Nettoyage de bureaux","11 à 50","Premium","Oui","Franc CFA","Planning de 32 agents sur 14 sites, factures mensuelles et relances.","","Facebook","","Nouveau"]},
-      {row:3,values:[t(26),"Julien Moreau","Boutique Élan","julien@elan.fr","+33 6 00 00 00 00","France","StockPro – Commerce","Prêt-à-porter","1 à 10","Standard","À discuter","Euro (€)","Suivi du stock de 2 boutiques et catalogue client.","","Google","","Devis envoyé"]},
-      {row:4,values:[t(70),"Moussa Traoré","Hôtel Djoliba","rh@djoliba.ml","+223 70 00 00 00","Mali","RH Pro – Ressources humaines","Hôtellerie","51 à 200","Premium","Oui","Franc CFA","Congés et absences de 85 salariés, fiches de paie.","","Recommandation","","Gagné"]}]},
-    inscriptions:{headers:["Date","Nom et prénom","Entreprise","E-mail","WhatsApp","Démo ouverte","Statut"],rows:[
-      {row:2,values:[t(.3),"Koffi Mensah","Mensah Phones","koffi@gmail.com","+229 97 00 00 00","PhonePro","À relancer"]},
-      {row:3,values:[t(5),"Fatou Diop","","fatou.diop@gmail.com","+221 77 00 00 00","NettoPro","À relancer"]},
-      {row:4,values:[t(30),"Sarah Johnson","SJ Realty","sarah@sjrealty.com","+1 505 000 0000","RH Pro","Relancé"]}]},
-    clients:{headers:["Date","Entreprise","Contact","E-mail","WhatsApp","Application","Type de demande","Détail","Urgence","Fichiers","Statut"],rows:[
-      {row:2,values:[t(2),"Mensah Phones","Koffi Mensah","koffi@gmail.com","+229 97 00 00 00","PhonePro","Ajouter ou modifier des produits, prix ou stock","Ajouter les 6 nouveaux iPhone 17 et baisser le prix du S25.","Urgente (sous 24 h)","","À faire"]},
-      {row:3,values:[t(48),"Hôtel Djoliba","Moussa Traoré","rh@djoliba.ml","+223 70 00 00 00","RH Pro","Ajouter ou retirer des salariés ou utilisateurs","3 nouveaux salariés, fichier joint.","Normale (sous 48 h)","","Terminé"]}]},
-    documents:{headers:["Numéro","Type","Date","Échéance","Entreprise","Contact","E-mail","WhatsApp","Pays","Devise","Lignes","Total","Acompte %","Lien Mobile Money","Notes","Statut","Jeton","Origine","Payé"],rows:[
-      {row:2,values:["DEV-2026-001","Devis",t(20),"","Hôtel Djoliba","Moussa Traoré","rh@djoliba.ml","+223 70 00 00 00","Mali","XOF",JSON.stringify([{desc:"Application RH Pro – formule Premium",qte:1,prix:850000},{desc:"Option Sérénité – 3 mois",qte:3,prix:45000}]),985000,50,"","","Accepté","exemple","",""]},
-      {row:3,values:["FAC-2026-001","Facture",t(6),"","Hôtel Djoliba","Moussa Traoré","rh@djoliba.ml","+223 70 00 00 00","Mali","XOF",JSON.stringify([{desc:"Application RH Pro – formule Premium",qte:1,prix:850000},{desc:"Option Sérénité – 3 mois",qte:3,prix:45000}]),985000,50,"","","Paiement à vérifier","exemple2","DEV-2026-001",""]}]}
-  };
-}
-
-/* ---------- data ---------- */
-function rowsOf(k){const t=data&&data[k];if(!t)return[];return t.rows.map(r=>{const o={_row:r.row};t.headers.forEach((h,i)=>o[h]=r.values[i]);return o}).sort((a,b)=>new Date(b.Date)-new Date(a.Date))}
-const SEEN=()=>demo?"sc_seen_demo":"sc_seen";
-function idOf(k,r){return k+":"+r._row+":"+(r.Date||"")}
-async function api(params){
-  const u=new URL(URL_API);Object.entries(Object.assign({key},params||{})).forEach(([a,b])=>u.searchParams.set(a,b));
-  const res=await fetch(u.toString(),{method:"GET"});return res.json();
-}
-async function load(first){
-  $("sync").textContent="Synchronisation…";
-  try{
-    if(demo){data=data||sample();V=Object.keys(V).length?V:{"Nom légal":"SACKO CONCEPT LLC","Adresse":"8206 Louisiana Blvd NE, Ste A 8694, Albuquerque, NM 87113, USA","EIN":"35-2950833","E-mail":"sackoconcept8@gmail.com","Site":"www.sackoconcept.com","PayPal":"sackoconcept8@gmail.com","Acompte par défaut (%)":"50","Validité devis (jours)":"15","Conditions":"Acompte à la commande, solde à la livraison."}}
-    else{const j=await api();if(!j.ok){if(j.erreur==="code"){logout();$("loginErr").textContent="Code d'accès incorrect.";return}throw new Error(j.erreur)}data=j.data;V=j.vendeur||{};codes={};(j.data.clientsCodes||[]).forEach(c=>codes[String(c.email).toLowerCase()]=c.code)}
-    detectNew(first);render();
-    $("sync").textContent="À jour · "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
-  }catch(e){$("sync").textContent="Hors ligne · nouvel essai dans 1 min"}
-}
-function detectNew(first){
-  let prev={};try{prev=JSON.parse(store.get(SEEN())||"{}")}catch(e){}
-  const fresh=[];
-  Object.keys(TABS).forEach(k=>rowsOf(k).forEach(r=>{
-    if(k==="documents"){const id="doc:"+r["Jeton"]+":"+r.Statut;if(!prev[id]){prev[id]=1;if(["Accepté","Paiement à vérifier"].includes(r.Statut))fresh.push({k,r,id})}return}
-    const id=idOf(k,r);if(!prev[id]){fresh.push({k,r,id})}}));
-  if(first&&!store.get(SEEN())){fresh.forEach(f=>prev[f.id]=1);store.set(SEEN(),JSON.stringify(prev));return}
-  fresh.forEach(f=>{prev[f.id]=1;notifs.unshift(f)});
-  store.set(SEEN(),JSON.stringify(prev));
-  if(fresh.length){
-    const f=fresh[0];const label=lab(f);
-    const who=f.r[TABS[f.k].name]||f.r[TABS[f.k].person]||"";
-    toast(label+(fresh.length>1?" (+"+(fresh.length-1)+")":"")+" · "+who);
-    beep();
-    if("Notification" in window&&Notification.permission==="granted"){
-      try{navigator.serviceWorker&&navigator.serviceWorker.ready.then(reg=>reg.showNotification("SACKO CONCEPT · "+label,{body:who,icon:"../assets/sacko-logo-512.png",badge:"../assets/sacko-logo-96.png",tag:f.id}))}catch(e){try{new Notification("SACKO CONCEPT · "+label,{body:who})}catch(_){}}
-    }
-  }
-  updateBell();
-}
-function lab(f){return f.k==="devis"?"Nouveau devis":f.k==="inscriptions"?"Nouvelle inscription démo":f.k==="documents"?(f.r.Statut==="Accepté"?"Devis accepté":"Paiement signalé")+" "+(f.r["Numéro"]||""):"Nouvelle demande client"}
-function beep(){try{const a=new (window.AudioContext||window.webkitAudioContext)();const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.setValueAtTime(.08,a.currentTime);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+.35);o.start();o.stop(a.currentTime+.35)}catch(e){}}
-function updateBell(){const n=notifs.length;$("bellDot").hidden=!n;$("bellDot").textContent=n>9?"9+":n;document.title=(n?"("+n+") ":"")+"SACKO CONCEPT Pilotage"}
-
-/* ---------- render ---------- */
-function render(){
-  Object.keys(TABS).forEach(k=>{
-    const rs=rowsOf(k), open=rs.filter(r=>(r.Statut||FIRST[k])===FIRST[k]).length;
-    $("n-"+k).textContent=rs.length;
-    if(k==="documents"){const act=rs.filter(r=>["Accepté","Paiement à vérifier"].includes(r.Statut)).length,unpaid=rs.filter(r=>r.Type==="Facture"&&!["Payée","Annulé"].includes(r.Statut)).length;$("s-"+k).innerHTML=act?"<em>"+act+" à traiter</em>":unpaid?unpaid+" facture"+(unpaid>1?"s":"")+" en attente":"tout est à jour";return}
-    $("s-"+k).innerHTML=open?"<em>"+open+" "+(k==="clients"?"à faire":k==="inscriptions"?"à relancer":"nouveau"+(open>1?"x":""))+"</em>":"tout est traité";
-  });
-  document.querySelectorAll(".counter").forEach(c=>c.setAttribute("aria-pressed",c.dataset.tab===tab?"true":"false"));
-  $("tabTitle").textContent=TABS[tab].title;
-  const fs=["Tous"].concat(TABS[tab].statuses);
-  $("filters").innerHTML=fs.map(s=>'<button type="button" data-f="'+esc(s)+'" aria-pressed="'+(s===filter)+'">'+esc(s)+'</button>').join("");
-  const q=$("q").value.trim().toLowerCase();
-  const rs=rowsOf(tab).filter(r=>(filter==="Tous"||(r.Statut||FIRST[tab])===filter)&&(!q||Object.values(r).join(" ").toLowerCase().includes(q)));
-  const freshIds=new Set(notifs.map(n=>n.id));
-  $("list").innerHTML=rs.length?rs.map(r=>{
-    const st=r.Statut||FIRST[tab], T=TABS[tab];
-    const title=r[T.name]||r[T.person]||"Sans nom";
-    const sub=tab==="documents"?[r.Type+" "+r["Numéro"],SackoDocs.money(SackoDocs.total(r),r.Devise)].join(" · "):T.sub.map(h=>r[h]).filter(Boolean).join(" · ");
-    return '<button class="item'+(freshIds.has(idOf(tab,r))?' fresh':'')+'" data-row="'+r._row+'"><span class="t">'+esc(title)+'</span><span class="chip '+(OPEN[st]||"c-off")+'">'+esc(st)+'</span><span class="s">'+esc(sub)+'</span><span class="d">'+esc(fmtDate(r.Date))+'</span></button>';
-  }).join(""):'<div class="empty">Aucune demande ici pour l\'instant. Les nouvelles apparaîtront automatiquement.</div>';
-}
-function digits(p){return String(p||"").replace(/[^\d]/g,"")}
-function openItem(row){
-  const r=rowsOf(tab).find(x=>x._row===row);if(!r)return;
-  if(tab==="documents")return openDoc(r);
-  const T=TABS[tab], st=r.Statut||FIRST[tab];
-  notifs=notifs.filter(n=>n.id!==idOf(tab,r));updateBell();
-  $("sheetTitle").textContent=r[T.name]||r[T.person]||"Demande";
-  const person=r[T.person]||"", first=String(person).split(" ")[0];
-  const app=r["Application"]||r["Démo ouverte"]||"votre application";
-  const msg=tab==="inscriptions"?"Bonjour "+first+", c'est Hawa de SACKO CONCEPT. Vous avez testé la démo "+app+". Qu'en avez-vous pensé ? Je peux vous préparer une version à votre nom.":tab==="devis"?"Bonjour "+first+", c'est Hawa de SACKO CONCEPT. Merci pour votre demande de devis pour "+app+". Avez-vous 20 minutes cette semaine pour en parler ?":"Bonjour "+first+", c'est Hawa de SACKO CONCEPT. J'ai bien reçu votre demande pour "+app+", je m'en occupe.";
-  const wa=digits(r["WhatsApp"]);
-  const files=r["Fichiers joints"]||r["Fichiers"];
-  const skip=["Statut"];
-  $("sheetBody").innerHTML=
-    '<div class="acts">'+
-      (wa?'<a class="btn dark" href="https://wa.me/'+wa+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener">WhatsApp</a>':'')+
-      (r["E-mail"]?'<a class="btn" href="mailto:'+esc(r["E-mail"])+'">E-mail</a>':'')+
-      (files?'<a class="btn" href="'+esc(files)+'" target="_blank" rel="noopener">Fichiers</a>':'')+
-      (tab==="devis"?'<a class="btn" href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Calendly</a>':'')+
-      '<button class="btn" id="mkDoc">Créer un devis</button>'+
-    '</div>'+
-    '<div><div class="label" style="margin-bottom:8px">Statut</div><div class="status-row">'+T.statuses.map(s=>'<button type="button" data-s="'+esc(s)+'" aria-pressed="'+(s===st)+'">'+esc(s)+'</button>').join("")+'</div></div>'+
-    '<div><div class="label" style="margin-bottom:8px">Détails</div><dl class="fields">'+Object.keys(r).filter(k=>k!=="_row"&&!skip.includes(k)&&r[k]!=="").map(k=>'<div><dt>'+esc(k)+'</dt><dd>'+esc(k==="Date"?fmtDate(r[k]):r[k])+'</dd></div>').join("")+'</dl></div>'+
-    (wa?'<div><div class="label" style="margin-bottom:8px">Message WhatsApp préparé</div><p style="margin:0;color:var(--muted);font-size:14px">'+esc(msg)+'</p></div>':'');
-  $("sheetBody").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>setStatus(r,b.dataset.s));
-  $("mkDoc").onclick=()=>editDoc(fromRequest(r));
-  $("scrim").hidden=false;$("sheet").hidden=false;$("close").focus();
-  $("sheet").dataset.row=row;
-  render();
-}
-/* ---------- devis & factures ---------- */
-const SITE="https://www.sackoconcept.com/";
-const PRESETS=[["NettoPro – formule Standard",1],["NettoPro – formule Premium",1],["RH Pro – formule Standard",1],["RH Pro – formule Premium",1],["StockPro – formule Standard",1],["PhonePro – formule Standard",1],["Option Sérénité (par mois)",3],["Personnalisation à votre image",1],["Import de vos données Excel",1]];
-function docLink(d){return SITE+"document.html?t="+encodeURIComponent(d["Jeton"])}
-function curFrom(v){return SackoDocs.curCode(v)}
-function fromRequest(r){
-  const app=String(r["Application"]||r["Démo ouverte"]||"").split(" – ")[0];
-  const formule=r["Formule"]&&r["Formule"]!=="Je ne sais pas encore"?r["Formule"]:"Standard";
-  const L=[];if(app&&app!=="Sur mesure")L.push({desc:app+" – formule "+formule,qte:1,prix:0});
-  if(r["Option Sérénité"]==="Oui")L.push({desc:"Option Sérénité (par mois)",qte:3,prix:0});
-  return {Type:"Devis",Entreprise:r["Entreprise"]||"",Contact:r["Nom et prénom"]||r["Contact"]||"","E-mail":r["E-mail"]||"",WhatsApp:r["WhatsApp"]||"",Pays:r["Pays"]||"",Devise:curFrom(r["Devise"]||(r["Pays"]&&/France|Belgique|Suisse/.test(r["Pays"])?"EUR":/États-Unis|Canada|Royaume/.test(r["Pays"]||"")?"USD":"XOF")),Lignes:L.length?L:[{desc:"",qte:1,prix:0}],"Acompte %":Number(V["Acompte par défaut (%)"])||50,Notes:"",Origine:(r["Application"]||"")};
-}
-function addDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
-function editDoc(d){
-  d=JSON.parse(JSON.stringify(d||{Type:"Devis",Devise:"XOF",Lignes:[{desc:"",qte:1,prix:0}],"Acompte %":Number(V["Acompte par défaut (%)"])||50}));
-  if(typeof d.Lignes==="string"){try{d.Lignes=JSON.parse(d.Lignes)}catch(e){d.Lignes=[]}}
-  if(!d["Échéance"])d["Échéance"]=d.Type==="Devis"?addDays(Number(V["Validité devis (jours)"])||15):addDays(7);
-  else d["Échéance"]=String(d["Échéance"]).slice(0,10);
-  d.Devise=curFrom(d.Devise);
-  $("sheetTitle").textContent=d["Numéro"]?"Modifier "+d["Numéro"]:"Nouveau "+(d.Type==="Facture"?"document":"devis");
-  const f=(id,label,val,type)=>'<label>'+label+'<input id="'+id+'" type="'+(type||"text")+'" value="'+esc(val||"")+'"></label>';
-  $("sheetBody").innerHTML='<form class="ed" id="edf">'+
-    '<div class="row2"><label>Type<select id="e_type"><option'+(d.Type==="Devis"?" selected":"")+'>Devis</option><option'+(d.Type==="Facture"?" selected":"")+'>Facture</option></select></label><label>Devise<select id="e_cur"><option value="XOF"'+(d.Devise==="XOF"?" selected":"")+'>Franc CFA</option><option value="EUR"'+(d.Devise==="EUR"?" selected":"")+'>Euro (€)</option><option value="USD"'+(d.Devise==="USD"?" selected":"")+'>Dollar ($)</option></select></label></div>'+
-    '<div class="row2">'+f("e_ent","Entreprise",d.Entreprise)+f("e_con","Contact",d.Contact)+'</div>'+
-    '<div class="row2">'+f("e_mail","E-mail",d["E-mail"],"email")+f("e_wa","WhatsApp",d.WhatsApp,"tel")+'</div>'+
-    '<div class="row2">'+f("e_pays","Pays",d.Pays)+f("e_ech",d.Type==="Facture"?"À payer avant le":"Valable jusqu'au",d["Échéance"],"date")+'</div>'+
-    '<div><div class="label" style="margin-bottom:8px">Lignes</div><div class="lines" id="lines"></div><div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button type="button" class="btn sm" id="addLine">+ Ajouter une ligne</button></div><div class="presets" style="margin-top:8px">'+PRESETS.map((p,i)=>'<button type="button" data-p="'+i+'">+ '+esc(p[0])+'</button>').join("")+'</div></div>'+
-    '<div class="row2">'+f("e_dep","Acompte (%) — 0 pour tout payer d\'un coup",d["Acompte %"],"number")+f("e_momo","Lien Mobile Money (FedaPay, KKiaPay…)",d["Lien Mobile Money"]||"")+'</div>'+
-    '<label>Note pour le client<textarea id="e_notes">'+esc(d.Notes||"")+'</textarea></label>'+
-    '<div class="totbar"><span>Total</span><span id="e_tot"></span></div>'+
-    '<div class="acts"><button class="btn dark" type="submit" id="e_save">Enregistrer</button><button class="btn" type="button" id="e_cancel">Annuler</button></div><span class="err" id="e_err"></span></form>';
-  const drawLines=()=>{$("lines").innerHTML=d.Lignes.map((l,i)=>'<div class="line"><input aria-label="Description" data-i="'+i+'" data-k="desc" value="'+esc(l.desc)+'" placeholder="Description"><input aria-label="Quantité" data-i="'+i+'" data-k="qte" type="number" min="0" step="any" value="'+esc(l.qte)+'"><input aria-label="Prix unitaire" data-i="'+i+'" data-k="prix" type="number" min="0" step="any" value="'+esc(l.prix)+'" placeholder="Prix"><button type="button" data-del="'+i+'" aria-label="Retirer">×</button></div>').join("");tot()};
-  const tot=()=>{d.Devise=$("e_cur").value;$("e_tot").textContent=SackoDocs.money(SackoDocs.total(d),d.Devise)};
-  drawLines();
-  $("lines").oninput=e=>{const x=e.target;if(x.dataset.i==null)return;const l=d.Lignes[+x.dataset.i];l[x.dataset.k]=x.dataset.k==="desc"?x.value:Number(x.value);tot()};
-  $("lines").onclick=e=>{const b=e.target.closest("[data-del]");if(b){d.Lignes.splice(+b.dataset.del,1);if(!d.Lignes.length)d.Lignes.push({desc:"",qte:1,prix:0});drawLines()}};
-  $("addLine").onclick=()=>{d.Lignes.push({desc:"",qte:1,prix:0});drawLines()};
-  $("sheetBody").querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{const p=PRESETS[+b.dataset.p];const empty=d.Lignes.findIndex(l=>!l.desc);const L={desc:p[0],qte:p[1],prix:0};if(empty>=0)d.Lignes[empty]=L;else d.Lignes.push(L);drawLines()});
-  $("e_cur").onchange=tot;
-  $("e_cancel").onclick=()=>d.row?openDoc(rowsOf("documents").find(x=>x._row===d.row)):closeSheet();
-  $("edf").onsubmit=async e=>{
-    e.preventDefault();
-    const out=Object.assign({},d,{Type:$("e_type").value,Devise:$("e_cur").value,Entreprise:$("e_ent").value.trim(),Contact:$("e_con").value.trim(),"E-mail":$("e_mail").value.trim(),WhatsApp:$("e_wa").value.trim(),Pays:$("e_pays").value.trim(),"Échéance":$("e_ech").value,"Acompte %":Number($("e_dep").value)||0,"Lien Mobile Money":$("e_momo").value.trim(),Notes:$("e_notes").value.trim()});
-    out.Lignes=d.Lignes.filter(l=>l.desc);out.Total=SackoDocs.total(out);
-    if(!out.Entreprise&&!out.Contact){$("e_err").textContent="Indiquez au moins l'entreprise ou le contact.";return}
-    if(!out.Lignes.length){$("e_err").textContent="Ajoutez au moins une ligne.";return}
-    $("e_save").disabled=true;$("e_save").textContent="Enregistrement…";
-    try{
-      let saved;
-      if(demo){saved=Object.assign({},out,{"Numéro":out["Numéro"]||(out.Type==="Facture"?"FAC":"DEV")+"-2026-00"+(rowsOf("documents").length+1),Jeton:out.Jeton||"exemple"+Date.now(),Date:out.Date||new Date().toISOString(),Statut:out.Statut||"Brouillon"});saved.row=out.row||(100+rowsOf("documents").length)}
-      else{const j=await api({action:"enregistrer",data:JSON.stringify(Object.assign({},out,{row:d.row||""}))});if(!j.ok)throw new Error(j.erreur);saved=j.doc;if(j.code&&out["E-mail"])codes[out["E-mail"].toLowerCase()]=j.code}
-      upsertDoc(saved);toast((saved.Type||"Document")+" "+saved["Numéro"]+" enregistré");tab="documents";filter="Tous";render();openDoc(rowsOf("documents").find(x=>x._row===saved.row));
-    }catch(err){$("e_save").disabled=false;$("e_save").textContent="Enregistrer";$("e_err").textContent="L'enregistrement n'a pas abouti. Vérifiez votre connexion et réessayez."}
-  };
-  $("scrim").hidden=false;$("sheet").hidden=false;$("e_ent").focus();
-}
-function upsertDoc(o){
-  const t=data.documents;const vals=t.headers.map(h=>h==="Lignes"&&typeof o[h]!=="string"?JSON.stringify(o[h]||[]):(o[h]??""));
-  const ex=t.rows.find(x=>x.row===o.row);if(ex)ex.values=vals;else t.rows.push({row:o.row,values:vals});
-}
-function docMsg(d){
-  const first=String(d.Contact||"").split(" ")[0]||"";const code=codes[String(d["E-mail"]||"").toLowerCase()];
-  const amt=SackoDocs.money(SackoDocs.total(d),d.Devise);
-  return "Bonjour "+first+", c'est Hawa de SACKO CONCEPT. Voici votre "+(d.Type==="Facture"?"facture":"devis")+" "+d["Numéro"]+" ("+amt+") : "+docLink(d)+
-    (d.Type==="Facture"?"\nVous pouvez la régler directement depuis ce lien.":"\nVous pouvez l'accepter directement depuis ce lien.")+
-    (code?"\n\nVotre espace client : "+SITE+"espace-client.html\nE-mail : "+d["E-mail"]+"\nCode : "+code:"");
-}
-function openDoc(r){
-  if(!r)return closeSheet();
-  tab="documents";
-  const st=r.Statut||"Brouillon", wa=digits(r.WhatsApp), msg=docMsg(r);
-  $("sheetTitle").textContent=r.Type+" "+r["Numéro"];
-  $("sheetBody").innerHTML=
-    '<div class="acts">'+
-      (wa?'<a class="btn dark" id="d_wa" href="https://wa.me/'+wa+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener">Envoyer par WhatsApp</a>':'')+
-      (r["E-mail"]?'<a class="btn" id="d_mail" href="mailto:'+esc(r["E-mail"])+'?subject='+encodeURIComponent((r.Type==="Facture"?"Facture ":"Devis ")+r["Numéro"]+" – SACKO CONCEPT")+'&body='+encodeURIComponent(msg)+'">E-mail</a>':'')+
-      '<button class="btn" id="d_copy">Copier le lien</button>'+
-      '<a class="btn" href="'+esc(docLink(r))+'" target="_blank" rel="noopener">Voir comme le client</a>'+
-      '<button class="btn" id="d_edit">Modifier</button>'+
-      (r.Type==="Devis"?'<button class="btn" id="d_inv">Transformer en facture</button>':'')+
-    '</div>'+
-    '<div><div class="label" style="margin-bottom:8px">Statut</div><div class="status-row">'+TABS.documents.statuses.filter(s=>r.Type==="Devis"?!["Paiement à vérifier","Payée"].includes(s):s!=="Accepté").map(s=>'<button type="button" data-s="'+esc(s)+'" aria-pressed="'+(s===st)+'">'+esc(s)+'</button>').join("")+'</div></div>'+
-    (st==="Paiement à vérifier"?'<div class="banner" style="margin:0">Le client dit avoir payé. Vérifiez votre PayPal ou Mobile Money, puis touchez « Payée ».</div>':'')+
-    (st==="Accepté"?'<div class="banner" style="margin:0">Le client a accepté ce devis. Touchez « Transformer en facture » pour lui envoyer la facture.</div>':'')+
-    (r["E-mail"]&&codes[String(r["E-mail"]).toLowerCase()]?'<div style="font-size:13px;color:var(--muted)">Code espace client : <b style="font-family:var(--mono);color:var(--fg)">'+esc(codes[String(r["E-mail"]).toLowerCase()])+'</b></div>':'')+
-    '<div class="docprev">'+SackoDocs.render(r,V,{logo:"../assets/sacko-logo-512.png"})+'</div>';
-  $("sheetBody").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>setStatus(r,b.dataset.s));
-  $("d_copy").onclick=async()=>{try{await navigator.clipboard.writeText(docLink(r));toast("Lien copié")}catch(e){prompt("Copiez ce lien :",docLink(r))}};
-  $("d_edit").onclick=()=>editDoc(Object.assign({},r,{row:r._row}));
-  const inv=$("d_inv");if(inv)inv.onclick=()=>{const c=Object.assign({},r);["Numéro","Jeton","Date","Statut","Échéance","Payé","_row","row"].forEach(k=>delete c[k]);c.Type="Facture";c.Origine=r["Numéro"];editDoc(c)};
-  const markSent=()=>{if(st==="Brouillon")setStatus(r,"Envoyé",true)};
-  ["d_wa","d_mail"].forEach(id=>{const el=$(id);if(el)el.addEventListener("click",markSent)});
-  $("scrim").hidden=false;$("sheet").hidden=false;
-  render();
-}
-/* ---------- Mes informations ---------- */
-const SETTINGS=["Nom légal","Adresse","EIN","E-mail","Téléphone / WhatsApp","Site","PayPal","Lien Mobile Money par défaut","Acompte par défaut (%)","Validité devis (jours)","Conditions","Virement bancaire"];
-function openSettings(){
-  $("sheetTitle").textContent="Mes informations";
-  $("sheetBody").innerHTML='<form class="ed" id="sf"><p style="margin:0;color:var(--muted);font-size:14px">Ces informations apparaissent sur tous vos devis et factures, avec votre logo.</p>'+
-    SETTINGS.map((k,i)=>'<label>'+esc(k)+(["Conditions","Virement bancaire","Adresse"].includes(k)?'<textarea id="s'+i+'">'+esc(V[k]||"")+'</textarea>':'<input id="s'+i+'" value="'+esc(V[k]||"")+'">')+'</label>').join("")+
-    '<small style="color:var(--muted)">« Virement bancaire » : laissez vide si vous ne l\'utilisez pas. Ce texte s\'affiche sur les factures.</small>'+
-    '<div class="acts"><button class="btn dark" type="submit" id="s_save">Enregistrer</button></div><span class="err" id="s_err"></span></form>';
-  $("sf").onsubmit=async e=>{e.preventDefault();const vals={};SETTINGS.forEach((k,i)=>vals[k]=$("s"+i).value.trim());
-    if(demo){Object.assign(V,vals);toast("Enregistré (exemple)");closeSheet();return}
-    $("s_save").disabled=true;try{const j=await api({action:"parametres",data:JSON.stringify(vals)});if(!j.ok)throw 0;V=j.vendeur;toast("Informations enregistrées");closeSheet()}catch(err){$("s_save").disabled=false;$("s_err").textContent="L'enregistrement n'a pas abouti. Réessayez."}};
-  $("scrim").hidden=false;$("sheet").hidden=false;
-}
-
-function closeSheet(){$("scrim").hidden=true;$("sheet").hidden=true}
-async function setStatus(r,s,quiet){
-  const old=r.Statut;
-  const t=data[tab];const i=t.headers.indexOf("Statut");const raw=t.rows.find(x=>x.row===r._row);
-  if(i>=0&&raw)raw.values[i]=s;
-  if(!quiet)openItem(r._row);
-  if(demo){if(!quiet)toast("Statut : "+s+" (exemple)");return}
-  try{const j=await api({action:"statut",feuille:tab,row:r._row,statut:s});if(!j.ok)throw 0;toast("Statut enregistré : "+s)}
-  catch(e){if(i>=0&&raw)raw.values[i]=old;openItem(r._row);toast("Le statut n'a pas pu être enregistré. Vérifiez votre connexion.")}
-}
-
-/* ---------- events ---------- */
-document.querySelectorAll(".counter").forEach(c=>c.onclick=()=>{tab=c.dataset.tab;filter="Tous";render()});
-$("filters").onclick=e=>{const b=e.target.closest("[data-f]");if(b){filter=b.dataset.f;render()}};
-$("list").onclick=e=>{const b=e.target.closest(".item");if(b)openItem(parseInt(b.dataset.row,10))};
-$("q").oninput=render;
-$("close").onclick=closeSheet;$("scrim").onclick=closeSheet;
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
-$("refresh").onclick=()=>load(false);
-$("settings").onclick=openSettings;
-$("newDoc").onclick=()=>editDoc();
-$("bell").onclick=()=>{const p=$("notifs");if(!p.hidden){p.hidden=true;return}
-  p.innerHTML=notifs.length?notifs.slice(0,12).map((n,i)=>'<button data-i="'+i+'">'+esc(lab(n))+'<small>'+esc((n.r[TABS[n.k].name]||n.r[TABS[n.k].person]||"")+" · "+fmtDate(n.r.Date))+'</small></button>').join(""):'<div style="padding:14px;color:var(--muted);font-size:14px">Aucune nouvelle notification.</div>';
-  p.hidden=false;
-  p.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{const n=notifs[+b.dataset.i];p.hidden=true;tab=n.k;filter="Tous";render();openItem(n.r._row)});
-};
-document.addEventListener("click",e=>{if(!e.target.closest("#notifs")&&!e.target.closest("#bell"))$("notifs").hidden=true});
-function start(){
-  $("login").hidden=true;$("app").hidden=false;$("demoBanner").hidden=!demo;
-  if("Notification" in window&&Notification.permission==="default"&&!demo)$("permBanner").hidden=false;
-  load(true);clearInterval(timer);timer=setInterval(()=>load(false),60000);
-}
-function logout(){store.del("sc_key");key=null;demo=false;data=null;clearInterval(timer);$("app").hidden=true;$("login").hidden=false}
-$("logout").onclick=logout;
-$("allow").onclick=async()=>{try{const p=await Notification.requestPermission();$("permBanner").hidden=true;toast(p==="granted"?"Notifications activées":"Notifications refusées")}catch(e){$("permBanner").hidden=true}};
-$("loginForm").onsubmit=async e=>{
-  e.preventDefault();$("loginErr").textContent="";
-  const c=$("code").value.trim();if(!c){$("loginErr").textContent="Entrez votre code d'accès.";return}
-  if(URL_API.startsWith("COLLER")){$("loginErr").textContent="L'application n'est pas encore reliée à la feuille Google. Utilisez « Voir avec des exemples » en attendant.";return}
-  key=c;demo=false;
-  try{const j=await api();if(!j.ok){$("loginErr").textContent="Code d'accès incorrect.";key=null;return}store.set("sc_key",c);data=j.data;start()}
-  catch(err){$("loginErr").textContent="Connexion impossible. Vérifiez votre réseau.";key=null}
-};
-$("demoBtn").onclick=()=>{demo=true;key=null;data=sample();store.del("sc_seen_demo");start();
-  setTimeout(()=>{if(!demo||!data)return;data.inscriptions.rows.push({row:99,values:[new Date().toISOString(),"Ibrahim Sow","Sow Distribution","ibrahim@sowdistri.sn","+221 78 000 00 00","StockPro","À relancer"]});load(false)},7000)};
-if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(()=>{})}
-const saved=store.get("sc_key");
-if(saved&&!URL_API.startsWith("COLLER")){key=saved;start()}
-</script>
+<script src="app.js"></script>
 </body>
 </html>

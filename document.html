@@ -87,8 +87,9 @@ function show(){
       (pp?'<a class="btn btn-gold" href="'+pp+'" target="_blank" rel="noopener">Payer par carte ou PayPal</a>':'')+
       (ppAll?'<a class="btn btn-ghost" href="'+ppAll+'" target="_blank" rel="noopener">Payer la totalité ('+S.money(tot,cur)+')</a>':'')+
       (momo?'<a class="btn '+(pp?'btn-ghost':'btn-gold')+'" href="'+S.esc(momo)+'" target="_blank" rel="noopener">Payer par Mobile Money</a>':'')+
+      (V["Numéro Mobile Money"]?'<div class="sep"></div><small>'+(momo?"Ou par transfert Mobile Money :":"Par Mobile Money (MTN, Moov, Orange, Wave…) :")+'</small><div class="bank">'+S.esc(V["Numéro Mobile Money"])+'\nMotif : '+S.esc(D["Numéro"])+'</div>':'')+
       (V["Virement bancaire"]?'<div class="sep"></div><small>Ou par virement bancaire :</small><div class="bank">'+S.esc(V["Virement bancaire"])+'</div>':'')+
-      (!pp&&!momo&&!V["Virement bancaire"]?'<small>Les moyens de paiement vous sont envoyés par WhatsApp.</small>':'')+
+      (!pp&&!momo&&!V["Virement bancaire"]&&!V["Numéro Mobile Money"]?'<small>Les moyens de paiement vous sont envoyés par WhatsApp.</small>':'')+
       '<div class="sep"></div><button class="btn btn-ghost" id="paid">J\'ai payé, prévenir SACKO CONCEPT</button><span class="msg" id="pmsg" aria-live="polite"></span>';
   }
   box+='<div class="sep"></div><button class="btn btn-ghost" id="pdf">Télécharger en PDF</button><a class="btn btn-ghost" href="espace-client.html">Mon espace client</a></aside>';
@@ -104,7 +105,7 @@ function show(){
 function alertBox(m){const el=document.createElement("p");el.className="msg err";el.textContent=m;view.querySelector(".paybox").appendChild(el)}
 (async()=>{
   if(!t){view.textContent="Lien incomplet. Ouvrez le lien reçu par WhatsApp ou par e-mail.";return}
-  try{const j=await call({action:"doc",t});if(!j.ok){view.textContent="Ce document est introuvable. Vérifiez le lien ou contactez sackoconcept8@gmail.com.";return}D=j.doc;V=j.vendeur||{};show()}
+  try{const j=await call({action:"doc",t,vue:"1"});if(!j.ok){view.textContent="Ce document est introuvable. Vérifiez le lien ou contactez sackoconcept8@gmail.com.";return}D=j.doc;V=j.vendeur||{};show()}
   catch(e){view.textContent="Connexion impossible. Vérifiez votre réseau et rechargez la page."}
 })();
 </script>

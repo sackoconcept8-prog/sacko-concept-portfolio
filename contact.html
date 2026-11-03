@@ -63,5 +63,7 @@ document.getElementById("copy").addEventListener("click",function(){var t=docume
 function sel(){var r=document.createRange();r.selectNodeContents(document.getElementById("mail"));var s=getSelection();s.removeAllRanges();s.addRange(r);o.textContent="Adresse sélectionnée, copiez-la.";}
 try{navigator.clipboard.writeText(t).then(function(){o.textContent="Adresse copiée.";},sel);}catch(e){sel();}});
 </script>
+<script src="sacko-config.js"></script>
+<script src="sacko-track.js" defer></script>
 </body>
 </html>
