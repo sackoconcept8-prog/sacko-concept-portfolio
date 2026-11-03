@@ -2,6 +2,7 @@
 (function () {
   try {
     if (navigator.webdriver || location.hostname === "localhost") return;
+    try { if (localStorage.getItem("sc_moi") === "1") return; } catch (e) {}
     var url = window.SACKO_SCRIPT_URL; if (!url || url.indexOf("COLLER") === 0) return;
     var vid; try { vid = localStorage.getItem("sc_vid"); if (!vid) { vid = Math.random().toString(36).slice(2, 12); localStorage.setItem("sc_vid", vid); } } catch (e) { vid = "anonyme"; }
     var q = new URLSearchParams(location.search);

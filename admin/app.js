@@ -464,6 +464,7 @@ $("bell").onclick=()=>{const p=$("notifs");if(!p.hidden){p.hidden=true;return}
 };
 document.addEventListener("click",e=>{if(!e.target.closest("#notifs")&&!e.target.closest("#bell"))$("notifs").hidden=true});
 function start(){
+  if(!demo)store.set("sc_moi","1");
   $("login").hidden=true;$("app").hidden=false;$("demoBar").hidden=!demo;
   if("Notification" in window&&Notification.permission==="default"&&!demo)$("permBar").hidden=false;
   setView("home");load(true);clearInterval(timer);timer=setInterval(()=>load(false),60000);
