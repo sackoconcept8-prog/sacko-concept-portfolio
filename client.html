@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Espace client SACKO CONCEPT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Clients SACKO CONCEPT : demandez une mise à jour de votre application.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="sacko-apps.css">
+<link rel="icon" href="assets/sacko-logo-96.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="logo" href="index.html"><img src="assets/sacko-logo-96.png" alt="" width="38" height="38"><b>SACKO CONCEPT</b></a>
+    <div class="navlinks">
+      <a href="index.html">Accueil</a>
+      <a href="applications.html">Applications</a>
+      <a href="offres.html">Offres</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="navcta"><a class="navlink-client hide-sm" href="client.html">Espace client</a><a class="btn btn-ghost hide-sm" href="devis.html">Demander un devis</a><a class="btn btn-gold" href="commencer.html">Commencer gratuitement</a></div>
+  </div>
+</nav>
+<header class="pagehead"><div class="wrap"><div class="eyebrow">Espace client</div><h1>On s'occupe de votre application</h1><p>Vous êtes client SACKO CONCEPT ? Dites-nous ce qu'il faut changer : nouveaux produits, prix, stock, salariés, utilisateurs ou documents. On met votre application à jour pour vous.</p></div></header>
+<section style="padding-top:24px"><div class="wrap"><div class="form-wrap">
+<form class="qform" id="devis" novalidate>
+  <fieldset>
+    <legend>Votre compte</legend>
+    <div class="f"><label for="entreprise">Entreprise <i>*</i></label><input id="entreprise" name="entreprise" required autocomplete="organization"></div>
+    <div class="f"><label for="nom">Votre nom <i>*</i></label><input id="nom" name="nom" required autocomplete="name"></div>
+    <div class="f"><label for="email">E-mail <i>*</i></label><input id="email" name="email" type="email" required autocomplete="email"></div>
+    <div class="f"><label for="whatsapp">WhatsApp <i>*</i></label><input id="whatsapp" name="whatsapp" type="tel" required placeholder="+229 …" autocomplete="tel"></div>
+    <div class="f full"><span class="lab">Votre application <i>*</i></span><div class="opts"><label><input type="radio" name="application" value="NettoPro" required> NettoPro</label><label><input type="radio" name="application" value="RH Pro"> RH Pro</label><label><input type="radio" name="application" value="StockPro"> StockPro</label><label><input type="radio" name="application" value="PhonePro"> PhonePro</label><label><input type="radio" name="application" value="Autre"> Autre</label></div></div>
+  </fieldset>
+  <fieldset>
+    <legend>Votre demande</legend>
+    <div class="f full"><span class="lab">Type de demande <i>*</i></span><div class="opts"><label><input type="radio" name="demande" value="Ajouter ou modifier des produits, prix ou stock" required> Ajouter ou modifier des produits, prix ou stock</label><label><input type="radio" name="demande" value="Ajouter ou retirer des salariés ou utilisateurs"> Ajouter ou retirer des salariés ou utilisateurs</label><label><input type="radio" name="demande" value="Mettre à jour des documents"> Mettre à jour des documents</label><label><input type="radio" name="demande" value="Changer le logo ou les couleurs"> Changer le logo ou les couleurs</label><label><input type="radio" name="demande" value="Signaler un problème"> Signaler un problème</label><label><input type="radio" name="demande" value="Nouvelle fonction"> Nouvelle fonction</label></div></div>
+    <div class="f full"><label for="besoins">Détail de la demande <i>*</i></label><textarea id="besoins" name="besoins" required placeholder="Ex. : ajouter les 12 nouveaux modèles de la liste jointe, passer le prix du Galaxy S26 à 650 000 F CFA…"></textarea></div>
+    <div class="f full"><span class="lab">Urgence</span><div class="opts"><label><input type="radio" name="urgence" value="Normale (sous 48 h)" checked> Normale (sous 48 h)</label><label><input type="radio" name="urgence" value="Urgente (sous 24 h)"> Urgente (sous 24 h)</label></div></div>
+  </fieldset>
+  <fieldset>
+    <legend>Vos fichiers</legend>
+    <div class="f full">
+      <div class="drop" id="drop" tabindex="0" role="button" aria-label="Ajouter des fichiers"><b>Ajoutez vos fichiers</b> ou glissez-les ici<br><small>Liste de produits, photos, fichier Excel des salariés… 10 Mo au total.</small></div>
+      <input type="file" id="files" multiple accept=".xlsx,.xls,.csv,.pdf,.doc,.docx,.png,.jpg,.jpeg,.webp" hidden>
+      <ul class="filelist" id="filelist"></ul>
+    </div>
+  </fieldset>
+  <label class="consent"><input type="checkbox" id="consent" name="consent" required> <span>Je confirme être client(e) SACKO CONCEPT. <i style="color:#C2410C;font-style:normal">*</i></span></label>
+  <div class="submit-row"><button class="btn btn-gold" type="submit" id="send">Envoyer ma demande</button><span class="msg" id="msg" aria-live="polite"></span></div>
+</form>
+<aside class="side-card">
+  <h3>Comment ça marche</h3>
+  <ol><li><b>Vous envoyez</b> vos changements et vos fichiers ici.</li><li><b>On met à jour</b> votre application sous 48 heures, 24 heures si c'est urgent.</li><li><b>On vous prévient</b> sur WhatsApp quand c'est fait.</li></ol>
+  <p style="color:var(--muted);font-size:14px">Inclus dans la formule Sérénité. Sans Sérénité, chaque mise à jour fait l'objet d'un petit devis.</p>
+  <a class="btn btn-ghost" href="offres.html">Voir la formule Sérénité</a>
+</aside>
+</div></div></section>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div><a class="logo" href="index.html"><img src="assets/sacko-logo-96.png" alt="" width="38" height="38"><b>SACKO CONCEPT</b></a><p>Applications de gestion et identité de marque pour les PME, en français et en anglais.</p></div>
+      <div><h4>Applications</h4><ul><li><a href="applications.html#nettopro">NettoPro</a></li><li><a href="applications.html#rhpro">RH Pro</a></li><li><a href="applications.html#stockpro">StockPro</a></li><li><a href="applications.html#phonepro">PhonePro</a></li></ul></div>
+      <div><h4>Studio</h4><ul><li><a href="index.html#methode">Méthode</a></li><li><a href="offres.html">Offres</a></li><li><a href="contact.html#faq">FAQ</a></li><li><a href="client.html">Espace client</a></li><li><a href="studio.html">Boutique et packs</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Réserver un appel</a></li><li><a href="contact.html">sackoconcept8@gmail.com</a></li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 SACKO CONCEPT LLC · Albuquerque, NM</span><span>sackoconcept.com</span></div>
+  </div>
+</footer>
+<script data-goatcounter="https://sackoconcept.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="sacko-config.js"></script>
+<script>
+const SCRIPT_URL = window.SACKO_SCRIPT_URL || "COLLER";
+const MAX = 10*1024*1024;
+const f=document.getElementById("devis"), msg=document.getElementById("msg"), send=document.getElementById("send");
+const drop=document.getElementById("drop"), input=document.getElementById("files"), list=document.getElementById("filelist");
+let files=[];
+const APPS={nettopro:0,rhpro:1,stockpro:2,phonepro:3};
+const h=(location.hash||"").slice(1); if(h in APPS){f.querySelectorAll('input[name="application"]')[APPS[h]].checked=true;}
+function size(n){return n>1048576?(n/1048576).toFixed(1)+" Mo":Math.max(1,Math.round(n/1024))+" Ko"}
+function render(){list.innerHTML="";files.forEach((x,i)=>{const li=document.createElement("li");li.innerHTML="<span></span><button type='button'>Retirer</button>";li.firstChild.textContent=x.name+" · "+size(x.size);li.lastChild.onclick=()=>{files.splice(i,1);render()};list.appendChild(li)})}
+function add(fl){for(const x of fl){files.push(x)}const t=files.reduce((a,b)=>a+b.size,0);if(t>MAX){msg.className="msg err";msg.textContent="Les fichiers dépassent 10 Mo au total. Retirez-en un ou envoyez-les par e-mail.";}else{msg.textContent=""}render()}
+drop.onclick=()=>input.click();drop.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();input.click()}};
+input.onchange=()=>{add(input.files);input.value=""};
+["dragover","dragenter"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over")}));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("over")}));
+drop.addEventListener("drop",e=>add(e.dataTransfer.files));
+function b64(file){return new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=ko;r.readAsDataURL(file)})}
+f.addEventListener("submit",async e=>{
+  e.preventDefault();msg.className="msg";
+  if(!f.checkValidity()){const bad=f.querySelector(":invalid");msg.className="msg err";msg.textContent="Remplissez les champs marqués d'une étoile.";bad&&bad.focus();return}
+  if(files.reduce((a,b)=>a+b.size,0)>MAX){msg.className="msg err";msg.textContent="Les fichiers dépassent 10 Mo au total.";return}
+  const data=Object.fromEntries(new FormData(f).entries());data.type="client";
+  send.disabled=true;send.textContent="Envoi en cours…";
+  try{
+    data.fichiers=await Promise.all(files.map(async x=>({name:x.name,type:x.type||"application/octet-stream",data:await b64(x)})));
+    if(SCRIPT_URL.startsWith("COLLER")) throw new Error("config");
+    await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)});
+    f.innerHTML='<div class="done"><div class="ok">✓</div><h2 style="font-size:28px">Demande reçue</h2><p style="color:var(--muted);max-width:44ch">Merci. Nous traitons votre demande et vous prévenons sur WhatsApp dès que votre application est à jour.</p><a class="btn btn-gold" href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Réserver un appel si besoin</a></div>';
+  }catch(err){
+    send.disabled=false;send.textContent="Envoyer ma demande";msg.className="msg err";
+    msg.textContent=err.message==="config"?"Le formulaire n'est pas encore relié à la feuille Google. Écrivez-nous à sackoconcept8@gmail.com.":"L'envoi n'a pas abouti. Vérifiez votre connexion et réessayez, ou écrivez-nous à sackoconcept8@gmail.com.";
+  }
+});
+</script>
+</body>
+</html>
