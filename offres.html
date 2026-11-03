@@ -26,36 +26,58 @@
     <div class="navcta"><a class="navlink-client hide-sm" href="espace-client.html">Espace client</a><a class="btn btn-ghost hide-sm" href="devis.html">Demander un devis</a><a class="btn btn-gold" href="commencer.html"><span class="lg-label">Commencer gratuitement</span><span class="sm-label">Essai gratuit</span></a></div>
   </div>
 </nav>
-<header class="pagehead"><div class="wrap"><div class="eyebrow">Offres</div><h1>Un prix qui suit la taille de votre entreprise</h1><p>Deux formules principales et une option de suivi. Le montant dépend du nombre d'utilisateurs et des fonctions dont vous avez besoin.</p></div></header>
-<section id="offres">
+<header class="pagehead"><div class="wrap"><div class="eyebrow">Offres</div><h1>Des prix clairs, pour chaque métier</h1><p>Choisissez votre application et votre devise. Deux formules, une option de suivi, un devis gratuit sous 24 heures.</p></div></header>
+<section id="offres" class="pricing">
   <div class="wrap">
-    <div class="head">
-      <p>Les montants dépendent du nombre d'utilisateurs et des fonctions. Demandez votre devis : réponse sous 24 heures.</p>
-    </div>
-    <div class="plans">
-      <div class="plan">
-        <h3>Standard</h3>
-        <div class="price">À partir de <b>sur devis</b></div>
-        <ul><li>L'application de votre secteur à votre image</li><li>Jusqu'à 50 utilisateurs</li><li>Import de vos fichiers Excel</li><li>Version ordinateur et mobile</li></ul>
-        <a class="btn btn-ghost" href="devis.html">Demander un devis</a>
+    <div class="pr-bar">
+      <div class="pr-seg" role="group" aria-label="Choisir l'application">
+        <button type="button" data-app="nettopro" aria-pressed="true">NettoPro</button>
+        <button type="button" data-app="rhpro" aria-pressed="false">RH Pro</button>
+        <button type="button" data-app="stockpro" aria-pressed="false">StockPro</button>
+        <button type="button" data-app="phonepro" aria-pressed="false">PhonePro</button>
       </div>
-      <div class="plan feat">
-        <span class="badge">LE PLUS CHOISI</span>
-        <h3>Premium</h3>
-        <div class="price">À partir de <b>sur devis</b></div>
-        <ul><li>Tout le Standard</li><li>Tous les espaces : direction, équipe, clients</li><li>Publication Play Store et App Store</li><li>Hébergement un an et code source remis</li></ul>
-        <a class="btn btn-gold" href="devis.html">Demander un devis</a>
-      </div>
-      <div class="plan">
-        <h3>Sérénité</h3>
-        <div class="price">En option, <b>mensuel</b></div>
-        <ul><li>Vous envoyez vos changements, on met l'application à jour</li><li>Nouveaux produits, stocks et utilisateurs</li><li>Assistance prioritaire</li></ul>
-        <a class="btn btn-ghost" href="espace-client.html">Espace client</a>
+      <div class="pr-seg pr-cur" role="group" aria-label="Choisir la devise">
+        <button type="button" data-cur="xof" aria-pressed="false">F CFA</button>
+        <button type="button" data-cur="eur" aria-pressed="true">€</button>
+        <button type="button" data-cur="usd" aria-pressed="false">$</button>
       </div>
     </div>
-    <p class="promo"><b>Offre de fin d'année :</b> −15 % sur toute commande confirmée avant le 31 décembre 2026.</p>
+    <p class="pr-for" id="prFor">Pour les sociétés de nettoyage : agents, sites, contrats et factures.</p>
+    <div class="pr-grid">
+      <article class="pr-card">
+        <div class="pr-top"><h3>Standard</h3><span class="pr-tag">Application web</span></div>
+        <p class="pr-desc">Pour démarrer simplement. S'ouvre avec un lien, sur tous les téléphones et ordinateurs.</p>
+        <div class="pr-price"><small>À partir de</small><b data-k="std">290 €</b><span>paiement unique · hébergement 1 an inclus</span></div>
+        <ul class="pr-list" id="lStd"></ul>
+        <p class="pr-time" id="tStd">Livraison sous 4 semaines</p>
+        <a class="btn btn-ghost pr-cta" data-cta="Standard" href="devis.html#nettopro">Demander mon devis Standard</a>
+      </article>
+      <article class="pr-card pr-feat">
+        <span class="pr-badge">Recommandé</span>
+        <div class="pr-top"><h3>Premium</h3><span class="pr-tag">Votre app sur les stores</span></div>
+        <p class="pr-desc">Une vraie application Android et iPhone à votre nom, pour toute votre équipe.</p>
+        <div class="pr-price"><small>À partir de</small><b data-k="pre">790 €</b><span>paiement unique · renouvellement dès <i data-k="ren">190 €</i> par an</span></div>
+        <ul class="pr-list" id="lPre"></ul>
+        <p class="pr-time">Livraison sous 6 à 8 semaines</p>
+        <a class="btn btn-gold pr-cta" data-cta="Premium" href="devis.html#nettopro">Demander mon devis Premium</a>
+      </article>
+      <article class="pr-card">
+        <div class="pr-top"><h3>Option Sérénité</h3><span class="pr-tag">On gère tout pour vous</span></div>
+        <p class="pr-desc">À ajouter à votre formule. Vous vous concentrez sur vos clients, nous nous occupons de l'application.</p>
+        <div class="pr-price"><small>À partir de</small><b data-k="ser">+ 49 €</b><span>par mois · mise en place dès <i data-k="std2">290 €</i></span></div>
+        <ul class="pr-list" id="lSer"></ul>
+        <p class="pr-time">Résiliable avec un mois de préavis</p>
+        <a class="btn btn-ghost pr-cta" data-cta="Sérénité" href="devis.html#nettopro">Demander mon devis Sérénité</a>
+      </article>
+    </div>
+    <div class="pr-notes">
+      <div><b>Prévente</b> : acompte de 30 % à la commande, solde à la livraison. Remboursement intégral si nous ne livrons pas dans les délais.</div>
+      <div><b>Offre de fin d'année</b> : −15 % sur votre formule jusqu'au 31 décembre 2026.</div>
+      <div><a id="prPage" href="nettopro/">Voir la page complète de NettoPro →</a></div>
+    </div>
   </div>
 </section>
+
 
 <section style="padding-top:0">
   <div class="wrap">
@@ -70,7 +92,7 @@
       </div>
       <div class="cmp us">
         <h3>SACKO CONCEPT</h3>
-        <dl><dt>Délai</dt><dd>Quelques jours</dd><dt>Budget</dt><dd>Adapté à la taille de votre entreprise</dd><dt>Avant de payer</dt><dd>Une démo complète à tester</dd><dt>Après livraison</dt><dd>Formule Sérénité au choix</dd></dl>
+        <dl><dt>Délai</dt><dd>3 à 8 semaines</dd><dt>Budget</dt><dd>Adapté à la taille de votre entreprise</dd><dt>Avant de payer</dt><dd>Une démo complète à tester</dd><dt>Après livraison</dt><dd>Formule Sérénité au choix</dd></dl>
       </div>
     </div>
   </div>
@@ -100,6 +122,47 @@
     <div class="legal"><span>© 2026 SACKO CONCEPT LLC · Albuquerque, NM</span><span><a href="cgv.html">Conditions de vente</a> · <a href="confidentialite.html">Confidentialité</a></span></div>
   </div>
 </footer>
+<script>
+(function(){
+  var P={
+    nettopro:{n:"NettoPro",f:"Pour les sociétés de nettoyage : agents, sites, contrats et factures.",t:"4 semaines",eur:[290,790,190,49],usd:[299,849,199,49],xof:[190000,520000,125000,32000],
+      std:["Espace gérant et espace client","Espace agent jusqu'à 50 agents","Devis, factures, relances, contrats","Planning, tâches et rappels","Votre logo, vos couleurs, votre devise"],
+      pre:["Applications Android et iPhone à votre nom","Agents illimités","Pointage GPS, photos avant / après","Rapports de rentabilité par client et par agent"]},
+    rhpro:{n:"RH Pro",f:"Pour les PME, hôtels, écoles et cliniques qui gèrent leurs salariés.",t:"4 semaines",eur:[290,790,190,49],usd:[299,849,199,49],xof:[190000,520000,125000,32000],
+      std:["Espace dirigeant, espace employé, candidatures","Dossiers salariés, congés et absences","Attestations et documents RH","Signalements des employés","Votre logo, vos couleurs, votre devise"],
+      pre:["Applications Android et iPhone à votre nom","Salariés illimités","Fiches de paie, heures sup et primes","Avances sur salaire et notes de frais"]},
+    stockpro:{n:"StockPro",f:"Pour les boutiques et commerçants qui suivent leur stock au jour près.",t:"3 semaines",eur:[190,590,120,29],usd:[199,649,129,29],xof:[95000,290000,75000,19000],
+      std:["Espace gérant et espace vendeur","Produits, photos, prix et stock","Ventes et alertes de stock faible","Catalogue à partager aux clients","Votre logo, vos couleurs, votre devise"],
+      pre:["Applications Android et iPhone à votre nom","Vendeurs et boutiques illimités","Rapports de ventes par vendeur, pertes","Clôture de caisse du jour, exports Excel"]},
+    phonepro:{n:"PhonePro",f:"Pour les vendeurs de téléphones haut de gamme : stock, ventes, reprises.",t:"3 semaines",eur:[220,690,140,35],usd:[239,749,149,39],xof:[125000,350000,85000,25000],
+      std:["Espace gérant, vendeur et livreur","Stock par modèle, capacité et IMEI","Ventes, reprises et échanges","Équipe et présences du jour","Votre logo, vos couleurs, votre devise"],
+      pre:["Applications Android et iPhone à votre nom","Vendeurs et boutiques illimités","Bilan de présence du mois","Clôture de caisse du jour, exports Excel"]}
+  };
+  var SER=["Import et mise à jour de vos données par notre équipe","Hébergement, sauvegardes et mises à jour des stores","Nouvelles fonctions incluses","Assistance prioritaire par WhatsApp","Formation des nouveaux membres de l'équipe"];
+  var app="nettopro",cur="eur";
+  try{var tz=Intl.DateTimeFormat().resolvedOptions().timeZone||"";if(/^Africa\//.test(tz))cur="xof";else if(/^America\//.test(tz))cur="usd"}catch(e){}
+  var h=(location.hash||"").slice(1);if(P[h])app=h;
+  function fmt(n){if(cur==="xof")return n.toLocaleString("fr-FR")+" F CFA";if(cur==="usd")return "$"+n.toLocaleString("fr-FR");return n.toLocaleString("fr-FR")+" €"}
+  function li(arr,cls){return arr.map(function(x,i){return '<li class="'+(cls||"")+'" style="animation-delay:'+(i*45)+'ms">'+x+'</li>'}).join("")}
+  function draw(anim){
+    var a=P[app],v=a[cur];
+    document.querySelectorAll(".pr-seg [data-app]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.app===app)});
+    document.querySelectorAll(".pr-seg [data-cur]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.cur===cur)});
+    var vals={std:fmt(v[0]),pre:fmt(v[1]),ren:fmt(v[2]),ser:"+ "+fmt(v[3]),std2:fmt(v[0])};
+    document.querySelectorAll("[data-k]").forEach(function(el){var k=el.dataset.k;if(el.tagName==="B"&&anim){el.classList.add("swap");setTimeout(function(){el.textContent=vals[k];el.classList.remove("swap")},160)}else el.textContent=vals[k]});
+    document.getElementById("prFor").textContent=a.f;
+    document.getElementById("tStd").textContent="Livraison sous "+a.t;
+    document.getElementById("lStd").innerHTML=li(a.std)+li(["Applications Android et iPhone","Code source livré"],"no");
+    document.getElementById("lPre").innerHTML=li(["Tout Standard"].concat(a.pre,["Code source livré (licence d'utilisation)","Formation de 1 heure"]));
+    document.getElementById("lSer").innerHTML=li(SER);
+    document.querySelectorAll(".pr-cta").forEach(function(b){b.href="devis.html#"+app});
+    var pg=document.getElementById("prPage");pg.href=app+"/"+(cur==="xof"?"fcfa/":cur==="usd"?"dollars/":"");pg.textContent="Voir la page complète de "+a.n+" →";
+  }
+  document.querySelectorAll(".pr-seg [data-app]").forEach(function(b){b.onclick=function(){app=b.dataset.app;draw(true)}});
+  document.querySelectorAll(".pr-seg [data-cur]").forEach(function(b){b.onclick=function(){cur=b.dataset.cur;draw(true)}});
+  draw(false);
+})();
+</script>
 <script data-goatcounter="https://sackoconcept.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script src="sacko-config.js"></script>
 <script src="sacko-track.js" defer></script>

@@ -272,7 +272,7 @@ function renderSales(){
     '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px"><div class="chips" style="margin:0;flex:1">'+Object.keys(F).map(s=>'<button class="chip" data-f="'+s+'" aria-pressed="'+(s===docFilter)+'">'+s+'</button>').join("")+'</div><input class="search" id="salq" type="search" placeholder="N°, entreprise…" value="'+esc(q)+'"></div>'+
     '<div class="list">'+(list.length?list.map(d=>'<button class="item" data-row="'+d._row+'"><span class="avatar" style="background:'+(d.Type==="Facture"?"#E1ECF8;color:#2C63A8":"#F6EBD2;color:#8A6516")+';font-size:11px">'+(d.Type==="Facture"?"FAC":"DEV")+'</span><span class="mid"><span class="t">'+esc(d.Entreprise||d.Contact)+'</span><span class="s">'+esc(d["Numéro"]+" · "+fmtDate(d.Date)+(views[d["Numéro"]]?" · ouvert "+views[d["Numéro"]]+" fois":""))+'</span></span><span class="end"><span class="amt">'+esc(S.money(S.total(d),d.Devise))+'</span><span class="pill '+(PILL[d.Statut]||"p-off")+'">'+esc(d.Statut||"Brouillon")+'</span></span></button>').join(""):'<div class="empty">Aucun document ici. Créez un devis depuis une demande ou avec « Nouveau devis ».</div>')+'</div>';
   $("newDoc").onclick=()=>editDoc();
-  $("newInv").onclick=()=>editDoc({Type:"Facture",Devise:"XOF",Lignes:[{desc:"",qte:1,prix:0}],"Acompte %":Number(V["Acompte par défaut (%)"])||50});
+  $("newInv").onclick=()=>editDoc({Type:"Facture",Devise:"XOF",Lignes:[{desc:"",qte:1,prix:0}],"Acompte %":Number(V["Acompte par défaut (%)"])||30});
   $("v-sales").querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{docFilter=b.dataset.f;renderSales()});
   $("salq").oninput=()=>keepFocus("salq",renderSales);
   $("v-sales").querySelectorAll("[data-row]").forEach(b=>b.onclick=()=>openDoc(docs.find(d=>d._row===+b.dataset.row)));
@@ -354,10 +354,10 @@ function fromRequest(r){
   const L=[];if(app&&app!=="Sur mesure")L.push({desc:app+" – formule "+formule,qte:1,prix:0});
   if(r["Option Sérénité"]==="Oui")L.push({desc:"Option Sérénité (par mois)",qte:3,prix:0});
   const pays=r["Pays"]||"";
-  return {Type:"Devis",Entreprise:r["Entreprise"]||"",Contact:r["Nom et prénom"]||r["Contact"]||"","E-mail":r["E-mail"]||"",WhatsApp:r["WhatsApp"]||"",Pays:pays,Devise:r["Devise"]?S.curCode(r["Devise"]):/France|Belgique|Suisse/.test(pays)?"EUR":/États-Unis|Canada|Royaume/.test(pays)?"USD":"XOF",Lignes:L.length?L:[{desc:"",qte:1,prix:0}],"Acompte %":Number(V["Acompte par défaut (%)"])||50,Notes:"",Origine:r["Application"]||""};
+  return {Type:"Devis",Entreprise:r["Entreprise"]||"",Contact:r["Nom et prénom"]||r["Contact"]||"","E-mail":r["E-mail"]||"",WhatsApp:r["WhatsApp"]||"",Pays:pays,Devise:r["Devise"]?S.curCode(r["Devise"]):/France|Belgique|Suisse/.test(pays)?"EUR":/États-Unis|Canada|Royaume/.test(pays)?"USD":"XOF",Lignes:L.length?L:[{desc:"",qte:1,prix:0}],"Acompte %":Number(V["Acompte par défaut (%)"])||30,Notes:"",Origine:r["Application"]||""};
 }
 function editDoc(d){
-  d=JSON.parse(JSON.stringify(d||{Type:"Devis",Devise:"XOF",Lignes:[{desc:"",qte:1,prix:0}],"Acompte %":Number(V["Acompte par défaut (%)"])||50}));
+  d=JSON.parse(JSON.stringify(d||{Type:"Devis",Devise:"XOF",Lignes:[{desc:"",qte:1,prix:0}],"Acompte %":Number(V["Acompte par défaut (%)"])||30}));
   if(typeof d.Lignes==="string"){try{d.Lignes=JSON.parse(d.Lignes)}catch(e){d.Lignes=[]}}
   if(!d.Lignes||!d.Lignes.length)d.Lignes=[{desc:"",qte:1,prix:0}];
   d["Échéance"]=d["Échéance"]?String(d["Échéance"]).slice(0,10):(d.Type==="Devis"?addDays(Number(V["Validité devis (jours)"])||15):addDays(7));
