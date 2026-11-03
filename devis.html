@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Devis SACKO CONCEPT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Demande de devis pour une application SACKO CONCEPT.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="sacko-apps.css">
+<link rel="icon" href="assets/sacko-logo-96.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="logo" href="index.html"><img src="assets/sacko-logo-96.png" alt="" width="38" height="38"><b>SACKO CONCEPT</b></a>
+    <div class="navlinks">
+      <a href="index.html">Accueil</a>
+      <a href="applications.html">Applications</a>
+      <a href="offres.html">Offres</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <a class="btn btn-gold" href="devis.html">Demander un devis</a>
+  </div>
+</nav>
+<header class="pagehead"><div class="wrap"><div class="eyebrow">Devis gratuit</div><h1>Demandez votre devis</h1><p>Décrivez votre entreprise en 3 minutes. Vous recevez une proposition adaptée sous 24 heures.</p></div></header>
+<section style="padding-top:24px"><div class="wrap"><div class="form-wrap">
+<form class="qform" id="devis" novalidate>
+  <fieldset>
+    <legend>Vous</legend>
+    <div class="f"><label for="nom">Nom et prénom <i>*</i></label><input id="nom" name="nom" required autocomplete="name"></div>
+    <div class="f"><label for="entreprise">Entreprise <i>*</i></label><input id="entreprise" name="entreprise" required autocomplete="organization"></div>
+    <div class="f"><label for="email">E-mail <i>*</i></label><input id="email" name="email" type="email" required autocomplete="email"></div>
+    <div class="f"><label for="whatsapp">WhatsApp <i>*</i></label><input id="whatsapp" name="whatsapp" type="tel" required placeholder="+229 …" autocomplete="tel"></div>
+    <div class="f full"><label for="pays">Pays <i>*</i></label><select id="pays" name="pays" required><option value="">Choisir un pays</option><option>Bénin</option><option>Burkina Faso</option><option>Cameroun</option><option>Côte d'Ivoire</option><option>Gabon</option><option>Guinée</option><option>Mali</option><option>Niger</option><option>Sénégal</option><option>Togo</option><option>RD Congo</option><option>Congo</option><option>Maroc</option><option>Tunisie</option><option>Algérie</option><option>France</option><option>Belgique</option><option>Suisse</option><option>Canada</option><option>États-Unis</option><option>Royaume-Uni</option><option>Autre</option></select></div>
+  </fieldset>
+  <fieldset>
+    <legend>Votre projet</legend>
+    <div class="f full"><span class="lab">Application qui vous intéresse <i>*</i></span><div class="opts"><label><input type="radio" name="application" value="NettoPro – Nettoyage" required> NettoPro – Nettoyage</label><label><input type="radio" name="application" value="RH Pro – Ressources humaines"> RH Pro – Ressources humaines</label><label><input type="radio" name="application" value="StockPro – Commerce"> StockPro – Commerce</label><label><input type="radio" name="application" value="PhonePro – Téléphones"> PhonePro – Téléphones</label><label><input type="radio" name="application" value="ImmoPro – Immobilier"> ImmoPro – Immobilier</label><label><input type="radio" name="application" value="Sur mesure"> Sur mesure</label></div></div>
+    <div class="f full"><label for="secteur">Votre activité</label><input id="secteur" name="secteur" placeholder="Ex. : nettoyage de bureaux, boutique de vêtements…"></div>
+    <div class="f full"><span class="lab">Nombre d'utilisateurs <i>*</i></span><div class="opts"><label><input type="radio" name="utilisateurs" value="1 à 10" required> 1 à 10</label><label><input type="radio" name="utilisateurs" value="11 à 50"> 11 à 50</label><label><input type="radio" name="utilisateurs" value="51 à 200"> 51 à 200</label><label><input type="radio" name="utilisateurs" value="Plus de 200"> Plus de 200</label></div></div>
+    <div class="f full"><span class="lab">Formule envisagée</span><div class="opts"><label><input type="radio" name="formule" value="Standard"> Standard</label><label><input type="radio" name="formule" value="Premium"> Premium</label><label><input type="radio" name="formule" value="Je ne sais pas encore"> Je ne sais pas encore</label></div><small><a href="offres.html" target="_blank" rel="noopener">Comparer les formules</a></small></div>
+    <div class="f full"><span class="lab">Option Sérénité (mises à jour faites pour vous)</span><div class="opts"><label><input type="radio" name="serenite" value="Oui"> Oui</label><label><input type="radio" name="serenite" value="Non"> Non</label><label><input type="radio" name="serenite" value="À discuter"> À discuter</label></div></div>
+    <div class="f full"><span class="lab">Devise de paiement <i>*</i></span><div class="opts"><label><input type="radio" name="devise" value="Euro (€)" required> Euro (€)</label><label><input type="radio" name="devise" value="Dollar ($)"> Dollar ($)</label><label><input type="radio" name="devise" value="Franc CFA"> Franc CFA</label></div></div>
+    <div class="f full"><label for="besoins">Vos besoins principaux <i>*</i></label><textarea id="besoins" name="besoins" required placeholder="Ex. : planning des agents, factures, gestion des congés, suivi du stock…"></textarea></div>
+    <div class="f"><label for="date">Mise en service souhaitée</label><input id="date" name="date_service" type="date"></div>
+    <div class="f"><label for="source">Comment nous avez-vous connus ?</label><select id="source" name="source"><option value="">Choisir</option><option>Facebook</option><option>LinkedIn</option><option>WhatsApp</option><option>Recommandation</option><option>Google</option><option>Autre</option></select></div>
+  </fieldset>
+  <fieldset>
+    <legend>Vos fichiers</legend>
+    <div class="f full">
+      <div class="drop" id="drop" tabindex="0" role="button" aria-label="Ajouter des fichiers"><b>Ajoutez vos fichiers</b> ou glissez-les ici<br><small>Listes de clients, salariés ou produits : Excel, CSV, PDF, Word, images. 10 Mo au total.</small></div>
+      <input type="file" id="files" multiple accept=".xlsx,.xls,.csv,.pdf,.doc,.docx,.png,.jpg,.jpeg" hidden>
+      <ul class="filelist" id="filelist"></ul>
+    </div>
+  </fieldset>
+  <label class="consent"><input type="checkbox" id="consent" name="consent" required> <span>J'accepte d'être recontacté(e) par SACKO CONCEPT au sujet de ma demande. <i style="color:#C2410C;font-style:normal">*</i></span></label>
+  <div class="submit-row"><button class="btn btn-gold" type="submit" id="send">Envoyer ma demande</button><span class="msg" id="msg" aria-live="polite"></span></div>
+</form>
+<aside class="side-card">
+  <h3>Après votre demande</h3>
+  <ol><li><b>Sous 24 heures</b>, vous recevez une proposition chiffrée.</li><li><b>Un appel de 20 minutes</b> pour valider vos besoins.</li><li><b>Quelques jours</b> pour livrer votre application à votre image.</li></ol>
+  <a class="btn btn-ghost" href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Réserver l'appel directement</a>
+</aside>
+</div></div></section>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div><a class="logo" href="index.html"><img src="assets/sacko-logo-96.png" alt="" width="38" height="38"><b>SACKO CONCEPT</b></a><p>Applications de gestion et identité de marque pour les PME, en français et en anglais.</p></div>
+      <div><h4>Applications</h4><ul><li><a href="applications.html#nettopro">NettoPro</a></li><li><a href="applications.html#rhpro">RH Pro</a></li><li><a href="applications.html#stockpro">StockPro</a></li><li><a href="applications.html#phonepro">PhonePro</a></li></ul></div>
+      <div><h4>Studio</h4><ul><li><a href="index.html#methode">Méthode</a></li><li><a href="offres.html">Offres</a></li><li><a href="contact.html#faq">FAQ</a></li><li><a href="studio.html">Boutique et packs</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Réserver un appel</a></li><li><a href="contact.html">sackoconcept8@gmail.com</a></li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 SACKO CONCEPT LLC · Albuquerque, NM</span><span>sackoconcept.com</span></div>
+  </div>
+</footer>
+<script data-goatcounter="https://sackoconcept.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+/* Collez ici l'URL de votre application Google Apps Script (Déployer > Application web) */
+const SCRIPT_URL = "COLLER_ICI_URL_APPS_SCRIPT";
+const MAX = 10*1024*1024;
+const f=document.getElementById("devis"), msg=document.getElementById("msg"), send=document.getElementById("send");
+const drop=document.getElementById("drop"), input=document.getElementById("files"), list=document.getElementById("filelist");
+let files=[];
+const APPS={nettopro:0,rhpro:1,stockpro:2,phonepro:3,immopro:4};
+const h=(location.hash||"").slice(1); if(h in APPS){f.querySelectorAll('input[name="application"]')[APPS[h]].checked=true;}
+function size(n){return n>1048576?(n/1048576).toFixed(1)+" Mo":Math.max(1,Math.round(n/1024))+" Ko"}
+function render(){list.innerHTML="";files.forEach((x,i)=>{const li=document.createElement("li");li.innerHTML="<span></span><button type='button'>Retirer</button>";li.firstChild.textContent=x.name+" · "+size(x.size);li.lastChild.onclick=()=>{files.splice(i,1);render()};list.appendChild(li)})}
+function add(fl){for(const x of fl){files.push(x)}const t=files.reduce((a,b)=>a+b.size,0);if(t>MAX){msg.className="msg err";msg.textContent="Les fichiers dépassent 10 Mo au total. Retirez-en un ou envoyez-les par e-mail.";}else{msg.textContent=""}render()}
+drop.onclick=()=>input.click();drop.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();input.click()}};
+input.onchange=()=>{add(input.files);input.value=""};
+["dragover","dragenter"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over")}));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("over")}));
+drop.addEventListener("drop",e=>add(e.dataTransfer.files));
+function b64(file){return new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=ko;r.readAsDataURL(file)})}
+f.addEventListener("submit",async e=>{
+  e.preventDefault();msg.className="msg";
+  if(!f.checkValidity()){const bad=f.querySelector(":invalid");msg.className="msg err";msg.textContent="Remplissez les champs marqués d'une étoile.";bad&&bad.focus();return}
+  if(files.reduce((a,b)=>a+b.size,0)>MAX){msg.className="msg err";msg.textContent="Les fichiers dépassent 10 Mo au total.";return}
+  const data=Object.fromEntries(new FormData(f).entries());
+  send.disabled=true;send.textContent="Envoi en cours…";
+  try{
+    data.fichiers=await Promise.all(files.map(async x=>({name:x.name,type:x.type||"application/octet-stream",data:await b64(x)})));
+    if(SCRIPT_URL.startsWith("COLLER")) throw new Error("config");
+    await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)});
+    f.innerHTML='<div class="done"><div class="ok">✓</div><h2 style="font-size:28px">Demande envoyée</h2><p style="color:var(--muted);max-width:44ch">Merci. Vous recevez une confirmation par e-mail et une proposition sous 24 heures.</p><a class="btn btn-gold" href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Réserver l\'appel de 20 minutes</a></div>';
+  }catch(err){
+    send.disabled=false;send.textContent="Envoyer ma demande";msg.className="msg err";
+    msg.textContent=err.message==="config"?"Le formulaire n'est pas encore relié à la feuille Google. Écrivez-nous à sackoconcept8@gmail.com.":"L'envoi n'a pas abouti. Vérifiez votre connexion et réessayez, ou écrivez-nous à sackoconcept8@gmail.com.";
+  }
+});
+</script>
+</body>
+</html>
