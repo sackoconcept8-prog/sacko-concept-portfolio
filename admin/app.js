@@ -29,8 +29,8 @@ function ageH(v){return (Date.now()-new Date(v))/36e5}
 function digits(p){return String(p||"").replace(/[^\d]/g,"")}
 function plural(n,s,p){return n+" "+(n>1?(p||s+"s"):s)}
 function initials(n){return String(n||"?").trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase()||"?"}
-const AV = ["#16151A","#B8892B","#1F8A5B","#2C63A8","#6D4BC4","#C2412D"];
-function avColor(n){let h=0;String(n).split("").forEach(c=>h=(h*31+c.charCodeAt(0))%997);return AV[h%AV.length]}
+const AV = [["#F6EBD2","#8A6516"],["#DDF3E8","#1F7A50"],["#E1ECF8","#2C63A8"],["#ECE6FA","#6D4BC4"],["#FDE7DC","#B4502C"],["#E6F4F6","#1F7A86"]];
+function avColor(n){let h=0;String(n).split("").forEach(c=>h=(h*31+c.charCodeAt(0))%997);const c=AV[h%AV.length];return c[0]+";color:"+c[1]}
 function sumByCur(list,fn){const o={};list.forEach(d=>{const c=S.curCode(d.Devise);o[c]=(o[c]||0)+fn(d)});return o}
 function curText(o){const k=Object.keys(o).filter(c=>o[c]);return k.length?k.map(c=>S.money(o[c],c)).join(" · "):"0"}
 function keepFocus(id,fn){const el=$(id);const pos=el?el.selectionStart:0;fn();const n=$(id);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}}
@@ -270,7 +270,7 @@ function renderSales(){
   $("v-sales").innerHTML='<div class="toolbar"><h1>Ventes</h1><button class="btn dark" id="newDoc">+ Nouveau devis</button></div>'+
     '<div class="kpis" style="margin-top:0;margin-bottom:14px"><div class="kpi card"><small>Encaissé (total)</small><b>'+esc(curText(sumByCur(fact.filter(F["Payées"]),d=>S.total(d))))+'</b></div><div class="kpi card"><small>À encaisser</small><b>'+esc(curText(sumByCur(fact.filter(F["À encaisser"]),d=>S.total(d))))+'</b></div><div class="kpi card"><small>Devis envoyés</small><b>'+docs.filter(d=>d.Type==="Devis"&&d.Statut!=="Brouillon").length+'</b><span>'+docs.filter(d=>d.Type==="Devis"&&d.Statut==="Accepté").length+' accepté(s)</span></div><div class="kpi card"><small>Commandes à livrer</small><b>'+fact.filter(F["À livrer"]).length+'</b></div></div>'+
     '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px"><div class="chips" style="margin:0;flex:1">'+Object.keys(F).map(s=>'<button class="chip" data-f="'+s+'" aria-pressed="'+(s===docFilter)+'">'+s+'</button>').join("")+'</div><input class="search" id="salq" type="search" placeholder="N°, entreprise…" value="'+esc(q)+'"></div>'+
-    '<div class="list">'+(list.length?list.map(d=>'<button class="item" data-row="'+d._row+'"><span class="avatar" style="background:'+(d.Type==="Facture"?"#16151A":"#B8892B")+';font-size:11px">'+(d.Type==="Facture"?"FAC":"DEV")+'</span><span class="mid"><span class="t">'+esc(d.Entreprise||d.Contact)+'</span><span class="s">'+esc(d["Numéro"]+" · "+fmtDate(d.Date)+(views[d["Numéro"]]?" · ouvert "+views[d["Numéro"]]+" fois":""))+'</span></span><span class="end"><span class="amt">'+esc(S.money(S.total(d),d.Devise))+'</span><span class="pill '+(PILL[d.Statut]||"p-off")+'">'+esc(d.Statut||"Brouillon")+'</span></span></button>').join(""):'<div class="empty">Aucun document ici. Créez un devis depuis une demande ou avec « Nouveau devis ».</div>')+'</div>';
+    '<div class="list">'+(list.length?list.map(d=>'<button class="item" data-row="'+d._row+'"><span class="avatar" style="background:'+(d.Type==="Facture"?"#E1ECF8;color:#2C63A8":"#F6EBD2;color:#8A6516")+';font-size:11px">'+(d.Type==="Facture"?"FAC":"DEV")+'</span><span class="mid"><span class="t">'+esc(d.Entreprise||d.Contact)+'</span><span class="s">'+esc(d["Numéro"]+" · "+fmtDate(d.Date)+(views[d["Numéro"]]?" · ouvert "+views[d["Numéro"]]+" fois":""))+'</span></span><span class="end"><span class="amt">'+esc(S.money(S.total(d),d.Devise))+'</span><span class="pill '+(PILL[d.Statut]||"p-off")+'">'+esc(d.Statut||"Brouillon")+'</span></span></button>').join(""):'<div class="empty">Aucun document ici. Créez un devis depuis une demande ou avec « Nouveau devis ».</div>')+'</div>';
   $("newDoc").onclick=()=>editDoc();
   $("v-sales").querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{docFilter=b.dataset.f;renderSales()});
   $("salq").oninput=()=>keepFocus("salq",renderSales);
@@ -289,7 +289,7 @@ function renderStats(){
   const srcName=s=>s==="direct"?"Accès direct":String(s).startsWith("lien-")?"Lien suivi : "+String(s).slice(5):s;
   $("v-stats").innerHTML='<div class="toolbar"><h1>Statistiques</h1><div class="seg"><button data-d="7" aria-pressed="'+(statsDays===7)+'">7 jours</button><button data-d="30" aria-pressed="'+(statsDays===30)+'">30 jours</button></div></div>'+
     '<div class="kpis" style="margin-top:0"><div class="kpi card"><small>Visites</small><b>'+tv+'</b><span>pages vues</span></div><div class="kpi card"><small>Visiteurs</small><b>'+tu+'</b><span>personnes par jour, cumulées</span></div><div class="kpi card"><small>Clics sur vos liens</small><b>'+tc+'</b><span>liens suivis</span></div><div class="kpi card"><small>Inscriptions démo</small><b>'+ti+'</b><span>'+(tu?Math.round(100*ti/tu):0)+' % des visiteurs</span></div></div>'+
-    '<section class="panel card sec chart"><div class="panel-h"><h2>Visites par jour</h2></div>'+lineChart(days)+'<div class="legend"><span><i style="background:#16151A"></i>Visites</span><span><i style="background:#B8892B"></i>Clics sur vos liens</span></div></section>'+
+    '<section class="panel card sec chart"><div class="panel-h"><h2>Visites par jour</h2></div>'+lineChart(days)+'<div class="legend"><span><i style="background:#2C63A8"></i>Visites</span><span><i style="background:#B8892B"></i>Clics sur vos liens</span></div></section>'+
     '<div class="grid2"><section class="panel card"><div class="panel-h"><h2>Vos liens suivis</h2><button class="btn sm dark" id="newLink">+ Créer un lien</button></div>'+
       '<p class="muted small" style="margin:0 0 12px">Partagez ces liens sur WhatsApp, Facebook ou LinkedIn : chaque clic est compté ici (30 derniers jours).</p>'+
       (liens.length?'<div class="list">'+liens.map(l=>{const u=SITE+"go.html?l="+encodeURIComponent(l.Code);return '<div class="link-row"><div class="mid"><b>'+esc(l.Nom||l.Code)+'</b><span>'+esc(u)+'</span></div><span class="n" title="clics">'+((st.clics||{})[l.Code]||0)+'</span><button class="btn sm" data-copy="'+esc(u)+'">Copier</button></div>'}).join("")+'</div>':'<div class="empty">Aucun lien suivi. Créez-en un pour chaque endroit où vous partagez votre démo.</div>')+'</section>'+
@@ -307,9 +307,9 @@ function lineChart(days){
   const path=k=>days.map((d,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(d[k]).toFixed(1)).join(" ");
   let s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Visites par jour">';
   [0,.5,1].forEach(f=>{const yy=y(max*f);s+='<line x1="'+pl+'" x2="'+W+'" y1="'+yy+'" y2="'+yy+'" stroke="#E2E2E8"/><text x="0" y="'+(yy+4)+'" font-size="10" fill="#64636D">'+Math.round(max*f)+'</text>'});
-  s+='<path d="'+path("v")+' L'+x(n-1)+' '+(H-pb)+' L'+x(0)+' '+(H-pb)+' Z" fill="rgba(22,21,26,.06)"/>';
-  s+='<path d="'+path("v")+'" fill="none" stroke="#16151A" stroke-width="2.2" stroke-linejoin="round"/><path d="'+path("c")+'" fill="none" stroke="#B8892B" stroke-width="2" stroke-dasharray="4 3"/>';
-  const L=days[n-1];s+='<circle cx="'+x(n-1)+'" cy="'+y(L.v)+'" r="4" fill="#16151A"/><text x="'+(x(n-1)-6)+'" y="'+(y(L.v)-8)+'" font-size="11" font-weight="700" text-anchor="end" fill="#16151A">'+L.v+'</text>';
+  s+='<path d="'+path("v")+' L'+x(n-1)+' '+(H-pb)+' L'+x(0)+' '+(H-pb)+' Z" fill="rgba(44,99,168,.08)"/>';
+  s+='<path d="'+path("v")+'" fill="none" stroke="#2C63A8" stroke-width="2.2" stroke-linejoin="round"/><path d="'+path("c")+'" fill="none" stroke="#B8892B" stroke-width="2" stroke-dasharray="4 3"/>';
+  const L=days[n-1];s+='<circle cx="'+x(n-1)+'" cy="'+y(L.v)+'" r="4" fill="#2C63A8"/><text x="'+(x(n-1)-6)+'" y="'+(y(L.v)-8)+'" font-size="11" font-weight="700" text-anchor="end" fill="#2C63A8">'+L.v+'</text>';
   days.forEach((d,i)=>{if(d.label!=="")s+='<text x="'+x(i)+'" y="'+(H-4)+'" font-size="10" text-anchor="middle" fill="#64636D">'+d.label+'</text>'});
   return s+'</svg>';
 }
