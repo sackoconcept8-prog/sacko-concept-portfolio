@@ -26,6 +26,7 @@ await cp(join(root,'produits'),join(out,'produits'), {recursive:true});
 await cp(join(root,'branding-immobilier'),join(out,'branding-immobilier'), {recursive:true});
 await cp(join(root,'somaf'),join(out,'somaf'), {recursive:true});
 await cp(join(root,'somaf-livraison'),join(out,'somaf-livraison'), {recursive:true});
+await cp(join(root,'admin'),join(out,'admin'), {recursive:true});
 await cp(join(root,'nettopro'),join(out,'nettopro'), {recursive:true});
 for (const file of ['nettopro/index.html','nettopro/demo/index.html','nettopro/sacko-logo.jpg']) await readFile(join(out,file));
 await cp(join(root,'rhpro'),join(out,'rhpro'), {recursive:true});

@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SACKO CONCEPT Pilotage</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SACKO">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="../assets/sacko-logo-96.png">
+<link rel="apple-touch-icon" href="../assets/sacko-logo-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
+<style>
+/* Layout: mobile-first app — header, 3 counters, tabs, request list; detail opens as a sheet */
+:root{
+  --bg:#FFFFFF; --soft:#F7F7F9; --soft-2:#EFEFF3; --line:#E7E7EC;
+  --fg:#0D0D12; --muted:#62626C; --new:#2563EB; --ok:#13814F; --warn:#A35E00; --bad:#B42318;
+  --font:"Geist",-apple-system,"Segoe UI",Roboto,sans-serif; --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--soft);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:980px;margin:0 auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:11px 18px;border:1px solid var(--line);background:var(--bg);font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;color:var(--fg)}
+.btn.dark{background:var(--fg);color:#fff;border-color:var(--fg)}
+.btn.sm{padding:7px 12px;font-size:13px}
+
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding-block:40px;background:radial-gradient(closest-side at 30% 30%,rgba(255,170,120,.25),transparent),radial-gradient(closest-side at 75% 40%,rgba(110,180,255,.25),transparent),var(--bg)}
+.login-card{width:100%;max-width:400px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:0 30px 80px rgba(30,30,60,.12);display:flex;flex-direction:column;gap:16px;text-align:center}
+.login-card img{width:72px;height:72px;margin:0 auto}
+.login-card h1{margin:0;font-size:24px;letter-spacing:-.02em}
+.login-card p{margin:0;color:var(--muted);font-size:14px}
+.login-card input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:var(--soft);text-align:center;font-family:var(--mono);letter-spacing:.1em}
+.err{color:var(--bad);font-size:13px;min-height:1.2em}
+
+/* header */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hrow{display:flex;align-items:center;justify-content:space-between;height:62px;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.01em}
+.brand img{width:34px;height:34px}
+.brand small{display:block;font-weight:500;color:var(--muted);font-size:12px;letter-spacing:0}
+.hact{display:flex;gap:8px;align-items:center}
+.icon-btn{position:relative;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}
+.icon-btn svg{width:18px;height:18px}
+.dot{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:9px;background:var(--bad);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px}
+
+main{padding-block:20px 60px}
+.banner{border:1px solid #FDE2B8;background:#FFF7EA;color:#7A4A00;border-radius:14px;padding:12px 14px;font-size:13.5px;margin-bottom:16px}
+.counters{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.counter{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:left}
+.counter[aria-pressed="true"]{border-color:var(--fg);box-shadow:0 10px 30px rgba(30,30,60,.08)}
+.counter small{display:block;color:var(--muted);font-size:12.5px}
+.counter b{display:block;font-size:30px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:4px}
+.counter span{font-size:12px;color:var(--muted)}
+.counter span em{font-style:normal;color:var(--new);font-weight:600}
+@media(max-width:520px){.counter b{font-size:24px}.counter{padding:12px}}
+
+.toolbar{display:flex;gap:10px;align-items:center;margin:22px 0 12px;flex-wrap:wrap}
+.toolbar h2{margin:0;font-size:20px;letter-spacing:-.02em;flex:1;min-width:140px}
+.search{flex:1;min-width:180px;max-width:300px;border:1px solid var(--line);border-radius:999px;padding:9px 14px;background:#fff}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.filters button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--muted)}
+.filters button[aria-pressed="true"]{background:var(--fg);color:#fff;border-color:var(--fg)}
+
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:grid;grid-template-columns:1fr auto;gap:4px 12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;cursor:pointer;text-align:left;width:100%}
+.item:hover{border-color:#C9C9D2}
+.item.fresh{border-left:3px solid var(--new)}
+.item .t{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .s{color:var(--muted);font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .d{color:var(--muted);font-size:12px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap;justify-self:end}
+.c-new{background:#E8F0FE;color:var(--new)}
+.c-wip{background:#FFF1DE;color:var(--warn)}
+.c-ok{background:#E6F6EE;color:var(--ok)}
+.c-off{background:var(--soft-2);color:var(--muted)}
+.empty{background:#fff;border:1px dashed var(--line);border-radius:14px;padding:30px;text-align:center;color:var(--muted)}
+
+/* detail sheet */
+.scrim{position:fixed;inset:0;background:rgba(13,13,18,.35);z-index:40}
+.sheet{position:fixed;z-index:41;background:#fff;display:flex;flex-direction:column;
+  right:0;top:0;bottom:0;width:min(520px,100%);box-shadow:-20px 0 60px rgba(30,30,60,.15)}
+.sheet-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:14px;border-bottom:1px solid var(--line)}
+.sheet-h h3{margin:0;font-size:19px;letter-spacing:-.02em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet-b{overflow:auto;padding-block:16px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.status-row{display:flex;gap:6px;flex-wrap:wrap}
+.status-row button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer}
+.status-row button[aria-pressed="true"]{background:var(--fg);color:#fff;border-color:var(--fg)}
+dl.fields{margin:0;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+dl.fields div{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:10px 14px;border-top:1px solid var(--line);font-size:14px}
+dl.fields div:first-child{border-top:0}
+dl.fields dt{color:var(--muted)}
+dl.fields dd{margin:0;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
+@media(max-width:480px){dl.fields div{grid-template-columns:1fr;gap:2px}}
+.label{font-size:12px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:#fff;padding:12px 18px;border-radius:999px;font-size:14px;z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:calc(100% - 32px)}
+.notifs{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:58px;width:min(360px,calc(100vw - 32px));background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(30,30,60,.15);padding:8px;z-index:25}
+.notifs button{display:block;width:100%;text-align:left;border:0;background:none;padding:10px;border-radius:10px;cursor:pointer;font-size:14px}
+.notifs button:hover{background:var(--soft)}
+.notifs small{display:block;color:var(--muted);font-size:12px}
+.foot-note{margin-top:24px;color:var(--muted);font-size:12.5px;text-align:center}
+@media(prefers-reduced-motion:no-preference){.sheet{animation:slide .2s ease-out}@keyframes slide{from{transform:translateX(30px);opacity:.6}}}
+</style>
+</head>
+<body>
+
+<section class="login pad" id="login">
+  <form class="login-card" id="loginForm">
+    <img src="../assets/sacko-logo-512.png" alt="">
+    <h1>SACKO CONCEPT</h1>
+    <p>Votre application de pilotage : devis, inscriptions et demandes clients.</p>
+    <label for="code" style="position:absolute;left:-9999px">Code d'accès</label>
+    <input id="code" type="password" placeholder="Code d'accès" autocomplete="current-password">
+    <button class="btn dark" type="submit">Entrer</button>
+    <button class="btn" type="button" id="demoBtn">Voir avec des exemples</button>
+    <div class="err" id="loginErr" aria-live="polite"></div>
+  </form>
+</section>
+
+<div id="app" hidden>
+  <header class="pad">
+    <div class="wrap hrow">
+      <div class="brand"><img src="../assets/sacko-logo-96.png" alt=""><div>SACKO CONCEPT<small id="sync">Synchronisation…</small></div></div>
+      <div class="hact">
+        <button class="icon-btn" id="bell" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="dot" id="bellDot" hidden>0</span></button>
+        <button class="icon-btn" id="refresh" aria-label="Actualiser"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
+        <button class="icon-btn" id="logout" aria-label="Se déconnecter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></button>
+      </div>
+    </div>
+    <div class="notifs" id="notifs" hidden></div>
+  </header>
+
+  <main class="pad">
+    <div class="wrap">
+      <div class="banner" id="demoBanner" hidden>Mode exemple : ces demandes sont fictives. Entrez votre code d'accès pour voir les vraies.</div>
+      <div class="banner" id="permBanner" hidden>Activez les notifications pour être prévenue même quand l'application est en arrière-plan. <button class="btn sm" id="allow" style="margin-left:6px">Activer</button></div>
+      <div class="counters" role="tablist">
+        <button class="counter" data-tab="devis" aria-pressed="true"><small>Devis</small><b id="n-devis">0</b><span id="s-devis"></span></button>
+        <button class="counter" data-tab="inscriptions" aria-pressed="false"><small>Inscriptions démo</small><b id="n-inscriptions">0</b><span id="s-inscriptions"></span></button>
+        <button class="counter" data-tab="clients" aria-pressed="false"><small>Demandes clients</small><b id="n-clients">0</b><span id="s-clients"></span></button>
+      </div>
+      <div class="toolbar"><h2 id="tabTitle">Devis</h2><input class="search" id="q" type="search" placeholder="Rechercher un nom, une entreprise…"></div>
+      <div class="filters" id="filters"></div>
+      <div class="list" id="list"></div>
+      <p class="foot-note">Actualisation automatique chaque minute. Les données viennent de votre feuille Google « SACKO CONCEPT – Demandes de devis ».</p>
+    </div>
+  </main>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-h pad"><h3 id="sheetTitle"></h3><button class="icon-btn" id="close" aria-label="Fermer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+  <div class="sheet-b pad" id="sheetBody"></div>
+</aside>
+<div class="toast" id="toast" hidden></div>
+
+<script src="../sacko-config.js"></script>
+<script>
+const URL_API = window.SACKO_SCRIPT_URL || "COLLER";
+const TABS = {
+  devis:{title:"Devis", statuses:["Nouveau","Devis envoyé","En discussion","Gagné","Perdu"], name:"Entreprise", sub:["Application","Pays"], person:"Nom et prénom"},
+  inscriptions:{title:"Inscriptions démo", statuses:["À relancer","Relancé","Intéressé","Devis demandé","Pas intéressé"], name:"Nom et prénom", sub:["Démo ouverte","Entreprise"], person:"Nom et prénom"},
+  clients:{title:"Demandes clients", statuses:["À faire","En cours","Terminé"], name:"Entreprise", sub:["Application","Type de demande"], person:"Contact"}
+};
+const OPEN = {"Nouveau":"c-new","À relancer":"c-new","À faire":"c-new","Devis envoyé":"c-wip","En discussion":"c-wip","Relancé":"c-wip","Intéressé":"c-wip","En cours":"c-wip","Devis demandé":"c-wip","Gagné":"c-ok","Terminé":"c-ok","Perdu":"c-off","Pas intéressé":"c-off"};
+const FIRST = {devis:"Nouveau",inscriptions:"À relancer",clients:"À faire"};
+
+let key=null, demo=false, data=null, tab="devis", filter="Tous", seen={}, timer=null, notifs=[];
+const $=id=>document.getElementById(id);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+function toast(t){const el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
+function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function fmtDate(v){if(!v)return"";const d=new Date(v);if(isNaN(d))return String(v);const now=new Date();const same=d.toDateString()===now.toDateString();return same?"Aujourd'hui "+d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}):d.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})+" "+d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}
+
+/* ---------- sample data for demo mode ---------- */
+function sample(){
+  const t=h=>new Date(Date.now()-h*3600e3).toISOString();
+  return {
+    devis:{headers:["Date","Nom et prénom","Entreprise","E-mail","WhatsApp","Pays","Application","Secteur","Utilisateurs","Formule","Option Sérénité","Devise","Besoins","Date de mise en service","Source","Fichiers joints","Statut"],rows:[
+      {row:2,values:[t(1),"Aminata Koné","Clean Plus Abidjan","contact@cleanplus.ci","+225 07 00 00 00","Côte d'Ivoire","NettoPro – Nettoyage","Nettoyage de bureaux","11 à 50","Premium","Oui","Franc CFA","Planning de 32 agents sur 14 sites, factures mensuelles et relances.","","Facebook","","Nouveau"]},
+      {row:3,values:[t(26),"Julien Moreau","Boutique Élan","julien@elan.fr","+33 6 00 00 00 00","France","StockPro – Commerce","Prêt-à-porter","1 à 10","Standard","À discuter","Euro (€)","Suivi du stock de 2 boutiques et catalogue client.","","Google","","Devis envoyé"]},
+      {row:4,values:[t(70),"Moussa Traoré","Hôtel Djoliba","rh@djoliba.ml","+223 70 00 00 00","Mali","RH Pro – Ressources humaines","Hôtellerie","51 à 200","Premium","Oui","Franc CFA","Congés et absences de 85 salariés, fiches de paie.","","Recommandation","","Gagné"]}]},
+    inscriptions:{headers:["Date","Nom et prénom","Entreprise","E-mail","WhatsApp","Démo ouverte","Statut"],rows:[
+      {row:2,values:[t(.3),"Koffi Mensah","Mensah Phones","koffi@gmail.com","+229 97 00 00 00","PhonePro","À relancer"]},
+      {row:3,values:[t(5),"Fatou Diop","","fatou.diop@gmail.com","+221 77 00 00 00","NettoPro","À relancer"]},
+      {row:4,values:[t(30),"Sarah Johnson","SJ Realty","sarah@sjrealty.com","+1 505 000 0000","RH Pro","Relancé"]}]},
+    clients:{headers:["Date","Entreprise","Contact","E-mail","WhatsApp","Application","Type de demande","Détail","Urgence","Fichiers","Statut"],rows:[
+      {row:2,values:[t(2),"Mensah Phones","Koffi Mensah","koffi@gmail.com","+229 97 00 00 00","PhonePro","Ajouter ou modifier des produits, prix ou stock","Ajouter les 6 nouveaux iPhone 17 et baisser le prix du S25.","Urgente (sous 24 h)","","À faire"]},
+      {row:3,values:[t(48),"Hôtel Djoliba","Moussa Traoré","rh@djoliba.ml","+223 70 00 00 00","RH Pro","Ajouter ou retirer des salariés ou utilisateurs","3 nouveaux salariés, fichier joint.","Normale (sous 48 h)","","Terminé"]}]}
+  };
+}
+
+/* ---------- data ---------- */
+function rowsOf(k){const t=data&&data[k];if(!t)return[];return t.rows.map(r=>{const o={_row:r.row};t.headers.forEach((h,i)=>o[h]=r.values[i]);return o}).sort((a,b)=>new Date(b.Date)-new Date(a.Date))}
+const SEEN=()=>demo?"sc_seen_demo":"sc_seen";
+function idOf(k,r){return k+":"+r._row+":"+(r.Date||"")}
+async function api(params){
+  const u=new URL(URL_API);Object.entries(Object.assign({key},params||{})).forEach(([a,b])=>u.searchParams.set(a,b));
+  const res=await fetch(u.toString(),{method:"GET"});return res.json();
+}
+async function load(first){
+  $("sync").textContent="Synchronisation…";
+  try{
+    if(demo){data=data||sample()}
+    else{const j=await api();if(!j.ok){if(j.erreur==="code"){logout();$("loginErr").textContent="Code d'accès incorrect.";return}throw new Error(j.erreur)}data=j.data}
+    detectNew(first);render();
+    $("sync").textContent="À jour · "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+  }catch(e){$("sync").textContent="Hors ligne · nouvel essai dans 1 min"}
+}
+function detectNew(first){
+  let prev={};try{prev=JSON.parse(store.get(SEEN())||"{}")}catch(e){}
+  const fresh=[];
+  Object.keys(TABS).forEach(k=>rowsOf(k).forEach(r=>{const id=idOf(k,r);if(!prev[id]){fresh.push({k,r,id})}}));
+  if(first&&!store.get(SEEN())){fresh.forEach(f=>prev[f.id]=1);store.set(SEEN(),JSON.stringify(prev));return}
+  fresh.forEach(f=>{prev[f.id]=1;notifs.unshift(f)});
+  store.set(SEEN(),JSON.stringify(prev));
+  if(fresh.length){
+    const f=fresh[0];const label=f.k==="devis"?"Nouveau devis":f.k==="inscriptions"?"Nouvelle inscription démo":"Nouvelle demande client";
+    const who=f.r[TABS[f.k].name]||f.r[TABS[f.k].person]||"";
+    toast(label+(fresh.length>1?" (+"+(fresh.length-1)+")":"")+" · "+who);
+    beep();
+    if("Notification" in window&&Notification.permission==="granted"){
+      try{navigator.serviceWorker&&navigator.serviceWorker.ready.then(reg=>reg.showNotification("SACKO CONCEPT · "+label,{body:who,icon:"../assets/sacko-logo-512.png",badge:"../assets/sacko-logo-96.png",tag:f.id}))}catch(e){try{new Notification("SACKO CONCEPT · "+label,{body:who})}catch(_){}}
+    }
+  }
+  updateBell();
+}
+function beep(){try{const a=new (window.AudioContext||window.webkitAudioContext)();const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.setValueAtTime(.08,a.currentTime);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+.35);o.start();o.stop(a.currentTime+.35)}catch(e){}}
+function updateBell(){const n=notifs.length;$("bellDot").hidden=!n;$("bellDot").textContent=n>9?"9+":n;document.title=(n?"("+n+") ":"")+"SACKO CONCEPT Pilotage"}
+
+/* ---------- render ---------- */
+function render(){
+  Object.keys(TABS).forEach(k=>{
+    const rs=rowsOf(k), open=rs.filter(r=>(r.Statut||FIRST[k])===FIRST[k]).length;
+    $("n-"+k).textContent=rs.length;
+    $("s-"+k).innerHTML=open?"<em>"+open+" "+(k==="clients"?"à faire":k==="inscriptions"?"à relancer":"nouveau"+(open>1?"x":""))+"</em>":"tout est traité";
+  });
+  document.querySelectorAll(".counter").forEach(c=>c.setAttribute("aria-pressed",c.dataset.tab===tab?"true":"false"));
+  $("tabTitle").textContent=TABS[tab].title;
+  const fs=["Tous"].concat(TABS[tab].statuses);
+  $("filters").innerHTML=fs.map(s=>'<button type="button" data-f="'+esc(s)+'" aria-pressed="'+(s===filter)+'">'+esc(s)+'</button>').join("");
+  const q=$("q").value.trim().toLowerCase();
+  const rs=rowsOf(tab).filter(r=>(filter==="Tous"||(r.Statut||FIRST[tab])===filter)&&(!q||Object.values(r).join(" ").toLowerCase().includes(q)));
+  const freshIds=new Set(notifs.map(n=>n.id));
+  $("list").innerHTML=rs.length?rs.map(r=>{
+    const st=r.Statut||FIRST[tab], T=TABS[tab];
+    const title=r[T.name]||r[T.person]||"Sans nom";
+    const sub=T.sub.map(h=>r[h]).filter(Boolean).join(" · ");
+    return '<button class="item'+(freshIds.has(idOf(tab,r))?' fresh':'')+'" data-row="'+r._row+'"><span class="t">'+esc(title)+'</span><span class="chip '+(OPEN[st]||"c-off")+'">'+esc(st)+'</span><span class="s">'+esc(sub)+'</span><span class="d">'+esc(fmtDate(r.Date))+'</span></button>';
+  }).join(""):'<div class="empty">Aucune demande ici pour l\'instant. Les nouvelles apparaîtront automatiquement.</div>';
+}
+function digits(p){return String(p||"").replace(/[^\d]/g,"")}
+function openItem(row){
+  const r=rowsOf(tab).find(x=>x._row===row);if(!r)return;
+  const T=TABS[tab], st=r.Statut||FIRST[tab];
+  notifs=notifs.filter(n=>n.id!==idOf(tab,r));updateBell();
+  $("sheetTitle").textContent=r[T.name]||r[T.person]||"Demande";
+  const person=r[T.person]||"", first=String(person).split(" ")[0];
+  const app=r["Application"]||r["Démo ouverte"]||"votre application";
+  const msg=tab==="inscriptions"?"Bonjour "+first+", c'est Hawa de SACKO CONCEPT. Vous avez testé la démo "+app+". Qu'en avez-vous pensé ? Je peux vous préparer une version à votre nom.":tab==="devis"?"Bonjour "+first+", c'est Hawa de SACKO CONCEPT. Merci pour votre demande de devis pour "+app+". Avez-vous 20 minutes cette semaine pour en parler ?":"Bonjour "+first+", c'est Hawa de SACKO CONCEPT. J'ai bien reçu votre demande pour "+app+", je m'en occupe.";
+  const wa=digits(r["WhatsApp"]);
+  const files=r["Fichiers joints"]||r["Fichiers"];
+  const skip=["Statut"];
+  $("sheetBody").innerHTML=
+    '<div class="acts">'+
+      (wa?'<a class="btn dark" href="https://wa.me/'+wa+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener">WhatsApp</a>':'')+
+      (r["E-mail"]?'<a class="btn" href="mailto:'+esc(r["E-mail"])+'">E-mail</a>':'')+
+      (files?'<a class="btn" href="'+esc(files)+'" target="_blank" rel="noopener">Fichiers</a>':'')+
+      (tab==="devis"?'<a class="btn" href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Calendly</a>':'')+
+    '</div>'+
+    '<div><div class="label" style="margin-bottom:8px">Statut</div><div class="status-row">'+T.statuses.map(s=>'<button type="button" data-s="'+esc(s)+'" aria-pressed="'+(s===st)+'">'+esc(s)+'</button>').join("")+'</div></div>'+
+    '<div><div class="label" style="margin-bottom:8px">Détails</div><dl class="fields">'+Object.keys(r).filter(k=>k!=="_row"&&!skip.includes(k)&&r[k]!=="").map(k=>'<div><dt>'+esc(k)+'</dt><dd>'+esc(k==="Date"?fmtDate(r[k]):r[k])+'</dd></div>').join("")+'</dl></div>'+
+    (wa?'<div><div class="label" style="margin-bottom:8px">Message WhatsApp préparé</div><p style="margin:0;color:var(--muted);font-size:14px">'+esc(msg)+'</p></div>':'');
+  $("sheetBody").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>setStatus(r,b.dataset.s));
+  $("scrim").hidden=false;$("sheet").hidden=false;$("close").focus();
+  $("sheet").dataset.row=row;
+  render();
+}
+function closeSheet(){$("scrim").hidden=true;$("sheet").hidden=true}
+async function setStatus(r,s){
+  const old=r.Statut;
+  const t=data[tab];const i=t.headers.indexOf("Statut");const raw=t.rows.find(x=>x.row===r._row);
+  if(i>=0&&raw)raw.values[i]=s;
+  openItem(r._row);
+  if(demo){toast("Statut : "+s+" (exemple)");return}
+  try{const j=await api({action:"statut",feuille:tab,row:r._row,statut:s});if(!j.ok)throw 0;toast("Statut enregistré : "+s)}
+  catch(e){if(i>=0&&raw)raw.values[i]=old;openItem(r._row);toast("Le statut n'a pas pu être enregistré. Vérifiez votre connexion.")}
+}
+
+/* ---------- events ---------- */
+document.querySelectorAll(".counter").forEach(c=>c.onclick=()=>{tab=c.dataset.tab;filter="Tous";render()});
+$("filters").onclick=e=>{const b=e.target.closest("[data-f]");if(b){filter=b.dataset.f;render()}};
+$("list").onclick=e=>{const b=e.target.closest(".item");if(b)openItem(parseInt(b.dataset.row,10))};
+$("q").oninput=render;
+$("close").onclick=closeSheet;$("scrim").onclick=closeSheet;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
+$("refresh").onclick=()=>load(false);
+$("bell").onclick=()=>{const p=$("notifs");if(!p.hidden){p.hidden=true;return}
+  p.innerHTML=notifs.length?notifs.slice(0,12).map((n,i)=>'<button data-i="'+i+'">'+esc(n.k==="devis"?"Nouveau devis":n.k==="inscriptions"?"Inscription démo":"Demande client")+'<small>'+esc((n.r[TABS[n.k].name]||n.r[TABS[n.k].person]||"")+" · "+fmtDate(n.r.Date))+'</small></button>').join(""):'<div style="padding:14px;color:var(--muted);font-size:14px">Aucune nouvelle notification.</div>';
+  p.hidden=false;
+  p.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{const n=notifs[+b.dataset.i];p.hidden=true;tab=n.k;filter="Tous";render();openItem(n.r._row)});
+};
+document.addEventListener("click",e=>{if(!e.target.closest("#notifs")&&!e.target.closest("#bell"))$("notifs").hidden=true});
+function start(){
+  $("login").hidden=true;$("app").hidden=false;$("demoBanner").hidden=!demo;
+  if("Notification" in window&&Notification.permission==="default"&&!demo)$("permBanner").hidden=false;
+  load(true);clearInterval(timer);timer=setInterval(()=>load(false),60000);
+}
+function logout(){store.del("sc_key");key=null;demo=false;data=null;clearInterval(timer);$("app").hidden=true;$("login").hidden=false}
+$("logout").onclick=logout;
+$("allow").onclick=async()=>{try{const p=await Notification.requestPermission();$("permBanner").hidden=true;toast(p==="granted"?"Notifications activées":"Notifications refusées")}catch(e){$("permBanner").hidden=true}};
+$("loginForm").onsubmit=async e=>{
+  e.preventDefault();$("loginErr").textContent="";
+  const c=$("code").value.trim();if(!c){$("loginErr").textContent="Entrez votre code d'accès.";return}
+  if(URL_API.startsWith("COLLER")){$("loginErr").textContent="L'application n'est pas encore reliée à la feuille Google. Utilisez « Voir avec des exemples » en attendant.";return}
+  key=c;demo=false;
+  try{const j=await api();if(!j.ok){$("loginErr").textContent="Code d'accès incorrect.";key=null;return}store.set("sc_key",c);data=j.data;start()}
+  catch(err){$("loginErr").textContent="Connexion impossible. Vérifiez votre réseau.";key=null}
+};
+$("demoBtn").onclick=()=>{demo=true;key=null;data=sample();store.del("sc_seen_demo");start();
+  setTimeout(()=>{if(!demo||!data)return;data.inscriptions.rows.push({row:99,values:[new Date().toISOString(),"Ibrahim Sow","Sow Distribution","ibrahim@sowdistri.sn","+221 78 000 00 00","StockPro","À relancer"]});load(false)},7000)};
+if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(()=>{})}
+const saved=store.get("sc_key");
+if(saved&&!URL_API.startsWith("COLLER")){key=saved;start()}
+</script>
+</body>
+</html>
