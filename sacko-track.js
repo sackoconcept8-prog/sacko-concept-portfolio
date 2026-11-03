@@ -9,7 +9,7 @@
     if (!src && document.referrer) { try { var h = new URL(document.referrer).hostname.replace(/^www\./, ""); if (h && h.indexOf("sackoconcept.com") < 0) src = h; } catch (e) {} }
     if (src) { try { sessionStorage.setItem("sc_src", src); } catch (e) {} } else { try { src = sessionStorage.getItem("sc_src") || "direct"; } catch (e) { src = "direct"; } }
     var page = location.pathname.replace(/index\.html$/, "") || "/";
-    fetch(url, { method: "POST", mode: "no-cors", keepalive: true, headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ type: "visite", page: page, source: src, vid: vid }) }).catch(function () {});
+    var u = new URL(url); u.searchParams.set("action", "visite"); u.searchParams.set("page", page); u.searchParams.set("source", src); u.searchParams.set("vid", vid);
+    fetch(u.toString(), { mode: "no-cors", keepalive: true }).catch(function () {});
   } catch (e) {}
 })();
