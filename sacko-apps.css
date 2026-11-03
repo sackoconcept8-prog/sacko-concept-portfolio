@@ -303,3 +303,19 @@ nav .btn{white-space:nowrap}
 .pr-notes a{color:var(--ivory);font-weight:600;white-space:nowrap}
 @media(max-width:900px){.pr-grid{grid-template-columns:1fr}.pr-notes{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.pr-feat{animation:none}.pr-list li{animation:none;opacity:1;transform:none}.pr-card,.pr-price b{transition:none}}
+
+/* offres compactes */
+.pr-grid{gap:14px;max-width:1040px;margin:0 auto}
+.pr-card{padding:20px 20px 18px;gap:10px;border-radius:18px}
+.pr-top h3{font-size:19px}
+.pr-desc{font-size:13.5px}
+.pr-price b{font-size:30px}
+.pr-price span{font-size:12.5px}
+.pr-list{gap:7px;font-size:13.5px}
+.pr-list li::before{width:16px;height:16px;background-size:10px}
+.pr-time{font-size:12.5px;padding-top:10px}
+.pr-cta{padding:11px 16px;font-size:14px}
+.pr-badge{top:-11px;font-size:11px;padding:4px 10px}
+.pr-bar{justify-content:center}
+.pr-for{text-align:center}
+.pr-notes{max-width:1040px;margin-left:auto;margin-right:auto;font-size:13px}
