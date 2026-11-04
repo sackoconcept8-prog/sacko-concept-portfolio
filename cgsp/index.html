@@ -59,7 +59,7 @@ textarea.input{min-height:90px;resize:vertical}
 #login .brand{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;margin-bottom:28px}
 #login .brand img{width:110px;filter:drop-shadow(0 10px 22px rgba(15,27,45,.18))}
 #login .brand h1{font-size:30px}
-#login .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;width:100%;max-width:1060px}
+#login .grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;width:100%;max-width:1280px}
 .space{text-align:left;cursor:pointer;padding:22px;border-radius:20px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow);transition:transform .15s,border-color .15s;display:flex;flex-direction:column;gap:10px}
 .space:hover{transform:translateY(-2px);border-color:var(--blue)}
 .space .si{width:46px;height:46px;border-radius:13px;display:grid;place-items:center}
@@ -195,9 +195,16 @@ tbody tr:last-child td{border-bottom:0}
 .cl-hero{border-radius:20px;padding:22px 24px;background:linear-gradient(135deg,#EAF1FE,#fff);border:1px solid var(--line);display:flex;align-items:center;gap:18px;margin-bottom:18px;flex-wrap:wrap}
 .leaflet-container{font-family:var(--body)}
 .mk{width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.sos-fab{position:fixed;right:max(16px,calc(50% - 204px));bottom:96px;z-index:60;width:74px;height:74px;border-radius:50%;border:0;background:radial-gradient(circle at 35% 30%,#FF6B5E,#D2362B 60%,#A61E15);color:#fff;font:800 18px var(--display);box-shadow:0 10px 26px rgba(210,54,43,.45);cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none}
+.sos-fab svg.ring{position:absolute;inset:-6px;width:86px;height:86px;transform:rotate(-90deg)}.sos-fab circle{fill:none;stroke:#D2362B;stroke-width:5;stroke-dasharray:258;stroke-dashoffset:258;transition:stroke-dashoffset .1s linear}
+@media (min-width:700px){.sos-fab{bottom:120px}}
+.sos-bar{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:16px;background:#D2362B;color:#fff;margin-bottom:16px;animation:pulse 1.4s infinite;flex-wrap:wrap}.sos-bar .btn{border-color:#fff}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(210,54,43,.5)}50%{box-shadow:0 0 0 10px rgba(210,54,43,0)}}
+.mk.sos{animation:pulse 1s infinite}
+.stars button{border:0;background:none;font-size:26px;cursor:pointer;color:#D9DEE7;padding:0 2px}.stars button.on{color:#F2A93B}
 /* responsive */
 .kpis.k4{grid-template-columns:repeat(4,minmax(0,1fr))}.kpis.k3{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media (max-width:1180px){.kpis,.kpis.k4{grid-template-columns:repeat(3,minmax(0,1fr))}.grid2,.grid2e{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}#login .grid{grid-template-columns:1fr 1fr}}
+@media (max-width:1180px){.kpis,.kpis.k4{grid-template-columns:repeat(3,minmax(0,1fr))}.grid2,.grid2e{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}#login .grid{grid-template-columns:repeat(3,1fr)}}
 @media (max-width:860px){
   .shell{grid-template-columns:1fr}
   .side{position:fixed;left:0;top:0;z-index:1500;width:270px;transform:translateX(-105%);transition:transform .25s;box-shadow:10px 0 40px rgba(15,27,45,.15)}
@@ -236,6 +243,7 @@ tbody tr:last-child td{border-bottom:0}
     <button class="space" data-go="dir"><div class="si" style="background:var(--blue-soft);color:var(--blue)" data-i="shield"></div><h3>Direction générale</h3><p>Vue en direct de tous les sites, alertes, chiffre d'affaires et décisions.</p><span class="go">Ouvrir l'espace →</span></button>
     <button class="space" data-go="rh"><div class="si" style="background:var(--violet-soft);color:var(--violet)" data-i="users"></div><h3>RH et exploitation</h3><p>Agents, planning, remplacements, congés, cartes professionnelles et paie.</p><span class="go">Ouvrir l'espace →</span></button>
     <button class="space" data-go="agent"><div class="si" style="background:var(--green-soft);color:var(--green)" data-i="phone"></div><h3>Application agent</h3><p>Sur le téléphone de l'agent : pointage, rondes, incidents, planning.</p><span class="go">Ouvrir l'application →</span></button>
+    <button class="space" data-go="sup"><div class="si" style="background:var(--red-soft);color:var(--red)" data-i="shield"></div><h3>Superviseur</h3><p>Sur le téléphone du superviseur : tournée de nuit, visites de contrôle, alertes SOS, rapport de nuit.</p><span class="go">Ouvrir l'application →</span></button>
     <button class="space" data-go="client"><div class="si" style="background:var(--amber-soft);color:var(--amber)" data-i="building"></div><h3>Espace client</h3><p>Pour vos clients : commandes, plaintes, suggestions, rapports et factures.</p><span class="go">Ouvrir l'espace →</span></button>
   </div>
   <div class="byline">Démonstration préparée pour CGSP-Sécurité · Données d'exemple · Conçu par <a href="../" target="_blank" rel="noopener">SACKO CONCEPT</a></div>
@@ -276,7 +284,7 @@ tbody tr:last-child td{border-bottom:0}
    CGSP-Sécurité · Logiciel de gestion (démo SACKO CONCEPT)
    Données d'exemple stockées dans le navigateur, régénérées chaque jour.
    ============================================================ */
-const KEY="cgsp-logiciel-v4";
+const KEY="cgsp-logiciel-v5";
 const ICONS={home:"M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z",map:"M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14",building:"M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M2 21h20M8 7h4M8 11h4M8 15h4",users:"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",calendar:"M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM16 2v4M8 2v4M3 10h18",clock:"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",book:"M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5M8 7h8M8 11h6",route:"M6 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM6 15V9a4 4 0 0 1 4-4h4M18 9v6a4 4 0 0 1-4 4h-4",leave:"M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM16 2v4M8 2v4M3 10h18M9 16l2 2 4-4",wallet:"M20 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4M18 12a2 2 0 0 0 0 4h4v-4z",file:"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h5",settings:"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",bell:"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0",search:"M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35",menu:"M3 12h18M3 6h18M3 18h18",x:"M18 6 6 18M6 6l12 12",check:"M20 6 9 17l-5-5",alert:"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",shield:"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4",phone:"M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM11 18h2",call:"M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z",pin:"M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",plus:"M12 5v14M5 12h14",print:"M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z",logout:"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9",camera:"M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",moon:"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z",sun:"M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42",user:"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",chev:"M9 18l6-6-6-6",scan:"M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10",chart:"M3 3v18h18M7 16V10M12 16V6M17 16v-4",cart:"M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM20 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6",msg:"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",star:"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z",send:"M22 2 11 13M22 2l-7 20-4-9-9-4z",dog:"M10 5.17C10 3.7 11.3 2.5 12.9 2.5c1.1 0 2 .6 2.5 1.5l.6 1H19a2 2 0 0 1 2 2v1a3 3 0 0 1-3 3h-1v8a2 2 0 0 1-2 2h-1v-5H8v5H7a2 2 0 0 1-2-2v-6l-2-3 3-2z",box:"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12",pen:"M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z",dl:"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",refresh:"M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"};
 const ic=(n,c="")=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[n]||""}"/></svg>`;
 function hydrateIcons(root=document){root.querySelectorAll("[data-i]").forEach(el=>{if(!el.dataset.done){el.innerHTML=ic(el.dataset.i)+el.innerHTML;el.dataset.done=1}})}
@@ -390,7 +398,7 @@ function seed(){
   ];
   const S={day:T,settings:{name:"CGSP-Sécurité",full:"Compagnie de Gardiennage et de Sécurité Privée",addr:"Lot 5185, 06 BP 3972, Cotonou, Bénin",phone:"+229 01 95 05 61 51",email:"contact@cgsp-securite.bj",ifu:"IFU 3 2019 0000 0000",city:"Cotonou",nightBonus:15000,meal:10000},
     sites,agents,absences,overrides:{},leaves,incidents,rounds,invoices,requests,punches:[],advances:[{id:uid(),agent:agents[9].id,amount:20000,date:addDays(T,-12),reason:"Frais de scolarité"},{id:uid(),agent:agents[15].id,amount:15000,date:addDays(T,-6),reason:"Réparation moto"}],
-    payValidated:false,log:[],seen:{},msgs:seedMsgs(agents,demo,sites,T),...seedStock(agents,T),docs:seedDocs(agents,demo,T),reportSched:{week:true,month:true,dir:true,rh:true,day:1}};
+    payValidated:false,log:[],seen:{},msgs:seedMsgs(agents,demo,sites,T),...seedStock(agents,T),docs:seedDocs(agents,demo,T),reportSched:{week:true,month:true,dir:true,rh:true,day:1},...seedSup(agents,sites,T)};
   /* pointages : nuit d'hier, jour d'aujourd'hui, et nuit de ce soir si elle a commencé */
   for(let d=13;d>=2;d--){const dd=addDays(T,-d);const pool=S.agents.filter(a=>a.site&&!a.demo);S.absences[dd]={};const na=1+Math.floor(rnd()*2);for(let k=0;k<na;k++){const a=pool[Math.floor(rnd()*pool.length)];S.absences[dd][a.id]={type:rnd()<.5?"Maladie":rnd()<.5?"Absence signalée":"Absence non justifiée",note:"Historique"}}genPunches(S,dd,"J",true,true);genPunches(S,dd,"N",true,true)}
   genPunches(S,addDays(T,-1),"N",true);
@@ -398,6 +406,17 @@ function seed(){
   if(nowMin()>=1150)genPunches(S,T,"N",false);
   if(nowMin()<420){genPunches(S,addDays(T,-1),"J",true)}
   return S;
+}
+function seedSup(agents,sites,T){
+  const sups=agents.filter(a=>a.grade==="Superviseur"&&a.shift==="N");const visits=[],nightReports=[];
+  const comments=["RAS, agents vigilants, registre à jour.","Agent sans béret, rappel fait sur place.","Éclairage du parking défaillant, signalé au client.","Agent somnolent à mon arrivée, réveillé et averti.","Très bon accueil, consignes parfaitement connues.","Registre des visiteurs incomplet pour la soirée."];
+  for(let d=6;d>=1;d--){const dd=addDays(T,-d);sups.forEach((sp,si)=>{const ss=sites.filter((_,i)=>i%2===si%2).slice(0,4);let issues=0;
+    ss.forEach((st,k)=>{const ok=rnd()>.18;if(!ok)issues++;const team=agents.filter(a=>a.site===st.id&&a.shift==="N").map(a=>a.id);
+      visits.push({id:uid(),date:dd,time:hm(1350+k*55+Math.floor(rnd()*20)),sup:sp.id,site:st.id,agents:team,checks:{present:true,eveille:ok||rnd()>.5,tenue:ok||rnd()>.5,registre:rnd()>.15,consignes:true,propre:rnd()>.1},note:ok?4+Math.round(rnd()):2+Math.round(rnd()),comment:ok?comments[pick([0,4])]:comments[pick([1,2,3,5])]})});
+    nightReports.push({id:uid(),date:dd,sup:sp.id,visits:ss.length,issues,txt:issues?"Tournée réalisée sur "+ss.length+" sites. "+issues+" point(s) à corriger signalé(s) aux chefs de poste. Aucun incident grave.":"Tournée réalisée sur "+ss.length+" sites. Tous les postes tenus, agents vigilants. Nuit calme.",sent:"06:"+pad(10+Math.floor(rnd()*40))})})}
+  const s3=sites.find(x=>x.id==="s3");const ag=agents.find(a=>a.site==="s3"&&a.shift==="N");
+  const sos=[{id:uid(),agent:ag.id,site:"s3",date:addDays(T,-3),time:"02:41",lat:s3.lat,lng:s3.lng,status:"Clôturée",handledBy:sups[0]?sups[0].name:"Superviseur",note:"Tentative de vol de câbles. Superviseur sur place à 02:52, police arrivée à 02:58. Aucun blessé."}];
+  return {visits,nightReports,sos,pchecks:[]};
 }
 function seedDocs(agents,demo,T){
   return [
@@ -499,14 +518,14 @@ function modal(title,body,foot="",wide=false){const m=$("#modal");m.innerHTML=`<
 
 /* ---------- navigation ---------- */
 const NAV={
-  dir:[["Pilotage",[["dash","home","Tableau de bord"],["live","map","Carte en direct"],["messages","send","Messagerie agents"],["requests","msg","Demandes clients"],["rapports","chart","Rapports"]]],["Exploitation",[["sites","building","Sites clients"],["agents","users","Agents"],["planning","calendar","Planning"],["pointage","clock","Pointage"],["courante","book","Main courante"],["rondes","route","Rondes"]]],["Gestion",[["conges","leave","Congés et absences"],["docs","pen","Documents RH"],["paie","wallet","Paie"],["stock","box","Matériel et stock"],["factures","file","Facturation"],["reglages","settings","Paramètres"]]]],
-  rh:[["Ressources humaines",[["dash","home","Tableau de bord RH"],["agents","users","Agents"],["planning","calendar","Planning"],["pointage","clock","Pointage"],["conges","leave","Congés et absences"],["docs","pen","Documents RH"],["messages","send","Messagerie agents"],["paie","wallet","Paie"],["stock","box","Matériel et stock"],["rapports","chart","Rapports"]]],["Terrain",[["courante","book","Main courante"],["rondes","route","Rondes"],["live","map","Carte en direct"]]]],
+  dir:[["Pilotage",[["dash","home","Tableau de bord"],["live","map","Carte en direct"],["messages","send","Messagerie agents"],["requests","msg","Demandes clients"],["supervision","shield","Supervision"],["rapports","chart","Rapports"]]],["Exploitation",[["sites","building","Sites clients"],["agents","users","Agents"],["planning","calendar","Planning"],["pointage","clock","Pointage"],["courante","book","Main courante"],["rondes","route","Rondes"]]],["Gestion",[["conges","leave","Congés et absences"],["docs","pen","Documents RH"],["paie","wallet","Paie"],["stock","box","Matériel et stock"],["factures","file","Facturation"],["reglages","settings","Paramètres"]]]],
+  rh:[["Ressources humaines",[["dash","home","Tableau de bord RH"],["agents","users","Agents"],["planning","calendar","Planning"],["pointage","clock","Pointage"],["conges","leave","Congés et absences"],["docs","pen","Documents RH"],["messages","send","Messagerie agents"],["paie","wallet","Paie"],["stock","box","Matériel et stock"],["rapports","chart","Rapports"]]],["Terrain",[["courante","book","Main courante"],["rondes","route","Rondes"],["supervision","shield","Supervision"],["live","map","Carte en direct"]]]],
   client:[["Mon espace",[["cdash","home","Accueil"],["corder","cart","Commander un service"],["cmsg","msg","Plaintes et suggestions"],["creport","chart","Rapports de sécurité"],["cinv","file","Mes factures"]]]]
 };
 const CLIENT_SITE="s1";
 function badges(){
   const p=planFor(S.day);
-  return {docs:S.docs.filter(d=>d.reply&&d.status==="Répondu").length,stock:S.stock.filter(m=>m.qty<m.min).length+S.matReq.filter(r=>r.status==="En attente").length,messages:S.msgs.filter(m=>m.to==="rh"&&!m.handled).length,requests:S.requests.filter(r=>r.status==="Nouvelle").length,planning:p._holes.length,conges:S.leaves.filter(l=>l.status==="En attente").length,courante:S.incidents.filter(i=>i.status==="En cours").length,factures:S.invoices.filter(i=>i.status==="En retard").length};
+  return {supervision:S.sos.filter(x=>x.status!=="Clôturée").length,docs:S.docs.filter(d=>d.reply&&d.status==="Répondu").length,stock:S.stock.filter(m=>m.qty<m.min).length+S.matReq.filter(r=>r.status==="En attente").length,messages:S.msgs.filter(m=>m.to==="rh"&&!m.handled).length,requests:S.requests.filter(r=>r.status==="Nouvelle").length,planning:p._holes.length,conges:S.leaves.filter(l=>l.status==="En attente").length,courante:S.incidents.filter(i=>i.status==="En cours").length,factures:S.invoices.filter(i=>i.status==="En retard").length};
 }
 function renderSide(){
   const b=badges();
@@ -525,6 +544,7 @@ function renderTop(){
 function notifs(){
   const out=[];const p=planFor(S.day);
   if(role==="client"){S.requests.filter(r=>r.site===CLIENT_SITE&&r.answer).forEach(r=>out.push({k:"ra"+r.id,i:"msg",c:"var(--blue)",t:"Réponse de CGSP : "+r.subject,s:fd(r.date),go:"cmsg"}));return out}
+  S.sos.filter(x=>x.status!=="Clôturée").forEach(x=>out.unshift({k:"sos"+x.id+x.status,i:"alert",c:"var(--red)",t:"🚨 SOS : "+A(x.agent).name,s:SI(x.site).name+" · "+x.time+" · "+x.status,go:"supervision"}));
   p._holes.forEach(h=>out.push({k:"h"+h.site+h.shift+S.day,i:"alert",c:"var(--red)",t:`Poste non couvert : ${SI(h.site).name} (${SHIFTS[h.shift].l.toLowerCase()})`,s:"Aujourd'hui · à traiter",go:"planning"}));
   S.incidents.filter(i=>i.status==="En cours").forEach(i=>out.push({k:"i"+i.id,i:"book",c:"var(--amber)",t:i.type+" · "+SI(i.site).name,s:fd(i.date)+" à "+i.time,go:"courante"}));
   S.punches.filter(x=>x.date>=addDays(S.day,-1)&&x.d>300).forEach(x=>out.push({k:"z"+x.id,i:"pin",c:"var(--red)",t:`Pointage hors zone : ${A(x.agent).name}`,s:SI(x.site).name+" · "+metres(x.d)+" du site",go:"pointage"}));
@@ -550,8 +570,8 @@ function render(keepSearch){
   Object.values(maps).forEach(m=>{try{m.remove()}catch(e){}});maps={};
   renderSide();renderTop();
   if(!keepSearch){filt.q="";$("#q").value=""}
-  const V={dash:role==="rh"?vDashRH:vDash,live:vLive,requests:vRequests,sites:vSites,agents:vAgents,planning:vPlanning,pointage:vPointage,courante:vCourante,rondes:vRondes,conges:vConges,paie:vPaie,factures:vFactures,reglages:vReglages,messages:vMessages,stock:vStock,docs:vDocs,rapports:vRapports,cdash:vCDash,corder:vCOrder,cmsg:vCMsg,creport:vCReport,cinv:vCInv}[view]||vDash;
-  $("#view").innerHTML=V();hydrateIcons($("#view"));
+  const V={dash:role==="rh"?vDashRH:vDash,live:vLive,requests:vRequests,sites:vSites,agents:vAgents,planning:vPlanning,pointage:vPointage,courante:vCourante,rondes:vRondes,conges:vConges,paie:vPaie,factures:vFactures,reglages:vReglages,messages:vMessages,stock:vStock,docs:vDocs,rapports:vRapports,supervision:vSup,cdash:vCDash,corder:vCOrder,cmsg:vCMsg,creport:vCReport,cinv:vCInv}[view]||vDash;
+  $("#view").innerHTML=(role!=="client"?sosBanner():"")+V();hydrateIcons($("#view"));bindSos();
   (afterRender[view]||(()=>{}))();
   window.scrollTo(0,0);
 }
@@ -574,7 +594,8 @@ function buildMap(el,opts={}){
   L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{maxZoom:19,attribution:'&copy; OpenStreetMap, &copy; CARTO'}).addTo(m);
   const col={green:"#14915A",amber:"#E08A00",red:"#D2362B"};const pts=[];
   S.sites.forEach(s=>{const h=siteHealth(s);pts.push([s.lat,s.lng]);
-    const icon=L.divIcon({className:"",html:`<div class="mk" style="background:${col[h.state]};width:22px;height:22px"></div>`,iconSize:[22,22],iconAnchor:[11,11]});
+    const sosOn=S.sos.some(x=>x.site===s.id&&x.status!=="Clôturée");
+    const icon=L.divIcon({className:"",html:`<div class="mk ${sosOn?"sos":""}" style="background:${sosOn?"#D2362B":col[h.state]};width:${sosOn?30:22}px;height:${sosOn?30:22}px"></div>`,iconSize:[22,22],iconAnchor:[11,11]});
     const names=h.team.map(id=>{const pu=h.pun.find(x=>x.agent===id);const st=punchStatus(pu);return `<div style="display:flex;justify-content:space-between;gap:10px"><span>${esc(A(id).name)}</span><b style="color:${!pu?"#5E6B80":st.c==="p-green"?"#14915A":st.c==="p-red"?"#D2362B":"#B86E00"}">${pu?st.l:"Pas encore pointé"}</b></div>`}).join("");
     L.marker([s.lat,s.lng],{icon}).addTo(m).bindPopup(`<div style="min-width:230px;font:13px Inter,sans-serif"><b style="font-size:14px">${esc(s.name)}</b><div style="color:#5E6B80;margin-bottom:6px">${esc(s.loc)} · ${h.team.length}/${h.need} agent(s)</div>${h.hole?`<div style="color:#D2362B;font-weight:700;margin-bottom:6px">⚠ ${h.hole.missing} poste(s) non couvert(s)</div>`:""}${names||"<i>Aucun agent</i>"}</div>`);
     if(opts.punches)h.pun.forEach(x=>{L.circleMarker([x.lat,x.lng],{radius:5,color:"#fff",weight:2,fillColor:x.d>300?"#D2362B":"#1D5FD1",fillOpacity:1}).addTo(m).bindTooltip(A(x.agent).name+" · "+x.in+" · "+metres(x.d))});
@@ -730,7 +751,7 @@ function vPointage(){
   S.sites.forEach(s=>p[s.id][tab].forEach(id=>{const pu=S.punches.find(x=>x.agent===id&&x.date===sd&&x.shift===tab);rows.push({s,a:A(id),pu})}));
   const started=sd<S.day||(tab==="J"?nowMin()>=420:nowMin()>=1140);
   const done=rows.filter(r=>r.pu).length,late=rows.filter(r=>r.pu&&punchStatus(r.pu).c==="p-amber").length,zone=rows.filter(r=>r.pu&&r.pu.d>300).length;
-  return ph("Pointage géolocalisé",`Relève de ${SHIFTS[tab].l.toLowerCase()} du ${fdl(sd)} · l'agent pointe depuis son téléphone, la position GPS est comparée au site`,`<div class="tabs"><button data-pt="J" class="${tab==="J"?"on":""}">${ic("sun")} Jour</button><button data-pt="N" class="${tab==="N"?"on":""}">${ic("moon")} Nuit</button></div><button class="btn" data-goto="live">${ic("map")} Voir sur la carte</button>`)+
+  return ph("Pointage géolocalisé",`Relève de ${SHIFTS[tab].l.toLowerCase()} du ${fdl(sd)} · l'agent pointe depuis son téléphone, la position GPS est comparée au site`,`<div class="tabs"><button data-pt="J" class="${tab==="J"?"on":""}">${ic("sun")} Jour</button><button data-pt="N" class="${tab==="N"?"on":""}">${ic("moon")} Nuit</button></div><button class="btn" data-goto="supervision">${ic("moon")} Contrôle de présence</button><button class="btn" data-goto="live">${ic("map")} Voir sur la carte</button>`)+
   `<div class="kpis k4">${kpi("Pointés",done+" / "+rows.length,started?"Agents arrivés":"Relève à venir","check","var(--green)")}${kpi("À l'heure",rows.filter(r=>r.pu&&punchStatus(r.pu).c==="p-green").length,"Moins de 10 min d'écart","clock")}${kpi("Retards",late,"Plus de 10 min","clock","var(--amber)")}${kpi("Hors zone",zone,"À plus de 300 m du site","pin","var(--red)")}</div>
   <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Agent</th><th>Site</th><th>Prévu</th><th>Arrivée</th><th>Départ</th><th>Distance au site</th><th>Statut</th></tr></thead><tbody>${rows.map(({s,a,pu})=>{const st=punchStatus(pu);return `<tr class="click" data-agent="${a.id}"><td><div class="row">${av(a.name)}<div><div class="b">${esc(a.name)}</div><div class="xs muted">${a.grade}</div></div></div></td><td>${esc(s.name)}</td><td>${SHIFTS[tab].start}</td><td class="b">${pu?pu.in:"—"}</td><td>${pu&&pu.out?pu.out:"—"}</td><td>${pu?`<span style="color:${pu.d>300?"var(--red)":"inherit"};font-weight:${pu.d>300?700:400}">${ic("pin")} ${metres(pu.d)}</span>`:"—"}</td><td>${pu?`<span class="pill ${st.c}">${st.l}</span>`:lateDecl(a.id,sd)?`<span class="pill p-amber">${ic("clock")} Retard signalé · ${lateDecl(a.id,sd).mins} min</span>`:started&&sd<=S.day&&!(tab==="N"&&sd===S.day&&nowMin()<1155)?`<span class="pill p-red">Non pointé</span>`:`<span class="pill p-grey">À venir</span>`}</td></tr>`}).join("")}</tbody></table></div></div>`;
 }
@@ -942,7 +963,7 @@ afterRender.docs=()=>{
 
 /* ---------- Rapports ---------- */
 const REPORTS=[
- ["abs","Absences","alert","var(--red)"],["ret","Retards","clock","var(--amber)"],["zone","Pointages hors zone","pin","var(--red)"],["pres","Présence par agent","users","var(--blue)"],["inc","Main courante (incidents)","book","var(--violet)"],["ron","Rondes","route","var(--blue)"],["cong","Congés et permissions","leave","var(--violet)"],["docs","Documents RH et sanctions","pen","var(--amber)"],["mat","Matériel et stock","box","var(--steel)"],["cli","Demandes clients","msg","var(--green)"],["paie","Paie","wallet","var(--green)"],["fac","Facturation","file","var(--green)"]];
+ ["abs","Absences","alert","var(--red)"],["ret","Retards","clock","var(--amber)"],["zone","Pointages hors zone","pin","var(--red)"],["pres","Présence par agent","users","var(--blue)"],["inc","Main courante (incidents)","book","var(--violet)"],["ron","Rondes","route","var(--blue)"],["cong","Congés et permissions","leave","var(--violet)"],["docs","Documents RH et sanctions","pen","var(--amber)"],["mat","Matériel et stock","box","var(--steel)"],["cli","Demandes clients","msg","var(--green)"],["paie","Paie","wallet","var(--green)"],["fac","Facturation","file","var(--green)"],["sup","Visites de supervision","shield","var(--blue)"],["sos","Alertes SOS et contrôles de nuit","alert","var(--red)"]];
 function repRange(){const p=filt.rp||"7";if(p==="m"){return [S.day.slice(0,8)+"01",S.day,"Mois de "+MOIS[new Date(S.day+"T12:00:00").getMonth()]]}const n=+p;return [addDays(S.day,-(n-1)),S.day,n+" derniers jours"]}
 function repData(k){
   const [a,b]=repRange();const inR=d=>d>=a&&d<=b;const P=S.punches.filter(x=>inR(x.date));const late=x=>toMin(x.in)-toMin(SHIFTS[x.shift].start);
@@ -958,6 +979,8 @@ function repData(k){
     case "mat":{const rows=S.mvts.filter(v=>inR(v.date)).map(v=>[fd(v.date),v.type,itemOf(v.item).name,v.qty,v.who]).concat(S.matReq.filter(r=>inR(r.date)).map(r=>[fd(r.date),"Demande ("+r.kind+")",itemOf(r.item).name,1,A(r.agent).name]));return {cols:["Date","Mouvement","Article","Qté","Qui"],rows,sum:S.stock.filter(m=>m.qty<m.min).length+" article(s) à racheter"}}
     case "cli":{const rows=S.requests.filter(r=>inR(r.date)).map(r=>[fd(r.date),SI(r.site).name,r.kind,r.subject,r.status]);return {cols:["Date","Client","Type","Objet","Statut"],rows,sum:rows.length+" demande(s) client"}}
     case "paie":{const rows=S.agents.map(x=>{const p=payOf(x);return [x.name,x.mat,fcfa(p.brut),fcfa(p.cnss),fcfa(p.adv+p.mat),fcfa(p.net)]});return {cols:["Agent","Matricule","Brut","CNSS","Avances et retenues","Net"],rows,sum:"Masse salariale nette : "+fcfa(S.agents.reduce((q,x)=>q+payOf(x).net,0))}}
+    case "sup":{const rows=S.visits.filter(v=>inR(v.date)).sort((x,y)=>(y.date+y.time).localeCompare(x.date+x.time)).map(v=>[fd(v.date)+" "+v.time,A(v.sup).name,SI(v.site).name,"★".repeat(v.note),Object.values(v.checks).filter(x=>!x).length?"Points à corriger":"RAS",v.comment]);return {cols:["Date","Superviseur","Site","Note","Bilan","Observation"],rows,sum:rows.length+" visite(s) · note moyenne "+(rows.length?(S.visits.filter(v=>inR(v.date)).reduce((q,v)=>q+v.note,0)/rows.length).toFixed(1).replace(".",","):"—")+"/5"}}
+    case "sos":{const rows=S.sos.filter(x=>inR(x.date)).map(x=>[fd(x.date)+" "+x.time,"SOS",A(x.agent).name,SI(x.site).name,x.status,x.note||""]).concat(S.pchecks.filter(c=>inR(c.date)).map(c=>[fd(c.date)+" "+c.time,"Contrôle de présence",c.res.filter(r=>r.ok).length+"/"+c.res.length+" confirmés","Tous les postes de nuit",c.res.some(r=>!r.ok)?"Non-réponses":"OK",c.res.filter(r=>!r.ok).map(r=>A(r.agent).name).join(", ")]));return {cols:["Date","Type","Agent / résultat","Site","Statut","Détail"],rows,sum:S.sos.filter(x=>inR(x.date)).length+" SOS · "+S.pchecks.filter(c=>inR(c.date)).length+" contrôle(s) de présence"}}
     case "fac":{const rows=S.invoices.map(i=>[i.num,SI(i.site).name,i.period,fcfa(i.amount),i.status]);return {cols:["N°","Client","Période","Montant","Statut"],rows,sum:"Impayés : "+fcfa(S.invoices.filter(i=>i.status!=="Payée").reduce((q,i)=>q+i.amount,0))}}
   }
 }
@@ -982,6 +1005,35 @@ afterRender.rapports=()=>{
   $$("[data-rcsv]").forEach(b=>b.onclick=()=>repCSV(b.dataset.rcsv));
   $("#rp-all").onclick=()=>show(REPORTS.map(r=>r[0]));
 };
+
+/* ---------- SOS (bureau) ---------- */
+function sosBanner(){return S.sos.filter(x=>x.status!=="Clôturée").map(x=>{const a=A(x.agent);return `<div class="sos-bar">${ic("alert")}<div class="grow"><b style="font-size:16px">🚨 ALERTE SOS · ${esc(a.name)}</b><div class="sm" style="opacity:.95">${esc(SI(x.site).name)} · ${x.time} · position GPS reçue · ${x.status}</div></div><a class="btn sm" style="background:#fff;color:#D2362B" href="tel:${(a.phone||"").replace(/\s/g,"")}">${ic("call")} Appeler l'agent</a>${x.status==="En cours"?`<button class="btn sm" style="background:transparent;color:#fff" data-sosgo="${x.id}">Envoyer le superviseur</button>`:""}<button class="btn sm" style="background:transparent;color:#fff" data-sosend="${x.id}">Clôturer</button></div>`}).join("")}
+function bindSos(){
+  $$("[data-sosgo]").forEach(b=>b.onclick=()=>{const x=S.sos.find(y=>y.id===b.dataset.sosgo);x.status="Superviseur en route";x.handledBy=supUser().name;S.msgs.unshift({id:uid(),from:"rh",to:supUser().id,kind:"Convocation",txt:"URGENT : alerte SOS de "+A(x.agent).name+" à "+SI(x.site).name+". Rendez-vous immédiatement sur place.",date:S.day,time:hm(nowMin()),read:{},ack:{}});save();toast("Superviseur alerté · en route","send");render(true)});
+  $$("[data-sosend]").forEach(b=>b.onclick=()=>{const x=S.sos.find(y=>y.id===b.dataset.sosend);modal("Clôturer l'alerte SOS",`<div class="field"><label>Ce qui s'est passé</label><textarea class="input" id="se-x" placeholder="Ex. Tentative d'intrusion, superviseur sur place à 02:52, police prévenue…"></textarea></div>`,`<button class="btn pri" id="se-ok">Clôturer et enregistrer</button>`);$("#se-ok").onclick=()=>{x.status="Clôturée";x.note=$("#se-x").value||"Situation maîtrisée.";const inc=S.incidents.find(i=>i.sos===x.id);if(inc){inc.status="Clôturé";inc.txt+=" · Clôture : "+x.note}save();closeAll();toast("Alerte clôturée et archivée dans la main courante");render(true)}});
+}
+function triggerSos(a,s,lat,lng){const id=uid();S.sos.unshift({id,agent:a.id,site:s.id,date:today(),time:hm(nowMin()),lat,lng,status:"En cours"});S.incidents.unshift({id:uid(),sos:id,date:today(),time:hm(nowMin()),site:s.id,agent:a.id,type:"Alerte SOS",grav:"Élevée",txt:"Alerte SOS déclenchée par l'agent depuis l'application. Position GPS transmise.",status:"En cours",fresh:true});save()}
+const supUser=()=>S.agents.find(a=>a.grade==="Superviseur"&&a.shift==="N")||S.agents[0];
+function launchPresence(){
+  const sd=curShiftDate(),p=planFor(sd);const ids=[];S.sites.forEach(s=>p[s.id].N.forEach(id=>ids.push(id)));
+  const c={id:uid(),date:S.day,time:hm(nowMin()),res:ids.map(id=>({agent:id,ok:false,at:""}))};
+  c.res.forEach((r,i)=>{if(!A(r.agent).demo&&i%9!==4){r.ok=true;r.at=hm(nowMin()+1+(i%4))}});
+  S.pchecks.unshift(c);save();toast("Contrôle de présence envoyé à "+ids.length+" agents de nuit","send");
+}
+/* ---------- Supervision (bureau) ---------- */
+function vSup(){
+  const v7=S.visits.filter(v=>v.date>=addDays(S.day,-6));const avg=v7.length?(v7.reduce((q,v)=>q+v.note,0)/v7.length).toFixed(1).replace(".",","):"—";
+  const lastPC=S.pchecks[0];
+  return ph("Supervision","Visites de contrôle des superviseurs, rapports de nuit, alertes SOS et contrôles de présence",`<button class="btn" id="pc-go">${ic("moon")} Lancer un contrôle de présence</button><button class="btn pri" data-goto="rapports">${ic("dl")} Rapports</button>`)+
+  `<div class="kpis k4">${kpi("Visites (7 nuits)",v7.length,"par "+new Set(v7.map(v=>v.sup)).size+" superviseur(s)","shield")}${kpi("Note moyenne des postes",avg+"/5","Tenue, vigilance, registre","star","var(--amber)")}${kpi("Points à corriger",v7.filter(v=>Object.values(v.checks).some(x=>!x)).length,"Relevés en visite","alert","var(--red)")}${kpi("Alertes SOS (30 j)",S.sos.length,S.sos.filter(x=>x.status!=="Clôturée").length+" en cours","alert","var(--red)")}</div>
+  ${lastPC?`<div class="card pad" style="margin-bottom:16px"><div class="row wrapf"><b class="grow">Dernier contrôle de présence · ${fd(lastPC.date)} à ${lastPC.time}</b><span class="pill ${lastPC.res.every(r=>r.ok)?"p-green":"p-amber"}">${lastPC.res.filter(r=>r.ok).length}/${lastPC.res.length} agents ont confirmé</span></div><div class="row wrapf" style="margin-top:10px">${lastPC.res.map(r=>`<span class="pill ${r.ok?"p-green":"p-red"}">${r.ok?"✓":"✗"} ${esc(A(r.agent).name)}${r.ok?" · "+r.at:" · pas de réponse"}</span>`).join("")}</div></div>`:""}
+  <div class="grid2e"><div class="card"><div class="ch"><h3>Rapports de nuit</h3></div><div class="list">${[...S.nightReports].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8).map(r=>`<div class="li click" data-nr="${r.id}" style="align-items:flex-start">${av(A(r.sup).name)}<div class="grow"><div class="row wrapf"><b class="sm">${esc(A(r.sup).name)}</b><span class="pill ${r.issues?"p-amber":"p-green"}">${r.visits} visites${r.issues?" · "+r.issues+" à corriger":" · RAS"}</span></div><div class="xs muted">Nuit du ${fd(addDays(r.date,0))} · envoyé à ${r.sent}</div><div class="sm" style="margin-top:3px">${esc(r.txt)}</div></div></div>`).join("")}</div></div>
+  <div class="card"><div class="ch"><h3>Alertes SOS</h3></div><div class="list">${S.sos.map(x=>`<div class="li" style="align-items:flex-start"><span style="color:var(--red)">${ic("alert")}</span><div class="grow"><div class="row wrapf"><b class="sm">${esc(A(x.agent).name)}</b><span class="pill ${x.status==="Clôturée"?"p-green":"p-red"}">${x.status}</span></div><div class="xs muted">${esc(SI(x.site).name)} · ${fd(x.date)} à ${x.time}${x.handledBy?" · pris en charge par "+esc(x.handledBy):""}</div>${x.note?`<div class="sm" style="margin-top:3px">${esc(x.note)}</div>`:""}</div></div>`).join("")}</div></div></div>
+  <div class="card"><div class="ch"><h3>Visites de contrôle</h3></div><div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Superviseur</th><th>Site</th><th>Contrôles</th><th>Note</th><th>Observation</th></tr></thead><tbody>${[...S.visits].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)).slice(0,30).map(v=>`<tr><td class="sm"><b>${fd(v.date)}</b><div class="muted">${v.time}</div></td><td class="sm">${esc(A(v.sup).name)}</td><td>${esc(SI(v.site).name)}</td><td>${[["present","Présent"],["eveille","Éveillé"],["tenue","Tenue"],["registre","Registre"]].map(([k,l])=>`<span class="pill ${v.checks[k]?"p-green":"p-red"}" style="margin:1px">${v.checks[k]?"✓":"✗"} ${l}</span>`).join("")}</td><td style="color:#E08A00;white-space:nowrap">${"★".repeat(v.note)}<span style="color:#D9DEE7">${"★".repeat(5-v.note)}</span></td><td class="sm" style="max-width:260px">${esc(v.comment)}</td></tr>`).join("")}</tbody></table></div></div>`;
+}
+afterRender.supervision=()=>{bindCommon();$("#pc-go").onclick=()=>{launchPresence();render(true)};
+  $$("[data-nr]").forEach(b=>b.onclick=()=>{const r=S.nightReports.find(x=>x.id===b.dataset.nr);const vs=S.visits.filter(v=>v.date===r.date&&v.sup===r.sup);
+    modal("Rapport de nuit",docHead("RAPPORT DE NUIT · SUPERVISION",r.date)+`<dl class="kv"><dt>Superviseur</dt><dd>${esc(A(r.sup).name)}</dd><dt>Nuit du</dt><dd>${fdl(r.date)}</dd><dt>Envoyé à</dt><dd>${r.sent} · Direction générale, Service RH</dd></dl><p>${esc(r.txt)}</p><table><thead><tr><th>Heure</th><th>Site</th><th>Note</th><th>Observation</th></tr></thead><tbody>${vs.map(v=>`<tr><td>${v.time}</td><td>${esc(SI(v.site).name)}</td><td>${v.note}/5</td><td>${esc(v.comment)}</td></tr>`).join("")}</tbody></table></div>`,`<button class="btn pri" onclick="window.print()">${ic("dl")} Télécharger (PDF)</button>`,true)})};
 
 /* ---------- Paramètres ---------- */
 function vReglages(){const s=S.settings;return ph("Paramètres","Informations de l'entreprise utilisées sur les bulletins, factures et rapports")+`<div class="card pad" style="max-width:720px"><div class="field"><label>Nom commercial</label><input class="input" id="st-n" value="${esc(s.name)}"></div><div class="field"><label>Raison sociale</label><input class="input" id="st-f" value="${esc(s.full)}"></div><div class="field"><label>Adresse</label><input class="input" id="st-a" value="${esc(s.addr)}"></div><div class="row"><div class="field grow"><label>Téléphone</label><input class="input" id="st-p" value="${esc(s.phone)}"></div><div class="field grow"><label>IFU</label><input class="input" id="st-i" value="${esc(s.ifu)}"></div></div><div class="row"><div class="field grow"><label>Prime de nuit (F CFA)</label><input class="input" type="number" id="st-nb" value="${s.nightBonus}"></div><div class="field grow"><label>Prime de panier (F CFA)</label><input class="input" type="number" id="st-m" value="${s.meal}"></div></div><div class="row"><button class="btn pri" id="st-ok">Enregistrer</button><button class="btn" id="st-reset">${ic("refresh")} Réinitialiser la démonstration</button></div></div>`}
@@ -1034,12 +1086,28 @@ function phoneRender(){
   const pu=S.punches.find(x=>x.agent===a.id&&x.date===sd&&x.shift===a.shift);
   const T={home:pHome,round:pRound,inc:pInc,plan:pPlan,me:pMe,msg:pMsg,late:pLate,mat:pMat,docs:pDocs,pay:pPay}[ptab];const unread=myMsgs(a).filter(m=>!m.read[a.id]).length;
   $("#pw").innerHTML=`<div class="ph-head"><img src="logo-cgsp-96.png" alt=""><div class="grow"><b style="font-family:var(--display)">CGSP Agent</b><div class="xs muted">${esc(a.mat)}</div></div><button class="iconbtn" id="pMsgs" title="Messages">${ic("bell")}${unread?`<span class="n">${unread}</span>`:""}</button><button class="iconbtn" id="pBack" title="Changer d'espace">${ic("logout")}</button></div>`+T(a,s,pu);
+  const pc=S.pchecks.find(c=>c.res.some(r=>r.agent===a.id&&!r.ok));
+  if(pc)$("#pw").insertAdjacentHTML("afterbegin",`<div style="position:sticky;top:0;z-index:40;padding:12px 16px 0"><div class="card pad" style="border:2px solid var(--blue);background:#F4F8FF"><b>${ic("moon")} Contrôle de présence</b><p class="sm" style="margin:4px 0 10px">La direction vérifie que les agents de nuit sont éveillés. Confirmez maintenant.</p><button class="btn pri" style="width:100%;padding:13px" id="pc-ok">${ic("check")} Je suis à mon poste, éveillé</button></div></div>`);
+  const sosOn=S.sos.find(x=>x.agent===a.id&&x.status!=="Clôturée");
+  if(sosOn)$("#pw").insertAdjacentHTML("afterbegin",`<div style="position:sticky;top:0;z-index:41;padding:12px 16px 0"><div class="sos-bar" style="margin:0"><div class="grow"><b>🚨 Alerte SOS envoyée à ${sosOn.time}</b><div class="sm">${sosOn.status==="Superviseur en route"?"Le superviseur est en route.":"La direction et le superviseur sont prévenus."} Restez en sécurité.</div></div><button class="btn sm" style="background:#fff;color:#D2362B" id="sos-cancel">Fausse alerte</button></div></div>`);
+  if(!document.getElementById("sosFab"))document.body.insertAdjacentHTML("beforeend",`<button class="sos-fab" id="sosFab" aria-label="SOS (appui long)"><svg class="ring" viewBox="0 0 86 86"><circle cx="43" cy="43" r="41"/></svg>SOS</button>`);
+  $("#sosFab").style.display="";
+  const pco=$("#pc-ok");if(pco)pco.onclick=()=>{pc.res.find(r=>r.agent===a.id).ok=true;pc.res.find(r=>r.agent===a.id).at=hm(nowMin());save();toast("Présence confirmée ✓");phoneRender()};
+  const sc=$("#sos-cancel");if(sc)sc.onclick=()=>{sosOn.status="Clôturée";sosOn.note="Fausse alerte annulée par l'agent à "+hm(nowMin());save();toast("Alerte annulée");phoneRender()};
+  bindSosFab(a,s);
   $("#tabbar").innerHTML=[["home","home","Accueil"],["round","route","Ronde"],["inc","alert","Incident"],["plan","calendar","Planning"],["me","user","Moi"]].map(([k,i,l])=>`<button class="${ptab===k?"on":""}" data-pt="${k}">${ic(i)}${l}</button>`).join("");
   $$("#tabbar [data-pt]").forEach(b=>b.onclick=()=>{ptab=b.dataset.pt;phoneRender();window.scrollTo(0,0)});
   $("#pBack").onclick=()=>{location.hash="";showLogin()};$("#pMsgs").onclick=()=>{ptab="msg";phoneRender();window.scrollTo(0,0)};
   (pAfter[ptab]||(()=>{}))(a,s,pu);
 }
 const pAfter={};
+function bindSosFab(a,s){
+  const b=$("#sosFab"),c=b.querySelector("circle");let t=null,st=0;
+  const stop=()=>{clearInterval(t);t=null;c.style.strokeDashoffset=258};
+  const start=e=>{e.preventDefault();if(t)return;st=Date.now();t=setInterval(()=>{const k=Math.min(1,(Date.now()-st)/3000);c.style.strokeDashoffset=258*(1-k);if(k>=1){stop();if(navigator.vibrate)navigator.vibrate([200,100,200]);const fin=(la,ln)=>{triggerSos(a,s,la,ln);toast("🚨 Alerte SOS envoyée avec votre position","alert");phoneRender()};if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>fin(p.coords.latitude,p.coords.longitude),()=>fin(s.lat,s.lng),{timeout:4000});else fin(s.lat,s.lng)}},60)};
+  b.onpointerdown=start;b.onpointerup=stop;b.onpointerleave=stop;b.onpointercancel=stop;
+  b.onclick=()=>{if(!t&&Date.now()-st<500)toast("Maintenez le bouton SOS appuyé 3 secondes","alert")};
+}
 function pHome(a,s,pu){
   const sh=SHIFTS[a.shift];const st=pu?punchStatus(pu):null;
   return `<div class="ph-hero"><div class="k">Bonjour ${esc(a.first)} · ${fdl(today())}</div><h2>${esc(s.name)}</h2><div style="opacity:.9">${esc(s.loc)} · relève de ${sh.l.toLowerCase()} ${sh.start} – ${sh.end}</div>
@@ -1162,18 +1230,85 @@ pAfter.late=(a,s)=>{let mins=20,motif=lateMode==="Retard"?"Problème de transpor
   $("#lt-ok").onclick=()=>{const x=$("#lt-x").value.trim()||motif;const m={id:uid(),from:a.id,to:"rh",kind:lateMode,motif,txt:x,date:today(),time:hm(nowMin()),handled:false};if(lateMode==="Retard")m.mins=mins;S.msgs.unshift(m);
     if(lateMode==="Absence"){S.absences[today()]=S.absences[today()]||{};S.absences[today()][a.id]={type:motif==="Maladie"?"Maladie":"Absence signalée",note:"Prévenu à "+m.time+" : "+x}}
     save();toast(lateMode==="Retard"?"Retard signalé · le service RH est prévenu":"Absence signalée · votre remplacement est organisé");ptab="home";phoneRender()}};
+/* ============ APPLICATION SUPERVISEUR ============ */
+let stab="home",visitSite=null,visitState=null;
+function supRender(){
+  const sp=supUser();const sd=curShiftDate(),p=planFor(sd);const sh=curShift();
+  const T={home:sHome,visit:sVisit,alerts:sAlerts,report:sReport,team:sTeam}[stab];
+  const nAl=S.sos.filter(x=>x.status!=="Clôturée").length+p._holes.length;
+  $("#pw").innerHTML=`<div class="ph-head"><img src="logo-cgsp-96.png" alt=""><div class="grow"><b style="font-family:var(--display)">CGSP Superviseur</b><div class="xs muted">${esc(sp.name)} · ${sp.mat}</div></div><button class="iconbtn" id="sBack">${ic("logout")}</button></div>`+sosBannerPhone()+T(sp,p,sd,sh);
+  $("#tabbar").innerHTML=[["home","route","Tournée"],["visit","shield","Visite"],["alerts","alert","Alertes"],["report","file","Rapport"],["team","users","Équipe"]].map(([k,i,l])=>`<button class="${stab===k?"on":""}" data-st="${k}" style="position:relative">${ic(i)}${l}${k==="alerts"&&nAl?`<span style="position:absolute;top:0;right:22%;background:var(--red);color:#fff;font-size:10px;border-radius:99px;padding:0 5px">${nAl}</span>`:""}</button>`).join("");
+  $$("#tabbar [data-st]").forEach(b=>b.onclick=()=>{stab=b.dataset.st;supRender();window.scrollTo(0,0)});
+  $("#sBack").onclick=()=>{location.hash="";showLogin()};
+  $$("[data-sgo]").forEach(b=>b.onclick=()=>{if(b.dataset.site){visitSite=b.dataset.site;visitState=null}stab=b.dataset.sgo;supRender();window.scrollTo(0,0)});
+  $$("[data-sostake]").forEach(b=>b.onclick=()=>{const x=S.sos.find(y=>y.id===b.dataset.sostake);x.status="Superviseur en route";x.handledBy=sp.name;save();toast("Direction informée : vous êtes en route","send");supRender()});
+  $$("[data-sosdone]").forEach(b=>b.onclick=()=>{const x=S.sos.find(y=>y.id===b.dataset.sosdone);x.status="Clôturée";x.note="Superviseur sur place à "+hm(nowMin())+". Situation maîtrisée.";const inc=S.incidents.find(i=>i.sos===x.id);if(inc)inc.status="Clôturé";save();toast("Alerte clôturée");supRender()});
+  (sAfter[stab]||(()=>{}))(sp,p,sd,sh);
+}
+const sAfter={};
+function sosBannerPhone(){return S.sos.filter(x=>x.status!=="Clôturée").map(x=>`<div class="ph-sec"><div class="sos-bar" style="margin:6px 0"><div class="grow"><b>🚨 SOS · ${esc(A(x.agent).name)}</b><div class="sm">${esc(SI(x.site).name)} · ${x.time} · ${x.status}</div></div>${x.status==="En cours"?`<button class="btn sm" style="background:#fff;color:#D2362B" data-sostake="${x.id}">J'y vais</button>`:`<button class="btn sm" style="background:#fff;color:#D2362B" data-sosdone="${x.id}">Résolu</button>`}<a class="btn sm" style="background:transparent;color:#fff" href="https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lng}" target="_blank" rel="noopener">${ic("pin")} Itinéraire</a></div></div>`).join("")}
+function sHome(sp,p,sd,sh){
+  const tonight=S.visits.filter(v=>v.sup===sp.id&&v.date===S.day);
+  return `<div class="ph-hero" style="background:linear-gradient(135deg,#3B4A63,#1F2B3E)"><div class="k">Tournée de ${sh==="N"?"nuit":"jour"} · ${fdl(S.day)}</div><h2>${tonight.length} visite(s) faite(s)</h2><div style="opacity:.9">${S.sites.length} sites · ${S.sites.reduce((q,s)=>q+p[s.id][sh].length,0)} agents en relève</div></div>
+  <div class="ph-sec">${S.sites.map(s=>{const h=siteHealth(s);const lv=[...S.visits].filter(v=>v.site===s.id).sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time))[0];const sosOn=S.sos.some(x=>x.site===s.id&&x.status!=="Clôturée");return `<div class="ck" style="cursor:default;${sosOn?"border-color:var(--red);background:var(--red-soft)":""}"><span class="dot" style="width:12px;height:12px;background:${sosOn||h.state==="red"?"var(--red)":h.state==="amber"?"#E08A00":"var(--green)"}"></span><div class="grow"><b class="sm">${esc(s.name)}</b><div class="xs muted">${h.team.length}/${h.need} agent(s) · ${lv?"dernière visite "+(lv.date===S.day?"aujourd'hui":fd(lv.date))+" "+lv.time:"jamais visité"}</div></div><button class="btn sm pri" data-sgo="visit" data-site="${s.id}">Visiter</button></div>`}).join("")}</div>`;
+}
+function sVisit(sp,p,sd,sh){
+  const s=SI(visitSite||S.sites[0].id);const team=p[s.id][sh];
+  if(!visitState)visitState={agents:Object.fromEntries(team.map(id=>[id,{present:true,eveille:true,tenue:true}])),site:{registre:true,consignes:true,propre:true},note:4,comment:"",photo:false};
+  const V=visitState;
+  return `<div class="ph-sec" style="padding-top:12px"><div class="field"><label>Site visité</label><select class="input" id="sv-site">${S.sites.map(x=>`<option value="${x.id}" ${x.id===s.id?"selected":""}>${esc(x.name)}</option>`).join("")}</select></div>
+  <div class="xs" style="margin:-4px 0 12px;color:var(--green);font-weight:600">${ic("pin")} Position vérifiée sur le site · ${hm(nowMin())}</div>
+  <div class="sec-t" style="margin-top:0">Agents en poste</div>${team.map(id=>`<div class="card pad" style="margin-bottom:8px"><b class="sm">${esc(A(id).name)}</b><div class="row wrapf" style="margin-top:8px">${[["present","Présent"],["eveille","Éveillé"],["tenue","En tenue"]].map(([k,l])=>`<button class="btn sm ${V.agents[id][k]?"green":"red"}" data-va="${id}|${k}">${V.agents[id][k]?"✓":"✗"} ${l}</button>`).join("")}</div></div>`).join("")||`<p class="sm muted">Aucun agent prévu sur ce poste.</p>`}
+  <div class="sec-t">Le poste</div><div class="row wrapf">${[["registre","Registre à jour"],["consignes","Consignes connues"],["propre","Poste propre"]].map(([k,l])=>`<button class="btn sm ${V.site[k]?"green":"red"}" data-vs="${k}">${V.site[k]?"✓":"✗"} ${l}</button>`).join("")}</div>
+  <div class="sec-t">Note du poste</div><div class="stars">${[1,2,3,4,5].map(n=>`<button class="${n<=V.note?"on":""}" data-vn="${n}">★</button>`).join("")}</div>
+  <div class="field" style="margin-top:10px"><label>Observation</label><textarea class="input" id="sv-c" placeholder="Ce que vous avez constaté, rappel fait à l'agent…">${esc(V.comment)}</textarea></div>
+  <label class="btn" style="width:100%;margin-bottom:10px">${ic("camera")} Photo du poste<input type="file" accept="image/*" capture="environment" id="sv-p" hidden></label><div class="xs muted" id="sv-pn" style="margin-bottom:8px">${V.photo?"Photo ajoutée ✓":""}</div>
+  <button class="btn pri" style="width:100%;padding:14px" id="sv-ok">${ic("check")} Enregistrer la visite</button></div>`;
+}
+sAfter.visit=(sp,p,sd,sh)=>{const V=visitState;
+  $("#sv-site").onchange=e=>{visitSite=e.target.value;visitState=null;supRender()};
+  $("#sv-c").oninput=e=>V.comment=e.target.value;
+  $$("[data-va]").forEach(b=>b.onclick=()=>{const [id,k]=b.dataset.va.split("|");V.agents[id][k]=!V.agents[id][k];supRender()});
+  $$("[data-vs]").forEach(b=>b.onclick=()=>{V.site[b.dataset.vs]=!V.site[b.dataset.vs];supRender()});
+  $$("[data-vn]").forEach(b=>b.onclick=()=>{V.note=+b.dataset.vn;supRender()});
+  $("#sv-p").onchange=()=>{V.photo=true;$("#sv-pn").textContent="Photo ajoutée ✓"};
+  $("#sv-ok").onclick=()=>{const s=visitSite||S.sites[0].id;const ag=Object.values(V.agents);const all=k=>ag.every(x=>x[k]);
+    S.visits.push({id:uid(),date:S.day,time:hm(nowMin()),sup:sp.id,site:s,agents:Object.keys(V.agents),checks:{present:all("present"),eveille:all("eveille"),tenue:all("tenue"),registre:V.site.registre,consignes:V.site.consignes,propre:V.site.propre},note:V.note,comment:V.comment||"RAS."});
+    if(!all("eveille")||!all("present"))S.incidents.unshift({id:uid(),date:S.day,time:hm(nowMin()),site:s,agent:sp.id,type:!all("present")?"Abandon de poste constaté":"Agent endormi au poste",grav:"Moyenne",txt:"Constaté lors de la visite du superviseur. "+(V.comment||""),status:"En cours",fresh:true});
+    save();visitState=null;toast("Visite enregistrée · visible par la direction");stab="home";supRender()}};
+function sAlerts(sp,p,sd,sh){
+  const late=S.punches.filter(x=>x.date===sd&&x.shift===sh&&(toMin(x.in)-toMin(SHIFTS[sh].start)>10||x.d>300));
+  const items=[...p._holes.map(h=>({c:"var(--red)",t:"Poste non couvert · "+SI(h.site).name,s:"Relève de "+SHIFTS[h.shift].l.toLowerCase()+" · manque "+h.missing})),...late.map(x=>({c:"#E08A00",t:(x.d>300?"Hors zone · ":"Retard · ")+A(x.agent).name,s:SI(x.site).name+" · "+x.in+" · "+metres(x.d)})),...S.incidents.filter(i=>i.status==="En cours").map(i=>({c:"var(--violet)",t:i.type+" · "+SI(i.site).name,s:fd(i.date)+" "+i.time}))];
+  return `<div class="ph-sec" style="padding-top:12px"><h2 style="font-size:21px">Alertes</h2><p class="sm muted" style="margin:4px 0 14px">Ce qui demande votre intervention cette ${sh==="N"?"nuit":"journée"}</p>${items.map(x=>`<div class="ck" style="cursor:default"><span class="dot" style="width:12px;height:12px;background:${x.c}"></span><div class="grow"><b class="sm">${esc(x.t)}</b><div class="xs muted">${esc(x.s)}</div></div></div>`).join("")||`<p class="sm muted">Aucune alerte. Bonne tournée !</p>`}</div>`;
+}
+function sReport(sp){
+  const tv=S.visits.filter(v=>v.sup===sp.id&&v.date===S.day);const issues=tv.filter(v=>Object.values(v.checks).some(x=>!x)).length;const mine=S.nightReports.filter(r=>r.sup===sp.id).sort((a,b)=>b.date.localeCompare(a.date));
+  return `<div class="ph-sec" style="padding-top:12px"><h2 style="font-size:21px">Rapport de nuit</h2><p class="sm muted" style="margin:4px 0 14px">Envoyé à la direction générale et au service RH.</p>
+  <div class="card pad" style="margin-bottom:12px"><b class="sm">Résumé automatique</b><p class="sm" style="margin:6px 0 0">${tv.length} visite(s) · ${issues} poste(s) avec points à corriger · ${S.incidents.filter(i=>i.date===S.day).length} événement(s) en main courante · ${S.sos.filter(x=>x.date===S.day).length} alerte(s) SOS</p></div>
+  <div class="field"><label>Vos observations</label><textarea class="input" id="sr-x" placeholder="Bilan de la tournée, points à améliorer, besoins…"></textarea></div>
+  <button class="btn pri" style="width:100%;padding:14px" id="sr-ok">${ic("send")} Envoyer le rapport</button>
+  <div class="sec-t">Mes rapports</div>${mine.slice(0,6).map(r=>`<div class="ck" style="cursor:default"><div class="grow"><b class="sm">Nuit du ${fd(r.date)}</b><div class="xs muted">${r.visits} visites · envoyé à ${r.sent}</div></div><span class="pill ${r.issues?"p-amber":"p-green"}">${r.issues?r.issues+" à corriger":"RAS"}</span></div>`).join("")}</div>`;
+}
+sAfter.report=sp=>{$("#sr-ok").onclick=()=>{const tv=S.visits.filter(v=>v.sup===sp.id&&v.date===S.day);const x=$("#sr-x").value.trim();S.nightReports.push({id:uid(),date:S.day,sup:sp.id,visits:tv.length,issues:tv.filter(v=>Object.values(v.checks).some(y=>!y)).length,txt:x||("Tournée réalisée sur "+tv.length+" site(s)."),sent:hm(nowMin())});save();toast("Rapport envoyé à la direction et au service RH","send");supRender()}};
+function sTeam(sp,p,sd,sh){
+  return `<div class="ph-sec" style="padding-top:12px"><h2 style="font-size:21px">Équipe en relève</h2><button class="btn pri" style="width:100%;margin:10px 0 14px" id="st-pc">${ic("moon")} Lancer un contrôle de présence</button>
+  ${S.sites.map(s=>p[s.id][sh].map(id=>{const a=A(id);const pu=S.punches.find(x=>x.agent===id&&x.date===sd&&x.shift===sh);return `<div class="ck" style="cursor:default">${av(a.name)}<div class="grow"><b class="sm">${esc(a.name)}</b><div class="xs muted">${esc(s.name)} · ${pu?"arrivé "+pu.in:"pas encore pointé"}</div></div><a class="iconbtn" href="tel:${a.phone.replace(/\s/g,"")}">${ic("call")}</a></div>`}).join("")).join("")}</div>`;
+}
+sAfter.team=()=>{$("#st-pc").onclick=()=>{launchPresence();supRender()}};
 /* ============ démarrage ============ */
-function showLogin(){$("#login").style.display="flex";$("#app").style.display="none";$("#phone").style.display="none";closeAll();document.title="CGSP-Sécurité · Logiciel de gestion"}
+function showLogin(){const sf=document.getElementById("sosFab");if(sf)sf.style.display="none";$("#login").style.display="flex";$("#app").style.display="none";$("#phone").style.display="none";closeAll();document.title="CGSP-Sécurité · Logiciel de gestion"}
 function enter(r){
   role=r;closeAll();$("#login").style.display="none";
   if(r==="agent"){$("#app").style.display="none";$("#phone").style.display="block";ptab="home";document.title="CGSP Agent";phoneRender();return}
+  const sf=document.getElementById("sosFab");if(sf)sf.style.display="none";
+  if(r==="sup"){$("#app").style.display="none";$("#phone").style.display="block";stab="home";document.title="CGSP Superviseur";supRender();return}
   $("#phone").style.display="none";$("#app").style.display="block";view=r==="client"?"cdash":"dash";filt={};
   $(".top .search").style.display=r==="client"?"none":"";document.title="CGSP-Sécurité · "+({dir:"Direction",rh:"RH",client:"Espace client"}[r]);render();
 }
 $$(".space").forEach(b=>b.onclick=()=>{location.hash=b.dataset.go;enter(b.dataset.go)});
 hydrateIcons();
-const h=location.hash.slice(1);if(["dir","rh","agent","client","direction"].includes(h))enter(h==="direction"?"dir":h);
-window.addEventListener("hashchange",()=>{const x=location.hash.slice(1);if(!x)showLogin();else if(["dir","rh","agent","client"].includes(x)&&x!==role)enter(x)});
+const h=location.hash.slice(1);if(["dir","rh","agent","sup","client","direction"].includes(h))enter(h==="direction"?"dir":h);
+window.addEventListener("hashchange",()=>{const x=location.hash.slice(1);if(!x)showLogin();else if(["dir","rh","agent","sup","client"].includes(x)&&x!==role)enter(x)});
 setInterval(()=>{if(role&&role!=="agent")renderTop()},30000);
 </script>
 <script src="../sacko-config.js"></script>
