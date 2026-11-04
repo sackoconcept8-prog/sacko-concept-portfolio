@@ -26,26 +26,15 @@
     <div class="navcta"><a class="navlink-client hide-sm" href="espace-client.html">Espace client</a><a class="btn btn-ghost hide-sm" href="devis.html">Demander un devis</a><a class="btn btn-gold" href="commencer.html"><span class="lg-label">Commencer gratuitement</span><span class="sm-label">Essai gratuit</span></a></div>
   </div>
 </nav>
-<header class="pagehead"><div class="wrap"><div class="eyebrow">Accès gratuit</div><h1>Testez votre application gratuitement</h1><p>Quatre informations et vous entrez dans la démo de votre secteur. Sans carte bancaire, sans engagement.</p></div></header>
+<header class="pagehead"><div class="wrap"><div class="eyebrow">Accès gratuit</div><h1>Testez votre application gratuitement</h1><p>Choisissez votre secteur : la démo s'ouvre tout de suite. Sans inscription, sans carte bancaire, sans engagement.</p></div></header>
 <section style="padding-top:24px"><div class="wrap"><div class="form-wrap">
-<form class="qform" id="start" novalidate>
-  <fieldset>
-    <legend>Votre accès</legend>
-    <div class="f full"><span class="lab">Quelle démo voulez-vous ouvrir ? <i>*</i></span>
-      <div class="opts">
-        <label><input type="radio" name="application" value="NettoPro" data-url="nettopro/demo/" required checked> NettoPro – Nettoyage</label>
-        <label><input type="radio" name="application" value="RH Pro" data-url="rhpro/demo/"> RH Pro – Ressources humaines</label>
-        <label><input type="radio" name="application" value="StockPro" data-url="stockpro/demo/"> StockPro – Commerce</label>
-        <label><input type="radio" name="application" value="PhonePro" data-url="phonepro/demo/"> PhonePro – Téléphones</label>
-      </div></div>
-    <div class="f"><label for="nom">Nom et prénom <i>*</i></label><input id="nom" name="nom" required autocomplete="name"></div>
-    <div class="f"><label for="entreprise">Entreprise</label><input id="entreprise" name="entreprise" autocomplete="organization"></div>
-    <div class="f"><label for="email">E-mail <i>*</i></label><input id="email" name="email" type="email" required autocomplete="email"></div>
-    <div class="f"><label for="whatsapp">WhatsApp <i>*</i></label><input id="whatsapp" name="whatsapp" type="tel" required placeholder="+229 …" autocomplete="tel"></div>
-  </fieldset>
-  <label class="consent"><input type="checkbox" id="consent" name="consent" required> <span>J'accepte de recevoir des conseils et des offres de SACKO CONCEPT (<a href="confidentialite.html" target="_blank" rel="noopener">confidentialité</a>). <i style="color:#C2410C;font-style:normal">*</i></span></label>
-  <div class="submit-row"><button class="btn btn-gold" type="submit" id="send">Ouvrir la démo</button><span class="msg" id="msg" aria-live="polite"></span></div>
-</form>
+<div class="demo-pick" id="start">
+  <a class="dp" href="nettopro/demo/"><b>NettoPro</b><span>Entreprise de nettoyage</span><em>Ouvrir la démo →</em></a>
+  <a class="dp" href="rhpro/demo/"><b>RH Pro</b><span>Gestion des salariés, congés, paie</span><em>Ouvrir la démo →</em></a>
+  <a class="dp" href="stockpro/demo/"><b>StockPro</b><span>Boutique, stock et ventes</span><em>Ouvrir la démo →</em></a>
+  <a class="dp" href="phonepro/demo/"><b>PhonePro</b><span>Vendeur de téléphones</span><em>Ouvrir la démo →</em></a>
+</div>
+<style>.demo-pick{display:grid;gap:12px}.dp{display:block;padding:18px 20px;border-radius:16px;background:#fff;border:1px solid #eadede;text-decoration:none;color:#1a1a1a;box-shadow:0 4px 14px rgba(0,0,0,.05)}.dp b{display:block;font-size:19px}.dp span{display:block;color:#666;font-size:14px;margin:2px 0 8px}.dp em{font-style:normal;font-weight:600;color:#d94040}.dp:active{transform:scale(.99)}</style>
 <aside class="side-card">
   <h3>Dans la démo</h3>
   <ol><li><b>Toutes les fonctions</b> de l'application, avec des données d'exemple.</li><li><b>Chaque espace</b> : direction, équipe et clients.</li><li><b>Un devis</b> en un clic quand l'application vous convient.</li></ol>
@@ -66,27 +55,7 @@
 <script data-goatcounter="https://sackoconcept.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script src="sacko-config.js"></script>
 <script src="sacko-track.js" defer></script>
-<script>
-const SCRIPT_URL = window.SACKO_SCRIPT_URL || "COLLER";
-const f=document.getElementById("start"), msg=document.getElementById("msg"), send=document.getElementById("send");
-const MAP={nettopro:0,rhpro:1,stockpro:2,phonepro:3};
-const h=(location.hash||"").slice(1); if(h in MAP){f.querySelectorAll('input[name="application"]')[MAP[h]].checked=true;}
-f.addEventListener("submit",async e=>{
-  e.preventDefault();msg.className="msg";
-  if(!f.checkValidity()){const bad=f.querySelector(":invalid");msg.className="msg err";msg.textContent="Remplissez les champs marqués d'une étoile.";bad&&bad.focus();return}
-  const choice=f.querySelector('input[name="application"]:checked');
-  const data=Object.fromEntries(new FormData(f).entries());data.type="inscription";
-  send.disabled=true;send.textContent="Ouverture de la démo…";
-  try{
-    if(!SCRIPT_URL.startsWith("COLLER")){
-      await Promise.race([
-        fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)}),
-        new Promise(r=>setTimeout(r,4000))
-      ]);
-    }
-  }catch(err){}
-  location.href=choice.dataset.url;
-});
-</script>
+
+<script src="sacko-lead.js" defer></script>
 </body>
 </html>
