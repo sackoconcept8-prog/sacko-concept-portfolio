@@ -12,7 +12,7 @@ const root = resolve(new URL('..', import.meta.url).pathname);
 const out = join(root, 'dist');
 await rm(out, {recursive:true,force:true});
 await mkdir(join(out,'assets'), {recursive:true});
-const files = ['relecture-pack-rh.html','solutions-rh-en.html','solutions-rh.html','solutions-rh.css','solutions-rh.js','signature.css','signature.js','index.html','studio.html','applications.html','offres.html','contact.html','devis.html','commencer.html','client.html','document.html','espace-client.html','sacko-docs.js','sacko-track.js','sacko-promo.js','go.html','cgv.html','confidentialite.html','sacko-config.js','sacko-apps.css','legal.html','styles.css','design.css','script.js','legal.js','site-config.js','catalog.js','robots.txt','sitemap.xml','catalogue-1tpe.html','vente-suivi-ventes-1tpe.html','vente-gestion-stocks-1tpe.html','vente-conges-absences-rh-1tpe.html','vente-launchvault-1tpe.html','vente-launchvault-500-prompts-1tpe.html','apercu-launchvault-1tpe.html','vente-ia-au-bureau-1tpe.html','vente-pack-rh-documents-1tpe.html','1tpe-product-pages.css','launchvault-1tpe.css'];
+const files = ['relecture-pack-rh.html','solutions-rh-en.html','solutions-rh.html','solutions-rh.css','solutions-rh.js','signature.css','signature.js','index.html','studio.html','applications.html','offres.html','contact.html','devis.html','commencer.html','client.html','document.html','espace-client.html','sacko-docs.js','sacko-track.js','sacko-lead.js','sacko-promo.js','go.html','cgv.html','confidentialite.html','sacko-config.js','sacko-apps.css','legal.html','styles.css','design.css','script.js','legal.js','site-config.js','catalog.js','robots.txt','sitemap.xml','catalogue-1tpe.html','vente-suivi-ventes-1tpe.html','vente-gestion-stocks-1tpe.html','vente-conges-absences-rh-1tpe.html','vente-launchvault-1tpe.html','vente-launchvault-500-prompts-1tpe.html','apercu-launchvault-1tpe.html','vente-ia-au-bureau-1tpe.html','vente-pack-rh-documents-1tpe.html','1tpe-product-pages.css','launchvault-1tpe.css'];
 for (const file of files) await copyFile(join(root,file),join(out,file));
 const previewPdfs = ['ia-bureau-extrait.pdf','pack-rh-apercu.pdf'];
 const assets = (await readdir(join(root,'assets'))).filter(file=>(/\.(png|webp|woff2|svg)$/.test(file) || previewPdfs.includes(file)) && !file.endsWith('-source.png'));
@@ -34,6 +34,8 @@ for (const file of ['rhpro/index.html','rhpro/dollars/index.html','rhpro/fcfa/in
 await cp(join(root,'stockpro'),join(out,'stockpro'), {recursive:true});
 for (const file of ['stockpro/index.html','stockpro/dollars/index.html','stockpro/fcfa/index.html','stockpro/demo/index.html','stockpro/sacko-logo.jpg']) await readFile(join(out,file));
 await cp(join(root,'phonepro'),join(out,'phonepro'), {recursive:true});
+await cp(join(root,'cgsp'),join(out,'cgsp'), {recursive:true});
+for (const file of ['cgsp/index.html','cgsp/logo-cgsp-96.png','cgsp/logo-cgsp-256.png','cgsp/icon-192.png']) await readFile(join(out,file));
 for (const file of ['phonepro/index.html','phonepro/dollars/index.html','phonepro/fcfa/index.html','phonepro/demo/index.html','phonepro/sacko-logo.jpg']) await readFile(join(out,file));
 for(const list of Object.values(packages)) for(const pack of list) {
   if(!SITE.forms[pack.form])throw new Error(`Missing order brief for ${pack.id}`);
