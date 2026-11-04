@@ -67,7 +67,7 @@ function sample(){
     liens:[{"Code":"wa-nettopro","Nom":"WhatsApp – démo NettoPro","Destination":SITE+"commencer.html#nettopro"},{"Code":"fb-phonepro","Nom":"Facebook – PhonePro","Destination":SITE+"commencer.html#phonepro"}]
   };
 }
-const SAMPLE_V = {"Nom légal":"SACKO CONCEPT LLC","Adresse":"8206 Louisiana Blvd NE, Ste A 8694, Albuquerque, NM 87113, USA","EIN":"35-2950833","E-mail":"sackoconcept8@gmail.com","Site":"www.sackoconcept.com","PayPal":"sackoconcept8@gmail.com","Acompte par défaut (%)":"50","Validité devis (jours)":"15","Conditions":"Acompte à la commande, solde à la livraison."};
+const SAMPLE_V = {"Nom légal":"SACKO CONCEPT LLC","Adresse":"8206 Louisiana Blvd NE, Ste A 8694, Albuquerque, NM 87113, USA","EIN":"35-2950833","E-mail":"contact@sackoconcept.com","Site":"www.sackoconcept.com","PayPal":"sackoconcept8@gmail.com","Acompte par défaut (%)":"50","Validité devis (jours)":"15","Conditions":"Acompte à la commande, solde à la livraison."};
 
 /* ---------- données ---------- */
 function rowsOf(k){const t=data&&data[k];if(!t||!t.headers)return[];return t.rows.map(r=>{const o={_row:r.row,_k:k};t.headers.forEach((h,i)=>o[h]=r.values[i]);return o}).sort((a,b)=>new Date(b.Date)-new Date(a.Date))}

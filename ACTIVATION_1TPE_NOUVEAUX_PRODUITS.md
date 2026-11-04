@@ -31,7 +31,7 @@ Pour chaque produit :
 
 - Pack RH : anglais, 500 lignes préparées par registre, pas de synchronisation ou de relances automatiques. Tests Microsoft Excel de bureau et impressions non exécutés dans la préparation du pack. Documents sensibles à adapter et faire revoir localement.
 - Licence RH : une organisation ; support `contact@sackoconcept.com` pendant 30 jours calendaires ; première réponse de fond sous trois jours ouvrés en UTC, hors jour de réception. Aucune garantie de délai de résolution.
-- Guide IA : lecture et usage professionnel des méthodes par l’acheteur, prompts adaptables à ses propres tâches, sans redistribution du pack. Aucun abonnement d’IA ni classeur Excel inclus. Assistance de commande : `sackoconcept8@gmail.com`.
+- Guide IA : lecture et usage professionnel des méthodes par l’acheteur, prompts adaptables à ses propres tâches, sans redistribution du pack. Aucun abonnement d’IA ni classeur Excel inclus. Assistance de commande : `contact@sackoconcept.com`.
 
 ## Références
 

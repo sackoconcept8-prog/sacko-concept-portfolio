@@ -54,7 +54,7 @@
       <div><a class="logo" href="index.html"><img src="assets/sacko-logo-96.png" alt="" width="38" height="38"><b>SACKO CONCEPT</b></a><p>Applications de gestion et identité de marque pour les PME, en français et en anglais.</p></div>
       <div><h4>Applications</h4><ul><li><a href="applications.html#nettopro">NettoPro</a></li><li><a href="applications.html#rhpro">RH Pro</a></li><li><a href="applications.html#stockpro">StockPro</a></li><li><a href="applications.html#phonepro">PhonePro</a></li></ul></div>
       <div><h4>Studio</h4><ul><li><a href="index.html#methode">Méthode</a></li><li><a href="offres.html">Offres</a></li><li><a href="contact.html#faq">FAQ</a></li><li><a href="espace-client.html">Espace client</a></li><li><a href="client.html">Demande de mise à jour</a></li><li><a href="studio.html">Boutique et packs</a></li></ul></div>
-      <div><h4>Contact</h4><ul><li><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Réserver un appel</a></li><li><a href="contact.html">sackoconcept8@gmail.com</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Réserver un appel</a></li><li><a href="contact.html">contact@sackoconcept.com</a></li></ul></div>
     </div>
     <div class="legal"><span>© 2026 SACKO CONCEPT LLC · Albuquerque, NM</span><span><a href="cgv.html">Conditions de vente</a> · <a href="confidentialite.html">Confidentialité</a></span></div>
   </div>
@@ -97,7 +97,7 @@ function show(){
   view.innerHTML='<div class="doc-grid"><div>'+S.render(D,V,{logo:"assets/sacko-logo-512.png"})+'</div>'+box+'</div>';
   document.title=D["Type"]+" "+D["Numéro"]+" · SACKO CONCEPT";
   const a=document.getElementById("accept");
-  if(a)a.onclick=async()=>{a.disabled=true;a.textContent="Validation…";try{const j=await call({action:"accepter",t});if(!j.ok)throw 0;D["Statut"]="Accepté";show()}catch(e){a.disabled=false;a.textContent="Accepter le devis";alertBox("La validation n'a pas abouti. Réessayez ou écrivez à sackoconcept8@gmail.com.")}};
+  if(a)a.onclick=async()=>{a.disabled=true;a.textContent="Validation…";try{const j=await call({action:"accepter",t});if(!j.ok)throw 0;D["Statut"]="Accepté";show()}catch(e){a.disabled=false;a.textContent="Accepter le devis";alertBox("La validation n'a pas abouti. Réessayez ou écrivez à contact@sackoconcept.com.")}};
   const p=document.getElementById("paid");
   if(p)p.onclick=async()=>{p.disabled=true;try{const j=await call({action:"paiement_signale",t,moyen:"site"});if(!j.ok)throw 0;D["Statut"]="Paiement à vérifier";show()}catch(e){p.disabled=false;document.getElementById("pmsg").textContent="Envoi impossible, réessayez."}};
   document.getElementById("pdf").onclick=()=>window.print();
@@ -105,7 +105,7 @@ function show(){
 function alertBox(m){const el=document.createElement("p");el.className="msg err";el.textContent=m;view.querySelector(".paybox").appendChild(el)}
 (async()=>{
   if(!t){view.textContent="Lien incomplet. Ouvrez le lien reçu par WhatsApp ou par e-mail.";return}
-  try{const j=await call({action:"doc",t,vue:"1"});if(!j.ok){view.textContent="Ce document est introuvable. Vérifiez le lien ou contactez sackoconcept8@gmail.com.";return}D=j.doc;V=j.vendeur||{};show()}
+  try{const j=await call({action:"doc",t,vue:"1"});if(!j.ok){view.textContent="Ce document est introuvable. Vérifiez le lien ou contactez contact@sackoconcept.com.";return}D=j.doc;V=j.vendeur||{};show()}
   catch(e){view.textContent="Connexion impossible. Vérifiez votre réseau et rechargez la page."}
 })();
 </script>

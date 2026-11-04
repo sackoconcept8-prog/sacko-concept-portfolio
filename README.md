@@ -26,7 +26,7 @@ Requires Node 20+. No external npm dependency or database.
 
 Edit `site-config.js` to change the commercial links. Never place passwords, payment credentials or API secrets in these files.
 
-The verified WhatsApp number is `15054642331`. PayPal invoices are requested from `sackoconcept8@gmail.com`; this email is not a checkout link.
+The verified WhatsApp number is `15054642331`. PayPal invoices are requested from `contact@sackoconcept.com`; this email is not a checkout link.
 
 Add official payment URLs to `SITE.payments` using the corresponding package IDs. The site then replaces “Request a PayPal invoice” with the real payment link. **Order always opens the client brief directly**, as requested by Hawa. Prices and deliverables live in `catalog.js`.
 
