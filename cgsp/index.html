@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CGSP-Sécurité · Logiciel de gestion</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Logiciel de gestion de CGSP-Sécurité : sites, agents, planning, pointage géolocalisé, main courante, paie, facturation et espace client.">
+<meta name="theme-color" content="#F5F7FB">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;CGSP-Sécurité&quot;,&quot;short_name&quot;:&quot;CGSP&quot;,&quot;start_url&quot;:&quot;./&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23F5F7FB&quot;,&quot;theme_color&quot;:&quot;%23F5F7FB&quot;}">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{
+  --bg:#F5F7FB;--surface:#FFFFFF;--surface2:#EEF3FB;--fg:#0F1B2D;--muted:#5E6B80;--line:#E1E7F0;
+  --blue:#1D5FD1;--blue2:#2F7BF0;--blue-soft:#E3EDFD;--blue-ink:#FFFFFF;
+  --silver:#C9D1DC;--steel:#8C97A8;
+  --green:#14915A;--green-soft:#DDF4E8;--red:#D2362B;--red-soft:#FCE4E1;--amber:#B86E00;--amber-soft:#FDF0D8;--violet:#6B4FD8;--violet-soft:#ECE7FC;
+  --shadow:0 1px 2px rgba(15,27,45,.05),0 6px 20px rgba(15,27,45,.06);
+  --display:"Sora",ui-sans-serif,system-ui,sans-serif;--body:"Inter",ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --r:16px;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--blue)}
+h1,h2,h3,h4{font-family:var(--display);margin:0;letter-spacing:-.01em}
+.muted{color:var(--muted)}.xs{font-size:12.5px}.sm{font-size:13.5px}.b{font-weight:600}
+.row{display:flex;align-items:center;gap:10px}.grow{flex:1;min-width:0}.wrapf{flex-wrap:wrap}
+.ic{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:9px 14px;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;text-decoration:none;color:var(--fg)}
+.btn:hover{border-color:var(--silver)}
+.btn.pri{background:linear-gradient(180deg,var(--blue2),var(--blue));border-color:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(29,95,209,.25)}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.btn.green{background:var(--green);border-color:var(--green);color:#fff}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.sm{padding:6px 10px;font-size:13px;border-radius:9px}
+.btn .ic{width:17px;height:17px}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:3px 10px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.p-green{background:var(--green-soft);color:var(--green)}.p-red{background:var(--red-soft);color:var(--red)}.p-amber{background:var(--amber-soft);color:var(--amber)}.p-blue{background:var(--blue-soft);color:var(--blue)}.p-grey{background:#EDF0F5;color:var(--muted)}.p-violet{background:var(--violet-soft);color:var(--violet)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.pad{padding:18px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.field label{font-size:13px;font-weight:600;color:var(--muted)}
+.input,select.input,textarea.input{width:100%;border:1px solid var(--line);background:#fff;border-radius:11px;padding:10px 12px;outline:none}
+.input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+textarea.input{min-height:90px;resize:vertical}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;color:#fff;font-family:var(--display)}
+
+/* ===== Écran d'accueil ===== */
+#login{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;background:radial-gradient(1200px 500px at 50% -10%,#DDE8FB,transparent),var(--bg)}
+#login .brand{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;margin-bottom:28px}
+#login .brand img{width:110px;filter:drop-shadow(0 10px 22px rgba(15,27,45,.18))}
+#login .brand h1{font-size:30px}
+#login .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;width:100%;max-width:1060px}
+.space{text-align:left;cursor:pointer;padding:22px;border-radius:20px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow);transition:transform .15s,border-color .15s;display:flex;flex-direction:column;gap:10px}
+.space:hover{transform:translateY(-2px);border-color:var(--blue)}
+.space .si{width:46px;height:46px;border-radius:13px;display:grid;place-items:center}
+.space h3{font-size:18px}
+.space p{margin:0;font-size:13.5px;color:var(--muted)}
+.space .go{margin-top:auto;font-weight:600;color:var(--blue);font-size:14px}
+.byline{margin-top:26px;font-size:12.5px;color:var(--muted);text-align:center}
+.byline a{color:var(--muted)}
+
+/* ===== Logiciel bureau ===== */
+#app{display:none}
+.shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.side{background:#fff;border-right:1px solid var(--line);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:16px 12px;overflow-y:auto}
+.side .logo{display:flex;align-items:center;gap:10px;padding:4px 8px 16px}
+.side .logo img{width:40px}
+.side .logo b{font-family:var(--display);font-size:16px;display:block;line-height:1.15}
+.side .logo span{font-size:11.5px;color:var(--muted)}
+.nav-t{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--steel);font-weight:700;padding:14px 10px 6px}
+.nav a{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:500;font-size:14.5px;cursor:pointer}
+.nav a:hover{background:var(--surface2)}
+.nav a.on{background:var(--blue-soft);color:var(--blue);font-weight:600}
+.nav a .bdg{margin-left:auto;background:var(--red);color:#fff;font-size:11px;font-weight:700;border-radius:99px;padding:1px 7px}
+.side .foot{margin-top:auto;padding:12px 10px 0;font-size:11.5px;color:var(--muted);border-top:1px solid var(--line)}
+.main{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:0;z-index:500;background:rgba(245,247,251,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:12px 26px}
+.top .search{flex:1;max-width:420px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:11px;padding:8px 12px;color:var(--muted)}
+.top .search input{border:0;outline:0;background:transparent;width:100%}
+.iconbtn{position:relative;width:40px;height:40px;border-radius:11px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}
+.iconbtn .n{position:absolute;top:-5px;right:-5px;background:var(--red);color:#fff;font-size:10.5px;font-weight:700;border-radius:99px;padding:1px 6px;border:2px solid var(--bg)}
+.me{display:flex;align-items:center;gap:10px;padding:4px 10px 4px 4px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.me .av{width:32px;height:32px}
+.burger{display:none}
+.content{padding:24px 26px 60px;max-width:1440px;width:100%}
+.ph{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+.ph h2{font-size:25px}
+.ph p{margin:4px 0 0;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.kpi{padding:16px 18px}
+.kpi .t{font-size:12.5px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:7px}
+.kpi .v{font-family:var(--display);font-size:27px;font-weight:700;margin-top:6px;letter-spacing:-.02em}
+.kpi .s{font-size:12.5px;margin-top:2px}
+.grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px}
+.grid2e{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px 0}
+.ch h3{font-size:16px}
+.mapbox{height:380px;border-radius:12px;margin:14px;overflow:hidden;border:1px solid var(--line);z-index:1}
+.mapbox.big{height:calc(100vh - 230px);min-height:420px}
+.list{padding:6px 8px 10px}
+.li{display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px}
+.li:hover{background:var(--surface2)}
+.li.click{cursor:pointer}
+.alert-bar{flex-wrap:wrap;display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:14px;background:var(--red-soft);color:#8E1F17;margin-bottom:16px;border:1px solid #F6C9C3}
+.alert-bar .ic{color:var(--red)}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--steel);font-weight:700;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap;background:#FAFBFD}
+td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.click{cursor:pointer}tr.click:hover td{background:#F7FAFF}
+tbody tr:last-child td{border-bottom:0}
+.filters{display:flex;gap:10px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line)}
+.filters .input{width:auto;min-width:170px;padding:8px 12px}
+.tabs{display:inline-flex;background:#E9EEF6;border-radius:12px;padding:4px;gap:4px}
+.tabs button{border:0;background:transparent;padding:7px 14px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:pointer;color:var(--muted)}
+.tabs button.on{background:#fff;color:var(--fg);box-shadow:0 1px 3px rgba(15,27,45,.1)}
+.bars{display:flex;align-items:flex-end;gap:6px;height:150px;padding:18px 18px 8px}
+.bars .bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.bars .bar i{display:block;width:100%;max-width:28px;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,var(--blue2),var(--blue))}
+.bars .bar span{font-size:10.5px;color:var(--muted)}
+.prog{height:8px;border-radius:99px;background:#E9EEF6;overflow:hidden}.prog i{display:block;height:100%;border-radius:99px;background:var(--blue)}
+/* planning */
+.plan{width:100%;border-collapse:separate;border-spacing:0}
+.plan th,.plan td{border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.plan td{padding:8px;vertical-align:top;min-width:128px}
+.plan td.site{min-width:200px;background:#FAFBFD;position:sticky;left:0;z-index:2}
+.plan th.today,.plan td.today{background:#F4F8FF}
+.slot{border-radius:9px;padding:6px 8px;margin-bottom:6px;font-size:12.5px;line-height:1.35;border:1px solid transparent}
+.slot.j{background:#FFF8E6;border-color:#F7E3AE}.slot.n{background:#EAF0FB;border-color:#CCDAF4}
+.slot.ko{background:var(--red-soft);border-color:#F3B9B2;color:#8E1F17;cursor:pointer}
+.slot b{display:flex;align-items:center;gap:5px;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+/* tiroir / modale */
+.ovl{position:fixed;inset:0;background:rgba(15,27,45,.32);z-index:1000;display:none}
+.ovl.on{display:block}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(520px,100%);background:#fff;z-index:1001;transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column;box-shadow:-10px 0 40px rgba(15,27,45,.12)}
+.drawer.on{transform:none}
+.drawer .dh{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid var(--line)}
+.drawer .db{padding:18px 20px;overflow-y:auto;flex:1}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-48%);opacity:0;pointer-events:none;width:min(560px,calc(100% - 24px));max-height:calc(100% - 40px);overflow-y:auto;background:#fff;border-radius:20px;z-index:1002;transition:.2s;box-shadow:0 30px 80px rgba(15,27,45,.25)}
+.modal.wide{width:min(820px,calc(100% - 24px))}
+.modal.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.modal .mh{display:flex;align-items:center;gap:10px;padding:18px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:2}
+.modal .mb{padding:20px}
+.modal .mf{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--line);position:sticky;bottom:0;background:#fff}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:8px 14px;font-size:14px;margin-bottom:16px}
+.kv dt{color:var(--muted)}.kv dd{margin:0;font-weight:500}
+.sec-t{font-family:var(--display);font-size:14px;font-weight:700;margin:18px 0 8px}
+.toast{pointer-events:none;position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:#0F1B2D;color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;z-index:3000;transition:.25s;display:flex;align-items:center;gap:10px;max-width:calc(100% - 32px)}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.notif{position:absolute;right:0;top:48px;width:360px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 50px rgba(15,27,45,.16);display:none;z-index:900;overflow:hidden}
+.notif.on{display:block}
+/* document imprimable */
+.doc{font-size:13.5px;color:#111}
+.doc .dhd{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:2px solid var(--blue);padding-bottom:14px;margin-bottom:16px}
+.doc .dhd img{width:62px}
+.doc table td,.doc table th{padding:8px 10px;font-size:13px}
+.doc .tot{display:flex;justify-content:space-between;font-weight:700;font-size:16px;padding:12px 10px;background:var(--blue-soft);border-radius:10px;margin-top:10px}
+/* client portal + agent phone */
+#phone{display:none;min-height:100vh;background:linear-gradient(180deg,#E7EEFA,var(--bg) 40%)}
+.ph-wrap{max-width:440px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:84px}
+@media (min-width:700px){.ph-wrap{margin:24px auto;min-height:calc(100vh - 48px);border-radius:34px;border:8px solid #fff;box-shadow:0 30px 80px rgba(15,27,45,.18);overflow:hidden}}
+.ph-head{display:flex;align-items:center;gap:10px;padding:16px 18px 6px}
+.ph-head img{width:34px}
+.ph-hero{margin:10px 16px;border-radius:22px;padding:20px;color:#fff;background:linear-gradient(135deg,#2F7BF0,#1D5FD1 60%,#174BA8);box-shadow:0 14px 30px rgba(29,95,209,.3)}
+.ph-hero .k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.85;font-weight:600}
+.ph-hero h2{font-size:22px;margin:4px 0 2px;color:#fff}
+.punch{width:100%;border:0;border-radius:18px;padding:18px;font-size:17px;font-weight:700;font-family:var(--display);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px;background:#fff;color:var(--blue)}
+.punch.out{background:#FFE9C7;color:#7A4A00}
+.ph-sec{padding:6px 16px}
+.tile-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px;cursor:pointer;text-align:left;box-shadow:var(--shadow)}
+.tile .ti{width:40px;height:40px;border-radius:12px;display:grid;place-items:center}
+.tile b{font-size:14.5px}
+.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;background:#fff;border-top:1px solid var(--line);display:flex;padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px));z-index:50}
+@media (min-width:700px){.tabbar{bottom:24px;max-width:424px;border-radius:0 0 26px 26px}}
+.tabbar button{flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;font-weight:600;color:var(--steel);cursor:pointer;padding:4px}
+.tabbar button.on{color:var(--blue)}
+.ck{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:#fff;border:1px solid var(--line);margin-bottom:10px;cursor:pointer}
+.ck .c{width:28px;height:28px;border-radius:50%;border:2px solid var(--silver);display:grid;place-items:center;flex:none}
+.ck.done{border-color:#BFE7D2;background:#F3FBF7}.ck.done .c{background:var(--green);border-color:var(--green);color:#fff}
+.demo-sw{display:flex;align-items:center;gap:8px;font-size:12px;margin-top:12px;opacity:.95}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);text-decoration:none;cursor:pointer;background:none;border:0;padding:0}
+/* portail client (bureau) */
+.cl-hero{border-radius:20px;padding:22px 24px;background:linear-gradient(135deg,#EAF1FE,#fff);border:1px solid var(--line);display:flex;align-items:center;gap:18px;margin-bottom:18px;flex-wrap:wrap}
+.leaflet-container{font-family:var(--body)}
+.mk{width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+/* responsive */
+.kpis.k4{grid-template-columns:repeat(4,minmax(0,1fr))}.kpis.k3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:1180px){.kpis,.kpis.k4{grid-template-columns:repeat(3,minmax(0,1fr))}.grid2,.grid2e{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}#login .grid{grid-template-columns:1fr 1fr}}
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  .side{position:fixed;left:0;top:0;z-index:1500;width:270px;transform:translateX(-105%);transition:transform .25s;box-shadow:10px 0 40px rgba(15,27,45,.15)}
+  .side.on{transform:none}
+  .burger{display:grid}
+  .hide-sm{display:none!important}.alert-bar .btn{width:100%}.alert-bar .grow{flex-basis:70%}
+  .top{padding:10px 14px}.top .search{display:none}.me .nm{display:none}
+  .content{padding:18px 14px 60px}
+  .kpis,.kpis.k4,.kpis.k3{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:1fr}
+  .kpi .v{font-size:23px}
+  .mapbox{height:300px;margin:12px}
+  .kv{grid-template-columns:1fr;gap:2px}.kv dd{margin-bottom:8px}
+  .notif{position:fixed;left:12px;right:12px;width:auto;top:62px}
+}
+@media (max-width:560px){#login .grid{grid-template-columns:1fr}.ph h2{font-size:21px}}
+@media print{
+  body:not(.pp) *{visibility:hidden}
+  body.pp .side,body.pp .top,body.pp .ph .row{display:none!important}body.pp .shell{display:block}
+  body:not(.pp) #printArea,body:not(.pp) #printArea *{visibility:visible}
+  #printArea{position:absolute;left:0;top:0;width:100%}
+  .modal{position:static;transform:none;box-shadow:none;width:100%;max-height:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Choix de l'espace ===== -->
+<section id="login">
+  <div class="brand">
+    <img src="logo-cgsp-256.png" alt="Logo CGSP">
+    <div class="xs muted" style="letter-spacing:.12em;text-transform:uppercase;font-weight:700">Compagnie de Gardiennage et de Sécurité Privée</div>
+    <h1>Logiciel de gestion CGSP</h1>
+    <p class="muted" style="margin:0;max-width:560px">Sites, agents, planning jour et nuit, pointage géolocalisé, main courante, paie, facturation et espace client. Tout votre métier dans un seul logiciel.</p>
+  </div>
+  <div class="grid">
+    <button class="space" data-go="dir"><div class="si" style="background:var(--blue-soft);color:var(--blue)" data-i="shield"></div><h3>Direction générale</h3><p>Vue en direct de tous les sites, alertes, chiffre d'affaires et décisions.</p><span class="go">Ouvrir l'espace →</span></button>
+    <button class="space" data-go="rh"><div class="si" style="background:var(--violet-soft);color:var(--violet)" data-i="users"></div><h3>RH et exploitation</h3><p>Agents, planning, remplacements, congés, cartes professionnelles et paie.</p><span class="go">Ouvrir l'espace →</span></button>
+    <button class="space" data-go="agent"><div class="si" style="background:var(--green-soft);color:var(--green)" data-i="phone"></div><h3>Application agent</h3><p>Sur le téléphone de l'agent : pointage, rondes, incidents, planning.</p><span class="go">Ouvrir l'application →</span></button>
+    <button class="space" data-go="client"><div class="si" style="background:var(--amber-soft);color:var(--amber)" data-i="building"></div><h3>Espace client</h3><p>Pour vos clients : commandes, plaintes, suggestions, rapports et factures.</p><span class="go">Ouvrir l'espace →</span></button>
+  </div>
+  <div class="byline">Démonstration préparée pour CGSP-Sécurité · Données d'exemple · Conçu par <a href="../" target="_blank" rel="noopener">SACKO CONCEPT</a></div>
+</section>
+
+<!-- ===== Logiciel bureau (Direction / RH / Client) ===== -->
+<section id="app">
+  <div class="shell">
+    <aside class="side" id="side"></aside>
+    <div class="main">
+      <header class="top">
+        <button class="iconbtn burger" id="burger" aria-label="Menu" data-i="menu"></button>
+        <div class="search"><span data-i="search"></span><input id="q" placeholder="Rechercher un agent, un site, un client…"></div>
+        <div class="grow"></div>
+        <div class="xs muted hide-sm" id="clock" style="white-space:nowrap"></div>
+        <div style="position:relative">
+          <button class="iconbtn" id="bell" aria-label="Notifications"><span data-i="bell"></span><span class="n" id="bellN" hidden></span></button>
+          <div class="notif" id="notif"></div>
+        </div>
+        <div class="me" id="meBtn"><div class="av" id="meAv"></div><div class="nm"><div class="b sm" id="meName"></div><div class="xs muted" id="meRole"></div></div></div>
+      </header>
+      <main class="content" id="view"></main>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Application agent (téléphone) ===== -->
+<section id="phone"><div class="ph-wrap" id="pw"></div><nav class="tabbar" id="tabbar"></nav></section>
+
+<div class="ovl" id="ovl"></div>
+<aside class="drawer" id="drawer"></aside>
+<div class="modal" id="modal"></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* ============================================================
+   CGSP-Sécurité · Logiciel de gestion (démo SACKO CONCEPT)
+   Données d'exemple stockées dans le navigateur, régénérées chaque jour.
+   ============================================================ */
+const KEY="cgsp-logiciel-v1";
+const ICONS={home:"M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z",map:"M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14",building:"M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M2 21h20M8 7h4M8 11h4M8 15h4",users:"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",calendar:"M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM16 2v4M8 2v4M3 10h18",clock:"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",book:"M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5M8 7h8M8 11h6",route:"M6 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM6 15V9a4 4 0 0 1 4-4h4M18 9v6a4 4 0 0 1-4 4h-4",leave:"M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM16 2v4M8 2v4M3 10h18M9 16l2 2 4-4",wallet:"M20 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4M18 12a2 2 0 0 0 0 4h4v-4z",file:"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h5",settings:"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",bell:"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0",search:"M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35",menu:"M3 12h18M3 6h18M3 18h18",x:"M18 6 6 18M6 6l12 12",check:"M20 6 9 17l-5-5",alert:"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",shield:"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4",phone:"M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM11 18h2",call:"M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z",pin:"M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",plus:"M12 5v14M5 12h14",print:"M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z",logout:"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9",camera:"M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",moon:"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z",sun:"M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42",user:"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",chev:"M9 18l6-6-6-6",scan:"M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10",chart:"M3 3v18h18M7 16V10M12 16V6M17 16v-4",cart:"M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM20 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6",msg:"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",star:"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z",send:"M22 2 11 13M22 2l-7 20-4-9-9-4z",dog:"M10 5.17C10 3.7 11.3 2.5 12.9 2.5c1.1 0 2 .6 2.5 1.5l.6 1H19a2 2 0 0 1 2 2v1a3 3 0 0 1-3 3h-1v8a2 2 0 0 1-2 2h-1v-5H8v5H7a2 2 0 0 1-2-2v-6l-2-3 3-2z",refresh:"M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"};
+const ic=(n,c="")=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[n]||""}"/></svg>`;
+function hydrateIcons(root=document){root.querySelectorAll("[data-i]").forEach(el=>{if(!el.dataset.done){el.innerHTML=ic(el.dataset.i)+el.innerHTML;el.dataset.done=1}})}
+
+/* ---------- utilitaires ---------- */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>{const x=new Date(d);return x.getFullYear()+"-"+pad(x.getMonth()+1)+"-"+pad(x.getDate())};
+const today=()=>iso(new Date());
+const addDays=(s,n)=>{const d=new Date(s+"T12:00:00");d.setDate(d.getDate()+n);return iso(d)};
+const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
+const hm=m=>{m=((m%1440)+1440)%1440;return pad(Math.floor(m/60))+":"+pad(m%60)};
+const toMin=s=>{const [h,m]=s.split(":").map(Number);return h*60+m};
+const JOURS=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"],JC=["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
+const MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"],MC=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+const fd=s=>{const d=new Date(s+"T12:00:00");return d.getDate()+" "+MC[d.getMonth()]};
+const fdl=s=>{const d=new Date(s+"T12:00:00");return JOURS[d.getDay()]+" "+d.getDate()+" "+MOIS[d.getMonth()]};
+const fcfa=n=>new Intl.NumberFormat("fr-FR").format(Math.round(n||0)).replace(/ | /g," ")+" F CFA";
+const uid=()=>Math.random().toString(36).slice(2,9);
+let rs=20261104;const rnd=()=>{rs=(rs*1103515245+12345)%2147483648;return rs/2147483648};
+const pick=a=>a[Math.floor(rnd()*a.length)];
+const dist=(a,b,c,d)=>{const R=6371000,r=x=>x*Math.PI/180,dl=r(c-a),dn=r(d-b);const h=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dn/2)**2;return Math.round(2*R*Math.asin(Math.sqrt(h)))};
+const offset=(lat,lng,m,ang)=>[lat+(m*Math.cos(ang))/111320,lng+(m*Math.sin(ang))/(111320*Math.cos(lat*Math.PI/180))];
+const COLORS=["#1D5FD1","#14915A","#6B4FD8","#B86E00","#D2362B","#0E8A9A","#8A4FD8","#3B6E2E","#C2410C","#2C5282"];
+const initials=n=>n.split(" ").map(x=>x[0]).slice(0,2).join("").toUpperCase();
+const avColor=s=>COLORS[[...s].reduce((a,c)=>a+c.charCodeAt(0),0)%COLORS.length];
+const av=(name,size)=>`<div class="av" style="background:${avColor(name)}${size?`;width:${size}px;height:${size}px;font-size:${Math.round(size/2.8)}px`:""}">${initials(name)}</div>`;
+const SHIFTS={J:{l:"Jour",start:"07:00",end:"19:00",i:"sun"},N:{l:"Nuit",start:"19:00",end:"07:00",i:"moon"}};
+const curShift=()=>{const m=nowMin();return m>=420&&m<1140?"J":"N"};
+/* la nuit en cours appartient à la date de 19 h */
+const curShiftDate=()=>{const m=nowMin();return m<420?addDays(today(),-1):today()};
+
+/* ---------- données d'exemple ---------- */
+function seed(){
+  rs=20261104;
+  const T=today();
+  const sites=[
+    ["s1","Banque Ouest Finance","Agence de Ganhi","Banque",6.3530,2.4330,2,2,1850000,"Mme Adjovi Kpadé","Directrice d'agence"],
+    ["s2","Résidence Les Cocotiers","Villa diplomatique","Résidence",6.3560,2.3990,1,2,650000,"M. Laurent Mercier","Résident"],
+    ["s3","Entrepôt Logistique Akpakpa","Zone portuaire","Entrepôt",6.3700,2.4600,1,2,900000,"M. Sylvain Dossa","Responsable logistique"],
+    ["s4","Hôtel Lagune","Fidjrossè plage","Hôtel",6.3530,2.3630,2,2,1200000,"Mme Nadia Hounsou","Directrice générale"],
+    ["s5","Clinique Saint-Luc","Cadjèhou","Santé",6.3630,2.3960,1,1,480000,"Dr Gérard Ahouansou","Directeur médical"],
+    ["s6","Résidence Haie Vive","Quartier des ambassades","Résidence",6.3590,2.3925,2,2,1600000,"M. Thomas Keller","Chargé de sécurité"],
+    ["s7","Station Énergie Plus","Godomey carrefour","Station-service",6.4020,2.3410,1,1,420000,"M. Rachidi Bello","Gérant"],
+    ["s8","Supermarché Étoile","Sikècodji","Commerce",6.3720,2.4180,2,1,750000,"Mme Victoire Agbo","Gérante"],
+    ["s9","Chantier Les Palmiers","Abomey-Calavi","Chantier",6.4480,2.3550,1,2,560000,"Ing. Fiacre Zannou","Chef de chantier"],
+    ["s10","École Internationale","Les Cocotiers","Éducation",6.3575,2.4015,2,1,700000,"Mme Carole Dubois","Proviseure"]
+  ].map(([id,name,loc,type,lat,lng,needJ,needN,contract,contact,crole])=>({id,name,loc,type,lat,lng,needJ,needN,contract,contact,crole,since:addDays(T,-Math.floor(200+rnd()*1200)),
+    checkpoints:type==="Banque"?["Entrée principale","Salle des coffres (extérieur)","Distributeurs","Parking clients","Issue de secours"]:type==="Entrepôt"?["Portail principal","Quai de chargement","Clôture arrière","Groupe électrogène","Bureau logistique"]:type==="Hôtel"?["Réception","Parking","Piscine","Accès plage","Cuisines (arrière)"]:["Portail principal","Parking","Clôture arrière","Local technique","Bâtiment principal"],
+    consignes:type==="Banque"?"Contrôle des accès clients, aucune personne en salle après fermeture, ronde toutes les 2 heures la nuit.":type==="Résidence"?"Registre des visiteurs obligatoire, aucune entrée sans accord du résident, ronde toutes les heures la nuit.":"Contrôle des entrées et sorties, registre des véhicules, ronde toutes les 2 heures la nuit."}));
+  const FN=["Romaric","Fiacre","Gildas","Brice","Hermann","Prudence","Armel","Serge","Josué","Rodrigue","Ulrich","Cyriaque","Aristide","Florent","Mathias","Évariste","Landry","Wilfried","Rachidi","Ibrahim","Issa","Bernadette","Victoire","Narcisse","Sylvain","Pacôme","Habib","Romain","Félicien","Dieudonné","Elvis","Jacques","Christian","Euloge","Modeste","Thierry","Basile","Achille","Hortense","Patrice","Noël","Firmin"];
+  const LN=["Hounkpatin","Dossou","Agossou","Ahouandjinou","Sossou","Adjovi","Gbaguidi","Houngbédji","Zinsou","Kpadonou","Akakpo","Tossou","Dansou","Assogba","Lokossou","Avocè","Hounsou","Fagla","Adéchian","Yarou","Orou","Saka","Chabi","Idrissou","Alassane","Kiki","Ahoyo","Gnonlonfoun","Houessou","Quenum","Sènou","Vodounon","Amoussou","Bossou","Djossou","Fanou","Glèlè","Hessou","Koudogbo","Médji","Noudéhou","Tchobo"];
+  let k=0;const agents=[];
+  const mk=(grade,site,shift,repos)=>{const first=FN[k%FN.length],last=LN[(k*7+3)%LN.length];k++;const name=first+" "+last;
+    const hired=addDays(T,-Math.floor(120+rnd()*2600));
+    const base={"Agent de sécurité":72000,"Chef de poste":95000,"Superviseur":140000,"Maître-chien":88000,"Agent volant":75000}[grade];
+    const a={id:"a"+k,mat:"CGSP-"+String(100+k).padStart(4,"0"),name,first,grade,site,shift,repos,hired,base,
+      phone:"+229 01 "+pick(["90","91","94","95","96","97","61","62","66","67"])+" "+pad(Math.floor(rnd()*100))+" "+pad(Math.floor(rnd()*100))+" "+pad(Math.floor(rnd()*100)),
+      carte:addDays(T,Math.floor(40+rnd()*600)),birth:(1972+Math.floor(rnd()*30))+"-"+pad(1+Math.floor(rnd()*12))+"-"+pad(1+Math.floor(rnd()*27)),
+      quartier:pick(["Akpakpa","Fidjrossè","Cadjèhou","Godomey","Calavi","Agla","Menontin","Vèdoko","Sainte-Rita","Zogbo","Houéyiho","Cocotomey"]),
+      formations:pick([["Secourisme (SST)","Sécurité incendie"],["Secourisme (SST)"],["Sécurité incendie","Palpation et filtrage"],["Secourisme (SST)","Sécurité incendie","Gestion des conflits"]]),
+      sanctions:[],cnss:"CNSS "+Math.floor(1e8+rnd()*9e8),status:"Actif"};
+    agents.push(a);return a};
+  let rep=0;
+  sites.forEach(s=>{["J","N"].forEach(sh=>{const n=sh==="J"?s.needJ:s.needN;for(let i=0;i<n;i++){mk(i===0&&sh==="J"?"Chef de poste":(s.type==="Entrepôt"&&sh==="N"&&i===1?"Maître-chien":"Agent de sécurité"),s.id,sh,rep%7);rep++}})});
+  for(let i=0;i<6;i++)mk("Agent volant",null,null,i);
+  for(let i=0;i<3;i++)mk("Superviseur",null,i<2?"N":"J",(i*3+1)%7);
+  /* agent de démo de l'application : Banque, poste de nuit */
+  const demo=agents.find(a=>a.site==="s1"&&a.shift==="N");demo.name="Constant Hounkpatin";demo.first="Constant";demo.repos=(new Date(T+"T12:00:00").getDay()+3)%7;demo.demo=true;
+  /* cartes pro qui expirent bientôt */
+  agents[4].carte=addDays(T,12);agents[17].carte=addDays(T,23);agents[26].carte=addDays(T,-3);
+  agents[8].sanctions=[{date:addDays(T,-40),type:"Avertissement",motif:"Retard de 45 minutes à la relève de nuit sans prévenir."}];
+  agents[21].sanctions=[{date:addDays(T,-75),type:"Mise à pied (2 jours)",motif:"Abandon de poste pendant 1 heure (contrôle superviseur)."}];
+
+  /* absences du jour : une maladie (couverte par un volant) et une absence injustifiée à l'entrepôt de nuit */
+  const working=a=>a.site&&a.repos!==new Date(T+"T12:00:00").getDay();
+  const sick=agents.find(a=>a.site==="s4"&&a.shift==="J"&&working(a));
+  const absN=agents.find(a=>a.site==="s3"&&a.shift==="N"&&working(a)&&!a.grade.includes("Maître"))||agents.find(a=>a.site==="s3"&&a.shift==="N"&&working(a));
+  const absences={};absences[T]={};
+  if(sick)absences[T][sick.id]={type:"Maladie",note:"Certificat médical reçu"};
+  if(absN)absences[T][absN.id]={type:"Absence non justifiée",note:"Injoignable depuis 15 h"};
+
+  const leaves=[
+    {id:uid(),agent:agents[6].id,type:"Congé annuel",from:addDays(T,9),to:addDays(T,22),status:"En attente",reason:"Voyage au village pour les fêtes",date:addDays(T,-1)},
+    {id:uid(),agent:agents[19].id,type:"Événement familial",from:addDays(T,3),to:addDays(T,4),status:"En attente",reason:"Mariage de ma sœur à Porto-Novo",date:T},
+    {id:uid(),agent:sick?sick.id:agents[2].id,type:"Maladie",from:T,to:addDays(T,2),status:"Validée",reason:"Paludisme, certificat médical",date:T},
+    {id:uid(),agent:agents[12].id,type:"Congé annuel",from:addDays(T,-30),to:addDays(T,-16),status:"Validée",reason:"Congés",date:addDays(T,-45)},
+    {id:uid(),agent:agents[29].id,type:"Permission",from:addDays(T,-8),to:addDays(T,-8),status:"Refusée",reason:"Démarches administratives",date:addDays(T,-10),answer:"Effectif insuffisant ce jour-là, à reprogrammer."}
+  ];
+  const incTypes=[["Tentative d'intrusion","Élevée"],["Visiteur suspect","Moyenne"],["Panne électrique","Moyenne"],["Véhicule suspect","Moyenne"],["Altercation avec un visiteur","Moyenne"],["Porte forcée constatée","Élevée"],["Alarme déclenchée","Faible"],["Objet abandonné","Faible"]];
+  const incTxt={"Tentative d'intrusion":"Deux individus ont tenté d'escalader la clôture arrière vers 02 h 40. Sifflet et lampe, fuite immédiate. Police alertée, ronde renforcée jusqu'au matin.","Visiteur suspect":"Individu non identifié a demandé à plusieurs reprises les horaires de fermeture. Refus de décliner son identité. Description consignée.","Panne électrique":"Coupure générale de 21 h 10 à 22 h 05. Groupe électrogène démarré manuellement, éclairage extérieur rétabli.","Véhicule suspect":"Véhicule sans plaque stationné 40 minutes devant l'entrée. Photo prise, parti à l'approche de l'agent.","Altercation avec un visiteur":"Visiteur refusant le contrôle du sac. Situation calmée sans violence, responsable du site informé.","Porte forcée constatée":"Serrure du local technique endommagée constatée à la ronde de 04 h. Rien de volé selon premier contrôle. Client informé.","Alarme déclenchée":"Alarme du bâtiment B déclenchée à 23 h 15. Vérification faite : fausse alerte (chat).","Objet abandonné":"Sac abandonné près du portail. Périmètre sécurisé, propriétaire retrouvé 20 minutes après."};
+  const work=agents.filter(a=>a.site);
+  const incidents=[];
+  [[0,"s3",0],[1,"s1",-1],[2,"s4",-1],[3,"s9",-2],[4,"s8",-3],[5,"s6",-4],[6,"s2",-5],[7,"s7",-6],[2,"s10",-8]].forEach(([ti,sid,d],i)=>{const [type,grav]=incTypes[ti];const ag=work.find(a=>a.site===sid)||work[0];
+    incidents.push({id:uid(),date:addDays(T,d),time:hm(d===0?Math.max(nowMin()-160,60):60+Math.floor(rnd()*1300)),site:sid,agent:ag.id,type,grav,txt:incTxt[type],status:d>=-1&&grav!=="Faible"?"En cours":"Clôturé",fresh:d===0})});
+  const rounds=[];
+  for(let d=-6;d<=0;d++){sites.forEach(s=>{const nb=s.type==="Banque"||s.type==="Résidence"?4:3;for(let r=0;r<nb;r++){if(d===0)continue;const ag=work.find(a=>a.site===s.id&&a.shift==="N")||work[0];const miss=rnd()<.09?1:0;
+    rounds.push({id:uid(),date:addDays(T,d),site:s.id,agent:ag.id,time:hm(1260+r*150),done:s.checkpoints.length-miss,total:s.checkpoints.length,missed:miss?[s.checkpoints[Math.floor(rnd()*s.checkpoints.length)]]:[]})}})}
+  /* factures : 3 derniers mois */
+  const invoices=[];const dt=new Date(T+"T12:00:00");
+  for(let m=2;m>=0;m--){const d=new Date(dt.getFullYear(),dt.getMonth()-m,1);const per=MOIS[d.getMonth()]+" "+d.getFullYear();
+    sites.forEach((s,i)=>{let st="Payée";if(m===0)st=i%3===0?"Payée":"En attente";if(m===1&&(i===2||i===8))st="En retard";
+      invoices.push({id:uid(),num:"FAC-"+d.getFullYear()+pad(d.getMonth()+1)+"-"+pad(i+1),site:s.id,period:per,date:iso(new Date(d.getFullYear(),d.getMonth(),5)),due:iso(new Date(d.getFullYear(),d.getMonth(),20)),amount:s.contract,status:st})})}
+  const requests=[
+    {id:uid(),site:"s4",kind:"Commande",subject:"4 agents pour un mariage le samedi",txt:"Nous organisons un mariage de 300 invités au bord de la piscine. Besoin de 4 agents supplémentaires de 16 h à 2 h, tenue de cérémonie souhaitée.",date:addDays(T,0),status:"Nouvelle",answer:""},
+    {id:uid(),site:"s1",kind:"Plainte",subject:"Agent au téléphone pendant le service",txt:"Mardi vers 11 h, l'agent à l'entrée était au téléphone et n'a pas contrôlé deux visiteurs. Merci de rappeler les consignes.",date:addDays(T,-1),status:"En traitement",answer:"Merci de votre signalement. Le chef de poste a été reçu et un rappel des consignes a été fait à toute l'équipe."},
+    {id:uid(),site:"s8",kind:"Suggestion",subject:"Ronde du parking à la fermeture",txt:"Ce serait bien qu'un agent accompagne le personnel de caisse jusqu'au parking à la fermeture (22 h).",date:addDays(T,-3),status:"Nouvelle",answer:""},
+    {id:uid(),site:"s9",kind:"Commande",subject:"Un agent de plus la nuit",txt:"Livraison de matériaux importante la semaine prochaine. Pouvez-vous ajouter un agent de nuit pendant 10 jours ?",date:addDays(T,-4),status:"Acceptée",answer:"Accepté : 1 agent supplémentaire de nuit du lundi au mercredi suivant. Devis envoyé : 145 000 F CFA."},
+    {id:uid(),site:"s6",kind:"Plainte",subject:"Retard à la relève du matin",txt:"La relève de 7 h est arrivée à 7 h 40 jeudi. L'agent de nuit a dû rester.",date:addDays(T,-9),status:"Clôturée",answer:"Retard confirmé par le pointage (7 h 38). Sanction appliquée et agent remplaçant prévu en cas d'empêchement."}
+  ];
+  const S={day:T,settings:{name:"CGSP-Sécurité",full:"Compagnie de Gardiennage et de Sécurité Privée",addr:"Lot 5185, 06 BP 3972, Cotonou, Bénin",phone:"+229 01 95 05 61 51",email:"contact@cgsp-securite.bj",ifu:"IFU 3 2019 0000 0000",city:"Cotonou",nightBonus:15000,meal:10000},
+    sites,agents,absences,overrides:{},leaves,incidents,rounds,invoices,requests,punches:[],advances:[{id:uid(),agent:agents[9].id,amount:20000,date:addDays(T,-12),reason:"Frais de scolarité"},{id:uid(),agent:agents[15].id,amount:15000,date:addDays(T,-6),reason:"Réparation moto"}],
+    payValidated:false,log:[],seen:{}};
+  /* pointages : nuit d'hier, jour d'aujourd'hui, et nuit de ce soir si elle a commencé */
+  genPunches(S,addDays(T,-1),"N",true);
+  if(nowMin()>=430)genPunches(S,T,"J",nowMin()>=1150);
+  if(nowMin()>=1150)genPunches(S,T,"N",false);
+  if(nowMin()<420){genPunches(S,addDays(T,-1),"J",true)}
+  return S;
+}
+function genPunches(S,date,sh,closed){
+  const p=planFor(date,S);const st=toMin(SHIFTS[sh].start);let i=0;
+  S.sites.forEach(s=>{(p[s.id][sh]||[]).forEach(aid=>{const a=S.agents.find(x=>x.id===aid);if(a.demo&&date===S.day)return;i++;
+    let late=-Math.floor(rnd()*14);if(i===5)late=22;if(i===13)late=38;if(i===19)late=14;
+    let m=8+Math.floor(rnd()*70);if(i===9&&sh==="J")m=1350;
+    const [lat,lng]=offset(s.lat,s.lng,m,rnd()*6.28);
+    const pu={id:uid(),agent:aid,site:s.id,date,shift:sh,in:hm(st+late),lat,lng,d:m};
+    if(closed){const [la2,ln2]=offset(s.lat,s.lng,10+Math.floor(rnd()*50),rnd()*6.28);pu.out=hm(st+720+Math.floor(rnd()*12));pu.d2=dist(s.lat,s.lng,la2,ln2)}
+    S.punches.push(pu)})});
+}
+/* Planning : équipe titulaire hors jour de repos, complétée par les volants */
+function planFor(date,St=S){
+  const wd=new Date(date+"T12:00:00").getDay();
+  const abs=(St.absences&&St.absences[date])||{};
+  const onLeave=id=>St.leaves.some(l=>l.agent===id&&l.status==="Validée"&&date>=l.from&&date<=l.to);
+  const res={};const used=new Set();const holes=[];
+  St.sites.forEach(s=>{res[s.id]={J:[],N:[],needJ:s.needJ,needN:s.needN}});
+  St.agents.filter(a=>a.site).forEach(a=>{if(a.repos===wd||abs[a.id]||onLeave(a.id))return;res[a.site][a.shift].push(a.id);used.add(a.id)});
+  const vol=St.agents.filter(a=>a.grade==="Agent volant"&&a.repos!==wd&&!abs[a.id]&&!onLeave(a.id));
+  St.sites.forEach(s=>["J","N"].forEach(sh=>{const need=sh==="J"?s.needJ:s.needN;
+    const ov=(St.overrides[date]||{})[s.id+"|"+sh]||[];ov.forEach(id=>{if(!res[s.id][sh].includes(id)){res[s.id][sh].push(id);used.add(id)}});
+    while(res[s.id][sh].length<need){
+      /* la nuit à l'entrepôt reste découverte le jour même : c'est l'alerte à traiter */
+      if(date===St.day&&s.id==="s3"&&sh==="N"&&Object.keys(abs).length&&!ov.length)break;
+      const v=vol.find(x=>!used.has(x.id));if(!v)break;res[s.id][sh].push(v.id);used.add(v.id)}
+    if(res[s.id][sh].length<need)holes.push({site:s.id,shift:sh,missing:need-res[s.id][sh].length})}));
+  res._holes=holes;res._used=used;return res;
+}
+
+let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+if(!S||S.day!==today())S=seed();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+save();
+
+const A=id=>S.agents.find(a=>a.id===id)||{name:"—",grade:""};
+const SI=id=>S.sites.find(s=>s.id===id)||{name:"—"};
+const agentSiteToday=id=>{const p=planFor(S.day);for(const s of S.sites)for(const sh of ["J","N"])if(p[s.id][sh].includes(id))return {site:s.id,shift:sh};return null};
+function agentState(a){
+  const abs=(S.absences[S.day]||{})[a.id];if(abs)return {l:abs.type==="Maladie"?"Maladie":"Absent",c:"p-red"};
+  if(S.leaves.some(l=>l.agent===a.id&&l.status==="Validée"&&S.day>=l.from&&S.day<=l.to))return {l:"En congé",c:"p-violet"};
+  const sh=curShift(),sd=curShiftDate();
+  const pu=S.punches.find(p=>p.agent===a.id&&p.date===sd&&p.shift===sh&&!p.out);
+  if(pu)return {l:"En poste",c:"p-green"};
+  const t=agentSiteToday(a.id);if(t)return {l:"Prévu "+SHIFTS[t.shift].l.toLowerCase(),c:"p-blue"};
+  if(a.grade==="Superviseur")return {l:"Supervision",c:"p-blue"};
+  return {l:"Repos",c:"p-grey"};
+}
+function punchStatus(p,s){
+  if(!p)return null;const late=toMin(p.in)-toMin(SHIFTS[p.shift].start);
+  if(p.d>300)return {l:"Hors zone",c:"p-red",late};
+  if(late>10)return {l:"Retard "+late+" min",c:"p-amber",late};
+  if(late<-60)return {l:"En avance",c:"p-blue",late};
+  return {l:"À l'heure",c:"p-green",late};
+}
+const metres=m=>m>=1000?(m/1000).toFixed(1).replace(".",",")+" km":m+" m";
+
+/* ---------- état d'interface ---------- */
+let role=null,view="dash",filt={},maps={};
+function toast(t,i="check"){const el=$("#toast");el.innerHTML=ic(i)+esc(t);el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("on"),2600)}
+function openOvl(){$("#ovl").classList.add("on")}
+function closeAll(){$("#ovl").classList.remove("on");$("#drawer").classList.remove("on");$("#modal").classList.remove("on");$("#modal").classList.remove("wide");$("#side").classList.remove("on")}
+$("#ovl").onclick=closeAll;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAll()});
+function drawer(title,sub,body,head=""){const d=$("#drawer");d.innerHTML=`<div class="dh">${head}<div class="grow"><h3 style="font-size:18px">${title}</h3>${sub?`<div class="sm muted">${sub}</div>`:""}</div><button class="iconbtn" data-close>${ic("x")}</button></div><div class="db">${body}</div>`;openOvl();d.classList.add("on");d.querySelector("[data-close]").onclick=closeAll}
+function modal(title,body,foot="",wide=false){const m=$("#modal");m.innerHTML=`<div class="mh"><h3 class="grow" style="font-size:18px">${title}</h3><button class="iconbtn" data-close>${ic("x")}</button></div><div class="mb" id="printArea">${body}</div>${foot?`<div class="mf">${foot}</div>`:""}`;if(wide)m.classList.add("wide");$("#drawer").classList.remove("on");openOvl();m.classList.add("on");m.querySelector("[data-close]").onclick=closeAll;return m}
+
+/* ---------- navigation ---------- */
+const NAV={
+  dir:[["Pilotage",[["dash","home","Tableau de bord"],["live","map","Carte en direct"],["requests","msg","Demandes clients"]]],["Exploitation",[["sites","building","Sites clients"],["agents","users","Agents"],["planning","calendar","Planning"],["pointage","clock","Pointage"],["courante","book","Main courante"],["rondes","route","Rondes"]]],["Gestion",[["conges","leave","Congés et absences"],["paie","wallet","Paie"],["factures","file","Facturation"],["reglages","settings","Paramètres"]]]],
+  rh:[["Ressources humaines",[["dash","home","Tableau de bord RH"],["agents","users","Agents"],["planning","calendar","Planning"],["pointage","clock","Pointage"],["conges","leave","Congés et absences"],["paie","wallet","Paie"]]],["Terrain",[["courante","book","Main courante"],["rondes","route","Rondes"],["live","map","Carte en direct"]]]],
+  client:[["Mon espace",[["cdash","home","Accueil"],["corder","cart","Commander un service"],["cmsg","msg","Plaintes et suggestions"],["creport","chart","Rapports de sécurité"],["cinv","file","Mes factures"]]]]
+};
+const CLIENT_SITE="s1";
+function badges(){
+  const p=planFor(S.day);
+  return {requests:S.requests.filter(r=>r.status==="Nouvelle").length,planning:p._holes.length,conges:S.leaves.filter(l=>l.status==="En attente").length,courante:S.incidents.filter(i=>i.status==="En cours").length,factures:S.invoices.filter(i=>i.status==="En retard").length};
+}
+function renderSide(){
+  const b=badges();
+  $("#side").innerHTML=`<div class="logo"><img src="logo-cgsp-96.png" alt=""><div><b>CGSP-Sécurité</b><span>${role==="client"?"Espace client":role==="rh"?"RH et exploitation":"Direction générale"}</span></div></div>
+  ${NAV[role].map(([t,items])=>`<div class="nav-t">${t}</div><nav class="nav">${items.map(([k,i,l])=>`<a data-v="${k}" class="${view===k?"on":""}">${ic(i)}<span>${l}</span>${b[k]?`<span class="bdg">${b[k]}</span>`:""}</a>`).join("")}</nav>`).join("")}
+  <div class="foot"><a class="back-link" id="switch">${ic("logout")} Changer d'espace</a><div style="margin-top:10px">Logiciel conçu par <a href="../" target="_blank" rel="noopener" style="color:var(--muted)">SACKO CONCEPT</a></div></div>`;
+  $$("#side .nav a").forEach(a=>a.onclick=()=>{view=a.dataset.v;$("#side").classList.remove("on");$("#ovl").classList.remove("on");render()});
+  $("#switch").onclick=()=>{location.hash="";showLogin()};
+}
+function renderTop(){
+  const names={dir:["Direction générale","Directeur général"],rh:["Service RH","Responsable RH"],client:[SI(CLIENT_SITE).contact,SI(CLIENT_SITE).name]};
+  const [n,r]=names[role];$("#meName").textContent=n;$("#meRole").textContent=r;$("#meAv").outerHTML=`<div id="meAv">${av(n,32)}</div>`;
+  const notes=notifs();const nb=notes.filter(x=>!S.seen[x.k]).length;const bn=$("#bellN");bn.hidden=!nb;bn.textContent=nb;
+  const d=new Date();$("#clock").textContent=fdl(today())+" · "+pad(d.getHours())+":"+pad(d.getMinutes())+" · Relève de "+SHIFTS[curShift()].l.toLowerCase();
+}
+function notifs(){
+  const out=[];const p=planFor(S.day);
+  if(role==="client"){S.requests.filter(r=>r.site===CLIENT_SITE&&r.answer).forEach(r=>out.push({k:"ra"+r.id,i:"msg",c:"var(--blue)",t:"Réponse de CGSP : "+r.subject,s:fd(r.date),go:"cmsg"}));return out}
+  p._holes.forEach(h=>out.push({k:"h"+h.site+h.shift+S.day,i:"alert",c:"var(--red)",t:`Poste non couvert : ${SI(h.site).name} (${SHIFTS[h.shift].l.toLowerCase()})`,s:"Aujourd'hui · à traiter",go:"planning"}));
+  S.incidents.filter(i=>i.status==="En cours").forEach(i=>out.push({k:"i"+i.id,i:"book",c:"var(--amber)",t:i.type+" · "+SI(i.site).name,s:fd(i.date)+" à "+i.time,go:"courante"}));
+  S.punches.filter(x=>x.date>=addDays(S.day,-1)&&x.d>300).forEach(x=>out.push({k:"z"+x.id,i:"pin",c:"var(--red)",t:`Pointage hors zone : ${A(x.agent).name}`,s:SI(x.site).name+" · "+metres(x.d)+" du site",go:"pointage"}));
+  if(role==="dir")S.requests.filter(r=>r.status==="Nouvelle").forEach(r=>out.push({k:"r"+r.id,i:"msg",c:"var(--blue)",t:r.kind+" client : "+r.subject,s:SI(r.site).name,go:"requests"}));
+  S.leaves.filter(l=>l.status==="En attente").forEach(l=>out.push({k:"l"+l.id,i:"leave",c:"var(--violet)",t:"Demande de congé : "+A(l.agent).name,s:l.type,go:"conges"}));
+  return out;
+}
+$("#bell").onclick=e=>{e.stopPropagation();const n=$("#notif");const list=notifs();
+  n.innerHTML=`<div class="row" style="padding:14px 16px;border-bottom:1px solid var(--line)"><b class="grow">Notifications</b><button class="btn sm ghost" id="allRead">Tout marquer comme lu</button></div><div style="max-height:420px;overflow-y:auto;padding:6px">${list.length?list.map(x=>`<div class="li click" data-go="${x.go}" style="${S.seen[x.k]?"opacity:.6":""}"><span style="color:${x.c}">${ic(x.i)}</span><div class="grow"><div class="sm b">${esc(x.t)}</div><div class="xs muted">${esc(x.s)}</div></div>${S.seen[x.k]?"":`<span class="dot" style="background:var(--red)"></span>`}</div>`).join(""):`<div class="pad muted sm">Aucune notification.</div>`}</div>`;
+  n.classList.toggle("on");
+  n.querySelectorAll("[data-go]").forEach(el=>el.onclick=()=>{view=el.dataset.go;n.classList.remove("on");render()});
+  const ar=$("#allRead");if(ar)ar.onclick=ev=>{ev.stopPropagation();list.forEach(x=>S.seen[x.k]=1);save();n.classList.remove("on");renderTop()};
+};
+document.addEventListener("click",e=>{if(!e.target.closest("#notif")&&!e.target.closest("#bell"))$("#notif").classList.remove("on")});
+$("#burger").onclick=()=>{$("#side").classList.add("on");openOvl()};
+$("#q").oninput=e=>{const q=e.target.value.trim().toLowerCase();if(q.length<2)return;filt.q=q;if(!["agents","sites"].includes(view)){view=S.agents.some(a=>a.name.toLowerCase().includes(q))?"agents":"sites"}render(true)};
+
+function render(keepSearch){
+  Object.values(maps).forEach(m=>{try{m.remove()}catch(e){}});maps={};
+  renderSide();renderTop();
+  if(!keepSearch){filt.q="";$("#q").value=""}
+  const V={dash:role==="rh"?vDashRH:vDash,live:vLive,requests:vRequests,sites:vSites,agents:vAgents,planning:vPlanning,pointage:vPointage,courante:vCourante,rondes:vRondes,conges:vConges,paie:vPaie,factures:vFactures,reglages:vReglages,cdash:vCDash,corder:vCOrder,cmsg:vCMsg,creport:vCReport,cinv:vCInv}[view]||vDash;
+  $("#view").innerHTML=V();hydrateIcons($("#view"));
+  (afterRender[view]||(()=>{}))();
+  window.scrollTo(0,0);
+}
+const afterRender={};
+const kpi=(t,v,s,i,col)=>`<div class="card kpi"><div class="t"><span style="color:${col||"var(--blue)"}">${ic(i)}</span>${t}</div><div class="v">${v}</div><div class="s muted">${s}</div></div>`;
+const ph=(t,p,actions="")=>`<div class="ph"><div><h2>${t}</h2>${p?`<p>${p}</p>`:""}</div><div class="row wrapf">${actions}</div></div>`;
+
+/* ---------- carte ---------- */
+function siteHealth(s){
+  const sh=curShift(),sd=curShiftDate();const p=planFor(sd);
+  const need=sh==="J"?s.needJ:s.needN;const team=p[s.id][sh];
+  const hole=p._holes.find(h=>h.site===s.id&&h.shift===sh);
+  const pun=S.punches.filter(x=>x.site===s.id&&x.date===sd&&x.shift===sh);
+  const issue=pun.some(x=>x.d>300||toMin(x.in)-toMin(SHIFTS[sh].start)>10);
+  return {need,team,hole,pun,state:hole?"red":issue?"amber":"green"};
+}
+function buildMap(el,opts={}){
+  if(!window.L||!document.getElementById(el))return;
+  const m=L.map(el,{zoomControl:true,attributionControl:true,scrollWheelZoom:false}).setView([6.38,2.40],12);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{maxZoom:19,attribution:'&copy; OpenStreetMap, &copy; CARTO'}).addTo(m);
+  const col={green:"#14915A",amber:"#E08A00",red:"#D2362B"};const pts=[];
+  S.sites.forEach(s=>{const h=siteHealth(s);pts.push([s.lat,s.lng]);
+    const icon=L.divIcon({className:"",html:`<div class="mk" style="background:${col[h.state]};width:22px;height:22px"></div>`,iconSize:[22,22],iconAnchor:[11,11]});
+    const names=h.team.map(id=>{const pu=h.pun.find(x=>x.agent===id);const st=punchStatus(pu);return `<div style="display:flex;justify-content:space-between;gap:10px"><span>${esc(A(id).name)}</span><b style="color:${!pu?"#5E6B80":st.c==="p-green"?"#14915A":st.c==="p-red"?"#D2362B":"#B86E00"}">${pu?st.l:"Pas encore pointé"}</b></div>`}).join("");
+    L.marker([s.lat,s.lng],{icon}).addTo(m).bindPopup(`<div style="min-width:230px;font:13px Inter,sans-serif"><b style="font-size:14px">${esc(s.name)}</b><div style="color:#5E6B80;margin-bottom:6px">${esc(s.loc)} · ${h.team.length}/${h.need} agent(s)</div>${h.hole?`<div style="color:#D2362B;font-weight:700;margin-bottom:6px">⚠ ${h.hole.missing} poste(s) non couvert(s)</div>`:""}${names||"<i>Aucun agent</i>"}</div>`);
+    if(opts.punches)h.pun.forEach(x=>{L.circleMarker([x.lat,x.lng],{radius:5,color:"#fff",weight:2,fillColor:x.d>300?"#D2362B":"#1D5FD1",fillOpacity:1}).addTo(m).bindTooltip(A(x.agent).name+" · "+x.in+" · "+metres(x.d))});
+    if(opts.punches)L.circle([s.lat,s.lng],{radius:300,color:col[h.state],weight:1,fillOpacity:.05}).addTo(m);
+  });
+  m.fitBounds(pts,{padding:[30,30]});maps[el]=m;setTimeout(()=>m.invalidateSize(),150);
+}
+
+/* ---------- Tableau de bord Direction ---------- */
+function vDash(){
+  const sh=curShift(),sd=curShiftDate(),p=planFor(sd);
+  const onPost=S.punches.filter(x=>x.date===sd&&x.shift===sh&&!x.out).length;
+  const needNow=S.sites.reduce((a,s)=>a+(sh==="J"?s.needJ:s.needN),0);
+  const covered=S.sites.filter(s=>!p._holes.find(h=>h.site===s.id&&h.shift===sh)).length;
+  const lateToday=S.punches.filter(x=>x.date===S.day&&(toMin(x.in)-toMin(SHIFTS[x.shift].start)>10||x.d>300)).length;
+  const inc7=S.incidents.filter(i=>i.date>=addDays(S.day,-6)).length;
+  const ca=S.sites.reduce((a,s)=>a+s.contract,0);
+  const unpaid=S.invoices.filter(i=>i.status!=="Payée").reduce((a,i)=>a+i.amount,0);
+  const holes=planFor(S.day)._holes;
+  const ponct=[];for(let d=13;d>=0;d--){const dd=addDays(S.day,-d);const v=d===0?Math.round(100*(1-lateToday/Math.max(1,S.punches.filter(x=>x.date===S.day).length))):88+Math.floor((Math.sin(d*1.7)+1)*5);ponct.push([dd,Math.min(100,v)])}
+  const recent=[...S.punches].filter(x=>x.date>=addDays(S.day,-1)).sort((a,b)=>(b.date+b.in).localeCompare(a.date+a.in)).slice(0,7);
+  return ph("Bonjour, Directeur 👋",`${fdl(S.day)} · Relève de ${SHIFTS[sh].l.toLowerCase()} en cours (${SHIFTS[sh].start} – ${SHIFTS[sh].end})`,`<button class="btn" data-goto="live">${ic("map")} Carte en direct</button><button class="btn pri" data-goto="planning">${ic("calendar")} Planning</button>`)+
+  (holes.length?holes.map(h=>`<div class="alert-bar">${ic("alert")}<div class="grow"><b>${h.missing} poste${h.missing>1?"s":""} non couvert${h.missing>1?"s":""} ce soir</b> · ${esc(SI(h.site).name)}, relève de ${SHIFTS[h.shift].l.toLowerCase()} (${SHIFTS[h.shift].start}). ${esc(Object.values(S.absences[S.day]||{}).find(a=>a.type!=="Maladie")?.note||"")}</div><button class="btn sm red" data-repl="${h.site}|${h.shift}">Affecter un remplaçant</button></div>`).join(""):"")+
+  `<div class="kpis">
+    ${kpi("Agents en poste",`${onPost}<span class="muted" style="font-size:16px"> / ${needNow}</span>`,"Relève de "+SHIFTS[sh].l.toLowerCase(),"shield")}
+    ${kpi("Sites couverts",`${covered}<span class="muted" style="font-size:16px"> / ${S.sites.length}</span>`,holes.length?`<span style="color:var(--red);font-weight:600">${holes.length} alerte(s)</span>`:"Tous couverts","building",holes.length?"var(--red)":"var(--green)")}
+    ${kpi("Retards et hors zone",lateToday,"Aujourd'hui","clock","var(--amber)")}
+    ${kpi("Incidents (7 jours)",inc7,S.incidents.filter(i=>i.status==="En cours").length+" en cours","book","var(--violet)")}
+    ${kpi("Chiffre d'affaires mensuel",fcfa(ca).replace(" F CFA",""),`F CFA · impayés ${fcfa(unpaid)}`,"wallet","var(--green)")}
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="ch"><h3>Sites en direct</h3><div class="row xs muted"><span class="dot" style="background:var(--green)"></span>OK<span class="dot" style="background:#E08A00"></span>À surveiller<span class="dot" style="background:var(--red)"></span>Non couvert</div></div><div id="mapDash" class="mapbox"></div></div>
+    <div class="card"><div class="ch"><h3>Derniers pointages</h3><button class="btn sm ghost" data-goto="pointage">Tout voir</button></div><div class="list">${recent.map(x=>{const st=punchStatus(x);return `<div class="li">${av(A(x.agent).name)}<div class="grow"><div class="sm b">${esc(A(x.agent).name)}</div><div class="xs muted">${esc(SI(x.site).name)} · ${x.date===S.day?"aujourd'hui":"hier"} ${x.in} · ${metres(x.d)} du site</div></div><span class="pill ${st.c}">${st.l}</span></div>`}).join("")}</div></div>
+  </div>
+  <div class="grid3">
+    <div class="card"><div class="ch"><h3>Ponctualité · 14 jours</h3><span class="pill p-green">${Math.round(ponct.reduce((a,x)=>a+x[1],0)/ponct.length)} %</span></div><div class="bars">${ponct.map(([d,v])=>`<div class="bar" title="${fd(d)} : ${v} %"><i style="height:${(v-70)*3.2}%;${v<92?"background:linear-gradient(180deg,#F2A93B,#E08A00)":""}"></i><span>${new Date(d+"T12:00:00").getDate()}</span></div>`).join("")}</div></div>
+    <div class="card"><div class="ch"><h3>Main courante</h3><button class="btn sm ghost" data-goto="courante">Ouvrir</button></div><div class="list">${S.incidents.slice(0,4).map(i=>`<div class="li click" data-inc="${i.id}"><span style="color:${i.grav==="Élevée"?"var(--red)":i.grav==="Moyenne"?"var(--amber)":"var(--steel)"}">${ic("alert")}</span><div class="grow"><div class="sm b">${esc(i.type)}</div><div class="xs muted">${esc(SI(i.site).name)} · ${fd(i.date)} ${i.time}</div></div>${i.status==="En cours"?`<span class="pill p-amber">En cours</span>`:""}</div>`).join("")}</div></div>
+    <div class="card"><div class="ch"><h3>Demandes clients</h3><button class="btn sm ghost" data-goto="requests">Ouvrir</button></div><div class="list">${S.requests.slice(0,4).map(r=>`<div class="li click" data-goto="requests"><span style="color:${r.kind==="Plainte"?"var(--red)":r.kind==="Commande"?"var(--green)":"var(--blue)"}">${ic(r.kind==="Commande"?"cart":r.kind==="Plainte"?"alert":"star")}</span><div class="grow"><div class="sm b">${esc(r.subject)}</div><div class="xs muted">${r.kind} · ${esc(SI(r.site).name)}</div></div>${reqPill(r.status)}</div>`).join("")}</div></div>
+  </div>`;
+}
+afterRender.dash=()=>{if(role==="dir")buildMap("mapDash");bindCommon()};
+function bindCommon(){
+  $$("[data-goto]").forEach(b=>b.onclick=()=>{view=b.dataset.goto;render()});
+  $$("[data-repl]").forEach(b=>b.onclick=e=>{e.stopPropagation();const [s,sh]=b.dataset.repl.split("|");replacement(s,sh)});
+  $$("[data-inc]").forEach(b=>b.onclick=()=>incidentDrawer(b.dataset.inc));
+  $$("[data-agent]").forEach(b=>b.onclick=()=>agentDrawer(b.dataset.agent));
+  $$("[data-site]").forEach(b=>b.onclick=()=>siteDrawer(b.dataset.site));
+}
+function replacement(siteId,sh){
+  const p=planFor(S.day);const wd=new Date(S.day+"T12:00:00").getDay();
+  const free=S.agents.filter(a=>(a.site||a.grade==="Agent volant")&&!p._used.has(a.id)&&!(S.absences[S.day]||{})[a.id]&&agentState(a).l!=="En congé").map(a=>({a,d:a.site?dist(SI(a.site).lat,SI(a.site).lng,SI(siteId).lat,SI(siteId).lng):0,rest:a.repos===wd}));
+  free.sort((x,y)=>(y.a.grade==="Agent volant")-(x.a.grade==="Agent volant")||x.d-y.d);
+  modal(`Remplaçant · ${esc(SI(siteId).name)}`,`<p class="muted sm" style="margin-top:0">Relève de ${SHIFTS[sh].l.toLowerCase()} (${SHIFTS[sh].start} – ${SHIFTS[sh].end}). Agents disponibles, du plus adapté au moins adapté :</p>
+  ${free.slice(0,8).map(({a,rest})=>`<div class="li">${av(a.name)}<div class="grow"><div class="sm b">${esc(a.name)}</div><div class="xs muted">${a.grade}${a.site?" · titulaire "+esc(SI(a.site).name):""} · ${rest?"jour de repos":"disponible"} · ${a.phone}</div></div><button class="btn sm pri" data-pick="${a.id}">Affecter</button></div>`).join("")||"<p>Aucun agent disponible.</p>"}`);
+  $$("[data-pick]").forEach(b=>b.onclick=()=>{const k=siteId+"|"+sh;S.overrides[S.day]=S.overrides[S.day]||{};(S.overrides[S.day][k]=S.overrides[S.day][k]||[]).push(b.dataset.pick);S.log.push({t:Date.now(),txt:"Remplacement : "+A(b.dataset.pick).name+" → "+SI(siteId).name});save();closeAll();toast(`${A(b.dataset.pick).name} affecté. SMS de convocation envoyé.`);render()});
+}
+
+/* ---------- Tableau de bord RH ---------- */
+function vDashRH(){
+  const act=S.agents.filter(a=>a.status==="Actif");
+  const abs=Object.keys(S.absences[S.day]||{}).length;
+  const onLeave=act.filter(a=>agentState(a).l==="En congé").length;
+  const exp=act.filter(a=>a.carte<=addDays(S.day,30)).sort((a,b)=>a.carte.localeCompare(b.carte));
+  const pend=S.leaves.filter(l=>l.status==="En attente");
+  const mass=act.reduce((s,a)=>s+payOf(a).brut,0);
+  const holes=planFor(S.day)._holes;
+  return ph("Tableau de bord RH",`${act.length} agents actifs · ${fdl(S.day)}`,`<button class="btn" data-goto="planning">${ic("calendar")} Planning</button><button class="btn pri" id="newAgent">${ic("plus")} Nouvel agent</button>`)+
+  (holes.length?holes.map(h=>`<div class="alert-bar">${ic("alert")}<div class="grow"><b>Poste non couvert</b> · ${esc(SI(h.site).name)}, relève de ${SHIFTS[h.shift].l.toLowerCase()}</div><button class="btn sm red" data-repl="${h.site}|${h.shift}">Affecter un remplaçant</button></div>`).join(""):"")+
+  `<div class="kpis">${kpi("Effectif",act.length,act.filter(a=>a.site).length+" titulaires · "+act.filter(a=>!a.site).length+" volants et superviseurs","users")}${kpi("Absents aujourd'hui",abs,"dont "+Object.values(S.absences[S.day]||{}).filter(x=>x.type==="Maladie").length+" maladie","alert","var(--red)")}${kpi("En congé",onLeave,pend.length+" demande(s) à traiter","leave","var(--violet)")}${kpi("Cartes pro à renouveler",exp.length,"Dans les 30 jours","shield","var(--amber)")}${kpi("Masse salariale",fcfa(mass).replace(" F CFA",""),"F CFA brut ce mois","wallet","var(--green)")}</div>
+  <div class="grid2e">
+    <div class="card"><div class="ch"><h3>Demandes de congé à traiter</h3><button class="btn sm ghost" data-goto="conges">Tout voir</button></div><div class="list">${pend.map(l=>`<div class="li">${av(A(l.agent).name)}<div class="grow"><div class="sm b">${esc(A(l.agent).name)}</div><div class="xs muted">${l.type} · du ${fd(l.from)} au ${fd(l.to)} · ${esc(l.reason)}</div></div><button class="btn sm green" data-ok="${l.id}">${ic("check")}</button><button class="btn sm" data-no="${l.id}">${ic("x")}</button></div>`).join("")||`<div class="pad muted sm">Aucune demande en attente.</div>`}</div></div>
+    <div class="card"><div class="ch"><h3>Cartes professionnelles</h3><span class="pill p-amber">${exp.length} à renouveler</span></div><div class="list">${exp.map(a=>`<div class="li click" data-agent="${a.id}">${av(a.name)}<div class="grow"><div class="sm b">${esc(a.name)}</div><div class="xs muted">${a.mat} · ${a.grade}</div></div><span class="pill ${a.carte<S.day?"p-red":"p-amber"}">${a.carte<S.day?"Expirée le ":"Expire le "}${fd(a.carte)}</span></div>`).join("")}</div></div>
+  </div>
+  <div class="card"><div class="ch"><h3>Absences du jour</h3></div><div class="list">${Object.entries(S.absences[S.day]||{}).map(([id,x])=>`<div class="li click" data-agent="${id}">${av(A(id).name)}<div class="grow"><div class="sm b">${esc(A(id).name)}</div><div class="xs muted">${esc(SI(A(id).site).name)} · relève de ${SHIFTS[A(id).shift]?.l.toLowerCase()||"—"} · ${esc(x.note)}</div></div><span class="pill ${x.type==="Maladie"?"p-violet":"p-red"}">${x.type}</span></div>`).join("")}</div></div>`;
+}
+afterRender.dash_rh=null;
+const _ad=afterRender.dash;afterRender.dash=()=>{_ad();if(role==="rh"){bindLeaveBtns();const n=$("#newAgent");if(n)n.onclick=newAgent}};
+
+/* ---------- Carte en direct ---------- */
+function vLive(){const sh=curShift();return ph("Carte en direct",`Relève de ${SHIFTS[sh].l.toLowerCase()} · cercles de 300 m autour de chaque site · points = position GPS des pointages`,`<button class="btn" id="refreshMap">${ic("refresh")} Actualiser</button>`)+`<div class="card"><div id="mapLive" class="mapbox big"></div></div>`}
+afterRender.live=()=>{buildMap("mapLive",{punches:true});$("#refreshMap").onclick=()=>{render();toast("Carte actualisée")}};
+
+/* ---------- Sites ---------- */
+function vSites(){
+  const q=filt.q||"";const list=S.sites.filter(s=>!q||(s.name+s.loc+s.type+s.contact).toLowerCase().includes(q));
+  return ph("Sites clients",`${S.sites.length} sites sous contrat · ${fcfa(S.sites.reduce((a,s)=>a+s.contract,0))} par mois`,`<button class="btn pri" id="newSite">${ic("plus")} Nouveau site</button>`)+
+  `<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Site</th><th>Type</th><th>Effectif jour / nuit</th><th>Maintenant</th><th>Contact client</th><th>Contrat mensuel</th></tr></thead><tbody>${list.map(s=>{const h=siteHealth(s);return `<tr class="click" data-site="${s.id}"><td><div class="row"><div class="av" style="background:var(--blue-soft);color:var(--blue)">${ic("building")}</div><div><div class="b">${esc(s.name)}</div><div class="xs muted">${esc(s.loc)}</div></div></div></td><td>${s.type}</td><td>${s.needJ} ${ic("sun","xs")} · ${s.needN} ${ic("moon","xs")}</td><td><span class="pill ${h.state==="green"?"p-green":h.state==="amber"?"p-amber":"p-red"}">${h.state==="red"?"Non couvert":h.state==="amber"?"À surveiller":"Couvert"} · ${h.team.length}/${h.need}</span></td><td><div class="sm">${esc(s.contact)}</div><div class="xs muted">${esc(s.crole)}</div></td><td class="b">${fcfa(s.contract)}</td></tr>`}).join("")}</tbody></table></div></div>`;
+}
+afterRender.sites=()=>{bindCommon();$("#newSite").onclick=newSite};
+function siteDrawer(id){
+  const s=SI(id);const h=siteHealth(s);const titu=S.agents.filter(a=>a.site===id);
+  const inc=S.incidents.filter(i=>i.site===id);const rd=S.rounds.filter(r=>r.site===id);const ok=rd.length?Math.round(100*rd.reduce((a,r)=>a+r.done,0)/rd.reduce((a,r)=>a+r.total,0)):100;
+  drawer(esc(s.name),esc(s.loc)+" · "+s.type,`
+  <dl class="kv"><dt>Client</dt><dd>${esc(s.contact)} · ${esc(s.crole)}</dd><dt>Contrat</dt><dd>${fcfa(s.contract)} / mois · depuis le ${fd(s.since)}</dd><dt>Effectif requis</dt><dd>${s.needJ} agent(s) de jour · ${s.needN} agent(s) de nuit</dd><dt>Situation actuelle</dt><dd><span class="pill ${h.state==="green"?"p-green":h.state==="amber"?"p-amber":"p-red"}">${h.team.length}/${h.need} en relève de ${SHIFTS[curShift()].l.toLowerCase()}</span></dd><dt>Rondes (7 jours)</dt><dd>${ok} % des points contrôlés</dd></dl>
+  <div class="sec-t">Consignes du poste</div><p class="sm" style="margin:0 0 6px">${esc(s.consignes)}</p>
+  <div class="sec-t">Points de ronde</div><div class="row wrapf">${s.checkpoints.map(c=>`<span class="pill p-grey">${ic("scan")} ${esc(c)}</span>`).join("")}</div>
+  <div class="sec-t">Équipe titulaire (${titu.length})</div>${titu.map(a=>`<div class="li click" data-agent="${a.id}">${av(a.name)}<div class="grow"><div class="sm b">${esc(a.name)}</div><div class="xs muted">${a.grade} · ${SHIFTS[a.shift].l} · repos le ${JOURS[a.repos].toLowerCase()}</div></div><span class="pill ${agentState(a).c}">${agentState(a).l}</span></div>`).join("")}
+  <div class="sec-t">Incidents récents</div>${inc.map(i=>`<div class="li click" data-inc="${i.id}">${ic("alert")}<div class="grow"><div class="sm b">${esc(i.type)}</div><div class="xs muted">${fd(i.date)} à ${i.time}</div></div></div>`).join("")||`<p class="sm muted">Aucun incident.</p>`}`);
+  $$("#drawer [data-agent]").forEach(b=>b.onclick=()=>agentDrawer(b.dataset.agent));$$("#drawer [data-inc]").forEach(b=>b.onclick=()=>incidentDrawer(b.dataset.inc));
+}
+function newSite(){
+  modal("Nouveau site client",`<div class="field"><label>Nom du client ou du site</label><input class="input" id="ns-n" placeholder="Ex. Pharmacie du Port"></div><div class="field"><label>Quartier</label><input class="input" id="ns-l" placeholder="Ex. Ganhi"></div><div class="row"><div class="field grow"><label>Agents de jour</label><input class="input" id="ns-j" type="number" value="1" min="0"></div><div class="field grow"><label>Agents de nuit</label><input class="input" id="ns-nn" type="number" value="1" min="0"></div></div><div class="field"><label>Contrat mensuel (F CFA)</label><input class="input" id="ns-c" type="number" value="450000"></div>`,`<button class="btn" data-close2>Annuler</button><button class="btn pri" id="ns-ok">Créer le site</button>`);
+  $("[data-close2]").onclick=closeAll;$("#ns-ok").onclick=()=>{const n=$("#ns-n").value.trim();if(!n)return $("#ns-n").focus();S.sites.push({id:"s"+(S.sites.length+1)+uid(),name:n,loc:$("#ns-l").value||"Cotonou",type:"Entreprise",lat:6.37+rnd()*.03,lng:2.37+rnd()*.07,needJ:+$("#ns-j").value,needN:+$("#ns-nn").value,contract:+$("#ns-c").value,contact:"À renseigner",crole:"",since:S.day,checkpoints:["Portail principal","Parking","Clôture arrière"],consignes:"À définir avec le client."});save();closeAll();toast("Site créé : pensez à affecter une équipe");render()};
+}
+
+/* ---------- Agents ---------- */
+function vAgents(){
+  const q=filt.q||"";const fs=filt.site||"",fst=filt.st||"";
+  const list=S.agents.filter(a=>(!q||(a.name+a.mat+a.phone).toLowerCase().includes(q))&&(!fs||a.site===fs||(fs==="vol"&&!a.site))&&(!fst||agentState(a).l.startsWith(fst)));
+  return ph("Agents",`${S.agents.length} agents · ${S.agents.filter(a=>agentState(a).l==="En poste").length} en poste en ce moment`,`<button class="btn" id="exp">${ic("file")} Exporter la liste</button><button class="btn pri" id="newAgent">${ic("plus")} Nouvel agent</button>`)+
+  `<div class="card"><div class="filters"><select class="input" id="f-site"><option value="">Tous les sites</option>${S.sites.map(s=>`<option value="${s.id}" ${fs===s.id?"selected":""}>${esc(s.name)}</option>`).join("")}<option value="vol" ${fs==="vol"?"selected":""}>Volants et superviseurs</option></select><select class="input" id="f-st"><option value="">Tous les statuts</option>${["En poste","Prévu","Repos","En congé","Absent","Maladie"].map(x=>`<option ${fst===x?"selected":""}>${x}</option>`).join("")}</select><div class="grow"></div><span class="sm muted" style="align-self:center">${list.length} résultat(s)</span></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Agent</th><th>Grade</th><th>Affectation</th><th>Statut</th><th>Téléphone</th><th>Carte pro</th></tr></thead><tbody>${list.map(a=>{const st=agentState(a);return `<tr class="click" data-agent="${a.id}"><td><div class="row">${av(a.name)}<div><div class="b">${esc(a.name)}</div><div class="xs muted">${a.mat}</div></div></div></td><td>${a.grade}</td><td>${a.site?`${esc(SI(a.site).name)}<div class="xs muted">${SHIFTS[a.shift].l} · repos ${JC[a.repos].toLowerCase()}</div>`:`<span class="muted">${a.grade==="Superviseur"?"Tous les sites":"Remplacements"}</span>`}</td><td><span class="pill ${st.c}">${st.l}</span></td><td class="sm">${a.phone}</td><td><span class="pill ${a.carte<S.day?"p-red":a.carte<=addDays(S.day,30)?"p-amber":"p-grey"}">${fd(a.carte)}</span></td></tr>`}).join("")}</tbody></table></div></div>`;
+}
+afterRender.agents=()=>{bindCommon();$("#f-site").onchange=e=>{filt.site=e.target.value;render(true)};$("#f-st").onchange=e=>{filt.st=e.target.value;render(true)};$("#newAgent").onclick=newAgent;$("#exp").onclick=()=>{const rows=[["Matricule","Nom","Grade","Site","Relève","Téléphone","Carte pro"]].concat(S.agents.map(a=>[a.mat,a.name,a.grade,a.site?SI(a.site).name:"",a.shift?SHIFTS[a.shift].l:"",a.phone,a.carte]));const csv="﻿"+rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(";")).join("\n");const u=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));const l=document.createElement("a");l.href=u;l.download="agents-cgsp.csv";l.click();toast("Liste exportée (Excel)")}};
+function agentDrawer(id){
+  const a=A(id);const st=agentState(a);const pu=S.punches.filter(x=>x.agent===id).sort((x,y)=>(y.date+y.in).localeCompare(x.date+x.in));const pay=payOf(a);
+  const years=Math.floor((new Date(S.day)-new Date(a.hired))/3.156e10);
+  drawer(esc(a.name),a.mat+" · "+a.grade,`
+  <div class="row wrapf" style="margin-bottom:14px"><span class="pill ${st.c}">${st.l}</span>${a.sanctions.length?`<span class="pill p-red">${a.sanctions.length} sanction(s)</span>`:""}<span class="pill p-grey">${years} an(s) d'ancienneté</span></div>
+  <div class="row" style="margin-bottom:16px"><a class="btn sm" href="tel:${a.phone.replace(/\s/g,"")}">${ic("call")} Appeler</a><a class="btn sm" href="https://wa.me/${a.phone.replace(/\D/g,"")}" target="_blank" rel="noopener">${ic("msg")} WhatsApp</a><button class="btn sm" id="ad-pay">${ic("wallet")} Bulletin</button></div>
+  <dl class="kv"><dt>Affectation</dt><dd>${a.site?esc(SI(a.site).name)+" · relève de "+SHIFTS[a.shift].l.toLowerCase():a.grade==="Superviseur"?"Supervision de tous les sites":"Agent volant (remplacements)"}</dd><dt>Jour de repos</dt><dd>${JOURS[a.repos]}</dd><dt>Téléphone</dt><dd>${a.phone}</dd><dt>Quartier</dt><dd>${a.quartier}</dd><dt>Date d'embauche</dt><dd>${fd(a.hired)} ${new Date(a.hired).getFullYear()}</dd><dt>Carte professionnelle</dt><dd>${a.carte<S.day?`<span style="color:var(--red);font-weight:700">Expirée le ${fd(a.carte)}</span>`:"Valable jusqu'au "+fd(a.carte)+" "+a.carte.slice(0,4)}</dd><dt>N° CNSS</dt><dd>${a.cnss}</dd><dt>Salaire de base</dt><dd>${fcfa(a.base)} · net estimé ${fcfa(pay.net)}</dd></dl>
+  <div class="sec-t">Formations</div><div class="row wrapf">${a.formations.map(f=>`<span class="pill p-blue">${esc(f)}</span>`).join("")}</div>
+  <div class="sec-t">Derniers pointages</div>${pu.slice(0,6).map(x=>{const s=punchStatus(x);return `<div class="li"><span class="muted">${ic(SHIFTS[x.shift].i)}</span><div class="grow"><div class="sm b">${fdl(x.date)}</div><div class="xs muted">${esc(SI(x.site).name)} · arrivée ${x.in}${x.out?" · départ "+x.out:""} · ${metres(x.d)} du site</div></div><span class="pill ${s.c}">${s.l}</span></div>`}).join("")||`<p class="sm muted">Aucun pointage récent.</p>`}
+  <div class="sec-t">Discipline</div>${a.sanctions.map(s=>`<div class="li"><span style="color:var(--red)">${ic("alert")}</span><div class="grow"><div class="sm b">${s.type} · ${fd(s.date)}</div><div class="xs muted">${esc(s.motif)}</div></div></div>`).join("")||`<p class="sm muted">Aucune sanction.</p>`}
+  <button class="btn sm" id="ad-sanc" style="margin-top:6px">${ic("plus")} Ajouter une sanction</button>`,av(a.name,46));
+  $("#ad-pay").onclick=()=>bulletin(id);
+  $("#ad-sanc").onclick=()=>{modal("Sanction · "+esc(a.name),`<div class="field"><label>Type</label><select class="input" id="sc-t"><option>Avertissement</option><option>Blâme</option><option>Mise à pied (1 jour)</option><option>Mise à pied (3 jours)</option></select></div><div class="field"><label>Motif</label><textarea class="input" id="sc-m" placeholder="Faits précis, date, heure…"></textarea></div>`,`<button class="btn pri" id="sc-ok">Enregistrer</button>`);$("#sc-ok").onclick=()=>{a.sanctions.unshift({date:S.day,type:$("#sc-t").value,motif:$("#sc-m").value||"—"});save();closeAll();toast("Sanction enregistrée");agentDrawer(id)}};
+}
+function newAgent(){
+  modal("Nouvel agent",`<div class="row"><div class="field grow"><label>Prénom</label><input class="input" id="na-f"></div><div class="field grow"><label>Nom</label><input class="input" id="na-l"></div></div><div class="field"><label>Téléphone</label><input class="input" id="na-p" placeholder="+229 01 …"></div><div class="row"><div class="field grow"><label>Grade</label><select class="input" id="na-g"><option>Agent de sécurité</option><option>Chef de poste</option><option>Maître-chien</option><option>Agent volant</option><option>Superviseur</option></select></div><div class="field grow"><label>Salaire de base</label><input class="input" id="na-b" type="number" value="72000"></div></div><div class="row"><div class="field grow"><label>Site</label><select class="input" id="na-s"><option value="">Aucun (volant)</option>${S.sites.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("")}</select></div><div class="field grow"><label>Relève</label><select class="input" id="na-sh"><option value="J">Jour</option><option value="N">Nuit</option></select></div></div>`,`<button class="btn pri" id="na-ok">Créer la fiche</button>`);
+  $("#na-ok").onclick=()=>{const f=$("#na-f").value.trim(),l=$("#na-l").value.trim();if(!f||!l)return $("#na-f").focus();const n=S.agents.length+1;S.agents.push({id:"a"+n+uid(),mat:"CGSP-"+String(100+n).padStart(4,"0"),name:f+" "+l,first:f,grade:$("#na-g").value,site:$("#na-s").value||null,shift:$("#na-s").value?$("#na-sh").value:null,repos:n%7,hired:S.day,base:+$("#na-b").value,phone:$("#na-p").value||"—",carte:addDays(S.day,365),birth:"",quartier:"—",formations:[],sanctions:[],cnss:"À déclarer",status:"Actif"});save();closeAll();toast("Fiche agent créée");view="agents";render()};
+}
+
+/* ---------- Planning ---------- */
+function vPlanning(){
+  const wk=filt.wk||0;const d0=new Date(S.day+"T12:00:00");const mon=addDays(S.day,-((d0.getDay()+6)%7)+wk*7);const days=[...Array(7)].map((_,i)=>addDays(mon,i));
+  const plans=days.map(d=>planFor(d));
+  const holes=plans.reduce((a,p,i)=>a+p._holes.filter(()=>days[i]>=S.day).length,0);
+  return ph("Planning des relèves",`Semaine du ${fd(days[0])} au ${fd(days[6])} · jour 07:00 – 19:00 · nuit 19:00 – 07:00`,`<div class="tabs"><button data-wk="-1">← Précédente</button><button data-wk="0" class="${wk===0?"on":""}">Cette semaine</button><button data-wk="1">Suivante →</button></div><button class="btn" id="prPlan">${ic("print")} Imprimer</button>`)+
+  (holes?`<div class="alert-bar">${ic("alert")}<div class="grow"><b>${holes} relève(s) non couverte(s)</b> cette semaine. Cliquez sur une case rouge pour affecter un remplaçant.</div></div>`:"")+
+  `<div class="card"><div class="tbl-wrap"><table class="plan"><thead><tr><th style="position:sticky;left:0;z-index:3">Site</th>${days.map(d=>`<th class="${d===S.day?"today":""}">${JC[new Date(d+"T12:00:00").getDay()]} ${new Date(d+"T12:00:00").getDate()}</th>`).join("")}</tr></thead><tbody>
+  ${S.sites.map(s=>`<tr><td class="site"><div class="b sm">${esc(s.name)}</div><div class="xs muted">${s.needJ} jour · ${s.needN} nuit</div></td>${days.map((d,i)=>`<td class="${d===S.day?"today":""}">${["J","N"].map(sh=>{const ids=plans[i][s.id][sh];const need=sh==="J"?s.needJ:s.needN;const ko=ids.length<need;return `<div class="slot ${ko?"ko":sh.toLowerCase()}" ${ko&&d===S.day?`data-repl="${s.id}|${sh}"`:""}><b>${ic(SHIFTS[sh].i)} ${SHIFTS[sh].l}${ko?` · manque ${need-ids.length}`:""}</b>${ids.map(id=>`<div>${esc(A(id).name.split(" ")[0])} ${esc(A(id).name.split(" ").slice(1).join(" ")[0]||"")}.${A(id).grade==="Agent volant"?" <span class='muted'>(V)</span>":""}</div>`).join("")}</div>`}).join("")}</td>`).join("")}</tr>`).join("")}
+  </tbody></table></div></div><p class="xs muted">(V) = agent volant en remplacement d'un titulaire au repos, en congé ou absent.</p>`;
+}
+afterRender.planning=()=>{bindCommon();$$("[data-wk]").forEach(b=>b.onclick=()=>{const v=+b.dataset.wk;filt.wk=v===0?0:(filt.wk||0)+v;render(true)});$("#prPlan").onclick=printPage};
+
+/* ---------- Pointage ---------- */
+function vPointage(){
+  const tab=filt.pt||curShift();const sd=tab===curShift()?curShiftDate():(tab==="J"?(nowMin()<420?addDays(S.day,-1):S.day):addDays(S.day,nowMin()>=1140?0:-1));
+  const p=planFor(sd);const rows=[];
+  S.sites.forEach(s=>p[s.id][tab].forEach(id=>{const pu=S.punches.find(x=>x.agent===id&&x.date===sd&&x.shift===tab);rows.push({s,a:A(id),pu})}));
+  const started=sd<S.day||(tab==="J"?nowMin()>=420:nowMin()>=1140);
+  const done=rows.filter(r=>r.pu).length,late=rows.filter(r=>r.pu&&punchStatus(r.pu).c==="p-amber").length,zone=rows.filter(r=>r.pu&&r.pu.d>300).length;
+  return ph("Pointage géolocalisé",`Relève de ${SHIFTS[tab].l.toLowerCase()} du ${fdl(sd)} · l'agent pointe depuis son téléphone, la position GPS est comparée au site`,`<div class="tabs"><button data-pt="J" class="${tab==="J"?"on":""}">${ic("sun")} Jour</button><button data-pt="N" class="${tab==="N"?"on":""}">${ic("moon")} Nuit</button></div><button class="btn" data-goto="live">${ic("map")} Voir sur la carte</button>`)+
+  `<div class="kpis k4">${kpi("Pointés",done+" / "+rows.length,started?"Agents arrivés":"Relève à venir","check","var(--green)")}${kpi("À l'heure",rows.filter(r=>r.pu&&punchStatus(r.pu).c==="p-green").length,"Moins de 10 min d'écart","clock")}${kpi("Retards",late,"Plus de 10 min","clock","var(--amber)")}${kpi("Hors zone",zone,"À plus de 300 m du site","pin","var(--red)")}</div>
+  <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Agent</th><th>Site</th><th>Prévu</th><th>Arrivée</th><th>Départ</th><th>Distance au site</th><th>Statut</th></tr></thead><tbody>${rows.map(({s,a,pu})=>{const st=punchStatus(pu);return `<tr class="click" data-agent="${a.id}"><td><div class="row">${av(a.name)}<div><div class="b">${esc(a.name)}</div><div class="xs muted">${a.grade}</div></div></div></td><td>${esc(s.name)}</td><td>${SHIFTS[tab].start}</td><td class="b">${pu?pu.in:"—"}</td><td>${pu&&pu.out?pu.out:"—"}</td><td>${pu?`<span style="color:${pu.d>300?"var(--red)":"inherit"};font-weight:${pu.d>300?700:400}">${ic("pin")} ${metres(pu.d)}</span>`:"—"}</td><td>${pu?`<span class="pill ${st.c}">${st.l}</span>`:started&&sd<=S.day&&!(tab==="N"&&sd===S.day&&nowMin()<1155)?`<span class="pill p-red">Non pointé</span>`:`<span class="pill p-grey">À venir</span>`}</td></tr>`}).join("")}</tbody></table></div></div>`;
+}
+afterRender.pointage=()=>{bindCommon();$$("[data-pt]").forEach(b=>b.onclick=()=>{filt.pt=b.dataset.pt;render(true)})};
+
+/* ---------- Main courante ---------- */
+const gravPill=g=>`<span class="pill ${g==="Élevée"?"p-red":g==="Moyenne"?"p-amber":"p-grey"}">${g}</span>`;
+function vCourante(){
+  const fsi=filt.isite||"";const list=S.incidents.filter(i=>!fsi||i.site===fsi).sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
+  return ph("Main courante électronique",`${S.incidents.length} événements · ${S.incidents.filter(i=>i.status==="En cours").length} en cours de traitement`,`<select class="input" id="f-is" style="width:auto"><option value="">Tous les sites</option>${S.sites.map(s=>`<option value="${s.id}" ${fsi===s.id?"selected":""}>${esc(s.name)}</option>`).join("")}</select><button class="btn pri" id="newInc">${ic("plus")} Nouvel événement</button>`)+
+  `<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Événement</th><th>Site</th><th>Agent</th><th>Gravité</th><th>Statut</th></tr></thead><tbody>${list.map(i=>`<tr class="click" data-inc="${i.id}"><td class="sm"><b>${fd(i.date)}</b><div class="muted">${i.time}</div></td><td><div class="b">${esc(i.type)}${i.fresh?` <span class="pill p-blue">Nouveau</span>`:""}</div><div class="xs muted" style="max-width:420px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(i.txt)}</div></td><td>${esc(SI(i.site).name)}</td><td class="sm">${esc(A(i.agent).name)}</td><td>${gravPill(i.grav)}</td><td><span class="pill ${i.status==="En cours"?"p-amber":"p-green"}">${i.status}</span></td></tr>`).join("")}</tbody></table></div></div>`;
+}
+afterRender.courante=()=>{bindCommon();$("#f-is").onchange=e=>{filt.isite=e.target.value;render(true)};$("#newInc").onclick=()=>incidentForm()};
+function incidentDrawer(id){
+  const i=S.incidents.find(x=>x.id===id);i.fresh=false;save();
+  drawer(esc(i.type),esc(SI(i.site).name)+" · "+fdl(i.date)+" à "+i.time,`<div class="row wrapf" style="margin-bottom:14px">${gravPill(i.grav)}<span class="pill ${i.status==="En cours"?"p-amber":"p-green"}">${i.status}</span>${i.photo?`<span class="pill p-blue">${ic("camera")} Photo jointe</span>`:""}</div>
+  <div class="sec-t" style="margin-top:0">Rapport de l'agent</div><p style="margin:0 0 12px">${esc(i.txt)}</p>
+  ${i.photo?`<img src="${i.photo}" alt="" style="border-radius:12px;margin-bottom:12px;max-height:240px">`:""}
+  <dl class="kv"><dt>Rédigé par</dt><dd>${esc(A(i.agent).name)} (${A(i.agent).mat||""})</dd><dt>Site</dt><dd>${esc(SI(i.site).name)} · ${esc(SI(i.site).loc)}</dd><dt>Client informé</dt><dd>${i.status==="Clôturé"?"Oui, rapport transmis":"Rapport visible dans son espace client"}</dd></dl>
+  <div class="row wrapf">${i.status==="En cours"?`<button class="btn green" id="i-close">${ic("check")} Clôturer l'événement</button>`:""}<button class="btn" id="i-pr">${ic("print")} Imprimer le rapport</button></div>`);
+  const c=$("#i-close");if(c)c.onclick=()=>{i.status="Clôturé";save();toast("Événement clôturé");closeAll();render()};
+  $("#i-pr").onclick=()=>{modal("Rapport d'incident",docHead("RAPPORT D'INCIDENT",i.date)+`<dl class="kv"><dt>Site</dt><dd>${esc(SI(i.site).name)}</dd><dt>Date et heure</dt><dd>${fdl(i.date)} à ${i.time}</dd><dt>Événement</dt><dd>${esc(i.type)} · gravité ${i.grav.toLowerCase()}</dd><dt>Agent</dt><dd>${esc(A(i.agent).name)}</dd></dl><p>${esc(i.txt)}</p><p class="xs muted" style="margin-top:30px">Signature du chef de poste : ____________________</p>`,`<button class="btn pri" onclick="window.print()">${ic("print")} Imprimer</button>`,true)};
+}
+function incidentForm(siteId,agentId,cb){
+  modal("Nouvel événement",`${siteId?"":`<div class="field"><label>Site</label><select class="input" id="if-s">${S.sites.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("")}</select></div>`}<div class="field"><label>Type d'événement</label><select class="input" id="if-t"><option>Tentative d'intrusion</option><option>Visiteur suspect</option><option>Véhicule suspect</option><option>Panne électrique</option><option>Alarme déclenchée</option><option>Altercation avec un visiteur</option><option>Porte forcée constatée</option><option>Incendie / fumée</option><option>Objet abandonné</option><option>Autre</option></select></div><div class="field"><label>Gravité</label><select class="input" id="if-g"><option>Faible</option><option selected>Moyenne</option><option>Élevée</option></select></div><div class="field"><label>Ce qui s'est passé</label><textarea class="input" id="if-x" placeholder="Heure, lieu précis, personnes, mesures prises…"></textarea></div><label class="btn" style="width:100%">${ic("camera")} Ajouter une photo<input type="file" accept="image/*" capture="environment" id="if-p" hidden></label><div class="xs muted" id="if-pn" style="margin-top:6px"></div>`,`<button class="btn pri" id="if-ok">${ic("send")} Envoyer le rapport</button>`);
+  let photo="";$("#if-p").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement("canvas");const k=Math.min(1,900/img.width);c.width=img.width*k;c.height=img.height*k;c.getContext("2d").drawImage(img,0,0,c.width,c.height);photo=c.toDataURL("image/jpeg",.7);$("#if-pn").textContent="Photo ajoutée ✓"};img.src=r.result};r.readAsDataURL(f)};
+  $("#if-ok").onclick=()=>{const t=$("#if-x").value.trim();if(!t)return $("#if-x").focus();const s=siteId||$("#if-s").value;
+    S.incidents.unshift({id:uid(),date:S.day,time:hm(nowMin()),site:s,agent:agentId||(S.agents.find(a=>a.site===s)||S.agents[0]).id,type:$("#if-t").value,grav:$("#if-g").value,txt:t,status:"En cours",fresh:true,photo});save();closeAll();toast("Rapport envoyé à la direction");cb?cb():render()};
+}
+
+/* ---------- Rondes ---------- */
+function vRondes(){
+  const per=S.sites.map(s=>{const r=S.rounds.filter(x=>x.site===s.id);const tot=r.reduce((a,x)=>a+x.total,0),done=r.reduce((a,x)=>a+x.done,0);return {s,r,pct:tot?Math.round(100*done/tot):100,miss:r.filter(x=>x.done<x.total)}});
+  const last=[...S.rounds].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)).slice(0,12);
+  return ph("Rondes de nuit","Chaque point de ronde est validé par l'agent sur son téléphone (scan ou appui), avec l'heure exacte")+
+  `<div class="grid2e"><div class="card"><div class="ch"><h3>Taux de passage par site · 7 nuits</h3></div><div class="list">${per.map(x=>`<div class="li click" data-site="${x.s.id}"><div class="grow"><div class="row"><span class="sm b grow">${esc(x.s.name)}</span><span class="sm b" style="color:${x.pct<95?"var(--amber)":"var(--green)"}">${x.pct} %</span></div><div class="prog" style="margin-top:6px"><i style="width:${x.pct}%;${x.pct<95?"background:#E08A00":""}"></i></div></div></div>`).join("")}</div></div>
+  <div class="card"><div class="ch"><h3>Dernières rondes</h3></div><div class="list">${last.map(r=>`<div class="li"><span style="color:${r.done<r.total?"var(--amber)":"var(--green)"}">${ic(r.done<r.total?"alert":"check")}</span><div class="grow"><div class="sm b">${esc(SI(r.site).name)} · ${r.time}</div><div class="xs muted">${fd(r.date)} · ${esc(A(r.agent).name)}${r.missed.length?" · oublié : "+esc(r.missed.join(", ")):""}</div></div><span class="pill ${r.done<r.total?"p-amber":"p-green"}">${r.done}/${r.total}</span></div>`).join("")}</div></div></div>`;
+}
+afterRender.rondes=bindCommon;
+
+/* ---------- Congés ---------- */
+function vConges(){
+  const order={"En attente":0,"Validée":1,"Refusée":2};const list=[...S.leaves].sort((a,b)=>order[a.status]-order[b.status]||b.from.localeCompare(a.from));
+  return ph("Congés et absences",`${S.leaves.filter(l=>l.status==="En attente").length} demande(s) à traiter · les agents font leurs demandes depuis l'application`,`<button class="btn pri" id="newLeave">${ic("plus")} Saisir une absence</button>`)+
+  `<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Agent</th><th>Type</th><th>Période</th><th>Motif</th><th>Statut</th><th></th></tr></thead><tbody>${list.map(l=>{const n=Math.round((new Date(l.to)-new Date(l.from))/864e5)+1;return `<tr><td><div class="row click" data-agent="${l.agent}">${av(A(l.agent).name)}<div><div class="b">${esc(A(l.agent).name)}</div><div class="xs muted">${esc(SI(A(l.agent).site).name||A(l.agent).grade)}</div></div></div></td><td>${l.type}</td><td class="sm">${fd(l.from)} → ${fd(l.to)}<div class="muted">${n} jour(s)</div></td><td class="sm" style="max-width:260px">${esc(l.reason)}${l.answer?`<div class="xs muted">Réponse : ${esc(l.answer)}</div>`:""}</td><td><span class="pill ${l.status==="Validée"?"p-green":l.status==="Refusée"?"p-red":"p-amber"}">${l.status}</span></td><td>${l.status==="En attente"?`<div class="row"><button class="btn sm green" data-ok="${l.id}">${ic("check")} Valider</button><button class="btn sm" data-no="${l.id}">Refuser</button></div>`:""}</td></tr>`}).join("")}</tbody></table></div></div>`;
+}
+function bindLeaveBtns(){
+  $$("[data-ok]").forEach(b=>b.onclick=e=>{e.stopPropagation();const l=S.leaves.find(x=>x.id===b.dataset.ok);l.status="Validée";save();toast("Congé validé · l'agent est prévenu par SMS");render()});
+  $$("[data-no]").forEach(b=>b.onclick=e=>{e.stopPropagation();const l=S.leaves.find(x=>x.id===b.dataset.no);l.status="Refusée";l.answer="Effectif insuffisant sur la période, merci de proposer d'autres dates.";save();toast("Demande refusée · l'agent est prévenu");render()});
+}
+afterRender.conges=()=>{bindCommon();bindLeaveBtns();$("#newLeave").onclick=()=>{modal("Saisir une absence",`<div class="field"><label>Agent</label><select class="input" id="nl-a">${S.agents.map(a=>`<option value="${a.id}">${esc(a.name)} · ${a.mat}</option>`).join("")}</select></div><div class="field"><label>Type</label><select class="input" id="nl-t"><option>Congé annuel</option><option>Maladie</option><option>Permission</option><option>Événement familial</option><option>Absence non justifiée</option></select></div><div class="row"><div class="field grow"><label>Du</label><input class="input" type="date" id="nl-f" value="${S.day}"></div><div class="field grow"><label>Au</label><input class="input" type="date" id="nl-to" value="${S.day}"></div></div><div class="field"><label>Motif</label><input class="input" id="nl-r"></div>`,`<button class="btn pri" id="nl-ok">Enregistrer</button>`);$("#nl-ok").onclick=()=>{S.leaves.unshift({id:uid(),agent:$("#nl-a").value,type:$("#nl-t").value,from:$("#nl-f").value,to:$("#nl-to").value,status:"Validée",reason:$("#nl-r").value||"—",date:S.day});save();closeAll();toast("Absence enregistrée · planning mis à jour");render()}}};
+
+/* ---------- Paie ---------- */
+function payOf(a){
+  const years=Math.max(0,Math.floor((new Date(S.day)-new Date(a.hired))/3.156e10));
+  const anc=years>=2?Math.round(a.base*Math.min(years,25)/100):0;
+  const night=a.shift==="N"||a.grade==="Superviseur"&&a.shift==="N"?S.settings.nightBonus:0;
+  const meal=S.settings.meal;const resp=a.grade==="Chef de poste"?20000:a.grade==="Superviseur"?30000:a.grade==="Maître-chien"?12000:0;
+  const absDays=Object.values(S.absences).filter(x=>x[a.id]&&x[a.id].type==="Absence non justifiée").length;
+  const ret=Math.round(a.base/26*absDays);
+  const brut=a.base+anc+night+meal+resp-ret;
+  const cnss=Math.round((brut-meal)*0.036);
+  const adv=S.advances.filter(x=>x.agent===a.id).reduce((s,x)=>s+x.amount,0);
+  return {base:a.base,anc,years,night,meal,resp,ret,absDays,brut,cnss,adv,net:brut-cnss-adv};
+}
+function vPaie(){
+  const d=new Date(S.day+"T12:00:00");const per=MOIS[d.getMonth()]+" "+d.getFullYear();
+  const rows=S.agents.map(a=>({a,p:payOf(a)}));const tot=k=>rows.reduce((s,r)=>s+r.p[k],0);
+  return ph("Paie · "+per,"Calcul automatique à partir des pointages, des absences, des primes et des avances. Les montants sont indicatifs et se règlent dans les paramètres.",`<button class="btn" id="pExp">${ic("file")} Exporter (Excel)</button><button class="btn ${S.payValidated?"green":"pri"}" id="pVal">${ic("check")} ${S.payValidated?"Paie validée":"Valider la paie du mois"}</button>`)+
+  `<div class="kpis k4">${kpi("Masse salariale brute",fcfa(tot("brut")).replace(" F CFA",""),"F CFA","wallet")}${kpi("CNSS salariale (3,6 %)",fcfa(tot("cnss")).replace(" F CFA",""),"F CFA","shield","var(--violet)")}${kpi("Avances à retenir",fcfa(tot("adv")).replace(" F CFA",""),S.advances.length+" avance(s)","clock","var(--amber)")}${kpi("Net à payer",fcfa(tot("net")).replace(" F CFA",""),"F CFA · "+rows.length+" bulletins","check","var(--green)")}</div>
+  <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Agent</th><th>Base</th><th>Ancienneté</th><th>Prime de nuit</th><th>Panier</th><th>Resp.</th><th>Retenue absences</th><th>CNSS</th><th>Avance</th><th>Net</th><th></th></tr></thead><tbody>${rows.map(({a,p})=>`<tr><td><div class="row">${av(a.name)}<div><div class="b">${esc(a.name)}</div><div class="xs muted">${a.grade}</div></div></div></td><td>${fcfa(p.base)}</td><td>${p.anc?fcfa(p.anc):"—"}</td><td>${p.night?fcfa(p.night):"—"}</td><td>${fcfa(p.meal)}</td><td>${p.resp?fcfa(p.resp):"—"}</td><td style="color:${p.ret?"var(--red)":"inherit"}">${p.ret?"− "+fcfa(p.ret):"—"}</td><td>− ${fcfa(p.cnss)}</td><td>${p.adv?"− "+fcfa(p.adv):"—"}</td><td class="b">${fcfa(p.net)}</td><td><button class="btn sm" data-bul="${a.id}">${ic("file")} Bulletin</button></td></tr>`).join("")}</tbody></table></div></div>`;
+}
+afterRender.paie=()=>{$$("[data-bul]").forEach(b=>b.onclick=()=>bulletin(b.dataset.bul));$("#pVal").onclick=()=>{S.payValidated=true;save();toast("Paie validée · bulletins disponibles dans l'application des agents");render()};$("#pExp").onclick=()=>{const rows=[["Matricule","Nom","Base","Ancienneté","Prime nuit","Panier","Responsabilité","Retenue","CNSS","Avance","Net"]].concat(S.agents.map(a=>{const p=payOf(a);return [a.mat,a.name,p.base,p.anc,p.night,p.meal,p.resp,p.ret,p.cnss,p.adv,p.net]}));const csv="﻿"+rows.map(r=>r.join(";")).join("\n");const u=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));const l=document.createElement("a");l.href=u;l.download="paie-cgsp.csv";l.click();toast("Paie exportée")}};
+function docHead(title,date){return `<div class="doc"><div class="dhd"><div class="row"><img src="logo-cgsp-96.png" alt=""><div><b style="font-size:15px">${esc(S.settings.name)}</b><div class="xs">${esc(S.settings.full)}</div><div class="xs">${esc(S.settings.addr)} · ${esc(S.settings.phone)}</div><div class="xs">${esc(S.settings.ifu)}</div></div></div><div style="text-align:right"><b style="font-size:16px;color:var(--blue)">${title}</b><div class="xs">Cotonou, le ${fd(date)} ${date.slice(0,4)}</div></div></div>`}
+function bulletin(id){
+  const a=A(id),p=payOf(a);const d=new Date(S.day+"T12:00:00");const per=MOIS[d.getMonth()]+" "+d.getFullYear();
+  const L=(l,v,neg)=>v?`<tr><td>${l}</td><td style="text-align:right">${neg?"− ":""}${fcfa(v)}</td></tr>`:"";
+  modal("Bulletin de paie",docHead("BULLETIN DE PAIE · "+per.toUpperCase(),S.day)+`<dl class="kv"><dt>Salarié</dt><dd>${esc(a.name)} · ${a.mat}</dd><dt>Emploi</dt><dd>${a.grade}${a.site?" · "+esc(SI(a.site).name):""}</dd><dt>Embauche</dt><dd>${fd(a.hired)} ${a.hired.slice(0,4)} (${p.years} an(s))</dd><dt>N° CNSS</dt><dd>${a.cnss}</dd></dl>
+  <table><thead><tr><th>Élément</th><th style="text-align:right">Montant</th></tr></thead><tbody>${L("Salaire de base",p.base)}${L("Prime d'ancienneté",p.anc)}${L("Prime de nuit",p.night)}${L("Prime de panier",p.meal)}${L("Prime de responsabilité",p.resp)}${L("Retenue absence(s) non justifiée(s) ("+p.absDays+" j)",p.ret,true)}<tr><td class="b">Salaire brut</td><td class="b" style="text-align:right">${fcfa(p.brut)}</td></tr>${L("Cotisation CNSS salariale (3,6 %)",p.cnss,true)}${L("Avance sur salaire",p.adv,true)}</tbody></table>
+  <div class="tot"><span>NET À PAYER</span><span>${fcfa(p.net)}</span></div><p class="xs muted" style="margin-top:16px">Mode de paiement : Mobile Money · Document généré par le logiciel CGSP.</p></div>`,`<button class="btn" onclick="navigator.share?navigator.share({title:'Bulletin de paie',text:'Bulletin de paie ${per}'}):0">${ic("send")} Partager</button><button class="btn pri" onclick="window.print()">${ic("print")} Imprimer / PDF</button>`,true);
+}
+
+/* ---------- Facturation ---------- */
+function vFactures(){
+  const fst=filt.fst||"";const list=S.invoices.filter(i=>!fst||i.status===fst).sort((a,b)=>b.date.localeCompare(a.date)||a.num.localeCompare(b.num));
+  const sum=st=>S.invoices.filter(i=>!st||i.status===st).reduce((a,i)=>a+i.amount,0);
+  return ph("Facturation clients","Factures mensuelles générées automatiquement à partir des contrats",`<div class="tabs">${["","Payée","En attente","En retard"].map(s=>`<button data-fst="${s}" class="${fst===s?"on":""}">${s||"Toutes"}</button>`).join("")}</div><button class="btn pri" id="genInv">${ic("plus")} Générer les factures du mois</button>`)+
+  `<div class="kpis k4">${kpi("Facturé (3 mois)",fcfa(sum()).replace(" F CFA",""),"F CFA","file")}${kpi("Encaissé",fcfa(sum("Payée")).replace(" F CFA",""),"F CFA","check","var(--green)")}${kpi("En attente",fcfa(sum("En attente")).replace(" F CFA",""),"F CFA","clock","var(--amber)")}${kpi("En retard",fcfa(sum("En retard")).replace(" F CFA",""),S.invoices.filter(i=>i.status==="En retard").length+" facture(s) à relancer","alert","var(--red)")}</div>
+  <div class="card"><div class="tbl-wrap"><table><thead><tr><th>N°</th><th>Client</th><th>Période</th><th>Échéance</th><th>Montant</th><th>Statut</th><th></th></tr></thead><tbody>${list.map(i=>`<tr><td class="b sm">${i.num}</td><td>${esc(SI(i.site).name)}<div class="xs muted">${esc(SI(i.site).contact)}</div></td><td class="sm">${i.period}</td><td class="sm">${fd(i.due)}</td><td class="b">${fcfa(i.amount)}</td><td><span class="pill ${i.status==="Payée"?"p-green":i.status==="En retard"?"p-red":"p-amber"}">${i.status}</span></td><td><div class="row"><button class="btn sm" data-inv="${i.id}">${ic("file")} Voir</button>${i.status!=="Payée"?`<button class="btn sm" data-paid="${i.id}">${ic("check")} Payée</button>`:""}${i.status==="En retard"?`<button class="btn sm red" data-rel="${i.id}">Relancer</button>`:""}</div></td></tr>`).join("")}</tbody></table></div></div>`;
+}
+afterRender.factures=()=>{$$("[data-fst]").forEach(b=>b.onclick=()=>{filt.fst=b.dataset.fst;render(true)});$$("[data-inv]").forEach(b=>b.onclick=()=>invoiceDoc(b.dataset.inv));$$("[data-paid]").forEach(b=>b.onclick=()=>{S.invoices.find(i=>i.id===b.dataset.paid).status="Payée";save();toast("Paiement enregistré");render(true)});$$("[data-rel]").forEach(b=>b.onclick=()=>toast("Relance envoyée au client par e-mail et WhatsApp","send"));$("#genInv").onclick=()=>toast("Les factures du mois sont déjà générées")};
+function invoiceDoc(id){
+  const i=S.invoices.find(x=>x.id===id),s=SI(i.site);const ht=i.amount;
+  modal("Facture "+i.num,docHead("FACTURE N° "+i.num,i.date)+`<div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:14px"><div><div class="xs muted">FACTURÉ À</div><b>${esc(s.name)}</b><div class="sm">${esc(s.contact)} · ${esc(s.crole)}</div><div class="sm">${esc(s.loc)}, Cotonou</div></div><div style="text-align:right"><div class="xs muted">ÉCHÉANCE</div><b>${fd(i.due)} ${i.due.slice(0,4)}</b></div></div>
+  <table><thead><tr><th>Désignation</th><th>Qté</th><th style="text-align:right">Montant</th></tr></thead><tbody><tr><td>Prestation de gardiennage · ${i.period}<div class="xs muted">${s.needJ} agent(s) de jour + ${s.needN} agent(s) de nuit, 7j/7, rondes et main courante</div></td><td>1</td><td style="text-align:right">${fcfa(ht)}</td></tr></tbody></table>
+  <div class="tot"><span>TOTAL À PAYER</span><span>${fcfa(ht)}</span></div><p class="xs muted" style="margin-top:14px">Paiement par virement, chèque ou Mobile Money. Merci de rappeler le numéro de facture.</p></div>`,`<button class="btn pri" onclick="window.print()">${ic("print")} Imprimer / PDF</button>`,true);
+}
+
+/* ---------- Demandes clients (côté Direction) ---------- */
+const reqPill=s=>`<span class="pill ${s==="Nouvelle"?"p-blue":s==="En traitement"?"p-amber":s==="Acceptée"?"p-green":"p-grey"}">${s}</span>`;
+function vRequests(){
+  const fk=filt.rk||"";const list=S.requests.filter(r=>!fk||r.kind===fk);
+  return ph("Demandes clients","Commandes, plaintes et suggestions envoyées par vos clients depuis leur espace",`<div class="tabs">${["","Commande","Plainte","Suggestion"].map(k=>`<button data-rk="${k}" class="${fk===k?"on":""}">${k?k+"s":"Toutes"}</button>`).join("")}</div>`)+
+  `<div class="grid3" style="margin-bottom:16px">${kpi("Commandes",S.requests.filter(r=>r.kind==="Commande").length,S.requests.filter(r=>r.kind==="Commande"&&r.status==="Nouvelle").length+" nouvelle(s)","cart","var(--green)")}${kpi("Plaintes",S.requests.filter(r=>r.kind==="Plainte").length,S.requests.filter(r=>r.kind==="Plainte"&&r.status!=="Clôturée").length+" à suivre","alert","var(--red)")}${kpi("Suggestions",S.requests.filter(r=>r.kind==="Suggestion").length,"Idées d'amélioration","star")}</div>
+  <div class="card"><div class="list">${list.map(r=>`<div class="li click" data-req="${r.id}" style="align-items:flex-start"><span style="color:${r.kind==="Plainte"?"var(--red)":r.kind==="Commande"?"var(--green)":"var(--blue)"};margin-top:2px">${ic(r.kind==="Commande"?"cart":r.kind==="Plainte"?"alert":"star")}</span><div class="grow"><div class="row wrapf"><b class="sm">${esc(r.subject)}</b>${reqPill(r.status)}</div><div class="xs muted">${r.kind} · ${esc(SI(r.site).name)} · ${esc(SI(r.site).contact)} · ${fd(r.date)}</div><div class="sm" style="margin-top:4px">${esc(r.txt)}</div>${r.answer?`<div class="sm" style="margin-top:6px;padding:8px 12px;border-radius:10px;background:var(--surface2)"><b>Votre réponse :</b> ${esc(r.answer)}</div>`:""}</div></div>`).join("")}</div></div>`;
+}
+afterRender.requests=()=>{$$("[data-rk]").forEach(b=>b.onclick=()=>{filt.rk=b.dataset.rk;render(true)});$$("[data-req]").forEach(b=>b.onclick=()=>{const r=S.requests.find(x=>x.id===b.dataset.req);
+  modal(esc(r.kind)+" · "+esc(SI(r.site).name),`<b>${esc(r.subject)}</b><p class="sm">${esc(r.txt)}</p><div class="field"><label>Statut</label><select class="input" id="rq-s">${["Nouvelle","En traitement","Acceptée","Clôturée"].map(s=>`<option ${r.status===s?"selected":""}>${s}</option>`).join("")}</select></div><div class="field"><label>Réponse au client (visible dans son espace)</label><textarea class="input" id="rq-a" placeholder="Votre réponse…">${esc(r.answer)}</textarea></div>${r.kind==="Commande"?`<p class="xs muted">Astuce : indiquez le prix et la date de démarrage, le client peut accepter directement.</p>`:""}`,`<button class="btn pri" id="rq-ok">${ic("send")} Enregistrer et répondre</button>`);
+  $("#rq-ok").onclick=()=>{r.status=$("#rq-s").value;r.answer=$("#rq-a").value.trim();save();closeAll();toast("Réponse envoyée au client");render(true)}})};
+
+/* ---------- Paramètres ---------- */
+function vReglages(){const s=S.settings;return ph("Paramètres","Informations de l'entreprise utilisées sur les bulletins, factures et rapports")+`<div class="card pad" style="max-width:720px"><div class="field"><label>Nom commercial</label><input class="input" id="st-n" value="${esc(s.name)}"></div><div class="field"><label>Raison sociale</label><input class="input" id="st-f" value="${esc(s.full)}"></div><div class="field"><label>Adresse</label><input class="input" id="st-a" value="${esc(s.addr)}"></div><div class="row"><div class="field grow"><label>Téléphone</label><input class="input" id="st-p" value="${esc(s.phone)}"></div><div class="field grow"><label>IFU</label><input class="input" id="st-i" value="${esc(s.ifu)}"></div></div><div class="row"><div class="field grow"><label>Prime de nuit (F CFA)</label><input class="input" type="number" id="st-nb" value="${s.nightBonus}"></div><div class="field grow"><label>Prime de panier (F CFA)</label><input class="input" type="number" id="st-m" value="${s.meal}"></div></div><div class="row"><button class="btn pri" id="st-ok">Enregistrer</button><button class="btn" id="st-reset">${ic("refresh")} Réinitialiser la démonstration</button></div></div>`}
+afterRender.reglages=()=>{$("#st-ok").onclick=()=>{Object.assign(S.settings,{name:$("#st-n").value,full:$("#st-f").value,addr:$("#st-a").value,phone:$("#st-p").value,ifu:$("#st-i").value,nightBonus:+$("#st-nb").value,meal:+$("#st-m").value});save();toast("Paramètres enregistrés")};$("#st-reset").onclick=()=>{S=seed();save();toast("Démonstration réinitialisée");render()}};
+
+/* ============ ESPACE CLIENT ============ */
+function vCDash(){
+  const s=SI(CLIENT_SITE);const h=siteHealth(s);const inc=S.incidents.filter(i=>i.site===s.id);const rd=S.rounds.filter(r=>r.site===s.id&&r.date===addDays(S.day,-1));
+  const inv=S.invoices.filter(i=>i.site===s.id);const due=inv.filter(i=>i.status!=="Payée");
+  return `<div class="cl-hero"><img src="logo-cgsp-96.png" alt="" style="width:54px"><div class="grow"><div class="xs muted b" style="letter-spacing:.06em;text-transform:uppercase">Espace client CGSP</div><h2 style="font-size:23px">Bonjour ${esc(s.contact)}</h2><div class="muted sm">${esc(s.name)} · ${esc(s.loc)} · client depuis ${MOIS[new Date(s.since).getMonth()]} ${s.since.slice(0,4)}</div></div><div class="row wrapf"><button class="btn" data-goto="cmsg">${ic("msg")} Écrire à CGSP</button><button class="btn pri" data-goto="corder">${ic("cart")} Commander un service</button></div></div>
+  <div class="kpis k4">${kpi("Agents sur votre site",`${h.team.length}<span class="muted" style="font-size:16px"> / ${h.need}</span>`,"Relève de "+SHIFTS[curShift()].l.toLowerCase()+" en cours","shield","var(--green)")}${kpi("Rondes cette nuit",rd.length,rd.reduce((a,r)=>a+r.done,0)+" points contrôlés","route")}${kpi("Incidents (30 jours)",inc.length,inc.filter(i=>i.status==="En cours").length+" en cours","book","var(--amber)")}${kpi("Factures à régler",due.length,due.length?fcfa(due.reduce((a,i)=>a+i.amount,0)):"Vous êtes à jour","file",due.length?"var(--red)":"var(--green)")}</div>
+  <div class="grid2e"><div class="card"><div class="ch"><h3>Votre équipe en ce moment</h3><span class="pill p-green">${ic("check")} Site couvert</span></div><div class="list">${h.team.map(id=>{const pu=h.pun.find(x=>x.agent===id);return `<div class="li">${av(A(id).name)}<div class="grow"><div class="sm b">${esc(A(id).name)}</div><div class="xs muted">${A(id).grade} · ${pu?"arrivé à "+pu.in+", sur site":"prise de poste prévue à "+SHIFTS[curShift()].start}</div></div><span class="pill ${pu?"p-green":"p-grey"}">${pu?"En poste":"Attendu"}</span></div>`}).join("")}</div></div>
+  <div class="card"><div class="ch"><h3>Derniers événements sur votre site</h3><button class="btn sm ghost" data-goto="creport">Rapports</button></div><div class="list">${inc.slice(0,4).map(i=>`<div class="li"><span style="color:var(--amber)">${ic("alert")}</span><div class="grow"><div class="sm b">${esc(i.type)}</div><div class="xs muted">${fd(i.date)} à ${i.time} · ${esc(i.txt.slice(0,70))}…</div></div></div>`).join("")||`<div class="pad sm muted">Aucun événement signalé. Tout est calme ✅</div>`}</div></div></div>`;
+}
+afterRender.cdash=bindCommon;
+function vCOrder(){
+  const svc=[["Agents supplémentaires","Renfort ponctuel ou permanent sur votre site","users"],["Sécurité d'événement","Mariage, conférence, concert, inauguration","star"],["Nouveau site à sécuriser","Un autre bâtiment, une villa, un chantier","building"],["Maître-chien","Patrouille avec chien pour les sites sensibles","dog"],["Escorte et convoyage","Accompagnement de personnes ou de fonds","route"],["Vidéosurveillance","Installation de caméras et alarmes","camera"]];
+  return ph("Commander un service","Votre demande arrive immédiatement à la direction de CGSP. Réponse et devis sous 24 h.")+
+  `<div class="grid3" style="margin-bottom:18px">${svc.map(([t,d,i],k)=>`<button class="tile" data-svc="${esc(t)}" style="${k===0?"border-color:var(--blue)":""}"><div class="ti" style="background:var(--blue-soft);color:var(--blue)">${ic(i)}</div><b>${t}</b><span class="sm muted">${d}</span></button>`).join("")}</div>
+  <div class="card pad" style="max-width:760px"><h3 style="font-size:17px;margin-bottom:12px">Votre demande</h3><div class="field"><label>Service</label><input class="input" id="co-s" value="Agents supplémentaires"></div><div class="row"><div class="field grow"><label>Date de début</label><input class="input" type="date" id="co-d" value="${addDays(S.day,3)}"></div><div class="field grow"><label>Nombre d'agents</label><input class="input" type="number" id="co-n" value="2" min="1"></div></div><div class="field"><label>Précisions</label><textarea class="input" id="co-x" placeholder="Horaires, lieu, tenue souhaitée, nombre d'invités…"></textarea></div><button class="btn pri" id="co-ok">${ic("send")} Envoyer ma commande</button></div>`;
+}
+afterRender.corder=()=>{$$("[data-svc]").forEach(b=>b.onclick=()=>{$$("[data-svc]").forEach(x=>x.style.borderColor="");b.style.borderColor="var(--blue)";$("#co-s").value=b.dataset.svc;$("#co-x").focus()});
+  $("#co-ok").onclick=()=>{S.requests.unshift({id:uid(),site:CLIENT_SITE,kind:"Commande",subject:$("#co-s").value+" · "+$("#co-n").value+" agent(s) à partir du "+fd($("#co-d").value),txt:$("#co-x").value||"Merci de me recontacter pour les détails.",date:S.day,status:"Nouvelle",answer:""});save();toast("Commande envoyée · CGSP vous répond sous 24 h");view="cmsg";render()}};
+function vCMsg(){
+  const mine=S.requests.filter(r=>r.site===CLIENT_SITE);
+  return ph("Plaintes et suggestions","Un problème avec un agent ? Une idée pour améliorer la sécurité ? Écrivez-nous, chaque message est suivi par la direction.")+
+  `<div class="grid2e"><div class="card pad"><div class="tabs" style="margin-bottom:14px"><button class="on" data-k="Plainte">${ic("alert")} Plainte</button><button data-k="Suggestion">${ic("star")} Suggestion</button></div><div class="field"><label>Objet</label><input class="input" id="cm-s" placeholder="Ex. Agent absent de l'entrée à 14 h"></div><div class="field"><label>Votre message</label><textarea class="input" id="cm-x" placeholder="Date, heure, ce qui s'est passé…"></textarea></div><button class="btn pri" id="cm-ok">${ic("send")} Envoyer</button></div>
+  <div class="card"><div class="ch"><h3>Mes demandes</h3></div><div class="list">${mine.map(r=>`<div class="li" style="align-items:flex-start"><span style="color:${r.kind==="Plainte"?"var(--red)":r.kind==="Commande"?"var(--green)":"var(--blue)"}">${ic(r.kind==="Commande"?"cart":r.kind==="Plainte"?"alert":"star")}</span><div class="grow"><div class="row wrapf"><b class="sm">${esc(r.subject)}</b>${reqPill(r.status)}</div><div class="xs muted">${r.kind} · ${fd(r.date)}</div>${r.answer?`<div class="sm" style="margin-top:6px;padding:8px 12px;border-radius:10px;background:var(--blue-soft)"><b>Réponse CGSP :</b> ${esc(r.answer)}</div>`:`<div class="xs muted" style="margin-top:4px">En attente de réponse</div>`}</div></div>`).join("")}</div></div></div>`;
+}
+afterRender.cmsg=()=>{let k="Plainte";$$("[data-k]").forEach(b=>b.onclick=()=>{$$("[data-k]").forEach(x=>x.classList.remove("on"));b.classList.add("on");k=b.dataset.k});$("#cm-ok").onclick=()=>{const s=$("#cm-s").value.trim(),x=$("#cm-x").value.trim();if(!s)return $("#cm-s").focus();S.requests.unshift({id:uid(),site:CLIENT_SITE,kind:k,subject:s,txt:x||"—",date:S.day,status:"Nouvelle",answer:""});save();toast(k==="Plainte"?"Plainte transmise à la direction":"Merci pour votre suggestion !");render()}};
+function vCReport(){
+  const s=SI(CLIENT_SITE);const rd=S.rounds.filter(r=>r.site===s.id);const pct=rd.length?Math.round(100*rd.reduce((a,r)=>a+r.done,0)/rd.reduce((a,r)=>a+r.total,0)):100;
+  const pu=S.punches.filter(x=>x.site===s.id);const ok=pu.filter(x=>punchStatus(x).c==="p-green").length;
+  return ph("Rapports de sécurité","Ce que nos agents ont fait sur votre site, en toute transparence",`<button class="btn" onclick="printPage()">${ic("print")} Imprimer</button>`)+
+  `<div class="kpis k3">${kpi("Rondes effectuées (7 nuits)",rd.length,pct+" % des points contrôlés","route")}${kpi("Relèves à l'heure",pu.length?Math.round(100*ok/pu.length)+" %":"—","Sur les 2 derniers jours","clock","var(--green)")}${kpi("Événements signalés",S.incidents.filter(i=>i.site===s.id).length,"Depuis 30 jours","book","var(--amber)")}</div>
+  <div class="grid2e"><div class="card"><div class="ch"><h3>Rondes de nuit</h3></div><div class="list">${rd.slice(-8).reverse().map(r=>`<div class="li"><span style="color:${r.done<r.total?"var(--amber)":"var(--green)"}">${ic(r.done<r.total?"alert":"check")}</span><div class="grow"><div class="sm b">${fdl(r.date)} · ${r.time}</div><div class="xs muted">${r.done}/${r.total} points · ${esc(A(r.agent).name)}</div></div></div>`).join("")}</div></div>
+  <div class="card"><div class="ch"><h3>Main courante de votre site</h3></div><div class="list">${S.incidents.filter(i=>i.site===s.id).map(i=>`<div class="li" style="align-items:flex-start">${ic("book")}<div class="grow"><div class="sm b">${esc(i.type)} · ${fd(i.date)} ${i.time}</div><div class="xs muted">${esc(i.txt)}</div></div></div>`).join("")||`<div class="pad sm muted">Aucun événement.</div>`}</div></div></div>`;
+}
+function vCInv(){
+  const inv=S.invoices.filter(i=>i.site===CLIENT_SITE);
+  return ph("Mes factures","Téléchargez vos factures et réglez par virement ou Mobile Money")+`<div class="card"><div class="tbl-wrap"><table><thead><tr><th>N°</th><th>Période</th><th>Échéance</th><th>Montant</th><th>Statut</th><th></th></tr></thead><tbody>${inv.map(i=>`<tr><td class="b sm">${i.num}</td><td>${i.period}</td><td>${fd(i.due)}</td><td class="b">${fcfa(i.amount)}</td><td><span class="pill ${i.status==="Payée"?"p-green":i.status==="En retard"?"p-red":"p-amber"}">${i.status}</span></td><td><div class="row"><button class="btn sm" data-inv="${i.id}">${ic("file")} Facture</button>${i.status!=="Payée"?`<button class="btn sm pri" data-pay="${i.id}">Payer</button>`:""}</div></td></tr>`).join("")}</tbody></table></div></div>`;
+}
+afterRender.cinv=()=>{$$("[data-inv]").forEach(b=>b.onclick=()=>invoiceDoc(b.dataset.inv));$$("[data-pay]").forEach(b=>b.onclick=()=>{modal("Régler la facture",`<p class="sm">Choisissez votre moyen de paiement :</p>${["MTN Mobile Money","Moov Money","Virement bancaire","Chèque"].map(m=>`<div class="li click" data-pm>${ic("wallet")}<b class="sm grow">${m}</b>${ic("chev")}</div>`).join("")}`);$$("[data-pm]").forEach(x=>x.onclick=()=>{const i=S.invoices.find(v=>v.id===b.dataset.pay);i.status="Payée";save();closeAll();toast("Paiement enregistré · merci !");render()})})};
+
+/* ============ APPLICATION AGENT (téléphone) ============ */
+let ptab="home",roundState=null;
+const demoAgent=()=>S.agents.find(a=>a.demo);
+function phoneRender(){
+  const a=demoAgent(),s=SI(a.site);const sd=today();
+  const pu=S.punches.find(x=>x.agent===a.id&&x.date===sd&&x.shift===a.shift);
+  const T={home:pHome,round:pRound,inc:pInc,plan:pPlan,me:pMe}[ptab];
+  $("#pw").innerHTML=`<div class="ph-head"><img src="logo-cgsp-96.png" alt=""><div class="grow"><b style="font-family:var(--display)">CGSP Agent</b><div class="xs muted">${esc(a.mat)}</div></div><button class="iconbtn" id="pBack" title="Changer d'espace">${ic("logout")}</button></div>`+T(a,s,pu);
+  $("#tabbar").innerHTML=[["home","home","Accueil"],["round","route","Ronde"],["inc","alert","Incident"],["plan","calendar","Planning"],["me","user","Moi"]].map(([k,i,l])=>`<button class="${ptab===k?"on":""}" data-pt="${k}">${ic(i)}${l}</button>`).join("");
+  $$("#tabbar [data-pt]").forEach(b=>b.onclick=()=>{ptab=b.dataset.pt;phoneRender();window.scrollTo(0,0)});
+  $("#pBack").onclick=()=>{location.hash="";showLogin()};
+  (pAfter[ptab]||(()=>{}))(a,s,pu);
+}
+const pAfter={};
+function pHome(a,s,pu){
+  const sh=SHIFTS[a.shift];const st=pu?punchStatus(pu):null;
+  return `<div class="ph-hero"><div class="k">Bonjour ${esc(a.first)} · ${fdl(today())}</div><h2>${esc(s.name)}</h2><div style="opacity:.9">${esc(s.loc)} · relève de ${sh.l.toLowerCase()} ${sh.start} – ${sh.end}</div>
+  ${!pu?`<button class="punch" id="doPunch">${ic("pin")} Pointer mon arrivée</button><label class="demo-sw"><input type="checkbox" id="simu" checked> Démonstration : simuler ma présence sur le site</label>`:pu.out?`<div class="punch" style="cursor:default">${ic("check")} Service terminé à ${pu.out}</div>`:`<div style="margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.16)"><b>${ic("check")} Arrivée pointée à ${pu.in}</b><div class="xs" style="opacity:.9">Position vérifiée : ${metres(pu.d)} du site · ${st.l}</div></div><button class="punch out" id="doOut">${ic("logout")} Pointer mon départ</button>`}
+  </div>
+  <div class="ph-sec"><div class="tile-g">
+    <button class="tile" data-pgo="round"><div class="ti" style="background:var(--blue-soft);color:var(--blue)">${ic("route")}</div><b>Faire ma ronde</b><span class="xs muted">${s.checkpoints.length} points à contrôler</span></button>
+    <button class="tile" data-pgo="inc"><div class="ti" style="background:var(--red-soft);color:var(--red)">${ic("alert")}</div><b>Signaler un incident</b><span class="xs muted">Avec photo</span></button>
+    <a class="tile" href="tel:${S.settings.phone.replace(/\s/g,"")}" style="text-decoration:none;color:inherit"><div class="ti" style="background:var(--green-soft);color:var(--green)">${ic("call")}</div><b>Appeler le superviseur</b><span class="xs muted">Urgence 24 h/24</span></a>
+    <button class="tile" data-pgo="me"><div class="ti" style="background:var(--violet-soft);color:var(--violet)">${ic("leave")}</div><b>Demander un congé</b><span class="xs muted">Réponse dans l'application</span></button>
+  </div>
+  <div class="card pad" style="margin-top:14px"><b class="sm">Consignes du poste</b><p class="sm muted" style="margin:6px 0 0">${esc(s.consignes)}</p></div></div>`;
+}
+pAfter.home=(a,s,pu)=>{
+  $$("[data-pgo]").forEach(b=>b.onclick=()=>{ptab=b.dataset.pgo;phoneRender()});
+  const btn=$("#doPunch");if(btn)btn.onclick=()=>{btn.disabled=true;btn.innerHTML=ic("pin")+" Localisation en cours…";
+    const finish=(lat,lng)=>{const d=dist(s.lat,s.lng,lat,lng);S.punches.push({id:uid(),agent:a.id,site:s.id,date:today(),shift:a.shift,in:hm(nowMin()),lat,lng,d});save();toast(d>300?`Pointage enregistré · attention, vous êtes à ${metres(d)} du site`:`Arrivée enregistrée · ${metres(d)} du site ✓`,d>300?"alert":"check");phoneRender()};
+    const simu=()=>{const [la,ln]=offset(s.lat,s.lng,18+Math.floor(Math.random()*30),Math.random()*6.28);finish(la,ln)};
+    if($("#simu").checked||!navigator.geolocation)return setTimeout(simu,900);
+    navigator.geolocation.getCurrentPosition(p=>finish(p.coords.latitude,p.coords.longitude),()=>{toast("Position refusée : simulation utilisée","alert");simu()},{enableHighAccuracy:true,timeout:9000})};
+  const o=$("#doOut");if(o)o.onclick=()=>{pu.out=hm(nowMin());pu.d2=pu.d;save();toast("Départ enregistré. Bon repos !");phoneRender()};
+};
+function pRound(a,s){
+  if(!roundState)roundState={start:hm(nowMin()),done:{}};
+  const n=Object.keys(roundState.done).length;
+  return `<div class="ph-sec" style="padding-top:12px"><h2 style="font-size:21px">Ronde en cours</h2><p class="sm muted" style="margin:4px 0 12px">${esc(s.name)} · démarrée à ${roundState.start} · touchez chaque point quand vous y êtes</p>
+  <div class="prog" style="margin-bottom:14px"><i style="width:${100*n/s.checkpoints.length}%"></i></div>
+  ${s.checkpoints.map((c,i)=>`<div class="ck ${roundState.done[i]?"done":""}" data-ck="${i}"><div class="c">${roundState.done[i]?ic("check"):""}</div><div class="grow"><b class="sm">${esc(c)}</b><div class="xs muted">${roundState.done[i]?"Contrôlé à "+roundState.done[i]:"À contrôler"}</div></div>${ic("scan")}</div>`).join("")}
+  <button class="btn pri" style="width:100%;padding:14px;margin-top:6px" id="endRound">${ic("check")} Terminer la ronde (${n}/${s.checkpoints.length})</button>
+  <button class="btn" style="width:100%;margin-top:10px" data-pgo="inc">${ic("alert")} Signaler un problème</button></div>`;
+}
+pAfter.round=(a,s)=>{$$("[data-ck]").forEach(b=>b.onclick=()=>{const i=b.dataset.ck;if(roundState.done[i])delete roundState.done[i];else roundState.done[i]=hm(nowMin());phoneRender()});
+  $$("[data-pgo]").forEach(b=>b.onclick=()=>{ptab=b.dataset.pgo;phoneRender()});
+  $("#endRound").onclick=()=>{const n=Object.keys(roundState.done).length;if(!n)return toast("Contrôlez au moins un point","alert");S.rounds.push({id:uid(),date:today(),site:s.id,agent:a.id,time:roundState.start,done:n,total:s.checkpoints.length,missed:s.checkpoints.filter((_,i)=>!roundState.done[i])});save();roundState=null;toast(`Ronde enregistrée : ${n}/${s.checkpoints.length} points`);ptab="home";phoneRender()}};
+function pInc(a,s){
+  return `<div class="ph-sec" style="padding-top:12px"><h2 style="font-size:21px">Signaler un incident</h2><p class="sm muted" style="margin:4px 0 14px">Le rapport part immédiatement à la direction et au superviseur.</p>
+  <div class="tile-g" style="margin-bottom:14px">${[["Intrusion","Tentative d'intrusion","alert"],["Suspect","Visiteur suspect","user"],["Panne","Panne électrique","sun"],["Autre","Autre","book"]].map(([l,v,i],k)=>`<button class="tile" data-it="${v}" style="${k===0?"border-color:var(--red)":""}"><div class="ti" style="background:var(--red-soft);color:var(--red)">${ic(i)}</div><b>${l}</b></button>`).join("")}</div>
+  <div class="field"><label>Gravité</label><select class="input" id="pi-g"><option>Faible</option><option selected>Moyenne</option><option>Élevée</option></select></div>
+  <div class="field"><label>Ce qui s'est passé</label><textarea class="input" id="pi-x" placeholder="Heure, lieu, personnes, ce que vous avez fait…"></textarea></div>
+  <label class="btn" style="width:100%;padding:12px">${ic("camera")} Prendre une photo<input type="file" accept="image/*" capture="environment" id="pi-p" hidden></label><div class="xs muted" id="pi-pn" style="margin:6px 0 10px"></div>
+  <button class="btn red" style="width:100%;padding:14px" id="pi-ok">${ic("send")} Envoyer le rapport</button></div>`;
+}
+pAfter.inc=(a,s)=>{let type="Tentative d'intrusion",photo="";$$("[data-it]").forEach(b=>b.onclick=()=>{$$("[data-it]").forEach(x=>x.style.borderColor="");b.style.borderColor="var(--red)";type=b.dataset.it});
+  $("#pi-p").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement("canvas");const k=Math.min(1,900/img.width);c.width=img.width*k;c.height=img.height*k;c.getContext("2d").drawImage(img,0,0,c.width,c.height);photo=c.toDataURL("image/jpeg",.7);$("#pi-pn").textContent="Photo ajoutée ✓"};img.src=r.result};r.readAsDataURL(f)};
+  $("#pi-ok").onclick=()=>{const t=$("#pi-x").value.trim();if(!t)return $("#pi-x").focus();S.incidents.unshift({id:uid(),date:today(),time:hm(nowMin()),site:s.id,agent:a.id,type,grav:$("#pi-g").value,txt:t,status:"En cours",fresh:true,photo});save();toast("Rapport envoyé à la direction");ptab="home";phoneRender()}};
+function pPlan(a,s){
+  const days=[...Array(7)].map((_,i)=>addDays(today(),i));
+  return `<div class="ph-sec" style="padding-top:12px"><h2 style="font-size:21px">Mon planning</h2><p class="sm muted" style="margin:4px 0 14px">${esc(s.name)} · repos le ${JOURS[a.repos].toLowerCase()}</p>
+  ${days.map(d=>{const p=planFor(d);const w=p[s.id][a.shift].includes(a.id);return `<div class="ck" style="cursor:default"><div class="ti" style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:${w?(a.shift==="N"?"#EAF0FB":"#FFF8E6"):"#EDF0F5"};color:${w?"var(--blue)":"var(--steel)"}">${ic(w?SHIFTS[a.shift].i:"home")}</div><div class="grow"><b class="sm">${d===today()?"Aujourd'hui":fdl(d)}</b><div class="xs muted">${w?`${SHIFTS[a.shift].l} · ${SHIFTS[a.shift].start} – ${SHIFTS[a.shift].end} · ${esc(s.name)}`:"Repos"}</div></div></div>`}).join("")}</div>`;
+}
+function pMe(a){
+  const mine=S.leaves.filter(l=>l.agent===a.id);const p=payOf(a);
+  return `<div class="ph-sec" style="padding-top:12px"><div class="row" style="margin-bottom:14px">${av(a.name,52)}<div><h2 style="font-size:20px">${esc(a.name)}</h2><div class="sm muted">${a.grade} · ${a.mat}</div></div></div>
+  <div class="card pad" style="margin-bottom:12px"><div class="row"><div class="grow"><div class="xs muted">Dernier bulletin</div><b>${fcfa(p.net)}</b></div><button class="btn sm" id="myPay">${ic("file")} Voir</button></div></div>
+  <div class="card pad" style="margin-bottom:12px"><b class="sm">Demander un congé</b><div class="field" style="margin-top:10px"><label>Type</label><select class="input" id="ml-t"><option>Congé annuel</option><option>Permission</option><option>Événement familial</option><option>Maladie</option></select></div><div class="row"><div class="field grow"><label>Du</label><input class="input" type="date" id="ml-f" value="${addDays(today(),7)}"></div><div class="field grow"><label>Au</label><input class="input" type="date" id="ml-to" value="${addDays(today(),8)}"></div></div><div class="field"><label>Motif</label><input class="input" id="ml-r" placeholder="Ex. baptême de mon fils"></div><button class="btn pri" style="width:100%" id="ml-ok">${ic("send")} Envoyer la demande</button></div>
+  ${mine.length?`<div class="card pad"><b class="sm">Mes demandes</b>${mine.map(l=>`<div class="li" style="padding:10px 0"><div class="grow"><div class="sm b">${l.type}</div><div class="xs muted">${fd(l.from)} → ${fd(l.to)}</div></div><span class="pill ${l.status==="Validée"?"p-green":l.status==="Refusée"?"p-red":"p-amber"}">${l.status}</span></div>`).join("")}</div>`:""}
+  <div class="card pad" style="margin-top:12px"><div class="xs muted">Carte professionnelle</div><b class="sm">Valable jusqu'au ${fd(a.carte)} ${a.carte.slice(0,4)}</b></div></div>`;
+}
+pAfter.me=a=>{$("#myPay").onclick=()=>bulletin(a.id);$("#ml-ok").onclick=()=>{S.leaves.unshift({id:uid(),agent:a.id,type:$("#ml-t").value,from:$("#ml-f").value,to:$("#ml-to").value,status:"En attente",reason:$("#ml-r").value||"—",date:today()});save();toast("Demande envoyée au service RH");phoneRender()}};
+
+function printPage(){document.body.classList.add("pp");window.print();setTimeout(()=>document.body.classList.remove("pp"),500)}
+/* ============ démarrage ============ */
+function showLogin(){$("#login").style.display="flex";$("#app").style.display="none";$("#phone").style.display="none";closeAll();document.title="CGSP-Sécurité · Logiciel de gestion"}
+function enter(r){
+  role=r;closeAll();$("#login").style.display="none";
+  if(r==="agent"){$("#app").style.display="none";$("#phone").style.display="block";ptab="home";document.title="CGSP Agent";phoneRender();return}
+  $("#phone").style.display="none";$("#app").style.display="block";view=r==="client"?"cdash":"dash";filt={};
+  $(".top .search").style.display=r==="client"?"none":"";document.title="CGSP-Sécurité · "+({dir:"Direction",rh:"RH",client:"Espace client"}[r]);render();
+}
+$$(".space").forEach(b=>b.onclick=()=>{location.hash=b.dataset.go;enter(b.dataset.go)});
+hydrateIcons();
+const h=location.hash.slice(1);if(["dir","rh","agent","client","direction"].includes(h))enter(h==="direction"?"dir":h);
+window.addEventListener("hashchange",()=>{const x=location.hash.slice(1);if(!x)showLogin();else if(["dir","rh","agent","client"].includes(x)&&x!==role)enter(x)});
+setInterval(()=>{if(role&&role!=="agent")renderTop()},30000);
+</script>
+<script src="../sacko-config.js"></script>
+<script src="../sacko-track.js" defer></script>
+</body>
+</html>
