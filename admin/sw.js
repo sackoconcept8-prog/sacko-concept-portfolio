@@ -1,5 +1,5 @@
 /* SACKO CONCEPT Pilotage – installation sur l'écran d'accueil et notifications */
-const CACHE = "sacko-pilotage-v3";
+const CACHE = "sacko-pilotage-v4";
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(["./", "./manifest.json", "../assets/sacko-logo-96.png", "../assets/sacko-logo-512.png"])).catch(() => {}));
   self.skipWaiting();
