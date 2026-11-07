@@ -1,4 +1,4 @@
-const C="sacko-devis-v2";
+const C="sacko-devis-v3";
 const CORE=["./","./index.html","./manifest.json","../assets/sacko-logo-96.png","../assets/sacko-logo-512.png","../sacko-config.js",
  "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js","https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>Promise.all(CORE.map(u=>c.add(new Request(u,{mode:u.startsWith("http")?"no-cors":"same-origin"})).catch(()=>{}))))).then(()=>self.skipWaiting())});

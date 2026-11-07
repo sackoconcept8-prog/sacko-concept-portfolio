@@ -276,13 +276,14 @@ const STEPS=["Client","Agence","Problèmes","Économies","Formule","Options","Pa
 
 /* =================== RÉGLAGES =================== */
 const DEF={simple_n:300000,simple_p:230000,simple_min:200000,complet_n:6000000,complet_p:3200000,complet_min:2300000,elite_n:9000000,elite_p:7000000,elite_min:5000000,
-  offre_on:1,offre_fin:"2026-12-31",offre_nom:"Offre spéciale fin d'année",t2:40,t3:100,villes:10,heb_c:0,heb_e:0,salaire:60000,cout_h:2000};
+  offre_on:1,offre_fin:"2026-12-31",offre_nom:"Offre spéciale fin d'année",t2:0,t3:0,villes:0,heb_c:0,heb_e:0,salaire:60000,cout_h:2000};
 OPTS.forEach(o=>DEF["op_"+o.id]=o.prix);
 const today=()=>new Date().toISOString().slice(0,10);
 const KEY="sacko_devis_v2",TKEY="sacko_reglages_v2",NKEY="sacko_devis_num";
 const lj=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}};
 const sj=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast("Stockage indisponible sur ce navigateur")}};
 let T=Object.assign({},DEF,lj(TKEY,{}));
+if(!lj("sacko_mig_v3",0)){T.t2=0;T.t3=0;T.villes=0;["simple","complet","elite"].forEach(k=>{T[k+"_n"]=DEF[k+"_n"];T[k+"_p"]=DEF[k+"_p"]});sj(TKEY,T);sj("sacko_mig_v3",1)}
 let store=lj(KEY,{}),cur=null,o=blank(),step=0,dirty=false;
 function blank(){const v=new Date();v.setDate(v.getDate()+30);return {problemes:[],options:[],custom:[],acompte:40,solde:"reception",remise:0,villes:1,ag:0,date_rdv:today(),validite:v.toISOString().slice(0,10),statut:"Intéressé"}}
 
@@ -395,10 +396,11 @@ function render(){
      ${r.m&&q?`<div style="margin-top:12px;font-size:15px">Avec <b>${PACKS[q.pk].nom}</b> à ${fcfa(q.total)}, le logiciel est <b>remboursé en ${r.mois} mois</b>.<br>Gain net estimé sur 3 ans : <b>${fcfa(r.an3)}</b>.</div>`:`<div class="s" style="margin-top:10px">Renseignez au moins une ligne pour voir le calcul.</div>`}
    </div></div></div>`}
   if(step===4){const rp=recoPack();
-   h=`<div class="kick">Étape 5 · La formule</div><h1>Les 3 formules, calculées pour son agence</h1><p class="lead">Les prix tiennent compte de la taille de l'agence et des options déjà choisies.${offre()?` <span class="offer">🎁 ${esc(T.offre_nom)} · plus que ${offre().jours} jours</span>`:""}</p>
-   <div class="packs">${["simple","complet","elite"].map(pk=>{const q=quoteFor(pk);const P=PACKS[pk];return `<div class="pack ${o.formule===pk?"on":""}" data-pack="${pk}">${pk===rp?`<span class="badge">★ RECOMMANDÉ</span>`:""}
+   h=`<div class="kick">Étape 5 · La formule</div><h1>Les 3 formules</h1><p class="lead">Prix de chaque formule, et en dessous le coût des options déjà choisies.${offre()?` <span class="offer">🎁 ${esc(T.offre_nom)} · plus que ${offre().jours} jours</span>`:""}</p>
+   <div class="packs">${["simple","complet","elite"].map(pk=>{const q=quoteFor(pk);const P=PACKS[pk];const pz=q.L.filter(z=>z.pack||/^Taille|villes \(/.test(z.l));const pn=r5(pz.reduce((a,z)=>a+z.n,0)),pp=r5(pz.reduce((a,z)=>a+z.p,0));const ox=q.promo-pp;const nInc=q.L.filter(z=>z.inc).length;return `<div class="pack ${o.formule===pk?"on":""}" data-pack="${pk}">${pk===rp?`<span class="badge">★ RECOMMANDÉ</span>`:""}
      <div class="nm">${P.nom}</div><div class="tg">${P.tag}</div>
-     ${q.eco>0?`<div class="old">${fcfa(q.normal)}</div>`:`<div class="old" style="text-decoration:none">&nbsp;</div>`}<div class="now">${n0(q.total)} <small>F CFA</small></div>${q.eco>0?`<span class="sv">Économie ${fcfa(q.eco)}</span>`:"<span></span>"}
+     ${pn>pp?`<div class="old">Prix normal ${fcfa(pn)}</div>`:`<div class="old" style="text-decoration:none">&nbsp;</div>`}<div class="now">${n0(pp)} <small>F CFA</small></div>${pn>pp?`<span class="sv">${q.of?"Offre de fin d'année · ":""}économie ${fcfa(pn-pp)}</span>`:"<span></span>"}
+     ${ox>0?`<div style="font-size:12.5px;color:var(--muted);margin-bottom:6px">+ options choisies : <b style="color:var(--ink)">${fcfa(ox)}</b> · total ${fcfa(q.promo)}</div>`:nInc?`<div style="font-size:12.5px;color:var(--green);margin-bottom:6px">Options choisies incluses</div>`:""}
      <ul>${P.inc.map(x=>`<li>${esc(x)}</li>`).join("")}${P.no.map(x=>`<li class="no">${esc(x)}</li>`).join("")}</ul>
      <div class="sel"><button type="button" class="btn wide ${o.formule===pk?"pri":""}">${o.formule===pk?"✓ Formule choisie":"Choisir"}</button></div></div>`}).join("")}</div>`}
   if(step===5){const pk=o.formule||recoPack();
@@ -496,7 +498,7 @@ function renderSet(){
    <div class="trow h"><span></span><span>Prix normal</span><span>Prix offre</span><span>Plancher 🔒</span></div>
    ${["simple","complet","elite"].map(pk=>`<div class="trow"><span>${PACKS[pk].nom}</span><input data-t="${pk}_n" type="number" value="${T[pk+"_n"]}"><input data-t="${pk}_p" type="number" value="${T[pk+"_p"]}"><input data-t="${pk}_min" type="number" value="${T[pk+"_min"]}"></div>`).join("")}
    <p style="font-size:12.5px;color:var(--muted);margin:6px 0 0">Le plancher n'apparaît jamais au client : l'outil vous alerte si le prix négocié passe en dessous.</p></div>
-  <div class="set"><h3>Majorations selon la taille</h3>
+  <div class="set"><h3>Majorations selon la taille (0 = désactivé)</h3><p style="font-size:12.5px;color:var(--muted);margin:0 0 6px">Laissez à 0 pour appliquer exactement les prix de votre fiche, quelle que soit la taille de l'agence.</p>
    <div class="trow2"><span>De 51 à 150 agents (+ %)</span><input data-t="t2" type="number" value="${T.t2}"></div>
    <div class="trow2"><span>Plus de 150 agents (+ %)</span><input data-t="t3" type="number" value="${T.t3}"></div>
    <div class="trow2"><span>Par ville supplémentaire (+ %)</span><input data-t="villes" type="number" value="${T.villes}"></div></div>
