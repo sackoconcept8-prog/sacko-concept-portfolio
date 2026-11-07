@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="../sacko-config.js"></script>
 <style>
 :root{--blue:#1D5FD1;--blue2:#2F7BF0;--ink:#0F1B2D;--muted:#5E6B80;--line:#E3E9F2;--soft:#F3F7FD;--green:#14915A;--red:#D2362B;--bg:#F6F8FC}
 *{box-sizing:border-box}html,body{margin:0}
@@ -102,8 +104,14 @@ textarea{min-height:70px;resize:vertical}
   .d-grid h4{margin:0 0 4px;font-size:8.6pt;color:var(--blue)}
   .d-grid ul{margin:0;padding-left:14px}
   .d-sig{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;break-inside:avoid}
-  .d-sig div{border:1px solid var(--line);border-radius:9px;height:30mm;padding:7px 10px;font-size:8.4pt;color:var(--muted)}
+  .d-sig>div{border:1px solid var(--line);border-radius:9px;height:34mm;padding:7px 10px;font-size:8.4pt;color:var(--muted)}
   .d-sig b{color:#0F1B2D}
+  .d-sign{position:relative;height:24mm}
+  .d-sign img.sg{position:absolute;left:4mm;top:0;height:20mm;max-width:52mm;object-fit:contain}
+  .d-sign svg{position:absolute;right:2mm;top:-4mm;width:30mm;height:30mm;transform:rotate(-9deg);opacity:.88}
+  .d-ver{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:7px 10px;margin-top:10px;font-size:8.2pt;color:var(--muted);break-inside:avoid}
+  .d-ver img{width:26mm;height:26mm}
+  .d-ver b{color:#0F1B2D;font-size:9pt}
   .d-foot{position:fixed;bottom:0;left:0;right:0;font-size:6.8pt;color:#7C889B;border-top:1px solid var(--line);padding-top:4px;line-height:1.45}
   .d-foot b{color:#4A5568}
 }
@@ -111,7 +119,7 @@ textarea{min-height:70px;resize:vertical}
 </head>
 <body>
 <header><div class="hd"><img src="../assets/sacko-logo-96.png" alt=""><div><b>SACKO CONCEPT</b><small>Informations pour le devis</small></div><span class="sp"></span>
-<div class="tabs"><button id="tNew" class="on">Devis</button><button id="tList">Mes devis <span id="nb"></span></button><button id="tTar">Tarifs</button></div></div></header>
+<div class="tabs"><button id="tNew" class="on">Devis</button><button id="tList">Mes devis <span id="nb"></span></button><button id="tTar">Réglages</button></div></div></header>
 
 <main id="vForm">
   <h1 id="ttl">Nouveau devis</h1>
@@ -127,7 +135,17 @@ textarea{min-height:70px;resize:vertical}
 </main>
 
 <main id="vTar" hidden>
-  <h1>Mes tarifs</h1>
+  <h1>Réglages</h1>
+  <div class="tarifs" style="display:block;margin-bottom:12px">
+    <h3>Ma signature</h3>
+    <p class="hint" style="margin:4px 0 8px">Signez avec le doigt dans le cadre. Elle s'ajoute ensuite automatiquement sur chaque devis, avec le cachet SACKO CONCEPT.</p>
+    <canvas id="sig" width="900" height="300" style="width:100%;height:150px;border:1.5px dashed #BFCDE3;border-radius:12px;background:#fff;touch-action:none"></canvas>
+    <div class="top" style="margin:8px 0 0"><button class="btn sm" id="sigClr">Effacer</button><button class="btn sm grn" id="sigOk">Enregistrer ma signature</button><span class="hint" id="sigSt" style="align-self:center"></span></div>
+    <h3 style="margin-top:16px">Registre d'authenticité</h3>
+    <p class="hint" style="margin:4px 0 8px" id="regInfo"></p>
+    <label class="f">Code secret du registre (PIN)<input id="pin" type="password" placeholder="Le code choisi dans votre script Google"></label>
+  </div>
+  <h1 style="font-size:19px">Mes tarifs</h1>
   <p class="lead">Ces prix servent au calcul automatique des devis. Modifiez-les quand vous voulez : ils restent enregistrés sur cet appareil.</p>
   <div class="tarifs" id="tar"></div>
   <div class="top" style="margin-top:12px"><button class="btn" id="bTarReset">Revenir aux tarifs conseillés</button></div>
@@ -286,14 +304,15 @@ function change(){dirty=true;const o=refresh();clearTimeout(change.t);change.t=s
 function save(auto){
   const o=read();if(!o.societe){toast("Indiquez la raison sociale");const d=$("details");d.open=true;$("#f").elements.societe.focus();return false}
   if(!cur)cur="d"+Date.now().toString(36);
-  const prev=store[cur]||{};o.id=cur;o.num=prev.num||nextNum();o.cree=prev.cree||new Date().toISOString();o.maj=new Date().toISOString();o.total=quote(o).total;
+  const prev=store[cur]||{};o.id=cur;o.num=prev.num||nextNum();o.code=prev.code||genCode();o.cree=prev.cree||new Date().toISOString();o.maj=new Date().toISOString();o.total=quote(o).total;
   store[cur]=o;sj(KEY,store);dirty=false;counts();
   $("#st").textContent=`${o.num} · enregistré à `+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
   if(!auto)toast("Devis enregistré");return true;
 }
+function genCode(){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let c='';const r=crypto.getRandomValues(new Uint8Array(8));r.forEach(x=>c+=A[x%A.length]);return c}
 function nextNum(){const y=new Date().getFullYear();let n=lj(NKEY,{});n[y]=(n[y]||0)+1;sj(NKEY,n);return `DEV-${y}-${String(n[y]).padStart(3,"0")}`}
 function counts(){const n=Object.keys(store).length;$("#nb").textContent=n?`(${n})`:""}
-function show(v){["Form","List","Tar"].forEach(x=>$("#v"+x).hidden=v!==x.toLowerCase());$("#bar").hidden=v!=="form";$("#tNew").classList.toggle("on",v==="form");$("#tList").classList.toggle("on",v==="list");$("#tTar").classList.toggle("on",v==="tar");if(v==="list")renderList();if(v==="tar")renderTar();scrollTo(0,0)}
+function show(v){["Form","List","Tar"].forEach(x=>$("#v"+x).hidden=v!==x.toLowerCase());$("#bar").hidden=v!=="form";$("#tNew").classList.toggle("on",v==="form");$("#tList").classList.toggle("on",v==="list");$("#tTar").classList.toggle("on",v==="tar");if(v==="list")renderList();if(v==="tar"){renderTar();if(!sigInit){initSig();sigInit=true}}scrollTo(0,0)}
 const PILL={"Intéressé":"p-int","À relancer":"p-rel","Devis envoyé":"p-int","Signé":"p-sig","Pas intéressé":"p-no"};
 function renderList(){
   const arr=Object.values(store).sort((a,b)=>b.maj.localeCompare(a.maj));
@@ -305,6 +324,15 @@ function renderTar(){
   $("#tar").innerHTML=TAR_LABELS.map(x=>x.length===1?`<h3>${esc(x[0])}</h3>`:`<label for="t_${x[0]}">${esc(x[1])}</label><input id="t_${x[0]}" data-t="${x[0]}" type="number" inputmode="numeric" min="0" value="${T[x[0]]}">`).join("");
   $$("[data-t]").forEach(i=>i.oninput=()=>{T[i.dataset.t]=+i.value||0;sj(TKEY,T)});
 }
+function initSig(){const c=$("#sig"),x=c.getContext("2d");x.lineWidth=5;x.lineCap="round";x.lineJoin="round";x.strokeStyle="#0F2A6B";let dn=false,last=null;
+  const pt=e=>{const r=c.getBoundingClientRect();return [(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
+  c.onpointerdown=e=>{dn=true;last=pt(e);c.setPointerCapture(e.pointerId)};c.onpointermove=e=>{if(!dn)return;const p=pt(e);x.beginPath();x.moveTo(...last);x.lineTo(...p);x.stroke();last=p;c._d=true};c.onpointerup=()=>dn=false;
+  const old=lj("sacko_sig","");if(old){const im=new Image();im.onload=()=>x.drawImage(im,0,0,c.width,c.height);im.src=old;$("#sigSt").textContent="Signature enregistrée ✓"}
+  $("#sigClr").onclick=()=>{x.clearRect(0,0,c.width,c.height);c._d=false;sj("sacko_sig","");$("#sigSt").textContent="Signature effacée"};
+  $("#sigOk").onclick=()=>{sj("sacko_sig",c.toDataURL("image/png"));$("#sigSt").textContent="Signature enregistrée ✓";toast("Signature enregistrée")};
+  $("#pin").value=lj("sacko_pin","");$("#pin").oninput=e=>sj("sacko_pin",e.target.value.trim());
+  $("#regInfo").textContent=window.SACKO_REGISTRE_URL?"Registre relié à votre feuille Google. Chaque devis PDF y est inscrit automatiquement.":"Registre pas encore relié. Les QR codes fonctionnent déjà : ils affichent le numéro, le client et le montant. Une fois le registre relié, ils confirmeront aussi que le devis est bien enregistré chez vous.";}
+let sigInit=false;
 $("#bTarReset").onclick=()=>{if(confirm("Revenir aux tarifs conseillés ?")){T=Object.assign({},DEF_TARIFS);sj(TKEY,T);renderTar();toast("Tarifs réinitialisés")}};
 function newForm(){cur=null;fill({});$("#st").textContent="Brouillon";show("form")}
 
@@ -312,6 +340,15 @@ function newForm(){cur=null;fill({});$("#st").textContent="Brouillon";show("form
 function flat(o){const q=quote(o);return {"N° devis":o.num,"Date":fd(o.maj),"Raison sociale":o.societe,"Sigle":o.sigle,"Pays":o.pays,"Ville":o.ville,"Adresse":o.adresse,"RCCM":o.rccm,"IFU":o.ifu,"Décideur":o.dir_nom,"Fonction":o.dir_fct,"Téléphone":o.dir_tel,"E-mail":o.dir_email,"Agents":o.nb_agents,"Superviseurs":o.nb_sup,"Sites":o.nb_sites,"Clients":o.nb_clients,"Villes":o.nb_villes,"Outil actuel":o.outils,"Problèmes":(o.problemes||[]).join(", "),"Formule":o.formule,"Options":(o.options||[]).map(k=>(OPTS.find(x=>x[0]===k)||[,k])[1]).join(", "),"Sur mesure":o.sur_mesure,"Remise %":o.remise,"Total F CFA":q.total,"Acompte %":o.acompte||40,"Acompte F CFA":q.accV,"Solde F CFA":q.solde,"Paiement":o.paiement,"Délai":o.delai,"Valable jusqu'au":fd(o.validite),"Réunion":fd(o.date_rdv),"Statut":o.statut,"Relance":fd(o.relance),"Notes":o.notes}}
 function xls(list,name){if(!window.XLSX){toast("Connexion nécessaire pour l'export Excel");return}const wb=XLSX.utils.book_new();const ws=XLSX.utils.json_to_sheet(list.map(flat));ws["!cols"]=Object.keys(flat(list[0])).map(()=>({wch:20}));XLSX.utils.book_append_sheet(wb,ws,"Devis");XLSX.writeFile(wb,name)}
 const slug=s=>String(s||"client").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/gi,"-").replace(/^-|-$/g,"");
+const STAMP=`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><path id="cp" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"/></defs><g fill="none" stroke="#1D4FA8"><circle cx="100" cy="100" r="96" stroke-width="4"/><circle cx="100" cy="100" r="88" stroke-width="1.5"/><circle cx="100" cy="100" r="56" stroke-width="1.5"/></g><text fill="#1D4FA8" font-family="Inter,Arial" font-size="13.2" font-weight="800" letter-spacing="1.2"><textPath href="#cp">SACKO CONCEPT • ABOMEY-CALAVI • RCCM RB/ABC/24 A 100536 •</textPath></text><text x="100" y="94" text-anchor="middle" fill="#1D4FA8" font-family="Inter,Arial" font-size="17" font-weight="800">SACKO</text><text x="100" y="113" text-anchor="middle" fill="#1D4FA8" font-family="Inter,Arial" font-size="12" font-weight="700" letter-spacing="1">CONCEPT</text><text x="100" y="131" text-anchor="middle" fill="#1D4FA8" font-family="Inter,Arial" font-size="8.5" font-weight="700" letter-spacing=".8">DEVIS OFFICIEL</text></svg>`;
+const SITE_URL="https://www.sackoconcept.com";
+function verifUrl(o,q){const p=new URLSearchParams({n:o.num,k:o.code,c:o.societe,t:String(q.total),d:fd(o.maj)});return `${SITE_URL}/verification/?${p}`}
+function qrImg(txt){try{const qr=qrcode(0,"M");qr.addData(txt);qr.make();return qr.createDataURL(4,2)}catch(e){return ""}}
+async function registre(o,q){const url=window.SACKO_REGISTRE_URL;const pin=lj("sacko_pin","");if(!url||!pin)return null;
+  try{const p=new URLSearchParams({action:"enregistrer",pin,n:o.num,code:o.code,client:o.societe,total:String(q.total),date:fd(o.maj),formule:o.formule||"",validite:fd(o.validite)});const r=await fetch(url+"?"+p);const j=await r.json();return !!j.ok}catch(e){return false}}
+async function pdfRun(o){const q=quote(o);if(!q.ok){toast("Choisissez une formule");return}
+  const r=await registre(o,q);if(r===true)toast("Devis inscrit au registre ✓");else if(r===false)toast("Registre injoignable : le QR code reste valable");
+  pdf(o)}
 function pdf(o){
   const q=quote(o);if(!q.ok){toast("Choisissez une formule");return}
   const cli=[o.societe,o.sigle&&`(${o.sigle})`].filter(Boolean).join(" ");
@@ -332,7 +369,8 @@ function pdf(o){
   </table>
   <div class="d-grid"><div><h4>Ce qui est compris</h4><ul><li>Personnalisation à vos couleurs et à votre nom</li><li>Import de vos agents, sites et clients</li><li>Création des accès de chaque utilisateur</li><li>Formation de vos équipes</li><li>Garantie de 3 mois après la mise en service</li></ul></div>
    <div><h4>Conditions</h4><ul><li>Acompte de ${q.acc} % à la signature, solde à la réception</li><li>Paiement : ${esc(o.paiement||"virement, Mobile Money ou auprès de nos représentants")}</li><li>Mise en service : ${esc(o.delai||"4 à 6 semaines")} après l'acompte</li><li>Licence d'utilisation non exclusive : SécuriPro reste la propriété de SACKO CONCEPT</li><li>Montants en F CFA</li></ul></div></div>
-  <div class="d-sig"><div><b>Bon pour accord · le client</b><br>Date, nom, signature et cachet</div><div><b>SACKO CONCEPT</b><br>Hawa Sacko, fondatrice</div></div>
+  <div class="d-sig"><div><b>Bon pour accord · le client</b><br>Date, nom, signature et cachet</div><div><b>SACKO CONCEPT</b><br>Hawa Sacko, fondatrice · le ${fd(o.maj)}<div class="d-sign">${lj("sacko_sig","")?`<img class="sg" src="${lj("sacko_sig","")}">`:""}${STAMP}</div></div></div>
+  <div class="d-ver"><img src="${qrImg(verifUrl(o,q))}"><div><b>Vérifiez l'authenticité de ce devis</b><br>Scannez ce QR code avec votre téléphone, ou rendez-vous sur <b>sackoconcept.com/verification</b> avec le n° <b>${esc(o.num)}</b> et le code <b>${esc(o.code)}</b>.<br>Si le montant affiché diffère de ce document, contactez-nous : +229 01 57 23 63 73.</div></div>
   <div class="d-foot"><b>SACKO CONCEPT LLC</b> · 8206 Louisiana Blvd NE, Ste A 8694, Albuquerque, NM 87113, États-Unis · EIN 35-2950833 · +1 505 464 2331<br><b>SACKO CONCEPT Bénin</b> · RCCM RB/ABC/24 A 100536 · Abomey-Calavi, Bénin · +229 01 57 23 63 73 · contact@sackoconcept.com · sackoconcept.com</div>`;
   const t=document.title;document.title=`Devis ${o.num} - ${o.societe}`;setTimeout(()=>{print();document.title=t},200);
 }
@@ -343,7 +381,7 @@ function wa(o){const q=quote(o);const L=[`*Devis ${o.num} · ${o.societe}*`,"",`
 const need=()=>save(true)?store[cur]:null;
 $("#bSave").onclick=()=>save(false);
 $("#bXls").onclick=()=>{const o=need();o&&xls([o],`${o.num}-${slug(o.societe)}.xlsx`)};
-$("#bPdf").onclick=()=>{const o=need();o&&pdf(o)};
+$("#bPdf").onclick=()=>{const o=need();o&&pdfRun(o)};
 $("#bWa").onclick=()=>{const o=need();o&&wa(o)};
 $("#bXlsAll").onclick=()=>{const l=Object.values(store);if(!l.length){toast("Aucun devis à exporter");return}xls(l,`Devis-SACKO-${new Date().toISOString().slice(0,10)}.xlsx`)};
 $("#bJson").onclick=()=>{const b=new Blob([JSON.stringify({devis:store,tarifs:T,num:lj(NKEY,{})},null,1)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`sauvegarde-devis-${new Date().toISOString().slice(0,10)}.json`;a.click()};
