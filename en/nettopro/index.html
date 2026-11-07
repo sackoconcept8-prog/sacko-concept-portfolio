@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="NettoPro live demo: a management app for cleaning companies, with manager, cleaner and client spaces.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://www.sackoconcept.com/en/nettopro/">
+<meta property="og:title" content="NettoPro · Live demo">
+<meta property="og:image" content="https://www.sackoconcept.com/nettopro/sacko-logo.jpg">
+<meta name="theme-color" content="#123D30">
+<link rel="icon" href="../../nettopro/sacko-logo.jpg">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+<title>NettoPro · Live demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: mobile app column (max 480px), fixed bottom tab bar, bottom sheets; forest-green hero card, gold accents for premium */
+:root{
+  --bg:#F2F6F3; --surface:#FFFFFF; --surface2:#E7F1EB; --fg:#14302A; --muted:#5C7268; --line:#D6E4DB;
+  --accent:#3FA877; --accent-ink:#FFFFFF; --accent-soft:#D5EFE1;
+  --forest:#123D30; --forest2:#1C5A45; --on-forest:#EAF6EF;
+  --gold:#B8892B; --gold-soft:#F6EBD2;
+  --red:#C2412D; --red-soft:#FBE3DE; --amber:#A86A0C; --amber-soft:#FCEFD3; --blue:#2C63A8; --blue-soft:#E1ECF8;
+  --shadow:0 1px 2px rgba(20,48,42,.05),0 8px 24px rgba(20,48,42,.07);
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Figtree",ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --r:18px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1814; --surface:#14231D; --surface2:#1A2E26; --fg:#E3F0E9; --muted:#92AA9F; --line:#28403A;
+  --accent:#5CC594; --accent-ink:#0A1913; --accent-soft:#1E3D30;
+  --forest:#0F3528; --forest2:#17513E; --on-forest:#EAF6EF;
+  --gold:#E2BC69; --gold-soft:#3A3019;
+  --red:#F08A78; --red-soft:#3D2420; --amber:#E7B45A; --amber-soft:#3A2E17; --blue:#8DB6EA; --blue-soft:#1C2C40;
+  --shadow:0 1px 2px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1814; --surface:#14231D; --surface2:#1A2E26; --fg:#E3F0E9; --muted:#92AA9F; --line:#28403A;
+  --accent:#5CC594; --accent-ink:#0A1913; --accent-soft:#1E3D30;
+  --forest:#0F3528; --forest2:#17513E; --on-forest:#EAF6EF;
+  --gold:#E2BC69; --gold-soft:#3A3019;
+  --red:#F08A78; --red-soft:#3D2420; --amber:#E7B45A; --amber-soft:#3A2E17; --blue:#8DB6EA; --blue-soft:#1C2C40;
+  --shadow:0 1px 2px rgba(0,0,0,.35); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.app{max-width:480px;margin:0 auto;min-height:100%;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px calc(100px + env(safe-area-inset-bottom,0px))}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.015em}
+h1{font-size:27px;font-weight:800}
+h2{font-size:18px;font-weight:700}
+h3{font-size:15px;font-weight:600;font-family:var(--body);letter-spacing:0}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .small{font-size:13px} .xs{font-size:11.5px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.demo{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:7px 10px;font-size:12px;margin-bottom:14px}
+.demo b{font-weight:700;color:var(--gold)}
+.sclogo{width:22px;height:22px;border-radius:50%;flex:none}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.iconbtn{position:relative;width:42px;height:42px;border-radius:13px;border:1px solid var(--line);background:var(--surface);color:var(--fg);display:grid;place-items:center;cursor:pointer;flex:none}
+.iconbtn svg{width:20px;height:20px}
+.badge{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;border-radius:10px;background:var(--red);color:#fff;font:700 11px var(--body);display:grid;place-items:center;padding:0 5px}
+.avatar{width:42px;height:42px;border-radius:13px;background:var(--forest);color:var(--on-forest);display:grid;place-items:center;font-family:var(--display);font-weight:700;flex:none;border:0;cursor:pointer;font-size:16px}
+.av-s{width:36px;height:36px;border-radius:11px;font-size:14px;background:var(--surface2);color:var(--fg)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.section{display:flex;flex-direction:column;gap:10px;margin-top:24px}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between} .wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.hero{background:linear-gradient(145deg,var(--forest) 0%,var(--forest2) 100%);color:var(--on-forest);border-radius:22px;padding:18px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;border:1px solid rgba(226,188,105,.35)}
+.hero .eyebrow{color:var(--on-forest);opacity:.75}
+.hero .big{font-family:var(--display);font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:2px}
+.hero .sub{display:flex;gap:16px;margin-top:10px;font-size:12.5px;opacity:.9;flex-wrap:wrap}
+.bars{display:flex;align-items:flex-end;gap:6px;height:58px;margin-top:12px}
+.bars i{flex:1;background:var(--on-forest);opacity:.28;border-radius:5px 5px 2px 2px;min-height:4px}
+.bars i.on{opacity:1;background:var(--gold)}
+.blabels{display:flex;gap:6px;margin-top:4px}.blabels span{flex:1;text-align:center;font-size:10.5px;opacity:.7}
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.qa button{border:0;background:var(--surface);box-shadow:var(--shadow);border-radius:16px;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--fg);font:600 11.5px var(--body);cursor:pointer}
+.qa svg{width:22px;height:22px;color:var(--accent)}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--surface);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:3px;min-width:0}
+.kpi .v{font-family:var(--display);font-size:23px;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi.alert .v{color:var(--red)}
+.card{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow)}
+.pad{padding:14px}
+.list{display:flex;flex-direction:column}
+.item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;background:none;width:100%;text-align:left;color:inherit;font:inherit;cursor:pointer;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item.static{cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.p-green{background:var(--accent-soft);color:var(--accent)} .p-red{background:var(--red-soft);color:var(--red)}
+.p-amber{background:var(--amber-soft);color:var(--amber)} .p-blue{background:var(--blue-soft);color:var(--blue)}
+.p-grey{background:var(--surface2);color:var(--muted)} .p-gold{background:var(--gold-soft);color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:12px;padding:11px 14px;font:600 14px var(--body);cursor:pointer;background:var(--surface2);color:var(--fg);text-decoration:none}
+.btn svg{width:18px;height:18px}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.dark{background:var(--forest);color:var(--on-forest)}
+.btn.danger{background:var(--red-soft);color:var(--red)}
+.btn.gold{background:var(--gold);color:#fff}
+.btn.sm{padding:7px 11px;font-size:12.5px;border-radius:10px}
+.btn.block{width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:99px;padding:7px 12px;font:600 13px var(--body);white-space:nowrap;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip.on{background:var(--forest);color:var(--on-forest);border-color:var(--forest)}
+.chip .n{font-size:11px;opacity:.75}
+.search{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:12px;padding:11px 14px;font:15px var(--body);min-width:0}
+.fab{position:fixed;right:max(16px,calc(50vw - 224px),env(safe-area-inset-right,0px));bottom:calc(86px + env(safe-area-inset-bottom,0px));height:54px;padding:0 20px 0 16px;border-radius:18px;border:0;background:var(--forest);color:var(--on-forest);font:700 15px var(--body);box-shadow:0 10px 26px rgba(18,61,48,.35);cursor:pointer;z-index:15;display:flex;align-items:center;gap:8px}
+.fab span{font-size:24px;line-height:1;color:var(--gold)}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+nav.tabs .in{max-width:480px;margin:0 auto;display:grid;grid-auto-flow:column;grid-auto-columns:1fr}
+nav.tabs a{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;color:var(--muted);text-decoration:none;font-size:11px;font-weight:600}
+nav.tabs a.on{color:var(--accent)}
+nav.tabs a .badge{top:0;right:calc(50% - 22px)}
+nav.tabs svg{width:22px;height:22px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{border:0;background:var(--surface);color:var(--fg);border-radius:13px;padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:2px;font:600 11.5px var(--body);cursor:pointer;box-shadow:var(--shadow)}
+.day b{font-family:var(--display);font-size:18px}
+.day.on{background:var(--forest);color:var(--on-forest)}
+.day.today:not(.on){outline:2px solid var(--accent);outline-offset:-2px}
+.day .m{width:5px;height:5px;border-radius:50%;background:var(--accent)} .day .m.off{background:transparent}
+.job{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:12px 14px;border-top:1px solid var(--line)}
+.job:first-child{border-top:0}
+.job .h{font-variant-numeric:tabular-nums;font-weight:700}
+.empty{padding:22px 16px;text-align:center;color:var(--muted);font-size:14px}
+.overlay{position:fixed;inset:0;background:rgba(8,22,17,.5);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:480px;max-height:93%;overflow:auto;border-radius:24px 24px 0 0;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+.grab{width:40px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 12px}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:var(--muted);min-width:0}
+label.f input,label.f select,label.f textarea,.line select,.line input,textarea.ta{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;padding:10px 12px;font:15px var(--body);width:100%;min-width:0}
+textarea.ta{min-height:130px;resize:vertical;line-height:1.45}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.line{display:grid;grid-template-columns:1fr 64px 34px;gap:6px;align-items:center}
+.line.cl{grid-template-columns:1fr 78px 56px 34px}
+.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;display:block}
+.access{background:var(--gold-soft);border-radius:10px;padding:8px 10px;font-size:12.5px}
+@media print{body *{visibility:hidden!important}.paper,.paper *{visibility:visible!important}.paper{position:absolute;left:0;top:0;width:100%;box-shadow:none;border-radius:0}.overlay{position:static;background:none}}
+.x{border:0;background:var(--surface2);color:var(--fg);border-radius:8px;height:40px;cursor:pointer;font-size:16px}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ck{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:13.5px;cursor:pointer;color:var(--fg)}
+.ck input{accent-color:var(--accent);width:18px;height:18px;flex:none}
+.tasks .ck{border-radius:0;border-width:0 0 1px;background:none;padding:10px 4px}
+.paper{background:#FFFFFF;color:#1d2a25;border-radius:14px;padding:18px;box-shadow:var(--shadow);font-size:12.8px;overflow:hidden}
+.paper .band{height:5px;background:#6BBF94;border-radius:4px;margin:-6px 0 14px}
+.paper .tw{overflow-x:auto}
+.paper table{width:100%;border-collapse:collapse;margin-top:12px}
+.paper th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:#6b7a72;border-bottom:1px solid #d5e4db;padding:6px 4px}
+.paper td{padding:7px 4px;border-bottom:1px solid #edf3ef;vertical-align:top}
+.paper .r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.paper .tot{width:auto;min-width:60%;margin-left:auto}
+.paper .tot td{border:0;padding:3px 6px}
+.paper .ttc td{background:#6BBF94;color:#fff;font-weight:700;padding:8px}
+.paper .title{font-family:var(--display);font-size:19px;color:#7a7a7a;font-weight:800;letter-spacing:.02em}
+.paper .lbl{font-size:10.5px;color:#6b7a72;text-transform:uppercase;letter-spacing:.05em;margin-top:12px}
+.paper .art{margin-top:10px} .paper .art b{color:#1E5B41}
+.paper .sigs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.paper .sig{border:1px solid #d5e4db;border-radius:8px;min-height:70px;padding:6px;font-size:10.5px;color:#6b7a72}
+.paper .sig img{max-height:56px;display:block;margin-top:2px}
+.paper .logo{width:42px;height:42px;border-radius:12px;background:#1E5B41;color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:19px;flex:none}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(156px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;z-index:70;max-width:90%;text-align:center}
+.timeline{display:flex;flex-direction:column}
+.tl{display:grid;grid-template-columns:18px 1fr;gap:10px;padding-bottom:12px;position:relative}
+.tl::before{content:"";position:absolute;left:8px;top:16px;bottom:0;width:2px;background:var(--line)}
+.tl:last-child::before{display:none}
+.tl i{width:18px;height:18px;border-radius:50%;background:var(--accent-soft);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line);margin-top:1px}
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tools button{border:0;background:var(--surface);box-shadow:var(--shadow);border-radius:16px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;font:600 12.5px var(--body);color:var(--fg);cursor:pointer;position:relative}
+.tools svg{width:24px;height:24px;color:var(--accent)}
+.stars{display:flex;gap:4px}
+.stars button{border:0;background:none;font-size:32px;cursor:pointer;color:var(--line);padding:0}
+.stars button.on{color:var(--gold)}
+.meter{height:8px;background:var(--surface2);border-radius:8px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:8px}
+.meter.low i{background:var(--red)}
+.chart{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;align-items:end;height:150px;padding-top:18px}
+.chart .c{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;min-width:0}
+.chart .c b{font-size:10px;font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600;white-space:nowrap}
+.chart .c i{width:100%;max-width:34px;background:var(--accent-soft);border-radius:6px 6px 3px 3px}
+.chart .c.on i{background:var(--accent)}
+.chart .c span{font-size:11px;color:var(--muted)}
+canvas.sigpad{width:100%;height:180px;background:#fff;border:1px dashed var(--line);border-radius:14px;touch-action:none;display:block}
+.login{min-height:calc(100vh - 40px);display:flex;flex-direction:column;justify-content:center;gap:16px;padding-block:20px}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:52px;height:52px;border-radius:16px;background:linear-gradient(145deg,var(--forest),var(--forest2));display:grid;place-items:center;color:var(--gold);font-family:var(--display);font-weight:800;font-size:24px;flex:none}
+.role{display:flex;gap:14px;align-items:center;padding:16px;border:1px solid var(--line);background:var(--surface);border-radius:18px;cursor:pointer;text-align:left;color:var(--fg);font:inherit;width:100%;box-shadow:var(--shadow)}
+.role .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none}
+.role svg{width:24px;height:24px}
+.splash{position:fixed;inset:0;z-index:100;background:#0B0B0B;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#E9D9AE;cursor:pointer;transition:opacity .5s}
+.splash img{width:110px;height:110px;border-radius:50%;animation:glow 1.6s ease-out both}
+.splash .p{font-size:12px;letter-spacing:.3em;text-transform:uppercase;opacity:0;animation:fade .8s .5s forwards}
+.splash .n{font-family:var(--display);font-size:36px;font-weight:800;color:#fff;opacity:0;animation:fade .8s 1s forwards}
+.splash .n em{font-style:normal;color:#6BBF94}
+@keyframes glow{from{transform:scale(.85);opacity:0;filter:brightness(.4)}to{transform:none;opacity:1;filter:none}}
+@keyframes fade{to{opacity:1}}
+@media (prefers-reduced-motion: reduce){.sheet,.splash img,.splash .p,.splash .n{animation:none;opacity:1}}
+.pitch{background:linear-gradient(145deg,#0E0E0E,#1E1A12);color:#F2E6C6;border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px}
+.pitch .eyebrow{color:#E2BC69}
+.note{background:var(--gold-soft);color:var(--fg);border-radius:12px;padding:10px 12px;font-size:13px}
+.note svg{width:20px;height:20px;flex:none}
+</style>
+
+<script data-goatcounter="https://sackoconcept.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div id="splash" class="splash" role="button" aria-label="Skip intro"><img src="data:image/jpeg;base64,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" alt="SACKO CONCEPT"><div class="p">SACKO CONCEPT presents</div><div class="n">Netto<em>Pro</em></div></div>
+<div class="app" id="app"></div>
+<button class="fab" id="fab" hidden></button>
+<nav class="tabs" id="nav" hidden><div class="in" id="tabs"></div></nav>
+<div id="layer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function(){
+const LOGO="data:image/jpeg;base64,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";
+const KEY="nettopro-en-v1";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const iso=d=>{const x=new Date(d);x.setMinutes(x.getMinutes()-x.getTimezoneOffset());return x.toISOString().slice(0,10)};
+const today=()=>iso(new Date());
+const addDays=(s,n)=>{const d=new Date(s+"T12:00:00");d.setDate(d.getDate()+n);return iso(d)};
+const off=n=>addDays(today(),n);
+const diff=s=>Math.round((new Date(s+"T12:00:00")-new Date(today()+"T12:00:00"))/864e5);
+const MOIS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const JOURS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const fd=s=>{if(!s)return"—";const d=new Date(s+"T12:00:00");return MOIS[d.getMonth()]+" "+d.getDate()};
+const fdy=s=>{if(!s)return"—";const d=new Date(s+"T12:00:00");return MOIS[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear()};
+const CURS={USD:"US dollar ($)",CAD:"Canadian dollar (CA$)",EUR:"Euro (€)",GBP:"British pound (£)",CHF:"Swiss franc (CHF)",AUD:"Australian dollar (A$)",XOF:"CFA franc WAEMU (F CFA)",XAF:"CFA franc CEMAC (F CFA)",MAD:"Moroccan dirham (MAD)",NGN:"Naira (NGN)",GHS:"Cedi (GHS)",ZAR:"Rand (ZAR)",AED:"UAE dirham (AED)",HTG:"Gourde (HTG)"};
+const fmtCache={};
+const eur=n=>{let c="USD";try{c=S.settings.currency||"USD"}catch(e){}let f=fmtCache[c];if(!f){const o={style:"currency",currency:c,minimumFractionDigits:0,maximumFractionDigits:["XOF","XAF","GNF"].includes(c)?0:2};try{f=new Intl.NumberFormat("en-US",{...o,currencyDisplay:"narrowSymbol"})}catch(e){f=new Intl.NumberFormat("en-US",o)}fmtCache[c]=f}const v=Math.round((+n||0)*100)/100;if(Number.isInteger(v)||["XOF","XAF","GNF"].includes(c))return f.format(v);const k=c+"2";if(!fmtCache[k])fmtCache[k]=new Intl.NumberFormat("en-US",{style:"currency",currency:c,minimumFractionDigits:2,maximumFractionDigits:2});return fmtCache[k].format(v)};
+const curSym=()=>eur(0).replace(/[0-9\s,.]/g,"").trim()||"$";
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9);
+const nowHM=()=>{const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")};
+const toH=s=>{const[a,b]=s.split(":").map(Number);return a+b/60};
+const first=s=>(s||"").split(" ")[0];
+
+const IC={
+ home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.8c1.6.8 2.6 2.6 3 5.2"/>',
+ cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+ bell:'<path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>',
+ doc:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+ send:'<path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"/>',
+ euro:'<path d="M12 3v18M16.5 7.5c-.8-1.3-2.4-2-4.5-2-2.6 0-4.3 1.3-4.3 3.2 0 4.4 9 2.4 9 6.8 0 2-1.9 3.3-4.7 3.3-2.2 0-4-.8-4.8-2.3"/>',
+ chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+ box:'<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>',
+ team:'<circle cx="12" cy="7" r="3.5"/><path d="M5 21c.8-4 3.6-6 7-6s6.2 2 7 6"/>',
+ tag:'<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="8" cy="8" r="1.5"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+ inbox:'<path d="M3 13l3-8h12l3 8v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 13h5l1 3h6l1-3h5"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ swap:'<path d="M7 7h13l-4-4M17 17H4l4 4"/>',
+ shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+ check:'<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12l3 3 5-6"/>',
+ help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7M12 17h.01"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/>'};
+const svg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
+
+/* ---------- FOLLOW-UP MESSAGES ---------- */
+const TPL={
+ devis:[
+  c=>`Hi ${c.p}, I'm following up on our quote ${c.num} for ${c.mt}. Have you had a chance to look at it? I'm happy to adjust it to your budget or schedule.\n\n${c.ent}`,
+  c=>`Hi ${c.p}, to hold your start date, I'd need your approval on quote ${c.num} by Friday. Would you like a quick 5-minute call to go over it?\n\n${c.ent}`,
+  c=>`Hi ${c.p}, since I haven't heard back, I'll close quote ${c.num} this week. If the need comes back, I'll be glad to help. Have a great day!\n\n${c.ent}`],
+ paiement:[
+  c=>`Hi ${c.p}, unless we're mistaken, invoice ${c.num} for ${c.mt}, due on ${c.ech}, is still outstanding. You can pay by bank transfer or card. Thank you!\n\n${c.ent}`,
+  c=>`Hi ${c.p}, second reminder: invoice ${c.num} (${c.mt}) has been overdue since ${c.ech}. Please settle it within 48 hours or contact me to set up a payment plan.\n\n${c.ent}`],
+ satisfaction:[c=>`Hi ${c.p}, our team cleaned your place recently. Are you happy with the result? A rating from 1 to 5 really helps us improve. Thank you!\n\n${c.ent}`],
+ prospect:[
+  c=>`Hi ${c.p}, following our conversation, I'd like to offer you a free walkthrough of your premises to prepare an accurate quote. Which day works for you this week?\n\n${c.ent}`,
+  c=>`Hi ${c.p}, I'm following up about the free walkthrough. We still have two open slots this week. Shall I book one for you?\n\n${c.ent}`],
+ renouvellement:[c=>`Hi ${c.p}, your cleaning contract ends on ${c.ech}. I'd be happy to renew it on the same terms, with one free visit in the first month. Shall we talk?\n\n${c.ent}`]};
+const RTYPE={devis:["Quote follow-up","p-amber"],paiement:["Unpaid","p-red"],satisfaction:["Satisfaction","p-green"],prospect:["Prospecting","p-blue"],renouvellement:["Renewal","p-gold"]};
+const CHECK={"Entrance":["Floor vacuumed and mopped","Door handles disinfected"],"Offices":["Surfaces dusted","Trash cans emptied","Floors vacuumed and mopped"],"Restrooms":["Toilets disinfected","Sinks and mirrors","Supplies restocked"],"Kitchen":["Countertop and sink","Appliances wiped"],"Final":["Equipment put away","Before / after photos","Doors locked"]};
+const TPLCTX={p:"[First name]",num:"[No.]",mt:"[amount]",ech:"[date]"};
+
+/* ---------- DEMO DATA ---------- */
+function seed(){
+ const catalog=[
+  {name:"Office – standard visit",unit:"visit",price:95},{name:"Office – per sq ft",unit:"sq ft",price:0.15},
+  {name:"Home cleaning",unit:"hour",price:40},{name:"Deep cleaning",unit:"flat rate",price:320},
+  {name:"Post-construction cleanup",unit:"sq ft",price:0.4},{name:"Window cleaning",unit:"window",price:8},
+  {name:"Carpet shampooing",unit:"sq ft",price:0.6},{name:"Full disinfection",unit:"flat rate",price:220},
+  {name:"Common areas",unit:"visit",price:75},{name:"Move-out cleaning",unit:"flat rate",price:260}];
+ const C=(name,contact,phone,email,type,status,value,addr,notes)=>({id:uid(),name,contact,phone,email,type,status,value,addr,notes:notes||"",created:off(-60)});
+ const cl=[
+  C("Miller & Hayes Law Firm","Rachel Miller","(555) 201-3344","r.miller@millerhayes.com","Business","Active client",1140,"240 Madison Ave, New York, NY","Contract: 3 visits / week. Keys at the front desk."),
+  C("Oakwood Residences HOA","David Johnson","(555) 302-4455","board@oakwoodhoa.com","HOA","Quote sent",580,"1820 Oak St, Austin, TX","Decision at the next board meeting."),
+  C("Sunrise Bakery","Paul Martinez","(555) 403-5566","hello@sunrisebakery.com","Retail","Active client",380,"55 Market St, San Diego, CA"),
+  C("Emily Carter","Emily Carter","(555) 504-6677","emily.carter@mail.com","Residential","Active client",240,"12 Rosewood Ln, Atlanta, GA","Allergic to scented products."),
+  C("Summit Realty Group","Kevin Brooks","(555) 605-7788","k.brooks@summitrealty.com","Business","Lead",720,"900 Peachtree St, Atlanta, GA","Met at the local business expo."),
+  C("Lakeside Family Clinic","Dr. Sarah Thompson","(555) 706-8899","admin@lakesideclinic.com","Business","Lead",1080,"410 Lake Shore Dr, Chicago, IL","Requires a medical-grade disinfection protocol."),
+  C("The Harbor View Hotel","James Wilson","(555) 807-9900","contact@harborviewhotel.com","Retail","Quote sent",900,"7 Harbor Blvd, Miami, FL"),
+  C("City of Brookfield","Purchasing Dept.","(555) 100-0000","purchasing@brookfield.gov","Public sector","Lost",0,"1 City Hall Plaza")];
+ const team=[{id:uid(),name:"Maria Lopez",role:"Team lead",rate:22},{id:uid(),name:"John Davis",role:"Cleaner",rate:18},{id:uid(),name:"Aisha Bello",role:"Cleaner",rate:18},{id:uid(),name:"Mike Chen",role:"Window cleaner",rate:20}];
+ const J=(d,s,e,ci,svc,ai,st)=>({id:uid(),date:off(d),start:s,end:e,clientId:cl[ci].id,service:catalog[svc].name,agent:team[ai].name,status:st});
+ const jobs=[J(-6,"08:00","11:00",0,0,0,"Completed"),J(-2,"08:00","11:00",0,0,2,"Completed"),J(-1,"14:00","16:00",3,2,1,"Completed"),J(0,"08:00","10:00",0,0,0,"In progress"),J(0,"14:00","17:00",6,5,3,"Scheduled"),J(1,"09:00","12:00",1,8,2,"Scheduled"),J(2,"07:00","09:00",2,7,1,"Scheduled"),J(3,"08:00","11:00",0,0,0,"Scheduled"),J(4,"10:00","15:00",4,3,3,"Scheduled"),J(6,"09:00","11:00",3,2,1,"Scheduled")];
+ jobs[0].rating={stars:5,comment:"Spotless as always, thanks to Maria."};
+ jobs[0].checkin={time:"07:58"};jobs[0].checkout={time:"11:04"};jobs[1].checkin={time:"08:03"};jobs[1].checkout={time:"10:56"};jobs[2].checkin={time:"13:57"};jobs[2].checkout={time:"16:01"};
+ jobs[3].checkin={time:"07:56",lat:40.7516,lng:-73.9787};jobs[3].site=0;jobs[7].site=1;
+ cl[0].sites=[{name:"Headquarters",addr:"240 Madison Ave, New York, NY",access:"Badge at the front desk. Alarm code 4521. Janitor closet in the basement."},{name:"Annex",addr:"88 Lexington Ave, New York, NY",access:"Keys with the doorman (Mr. Paul), 2nd floor."}];
+ cl[3].access="Gate code 1984B, unit 3B. Fragrance-free products only.";cl[6].access="Check in at reception and ask for a vendor badge.";cl[1].access="Trash room key in the lockbox, code 0707.";
+ const absences=[{id:uid(),agent:team[1].name,from:off(2),to:off(2),reason:"Doctor's appointment",status:"Approved"},{id:uid(),agent:team[3].name,from:off(10),to:off(12),reason:"Vacation",status:"Pending"}];
+ const incidents=[{id:uid(),agent:team[2].name,clientId:cl[0].id,date:off(-2),type:"Missing supplies",msg:"Out of toilet paper in the 2nd floor restrooms.",status:"Open"}];
+ const L=(i,q)=>({s:catalog[i].name,u:catalog[i].unit,p:catalog[i].price,q});
+ const D=(type,num,ci,d,extra)=>Object.assign({id:uid(),type,num,clientId:cl[ci].id,date:off(d)},extra);
+ const docs=[
+  D("devis","QUO-2026-014",1,-9,{lines:[L(8,12),L(5,40)],status:"Sent"}),
+  D("devis","QUO-2026-015",6,-2,{lines:[L(5,120),L(7,1)],status:"Sent"}),
+  D("devis","QUO-2026-013",2,-12,{lines:[L(0,4)],status:"Accepted",remise:5,signedAt:off(-10)}),
+  D("facture","INV-2026-031",0,-38,{lines:[L(0,12)],pays:[{id:uid(),date:off(-20),amount:600,mode:"Bank transfer",ok:true}]}),
+  D("facture","INV-2026-032",3,-12,{lines:[L(2,8)],pays:[]}),
+  D("facture","INV-2026-030",0,-60,{lines:[L(0,12)],pays:[{id:uid(),date:off(-35),amount:1231.2,mode:"Bank transfer",ok:true}]}),
+  D("facture","INV-2026-033",3,-3,{lines:[L(3,1)],pays:[{id:uid(),date:off(0),amount:345.6,mode:"Card",ok:true}]}),
+  D("facture","INV-2026-029",0,-90,{lines:[L(0,12)],pays:[{id:uid(),date:off(-70),amount:1231.2,mode:"Bank transfer",ok:true}]}),
+  D("facture","INV-2026-028",3,-120,{lines:[L(2,8),L(5,10)],pays:[{id:uid(),date:off(-100),amount:432,mode:"Check",ok:true}]}),
+  D("contrat","CTR-2026-004",0,-150,{status:"Signed",signedAt:off(-148),start:off(-150),months:6,freq:"3 visits per week (Mon, Wed, Fri)",monthly:1140,notice:1,services:"Office cleaning, restrooms, trash removal, interior windows once a month."}),
+  D("bon","WO-2026-087",0,-2,{status:"Signed",signedAt:off(-2),job:{start:"08:00",end:"11:00",agent:team[2].name,service:catalog[0].name},checks:{"Offices · Surfaces dusted":true,"Offices · Trash cans emptied":true,"Restrooms · Toilets disinfected":true,"Restrooms · Supplies restocked":false,"Final · Doors locked":true},score:80,obs:"Out of toilet paper: reported to the client."}),
+  D("visite","SV-2026-011",5,-2,{status:"Done",locaux:"Clinic / medical office",surface:4500,sanitaires:6,freq:"Every day",horaires:"After 7 pm",besoins:["Floors","Restrooms","Disinfection","Trash"],notes:"Hospital-grade protocol requested. Use EPA-registered virucidal products."}),
+  D("contrat","CTR-2026-005",3,-1,{status:"To sign",start:off(7),days:[4],t1:"09:00",t2:"11:00",agent:team[1].name,months:12,freq:"1 visit per week (Thu)",monthly:220,notice:1,services:"Full home cleaning, fragrance-free products provided."})];
+ const R=(ci,type,d,docId,step,total,status,result)=>({id:uid(),clientId:cl[ci].id,type,due:off(d),docId:docId||null,step,total,status:status||"open",result:result||"",channel:"Email"});
+ const rel=[
+  R(1,"devis",-7,docs[0].id,1,3,"done","No answer"),R(1,"devis",-2,docs[0].id,2,3),R(1,"devis",6,docs[0].id,3,3),
+  R(6,"devis",0,docs[1].id,1,3),R(6,"devis",5,docs[1].id,2,3),R(6,"devis",13,docs[1].id,3,3),
+  R(0,"paiement",-8,docs[3].id,1,2,"done","Promised to pay"),R(0,"paiement",-1,docs[3].id,2,2),
+  R(3,"paiement",18,docs[4].id,1,2),R(4,"prospect",0,null,1,2),R(5,"prospect",2,null,1,2),
+  R(3,"satisfaction",0,null,1,1),R(0,"renouvellement",10,docs[9].id,1,1)];
+ const A=(ci,d,text)=>({id:uid(),clientId:cl[ci].id,date:off(d),text});
+ const act=[A(0,-2,"Job completed · work order WO-2026-087 (80%)"),A(0,-6,"Client review: 5/5 “Spotless as always”"),A(0,-20,"Payment received: $600 (Bank transfer)"),A(0,-148,"Contract CTR-2026-004 signed"),A(1,-7,"Follow-up 1/3 (Quote follow-up, Email): No answer"),A(1,-9,"Quote QUO-2026-014 sent ($1,318)"),A(5,-2,"Site visit completed (4,500 sq ft)"),A(6,-2,"Quote QUO-2026-015 sent"),A(3,-1,"Contract CTR-2026-005 sent for signature"),A(3,-1,"Payment received: $345.60 (Card)"),A(2,-10,"Quote QUO-2026-013 accepted and signed")];
+ const stock=[{id:uid(),name:"All-purpose cleaner",unit:"1 gal jug",qty:12,min:5},{id:uid(),name:"Virucidal disinfectant",unit:"1 gal jug",qty:3,min:6},{id:uid(),name:"Trash bags 33 gal",unit:"roll",qty:8,min:10},{id:uid(),name:"Microfiber cloths",unit:"piece",qty:60,min:30},{id:uid(),name:"Glass cleaner",unit:"bottle",qty:9,min:4},{id:uid(),name:"Nitrile gloves",unit:"box",qty:2,min:5},{id:uid(),name:"Toilet paper",unit:"case",qty:6,min:4}];
+ const T=(d,t,title,prio,repeat,done)=>({id:uid(),date:off(d),time:t,title,prio,repeat,done:!!done,notified:false});
+ const tasks=[T(0,"08:30","Call the Oakwood HOA about the quote","High","none"),T(0,"11:00","Order virucidal disinfectant","Normal","none"),T(0,"17:30","Approve the team's hours","Normal","weekly"),T(1,"09:00","Walkthrough at Lakeside Family Clinic","High","none"),T(2,"14:00","Prepare end-of-month invoices","Normal","none"),T(4,"10:00","Quality check-in with Maria","Low","weekly"),T(-1,"16:00","Follow up with the City about the tender","Normal","none",true)];
+ const tickets=[{id:uid(),clientId:cl[0].id,date:off(-1),subject:"Cleaning job",msg:"The meeting room windows were missed during the last visit.",urgent:false,status:"Open",reply:""},{id:uid(),clientId:cl[3].id,date:off(-8),subject:"Invoice or payment",msg:"Can I pay for the deep cleaning in two installments?",urgent:false,status:"Resolved",reply:"Of course, we've set up a two-installment payment. Thank you for your trust.",repliedAt:off(-7)}];
+ const requests=[{id:uid(),clientId:cl[3].id,date:off(-1),wanted:off(5),service:catalog[6].name,notes:"Living room rug, about 130 sq ft.",status:"New"}];
+ return{settings:{name:"Sparkle Pro Cleaning",owner:"Ashley",tva:8,delay:30,currency:"USD",m2:0.04,phone:"(555) 000-0000",addr:"120 Lilac Avenue, Brooklyn, NY 11211",email:"hello@sparklepro.com",siret:"EIN 00-0000000",iban:"Account •••• 0000 (routing 000000000)"},
+  clients:cl,team,jobs,catalog,docs,rel,act,stock,requests,tickets,tasks,absences,incidents,seq:{devis:16,facture:34,contrat:6,bon:88,visite:12,avoir:3}};
+}
+let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+if(!S||!S.clients)S=seed();
+S.tickets=S.tickets||[];S.tasks=S.tasks||[];S.absences=S.absences||[];S.incidents=S.incidents||[];S.settings.currency=S.settings.currency||"USD";S.settings.m2=S.settings.m2||0.04;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+/* ---------- BUSINESS RULES ---------- */
+const client=id=>S.clients.find(c=>c.id===id)||{name:"Deleted client",contact:"",phone:"",addr:""};
+const gross=d=>(d.lines||[]).reduce((a,l)=>a+l.p*l.q,0);
+const ht=d=>gross(d)*(1-(d.remise||0)/100);
+const tva=d=>d.type==="contrat"?d.monthly*S.settings.tva/100:ht(d)*S.settings.tva/100;
+const ttc=d=>d.type==="contrat"?d.monthly+tva(d):ht(d)+tva(d);
+const due=d=>addDays(d.date,S.settings.delay);
+const paid=f=>(f.pays||[]).filter(p=>p.ok).reduce((a,p)=>a+p.amount,0);
+const reste=f=>f.type!=="facture"||f.cancelled?0:Math.max(0,Math.round((ttc(f)-paid(f))*100)/100);
+function fState(f){if(f.cancelled)return["Cancelled · credit note","p-grey"];if(reste(f)<=0)return["Paid","p-green"];const n=diff(due(f));if(n<0)return[`Overdue · ${-n} d`,"p-red"];if(paid(f)>0)return["Partial","p-blue"];return["Due","p-amber"]}
+function dState(d){
+ if(d.type==="facture")return fState(d);
+ if(d.type==="avoir")return["Credit note","p-gold"];
+ const map={"Sent":"p-amber","Accepted":"p-green","Invoiced":"p-grey","Declined":"p-red","Signed":"p-green","To sign":"p-amber","Done":"p-blue"};
+ return[d.status,map[d.status]||"p-grey"]}
+const pill=([t,c])=>`<span class="pill ${c}">${esc(t)}</span>`;
+const STATUS={"Lead":"p-blue","Quote sent":"p-amber","Negotiation":"p-amber","Active client":"p-green","Lost":"p-grey"};
+const openRels=cid=>S.rel.filter(r=>r.status==="open"&&(!cid||r.clientId===cid)).sort((a,b)=>a.due.localeCompare(b.due));
+function relState(r){if(r.status==="done")return["Done","p-green"];if(r.status==="cancel")return["Cancelled","p-grey"];const n=diff(r.due);if(n<0)return[`${-n} d late`,"p-red"];if(n===0)return["Today","p-amber"];return[fd(r.due),"p-grey"]}
+function nextRelPill(cid){const r=openRels(cid)[0];return r?pill(relState(r)):""}
+function addRel(cid,type,dueDate,docId,step,total){S.rel.push({id:uid(),clientId:cid,type,due:dueDate,docId:docId||null,step,total,status:"open",result:"",channel:"Email"})}
+const cancelRels=docId=>S.rel.forEach(r=>{if(r.docId===docId&&r.status==="open")r.status="cancel"});
+const log=(cid,text)=>S.act.unshift({id:uid(),clientId:cid,date:today(),text});
+function seqDevis(d){[2,7,15].forEach((n,i)=>addRel(d.clientId,"devis",addDays(d.date,n),d.id,i+1,3))}
+function seqFacture(f){addRel(f.clientId,"paiement",due(f),f.id,1,2);addRel(f.clientId,"paiement",addDays(due(f),7),f.id,2,2)}
+function msgFor(r){const c=client(r.clientId),d=S.docs.find(x=>x.id===r.docId);const arr=TPL[r.type];const t=arr[Math.min(r.step,arr.length)-1];
+ return t({p:first(c.contact)||"",ent:S.settings.name+" · "+S.settings.phone,num:d?d.num:"",mt:d?eur(d.type==="facture"?reste(d):ttc(d)):"",ech:d?fdy(d.type==="contrat"?addDays(d.start,d.months*30):due(d)):""})}
+function nextNum(type){const p={devis:"QUO",facture:"INV",contrat:"CTR",bon:"WO",visite:"SV",avoir:"CN"}[type];return p+"-"+new Date().getFullYear()+"-"+String(S.seq[type]++).padStart(3,"0")}
+function jobPlace(j){const c=client(j.clientId);const st=(c.sites&&j.site!=null&&c.sites[j.site])||null;return{name:st?st.name:"",addr:st?st.addr:(c.addr||""),access:st?st.access:(c.access||"")}}
+const isAbsent=(name,date)=>S.absences.some(a=>a.agent===name&&a.status==="Approved"&&a.from<=date&&a.to>=date);
+const agentByName=n=>S.team.find(a=>a.name===n);
+function jobHours(j){if(j.checkin&&j.checkout)return Math.max(0,toH(j.checkout.time)-toH(j.checkin.time));return toH(j.end)-toH(j.start)}
+const WD=["","Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const isoWd=d=>(new Date(d+"T12:00:00").getDay()+6)%7+1;
+function genContractJobs(d){if(!d.days||!d.days.length)return 0;const end=addDays(d.start,d.months*30);const from=d.start>today()?d.start:today();let n=0;
+ for(let i=0;i<56;i++){const dt=addDays(from,i);if(dt>end)break;if(!d.days.includes(isoWd(dt)))continue;if(S.jobs.some(j=>j.contractId===d.id&&j.date===dt))continue;
+  S.jobs.push({id:uid(),date:dt,start:d.t1||"09:00",end:d.t2||"11:00",clientId:d.clientId,service:"Contract cleaning ("+d.num+")",agent:d.agent||S.team[0].name,status:"Scheduled",contractId:d.id,site:d.site!=null?d.site:undefined});n++}
+ if(n)log(d.clientId,`${n} visits scheduled automatically (contract ${d.num})`);return n}
+const mapLink=a=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(a);
+const waLink=(phone,text)=>"sms:"+String(phone||"").replace(/[^\d+]/g,"")+"?&body="+encodeURIComponent(text||"");
+function imgToData(file,max){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const cv=document.createElement("canvas");cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);res(cv.toDataURL("image/jpeg",.62))};im.onerror=rej;im.src=fr.result};fr.onerror=rej;fr.readAsDataURL(file)})}
+function notifs(){
+ const out=[],pl=(n,s,p)=>n+" "+(n>1?p:s);
+ const rl=S.rel.filter(r=>r.status==="open"&&diff(r.due)<0);if(rl.length)out.push({t:pl(rl.length,"overdue follow-up","overdue follow-ups"),cls:"p-red",go:"relances"});
+ const fl=S.docs.filter(d=>d.type==="facture"&&reste(d)>0&&diff(due(d))<0);if(fl.length)out.push({t:pl(fl.length,"overdue unpaid invoice","overdue unpaid invoices"),cls:"p-red",go:"documents",tab:"facture"});
+ const pd=S.docs.filter(d=>(d.pays||[]).some(p=>!p.ok));if(pd.length)out.push({t:pl(pd.length,"client-reported payment to confirm","client-reported payments to confirm"),cls:"p-gold",go:"documents",tab:"facture"});
+ const rq=S.requests.filter(r=>r.status==="New");if(rq.length)out.push({t:pl(rq.length,"cleaning request received","cleaning requests received"),cls:"p-blue",go:"demandes"});
+ const tl=S.tasks.filter(t=>!t.done&&(diff(t.date)<0||(diff(t.date)===0&&t.time<=nowHM())));if(tl.length)out.push({t:pl(tl.length,"task due now or overdue","tasks due now or overdue"),cls:tl.some(t=>diff(t.date)<0)?"p-red":"p-amber",go:"taches"});
+ const inc=S.incidents.filter(i=>i.status==="Open");if(inc.length)out.push({t:pl(inc.length,"cleaner report to handle","cleaner reports to handle"),cls:"p-red",go:"demandes"});
+ const ab=S.absences.filter(a=>a.status==="Pending");if(ab.length)out.push({t:pl(ab.length,"time-off request to approve","time-off requests to approve"),cls:"p-amber",go:"equipe"});
+ const na=S.jobs.filter(j=>j.date>=today()&&!["Completed","Cancelled"].includes(j.status)&&isAbsent(j.agent,j.date));if(na.length)out.push({t:pl(na.length,"job to reassign (cleaner absent)","jobs to reassign (cleaner absent)"),cls:"p-red",go:"planning"});
+ const tk=S.tickets.filter(t=>t.status==="Open");if(tk.length)out.push({t:pl(tk.length,"client support message to handle","client support messages to handle"),cls:tk.some(t=>t.urgent)?"p-red":"p-blue",go:"demandes"});
+ const sg=S.docs.filter(d=>d.status==="To sign");if(sg.length)out.push({t:pl(sg.length,"document awaiting signature","documents awaiting signature"),cls:"p-amber",go:"documents",tab:"contrat"});
+ const st=S.stock.filter(s=>s.qty<s.min);if(st.length)out.push({t:pl(st.length,"product below stock level","products below stock level"),cls:"p-amber",go:"stock"});
+ return out}
+
+/* ---------- UI STATE ---------- */
+let mode=null,me=null,view="",filter="All",query="",weekOff=0,selDay=today(),docTab="devis",relTab="retard";
+try{const s=JSON.parse(sessionStorage.getItem(KEY+"-ui")||"null");if(s){mode=s.mode;me=s.me}}catch(e){}
+const saveUI=()=>{try{sessionStorage.setItem(KEY+"-ui",JSON.stringify({mode,me}))}catch(e){}};
+function toast(t){$$(".toast").forEach(x=>x.remove());const el=document.createElement("div");el.className="toast";el.setAttribute("role","status");el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),2400)}
+function copyText(text){const ok=()=>toast("Copied · paste it into an email, SMS or WhatsApp");
+ const fb=()=>{const box=$("#msg");if(box&&box.select){box.focus();box.select();toast("Text selected: copy it")}else toast("Can't copy here: select the text")};
+ try{navigator.clipboard.writeText(text).then(ok,fb)}catch(e){fb()}}
+const demoBar=()=>`<div class="demo"><span><b>DEMO</b> · sample data</span><span class="row" style="gap:6px"><span class="muted">by SACKO CONCEPT</span><img src="${LOGO}" alt="" class="sclogo"></span></div>`;
+const opts=(arr,sel)=>arr.map(v=>`<option ${v===sel?"selected":""}>${esc(v)}</option>`).join("");
+const clientOpts=sel=>S.clients.filter(c=>c.status!=="Lost").map(c=>`<option value="${c.id}" ${c.id===sel?"selected":""}>${esc(c.name)}</option>`).join("");
+const link=(go,txt)=>`<a href="#${go}" class="small" style="color:var(--accent);font-weight:700;text-decoration:none">${txt}</a>`;
+
+/* ================= MANAGER SPACE ================= */
+function header(eyebrow,title){const n=notifs().length;return`${demoBar()}<div class="top"><div class="grow"><div class="eyebrow">${eyebrow}</div><h1>${title}</h1></div><div class="row" style="gap:8px"><button class="iconbtn" data-act="notifs" aria-label="Notifications">${svg("bell")}${n?`<span class="badge">${n}</span>`:""}</button><button class="avatar" data-act="menu" aria-label="Menu">${esc(S.settings.name[0])}</button></div></div>`}
+function months6(){const m=[];for(let i=5;i>=0;i--){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-i);m.push(iso(d).slice(0,7))}return m}
+const allPays=()=>S.docs.filter(d=>d.type==="facture").flatMap(f=>(f.pays||[]).filter(p=>p.ok).map(p=>({...p,cid:f.clientId})));
+
+function vAccueil(){
+ const t=today(),m=t.slice(0,7),pays=allPays();
+ const cash=pays.filter(p=>p.date.slice(0,7)===m).reduce((a,p)=>a+p.amount,0);
+ const owed=S.docs.reduce((a,f)=>a+reste(f),0);
+ const months=months6();const mv=months.map(mm=>pays.filter(p=>p.date.slice(0,7)===mm).reduce((a,p)=>a+p.amount,0));const mx=Math.max(...mv,1);
+ const pr=openRels().filter(r=>diff(r.due)<=0);
+ const jt=S.jobs.filter(j=>j.date===t).sort((a,b)=>a.start.localeCompare(b.start));
+ const pipe=S.clients.filter(c=>["Lead","Quote sent","Negotiation"].includes(c.status));
+ const act=S.clients.filter(c=>c.status==="Active client");
+ const dv=S.docs.filter(d=>d.type==="devis"&&d.status==="Sent");
+ const h=new Date().getHours();
+ return`${header(new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"}),(h<12?"Good morning, ":h<18?"Good afternoon, ":"Good evening, ")+esc(S.settings.owner))}
+ <div class="hero"><div class="eyebrow">Collected this month</div><div class="big">${eur(cash)}</div>
+  <div class="sub"><span>Outstanding <b class="num">${eur(owed)}</b></span><span>Pending quotes <b class="num">${eur(dv.reduce((a,d)=>a+ttc(d),0))}</b></span></div>
+  <div class="bars" role="img" aria-label="Payments over the last 6 months">${mv.map((v,i)=>`<i class="${i===5?"on":""}" style="height:${Math.max(6,v/mx*100)}%" title="${eur(v)}"></i>`).join("")}</div>
+  <div class="blabels">${months.map(mm=>`<span>${MOIS[+mm.slice(5)-1]}</span>`).join("")}</div></div>
+ <div class="qa"><button data-act="qa-devis">${svg("doc")}Quote</button><button data-act="qa-facture">${svg("euro")}Invoice</button><button data-act="qa-job">${svg("cal")}Schedule</button><button data-act="qa-client">${svg("users")}Client</button></div>
+ <div class="kpis" style="margin-top:14px">
+  <div class="kpi ${pr.some(r=>diff(r.due)<0)?"alert":""}"><div class="eyebrow">Today's follow-ups</div><div class="v">${pr.length}</div><div class="xs muted">${pr.filter(r=>diff(r.due)<0).length} overdue</div></div>
+  <div class="kpi"><div class="eyebrow">Jobs</div><div class="v">${jt.length}</div><div class="xs muted">today · ${jt.reduce((a,j)=>a+toH(j.end)-toH(j.start),0)} h</div></div>
+  <div class="kpi"><div class="eyebrow">Pipeline</div><div class="v">${eur(pipe.reduce((a,c)=>a+(+c.value||0),0))}</div><div class="xs muted">${pipe.length} leads · per month</div></div>
+  <div class="kpi"><div class="eyebrow">Active clients</div><div class="v">${act.length}</div><div class="xs muted">${eur(act.reduce((a,c)=>a+(+c.value||0),0))} / month</div></div></div>
+ <div class="section"><div class="row between"><h2>My tasks today</h2>${link("taches","Week")}</div><div class="card list">${(()=>{const l=S.tasks.filter(t=>t.date===today()||(!t.done&&diff(t.date)<0)).sort((a,b)=>(a.done-b.done)||(a.date+a.time).localeCompare(b.date+b.time));return l.length?l.map(taskRow).join(""):`<div class="empty">No tasks today.</div>`})()}</div></div>
+ <div class="section"><div class="row between"><h2>Today's priorities</h2>${link("relances","See all")}</div>
+  <div class="card list">${pr.length?pr.slice(0,5).map(relItem).join(""):`<div class="empty">No follow-ups due today.</div>`}</div></div>
+ <div class="section"><div class="row between"><h2>Today's schedule</h2>${link("planning","Week")}</div>
+  <div class="card">${jt.length?jt.map(jobRow).join(""):`<div class="empty">No jobs today.</div>`}</div></div>
+ <div class="section"><h2>Tools</h2>${toolsGrid()}</div>`}
+function toolsGrid(){const rq=S.requests.filter(r=>r.status==="New").length+S.tickets.filter(t=>t.status==="Open").length,st=S.stock.filter(s=>s.qty<s.min).length;
+ return`<div class="tools"><button data-go="taches">${svg("check")}Tasks${S.tasks.filter(t=>!t.done&&diff(t.date)<=0).length?`<span class="badge">${S.tasks.filter(t=>!t.done&&diff(t.date)<=0).length}</span>`:""}</button><button data-go="rapports">${svg("chart")}Reports</button><button data-go="demandes">${svg("inbox")}Requests &amp; support${rq?`<span class="badge">${rq}</span>`:""}</button><button data-go="stock">${svg("box")}Supplies${st?`<span class="badge">${st}</span>`:""}</button><button data-go="equipe">${svg("team")}Team</button><button data-go="tarifs">${svg("tag")}Pricing</button><button data-go="reglages">${svg("gear")}Settings</button></div>`}
+function relItem(r){const c=client(r.clientId);const[tl,tc]=RTYPE[r.type];const n=diff(r.due);return`<button class="item" data-act="rel" data-id="${r.id}"><span class="dot" style="background:var(${r.status!=="open"?"--line":n<0?"--red":n===0?"--amber":"--line"})"></span><span class="grow"><div class="t">${esc(c.name)}</div><div class="row xs" style="gap:6px;margin-top:3px"><span class="pill ${tc}">${tl}</span><span class="muted">${r.total>1?`Follow-up ${r.step}/${r.total} · `:""}${esc(r.channel)}</span></div></span>${pill(relState(r))}</button>`}
+function jobRow(j){const c=client(j.clientId);const pl=jobPlace(j);const abs=!["Completed","Cancelled"].includes(j.status)&&isAbsent(j.agent,j.date);const st={"Completed":"p-green","In progress":"p-blue","Cancelled":"p-red"}[j.status]||"p-grey";
+ return`<div class="job"><div><div class="h">${j.start}</div><div class="xs muted">${j.end}</div></div><div class="stack" style="gap:6px;min-width:0"><div class="row between"><b class="t">${esc(c.name)}</b><span class="pill ${st}">${j.status}</span></div><div class="small muted">${esc(j.service)} · ${esc(j.agent)}</div><div class="xs muted">${pl.name?esc(pl.name)+" · ":""}${esc(pl.addr)}</div>${j.checkin?`<div class="xs" style="color:var(--accent);font-weight:600">Clocked in ${j.checkin.time}${j.checkout?" → "+j.checkout.time:""}${j.checkin.lat?` · <a href="${mapLink(j.checkin.lat+","+j.checkin.lng)}" target="_blank" rel="noopener" style="color:var(--accent)">location</a>`:""}</div>`:""}${abs?`<div class="row" style="gap:6px"><span class="pill p-red">Cleaner absent</span>${mode==="admin"?`<button class="btn sm danger" data-act="reassign" data-id="${j.id}">Replace</button>`:""}</div>`:""}${j.rating?`<div class="xs" style="color:var(--gold)">${"★".repeat(j.rating.stars)}<span class="muted"> ${esc(j.rating.comment||"")}</span></div>`:""}${mode==="admin"&&j.status!=="Completed"&&j.status!=="Cancelled"?`<div class="btns"><button class="btn sm primary" data-act="jobdone" data-id="${j.id}">Complete &amp; get signature</button><button class="btn sm" data-act="jobcancel" data-id="${j.id}">Cancel</button></div>`:""}</div></div>`}
+
+function vClients(){
+ const f=["All","Lead","Quote sent","Negotiation","Active client","Lost"];
+ const list=S.clients.filter(c=>(filter==="All"||c.status===filter)&&(c.name+" "+c.contact).toLowerCase().includes(query.toLowerCase()));
+ list.sort((a,b)=>((openRels(a.id)[0]||{}).due||"9").localeCompare((openRels(b.id)[0]||{}).due||"9"));
+ return`${header("CRM","Clients")}<div class="stack"><div class="row"><input class="search" id="q" placeholder="Search a client or contact" value="${esc(query)}" aria-label="Search"><button class="btn" data-act="import" data-v="clients" style="flex:none">Import</button></div>
+ <div class="chips">${f.map(x=>`<button class="chip ${x===filter?"on":""}" data-act="filter" data-v="${x}">${x}<span class="n">${x==="All"?S.clients.length:S.clients.filter(c=>c.status===x).length}</span></button>`).join("")}</div>
+ <div class="card list">${list.length?list.map(c=>`<button class="item" data-act="client" data-id="${c.id}"><div class="avatar av-s">${esc(c.name[0])}</div><span class="grow"><div class="t">${esc(c.name)}</div><div class="row wrap" style="gap:6px;margin-top:3px"><span class="pill ${STATUS[c.status]}">${c.status}</span>${nextRelPill(c.id)}</div></span><span class="xs muted num">${c.value?eur(c.value)+"/mo":""}</span></button>`).join(""):`<div class="empty">No clients found.</div>`}</div></div>`}
+
+function weekDays(){const base=addDays(today(),weekOff*7);const wd=(new Date(base+"T12:00:00").getDay()+6)%7;const mon=addDays(base,-wd);return[...Array(7)].map((_,i)=>addDays(mon,i))}
+function vPlanning(){
+ const days=weekDays();if(!days.includes(selDay))selDay=days.includes(today())?today():days[0];
+ const list=S.jobs.filter(j=>j.date===selDay).sort((a,b)=>a.start.localeCompare(b.start));
+ const wk=S.jobs.filter(j=>days.includes(j.date)&&j.status!=="Cancelled");
+ const rq=S.requests.filter(r=>r.status==="New");
+ return`${header("Week of "+fd(days[0]),"Schedule")}
+ <div class="row between" style="margin-bottom:10px"><button class="btn sm" data-act="wk" data-v="-1">‹ Prev</button><span class="small muted num">${wk.length} jobs · ${wk.reduce((a,j)=>a+toH(j.end)-toH(j.start),0)} h</span><button class="btn sm" data-act="wk" data-v="1">Next ›</button></div>
+ <div class="week">${days.map(d=>{const dt=new Date(d+"T12:00:00");const has=S.jobs.some(j=>j.date===d&&j.status!=="Cancelled");return`<button class="day ${d===selDay?"on":""} ${d===today()?"today":""}" data-act="day" data-v="${d}">${JOURS[dt.getDay()]}<b>${dt.getDate()}</b><span class="m ${has?"":"off"}"></span></button>`}).join("")}</div>
+ ${rq.length?`<button class="note row" style="margin-top:12px;border:0;width:100%;cursor:pointer;text-align:left" data-go="demandes">${svg("inbox")}<span class="grow"><b>${rq.length} client request${rq.length>1?"s":""}</b> to schedule</span><span>›</span></button>`:""}
+ <div class="section"><div class="row between"><h2>${selDay===today()?"Today":JOURS[new Date(selDay+"T12:00:00").getDay()]+" "+fd(selDay)}</h2><span class="small muted num">${list.length} · ${list.reduce((a,j)=>a+toH(j.end)-toH(j.start),0)} h</span></div>
+ <div class="card">${list.length?list.map(jobRow).join(""):`<div class="empty">Nothing scheduled that day.</div>`}</div></div>`}
+
+function vRelances(){
+ const all=S.rel;const g={retard:all.filter(r=>r.status==="open"&&diff(r.due)<0),jour:all.filter(r=>r.status==="open"&&diff(r.due)===0),avenir:all.filter(r=>r.status==="open"&&diff(r.due)>0),faites:all.filter(r=>r.status!=="open")};
+ const lab={retard:"Overdue",jour:"Today",avenir:"Upcoming",faites:"Done",modeles:"Templates"};
+ let body;
+ if(relTab==="modeles"){body=`<div class="stack">${Object.entries(TPL).map(([k,arr])=>arr.map((f,i)=>`<div class="card pad stack" style="gap:8px"><div class="row between"><span class="pill ${RTYPE[k][1]}">${RTYPE[k][0]}</span><span class="xs muted">Step ${i+1}/${arr.length}</span></div><div class="small" style="white-space:pre-wrap">${esc(f({...TPLCTX,ent:S.settings.name}))}</div><button class="btn sm" style="align-self:flex-start" data-act="copytpl" data-k="${k}" data-i="${i}">Copy</button></div>`).join("")).join("")}</div>`}
+ else{const l=g[relTab].sort((a,b)=>relTab==="faites"?b.due.localeCompare(a.due):a.due.localeCompare(b.due));body=`<div class="card list">${l.length?l.map(relItem).join(""):`<div class="empty">${relTab==="retard"?"No overdue follow-ups. Great job!":"Nothing in this list."}</div>`}</div>`}
+ return`${header("Sales follow-up","Follow-ups")}
+ <div class="note" style="margin-bottom:12px">Follow-ups are created automatically: 3 after each quote, 2 after each invoice, 1 satisfaction check after each job.</div>
+ <div class="chips" style="margin-bottom:12px">${Object.keys(lab).map(k=>`<button class="chip ${k===relTab?"on":""}" data-act="reltab" data-v="${k}">${lab[k]}${g[k]?`<span class="n">${g[k].length}</span>`:""}</button>`).join("")}</div>${body}`}
+
+const DTABS=[["devis","Quotes"],["facture","Invoices"],["contrat","Contracts"],["bon","Work orders"],["visite","Site visits"]];
+function vDocuments(){
+ const list=S.docs.filter(d=>d.type===docTab||(docTab==="facture"&&d.type==="avoir")).sort((a,b)=>b.date.localeCompare(a.date));
+ let sum="";
+ if(docTab==="facture"){const f=S.docs.filter(d=>d.type==="facture");const late=f.filter(x=>reste(x)>0&&diff(due(x))<0);sum=`<div class="kpis"><div class="kpi"><div class="eyebrow">Left to collect</div><div class="v">${eur(f.reduce((a,x)=>a+reste(x),0))}</div><div class="xs muted">${f.filter(x=>reste(x)>0).length} open invoices</div></div><div class="kpi ${late.length?"alert":""}"><div class="eyebrow">Overdue</div><div class="v">${eur(late.reduce((a,x)=>a+reste(x),0))}</div><div class="xs muted">${late.length} invoice${late.length>1?"s":""}</div></div></div>`}
+ else if(docTab==="devis"){const d=S.docs.filter(x=>x.type==="devis");const dec=d.filter(x=>x.status!=="Sent"),acc=d.filter(x=>["Accepted","Invoiced"].includes(x.status)).length;sum=`<div class="kpis"><div class="kpi"><div class="eyebrow">Pending</div><div class="v">${eur(d.filter(x=>x.status==="Sent").reduce((a,x)=>a+ttc(x),0))}</div></div><div class="kpi"><div class="eyebrow">Acceptance rate</div><div class="v">${dec.length?Math.round(acc/dec.length*100):0}%</div><div class="xs muted">of decided quotes</div></div></div>`}
+ else if(docTab==="contrat"){const c=S.docs.filter(x=>x.type==="contrat"&&x.status==="Signed");sum=`<div class="kpi"><div class="eyebrow">Signed recurring revenue</div><div class="v">${eur(c.reduce((a,x)=>a+x.monthly,0))} <span class="small muted">excl. tax / month</span></div></div>`}
+ else if(docTab==="bon"){const b=S.docs.filter(x=>x.type==="bon");sum=`<div class="kpi"><div class="eyebrow">Average quality score</div><div class="v">${b.length?Math.round(b.reduce((a,x)=>a+x.score,0)/b.length):0}%</div><div class="xs muted">Work orders are created when you complete a job in the schedule</div></div>`}
+ return`${header("Quotes, invoices, contracts","Documents")}
+ <div class="chips" style="margin-bottom:12px">${DTABS.map(([k,l])=>`<button class="chip ${k===docTab?"on":""}" data-act="doctab" data-v="${k}">${l}</button>`).join("")}</div>
+ ${sum}<div class="card list" style="margin-top:12px">${list.length?list.map(docItem).join(""):`<div class="empty">No documents yet.</div>`}</div>`}
+function docItem(d){const amt=["devis","facture","avoir"].includes(d.type)?eur(d.type==="avoir"?-ttc(d):ttc(d)):d.type==="contrat"?eur(d.monthly)+" excl. tax/mo":d.type==="bon"?d.score+"%":"";
+ const lbl={contrat:"Contract",bon:"Work order",visite:"Site visit",avoir:"Credit note"}[d.type];
+ return`<button class="item" data-act="doc" data-id="${d.id}"><span class="grow"><div class="t">${esc(client(d.clientId).name)}</div><div class="xs muted num">${lbl&&mode==="client"?lbl+" · ":""}${d.num} · ${fd(d.date)}${d.type==="facture"&&reste(d)>0&&paid(d)>0?" · balance "+eur(reste(d)):""}</div></span><span class="stack" style="gap:4px;align-items:flex-end">${amt?`<b class="num small">${amt}</b>`:""}${pill(dState(d))}</span></button>`}
+
+/* ----- Tools ----- */
+function back(title,eyebrow){return`${demoBar()}<div class="top"><div class="grow">${link("accueil","‹ Home")}<div class="eyebrow" style="margin-top:6px">${eyebrow}</div><h1>${title}</h1></div><button class="avatar" data-act="menu" aria-label="Menu">${esc(S.settings.name[0])}</button></div>`}
+function vRapports(){
+ const pays=allPays();const y=today().slice(0,4);const ytd=pays.filter(p=>p.date.slice(0,4)===y).reduce((a,p)=>a+p.amount,0);
+ const months=months6();const mv=months.map(mm=>pays.filter(p=>p.date.slice(0,7)===mm).reduce((a,p)=>a+p.amount,0));const mx=Math.max(...mv,1);
+ const fac=S.docs.filter(d=>d.type==="facture"&&!d.cancelled);const avg=fac.length?fac.reduce((a,f)=>a+ttc(f),0)/fac.length:0;
+ const dv=S.docs.filter(d=>d.type==="devis"&&d.status!=="Sent");const conv=dv.length?Math.round(dv.filter(x=>["Accepted","Invoiced"].includes(x.status)).length/dv.length*100):0;
+ const by={};pays.forEach(p=>by[p.cid]=(by[p.cid]||0)+p.amount);const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,5);const tmx=top.length?top[0][1]:1;
+ const rated=S.jobs.filter(j=>j.rating);const sat=rated.length?(rated.reduce((a,j)=>a+j.rating.stars,0)/rated.length).toFixed(1):"—";
+ const rd=S.rel.filter(r=>r.status==="done").length;
+ return`${back("Reports","Business overview")}
+ <div class="kpis"><div class="kpi"><div class="eyebrow">Collected ${y}</div><div class="v">${eur(ytd)}</div></div><div class="kpi"><div class="eyebrow">Average invoice</div><div class="v">${eur(avg)}</div></div><div class="kpi"><div class="eyebrow">Quotes accepted</div><div class="v">${conv}%</div></div><div class="kpi"><div class="eyebrow">Satisfaction</div><div class="v" style="color:var(--gold)">${sat} ★</div><div class="xs muted">${rated.length} client review${rated.length>1?"s":""}</div></div></div>
+ <div class="section"><h2>Payments over 6 months</h2><div class="card pad"><div class="chart">${mv.map((v,i)=>`<div class="c ${i===5?"on":""}"><b>${v?Math.round(v).toLocaleString("en-US"):""}</b><i style="height:${Math.max(3,v/mx*100)}%"></i><span>${MOIS[+months[i].slice(5)-1]}</span></div>`).join("")}</div><div class="xs muted" style="margin-top:8px">Amounts in ${curSym()}, confirmed payments</div></div></div>
+ <div class="section"><h2>Top clients</h2><div class="card pad stack">${top.map(([cid,v])=>`<div class="stack" style="gap:5px"><div class="row between small"><b class="t">${esc(client(cid).name)}</b><span class="num">${eur(v)}</span></div><div class="meter"><i style="width:${v/tmx*100}%"></i></div></div>`).join("")||`<div class="empty">No payments yet.</div>`}</div></div>
+ <div class="section"><h2>Pipeline by status</h2><div class="card pad stack">${Object.keys(STATUS).map(s=>`<div class="row between small"><span class="pill ${STATUS[s]}">${s}</span><b class="num">${S.clients.filter(c=>c.status===s).length}</b></div>`).join("")}</div></div>
+ <div class="section"><h2>Profitability by client</h2><div class="xs muted">Collected minus cleaner labor cost</div><div class="card list">${S.clients.filter(c=>by[c.id]).map(c=>{const cost=S.jobs.filter(j=>j.clientId===c.id&&j.status==="Completed").reduce((a,j)=>a+jobHours(j)*((agentByName(j.agent)||{rate:0}).rate),0);const mg=by[c.id]-cost;return{c,cost,mg,pc:by[c.id]?Math.round(mg/by[c.id]*100):0}}).sort((a,b)=>b.mg-a.mg).map(x=>`<div class="item static"><span class="grow"><div class="t">${esc(x.c.name)}</div><div class="xs muted num">Collected ${eur(by[x.c.id])} · cost ${eur(x.cost)}</div></span><span class="stack" style="gap:3px;align-items:flex-end"><b class="num small">${eur(x.mg)}</b><span class="pill ${x.pc>=50?"p-green":x.pc>=25?"p-amber":"p-red"}">${x.pc}%</span></span></div>`).join("")||`<div class="empty">No data yet.</div>`}</div></div>
+ <div class="section"><h2>Cleaner performance</h2><div class="card list">${S.team.map(a=>{const js=S.jobs.filter(j=>j.agent===a.name&&j.status==="Completed");const h=js.reduce((x,j)=>x+jobHours(j),0);const bons=S.docs.filter(d=>d.type==="bon"&&d.job.agent===a.name);const q=bons.length?Math.round(bons.reduce((x,d)=>x+d.score,0)/bons.length):null;const rt=js.filter(j=>j.rating);return`<div class="item static"><div class="avatar av-s">${esc(a.name[0])}</div><span class="grow"><div class="t">${esc(a.name)}</div><div class="xs muted num">${js.length} jobs · ${h.toFixed(1)} h · cost ${eur(h*a.rate)}</div></span><span class="stack xs" style="gap:3px;align-items:flex-end">${q!=null?`<span class="pill ${q>=90?"p-green":"p-amber"}">Quality ${q}%</span>`:""}${rt.length?`<span style="color:var(--gold);font-weight:700">★ ${(rt.reduce((x,j)=>x+j.rating.stars,0)/rt.length).toFixed(1)}</span>`:""}</span></div>`}).join("")}</div></div>
+ <div class="section"><h2>Sales follow-up</h2><div class="kpis"><div class="kpi"><div class="eyebrow">Follow-ups done</div><div class="v">${rd}</div></div><div class="kpi"><div class="eyebrow">Open follow-ups</div><div class="v">${openRels().length}</div></div></div></div>`}
+function vStock(){return`${back("Supplies","Inventory")}
+ <div class="card list">${S.stock.map(s=>{const low=s.qty<s.min;return`<div class="item static"><span class="grow stack" style="gap:6px"><span class="row between"><b class="t">${esc(s.name)}</b>${low?`<span class="pill p-red">Reorder</span>`:`<span class="pill p-green">OK</span>`}</span><span class="xs muted num">${s.qty} ${esc(s.unit)} · min ${s.min}</span><span class="meter ${low?"low":""}"><i style="width:${Math.min(100,s.qty/(s.min*2||1)*100)}%"></i></span></span><span class="row" style="gap:4px"><button class="x" style="width:38px" data-act="stk" data-id="${s.id}" data-v="-1" aria-label="Remove one ${esc(s.name)}">−</button><button class="x" style="width:38px" data-act="stk" data-id="${s.id}" data-v="1" aria-label="Add one ${esc(s.name)}">+</button></span></div>`}).join("")}</div>
+ <div class="section"><button class="btn block" data-act="addstock">Add a product</button></div>`}
+function vEquipe(){const m=today().slice(0,7);const ab=[...S.absences].sort((a,b)=>(a.status==="Pending"?-1:1)-(b.status==="Pending"?-1:1)||a.from.localeCompare(b.from));const now=S.jobs.filter(j=>j.date===today()&&j.checkin&&!j.checkout);return`${back("Team","Cleaners, hours, time off")}
+ ${now.length?`<div class="note" style="margin-bottom:12px"><b>On site right now:</b> ${now.map(j=>esc(first(j.agent))+" at "+esc(client(j.clientId).name)+" since "+j.checkin.time).join(" · ")}</div>`:""}
+ <div class="card list">${S.team.map(a=>{const js=S.jobs.filter(j=>j.agent===a.name&&j.date.slice(0,7)===m&&j.status!=="Cancelled");const h=js.reduce((x,j)=>x+toH(j.end)-toH(j.start),0);const rt=S.jobs.filter(j=>j.agent===a.name&&j.rating);return`<div class="item static"><div class="avatar av-s">${esc(a.name[0])}</div><span class="grow"><div class="t">${esc(a.name)}</div><div class="xs muted">${esc(a.role)} · ${eur(a.rate)}/h${rt.length?` · <span style="color:var(--gold)">★ ${(rt.reduce((x,j)=>x+j.rating.stars,0)/rt.length).toFixed(1)}</span>`:""}</div></span><span class="stack xs" style="gap:2px;align-items:flex-end"><b class="num">${js.length} jobs · ${h} h</b><span class="muted num">${eur(h*a.rate)} this month</span></span></div>`}).join("")}</div>
+ <div class="section"><button class="btn block" data-act="addagent">Add a cleaner</button></div>
+ <div class="section"><h2>Time off</h2><div class="card list">${ab.length?ab.map(a=>`<div class="item static" style="align-items:flex-start"><span class="grow stack" style="gap:4px"><span class="row between"><b class="t">${esc(a.agent)}</b>${pill([a.status,a.status==="Approved"?"p-green":a.status==="Declined"?"p-grey":"p-amber"])}</span><span class="small">${a.from===a.to?"On "+fd(a.from):"From "+fd(a.from)+" to "+fd(a.to)} · ${esc(a.reason)}</span>${a.status==="Pending"?`<span class="btns"><button class="btn sm primary" data-act="absok" data-id="${a.id}">Approve</button><button class="btn sm" data-act="absno" data-id="${a.id}">Decline</button></span>`:""}</span></div>`).join(""):`<div class="empty">No time off.</div>`}</div></div>`}
+function vTarifs(){return`${back("Pricing","Service catalog")}
+ <div class="note" style="margin-bottom:12px">Change a price: it applies to your next quotes and invoices.</div>
+ <div class="card list">${S.catalog.map((s,i)=>`<div class="item static"><span class="grow"><div class="t">${esc(s.name)}</div><div class="xs muted">excl. tax per ${esc(s.unit)}</div></span><input id="price-${i}" type="number" step="any" inputmode="decimal" value="${s.price}" data-price="${i}" aria-label="Price of ${esc(s.name)}" style="width:86px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;padding:8px;font:600 14px var(--body);text-align:right"><span class="small muted">${curSym()}</span></div>`).join("")}</div>
+ <div class="section btns"><button class="btn grow" data-act="addsvc">Add a service</button><button class="btn grow" data-act="import" data-v="tarifs">Import a file</button></div>`}
+function vDemandes(){const l=[...S.requests].sort((a,b)=>b.date.localeCompare(a.date));const tk=[...S.tickets].sort((a,b)=>(a.status===b.status?0:a.status==="Open"?-1:1)||b.date.localeCompare(a.date));const inc=[...S.incidents].sort((a,b)=>(a.status==="Open"?-1:1)-(b.status==="Open"?-1:1)||b.date.localeCompare(a.date));return`${back("Requests &amp; support","Clients and cleaners")}
+ <div class="section" style="margin-top:0"><h2>Cleaner reports</h2><div class="card list">${inc.length?inc.map(i=>`<div class="item static" style="align-items:flex-start"><span class="grow stack" style="gap:5px"><span class="row between"><b class="t">${esc(i.type)}</b>${pill([i.status,i.status==="Open"?"p-red":"p-green"])}</span><span class="xs muted">${esc(i.agent)} · ${esc(client(i.clientId).name)} · ${fd(i.date)}</span><span class="small">${esc(i.msg)}</span>${i.photo?`<img src="${i.photo}" alt="Report photo" style="max-width:140px;border-radius:8px">`:""}${i.status==="Open"?`<span class="btns"><button class="btn sm primary" data-act="incok" data-id="${i.id}">Mark as handled</button></span>`:""}</span></div>`).join(""):`<div class="empty">No reports.</div>`}</div></div>
+ <div class="section"><h2>Client support messages</h2><div class="card list">${tk.length?tk.map(t=>`<div class="item static" style="align-items:flex-start"><span class="grow stack" style="gap:6px"><span class="row between"><b class="t">${esc(client(t.clientId).name)}</b><span class="row" style="gap:6px">${t.urgent?`<span class="pill p-red">Urgent</span>`:""}${pill([t.status,t.status==="Open"?"p-blue":"p-green"])}</span></span><span class="xs muted">${esc(t.subject)} · ${fd(t.date)}</span><span class="small">${esc(t.msg)}</span>${t.reply?`<span class="note small"><b>Your reply:</b> ${esc(t.reply)}</span>`:""}${t.status==="Open"?`<label class="f">Reply<textarea id="rep-${t.id}" rows="2" placeholder="Your reply to the client"></textarea></label><span class="btns"><button class="btn sm primary" data-act="tkreply" data-id="${t.id}">Reply and close</button></span>`:""}</span></div>`).join(""):`<div class="empty">No messages.</div>`}</div></div>
+ <div class="section"><h2>Cleaning requests</h2></div>
+ <div class="card list">${l.length?l.map(r=>`<div class="item static" style="align-items:flex-start"><span class="grow stack" style="gap:4px"><span class="row between"><b class="t">${esc(client(r.clientId).name)}</b>${pill([r.status,r.status==="New"?"p-blue":r.status==="Scheduled"?"p-green":"p-grey"])}</span><span class="small">${esc(r.service)} · wanted on ${fd(r.wanted)}</span>${r.notes?`<span class="xs muted">${esc(r.notes)}</span>`:""}${r.status==="New"?`<span class="btns" style="margin-top:4px"><button class="btn sm primary" data-act="planreq" data-id="${r.id}">Schedule</button><button class="btn sm" data-act="refusereq" data-id="${r.id}">Decline</button></span>`:""}</span></div>`).join(""):`<div class="empty">No requests.</div>`}</div>`}
+function vReglages(){const s=S.settings;return`${back("Settings","Your company")}
+ <div class="card pad"><form class="stack" id="setf">
+ <label class="f">Company name<input id="s-name" value="${esc(s.name)}"></label>
+ <div class="grid2"><label class="f">Your first name<input id="s-owner" value="${esc(s.owner)}"></label><label class="f">Sales tax (%)<input id="s-tva" type="number" step="any" value="${s.tva}"></label></div>
+ <label class="f">Address<input id="s-addr" value="${esc(s.addr)}"></label>
+ <div class="grid2"><label class="f">Phone<input id="s-phone" value="${esc(s.phone)}"></label><label class="f">Email<input id="s-email" value="${esc(s.email)}"></label></div>
+ <div class="grid2"><label class="f">Business ID (EIN)<input id="s-siret" value="${esc(s.siret)}"></label><label class="f">Payment terms (days)<input id="s-delay" type="number" value="${s.delay}"></label></div>
+ <label class="f">Bank details / payment link<input id="s-iban" value="${esc(s.iban)}"></label>
+ <div class="grid2"><label class="f">Currency<select id="s-cur">${Object.entries(CURS).map(([k,v])=>`<option value="${k}" ${k===(s.currency||"USD")?"selected":""}>${esc(v)}</option>`).join("")}</select></label><label class="f">Price per sq ft per visit<input id="s-m2" type="number" step="any" value="${s.m2}"></label></div>
+ <div class="xs muted">The price per sq ft is used to price quotes automatically from a site visit.</div>
+ <button class="btn primary" type="submit">Save</button></form></div>
+ <div class="section">${pitch()}</div>
+ <div class="section"><button class="btn danger block" data-act="reset">Reset the demo</button></div>`}
+const pitch=()=>`<div class="pitch"><div class="row" style="gap:10px"><img src="${LOGO}" alt="" style="width:44px;height:44px;border-radius:50%"><div class="eyebrow">Full version · SACKO CONCEPT</div></div><h2 style="color:#fff">Your app, under your brand</h2><div class="small" style="opacity:.85">Your logo and colors, accounts for your whole team, a secure client portal, cloud backup, and Android &amp; iPhone apps.</div><button class="btn gold" style="align-self:flex-start" data-act="offer">What's included</button></div>`;
+
+/* ================= CLIENT SPACE ================= */
+function cHeader(eyebrow,title){const c=client(me);return`${demoBar()}<div class="top"><div class="grow"><div class="eyebrow">${eyebrow}</div><h1>${title}</h1></div><button class="avatar" data-act="cmenu" aria-label="My account" style="background:var(--accent);color:var(--accent-ink)">${esc(c.name[0])}</button></div>`}
+const myDocs=()=>S.docs.filter(d=>d.clientId===me&&d.type!=="visite");
+function vCAccueil(){const c=client(me);
+ const nx=S.jobs.filter(j=>j.clientId===me&&j.date>=today()&&!["Cancelled","Completed"].includes(j.status)).sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start))[0];
+ const owe=S.docs.filter(d=>d.clientId===me).reduce((a,f)=>a+reste(f),0);
+ const todo=myDocs().filter(d=>(d.type==="devis"&&d.status==="Sent")||d.status==="To sign");
+ const unpaid=myDocs().filter(d=>reste(d)>0);
+ const rate=S.jobs.filter(j=>j.clientId===me&&j.status==="Completed"&&!j.rating);
+ return`${cHeader("Client portal · "+esc(S.settings.name),"Hi "+esc(first(c.contact)))}
+ <div class="hero"><div class="eyebrow">Next cleaning</div>${nx?`<div class="big" style="font-size:26px">${JOURS[new Date(nx.date+"T12:00:00").getDay()]} ${fd(nx.date)} · ${nx.start}</div><div class="sub"><span>${esc(nx.service)}</span><span>Cleaner: ${esc(first(nx.agent))}</span></div>`:`<div class="big" style="font-size:22px">None scheduled</div><div class="sub"><a href="#c-demande" style="color:var(--gold);font-weight:700">Request a cleaning ›</a></div>`}</div>
+ <div class="kpis" style="margin-top:14px"><div class="kpi ${owe?"alert":""}"><div class="eyebrow">Balance due</div><div class="v">${eur(owe)}</div></div><div class="kpi"><div class="eyebrow">To sign</div><div class="v">${todo.length}</div><div class="xs muted">document${todo.length>1?"s":""}</div></div></div>
+ ${todo.length?`<div class="section"><h2>Awaiting your approval</h2><div class="card list">${todo.map(docItem).join("")}</div></div>`:""}
+ ${unpaid.length?`<div class="section"><h2>Invoices to pay</h2><div class="card list">${unpaid.map(docItem).join("")}</div></div>`:""}
+ ${rate.length?`<div class="section"><h2>Rate your cleaning</h2><div class="card list">${rate.map(j=>`<button class="item" data-act="rate" data-id="${j.id}"><span class="grow"><div class="t">${esc(j.service)}</div><div class="xs muted">${fd(j.date)} · ${esc(j.agent)}</div></span><span style="color:var(--gold);font-size:18px">☆☆☆☆☆</span></button>`).join("")}</div></div>`:""}
+ <div class="section"><div class="qa" style="margin-top:0"><button data-go="c-demande">${svg("plus")}Request</button><button data-go="c-docs">${svg("doc")}Documents</button><button data-go="c-inter">${svg("cal")}History</button><button data-go="c-support">${svg("help")}Support</button></div></div>
+ <div class="section"><div class="card pad stack" style="gap:6px"><div class="eyebrow">Your contact</div><b>${esc(S.settings.name)}</b><span class="small muted num" style="user-select:all">${esc(S.settings.phone)} · ${esc(S.settings.email)}</span></div></div>`}
+function vCDocs(){const l=myDocs().sort((a,b)=>b.date.localeCompare(a.date));return`${cHeader("Client portal","My documents")}<div class="card list">${l.length?l.map(docItem).join(""):`<div class="empty">No documents.</div>`}</div>`}
+function vCInter(){const l=S.jobs.filter(j=>j.clientId===me).sort((a,b)=>(b.date+b.start).localeCompare(a.date+a.start));
+ const up=l.filter(j=>j.date>=today()&&!["Completed","Cancelled"].includes(j.status)).reverse(),past=l.filter(j=>!up.includes(j));
+ const row=j=>`<div class="item static"><span class="grow"><div class="t">${esc(j.service)}</div><div class="xs muted">${JOURS[new Date(j.date+"T12:00:00").getDay()]} ${fd(j.date)} · ${j.start}–${j.end} · ${esc(first(j.agent))}</div>${j.rating?`<div class="xs" style="color:var(--gold)">${"★".repeat(j.rating.stars)}</div>`:""}</span>${j.status==="Completed"&&!j.rating?`<button class="btn sm gold" data-act="rate" data-id="${j.id}">Rate</button>`:pill([j.status,{"Completed":"p-green","Cancelled":"p-red","In progress":"p-blue"}[j.status]||"p-grey"])}</div>`;
+ return`${cHeader("Client portal","Cleanings")}<div class="section" style="margin-top:0"><h2>Upcoming</h2><div class="card list">${up.map(row).join("")||`<div class="empty">Nothing scheduled.</div>`}</div></div><div class="section"><h2>History</h2><div class="card list">${past.map(row).join("")||`<div class="empty">No cleanings yet.</div>`}</div></div>`}
+function vCDemande(){const mine=S.requests.filter(r=>r.clientId===me).sort((a,b)=>b.date.localeCompare(a.date));return`${cHeader("Client portal","Request a cleaning")}
+ <div class="card pad"><form class="stack" id="reqf"><label class="f">Service<select id="r-s">${opts(S.catalog.map(s=>s.name))}</select></label><label class="f">Preferred date<input id="r-d" type="date" value="${off(3)}" required></label><label class="f">Details<textarea id="r-n" rows="3" placeholder="Size, access, preferred hours…"></textarea></label><button class="btn primary" type="submit">Send request</button></form></div>
+ ${mine.length?`<div class="section"><h2>My requests</h2><div class="card list">${mine.map(r=>`<div class="item static"><span class="grow"><div class="t">${esc(r.service)}</div><div class="xs muted">Wanted on ${fd(r.wanted)}</div></span>${pill([r.status==="New"?"Sent":r.status,r.status==="Scheduled"?"p-green":r.status==="Declined"?"p-red":"p-blue"])}</div>`).join("")}</div></div>`:""}`}
+
+
+function vCSupport(){const mine=S.tickets.filter(t=>t.clientId===me).sort((a,b)=>b.date.localeCompare(a.date));const ph=S.settings.phone,dig=ph.replace(/[^\d+]/g,"");
+ return`${cHeader("Client portal","Support")}
+ <div class="hero"><div class="eyebrow">A question or an issue?</div><div class="big" style="font-size:24px">The ${esc(S.settings.name)} team is here to help</div><div class="sub"><span>Monday to Saturday, 8 am – 7 pm</span></div></div>
+ <div class="grid2" style="margin-top:14px"><a class="btn primary" href="tel:${dig}">Call</a><a class="btn dark" href="mailto:${esc(S.settings.email)}">Email</a></div>
+ <div class="card pad" style="margin-top:10px"><dl class="kv"><dt>Phone</dt><dd class="num" style="user-select:all">${esc(ph)}</dd><dt>Email</dt><dd style="user-select:all">${esc(S.settings.email)}</dd></dl></div>
+ <div class="section"><h2>Send a message</h2><div class="card pad"><form class="stack" id="tkf">
+ <label class="f">Subject<select id="tk-s">${opts(["Cleaning job","Reschedule an appointment","Invoice or payment","Quote or contract","Quality complaint","Other"])}</select></label>
+ <label class="f">Your message<textarea id="tk-m" rows="4" required placeholder="Describe your request…"></textarea></label>
+ <label class="ck"><input type="checkbox" id="tk-u"> It's urgent</label>
+ <button class="btn primary" type="submit">Send to support</button></form></div></div>
+ ${mine.length?`<div class="section"><h2>My messages</h2><div class="card list">${mine.map(t=>`<div class="item static" style="align-items:flex-start"><span class="grow stack" style="gap:6px"><span class="row between"><b class="t">${esc(t.subject)}</b>${pill([t.status==="Open"?"In progress":"Answered",t.status==="Open"?"p-blue":"p-green"])}</span><span class="xs muted">Sent on ${fd(t.date)}</span><span class="small">${esc(t.msg)}</span>${t.reply?`<span class="note small"><b>Reply:</b> ${esc(t.reply)}</span>`:""}</span></div>`).join("")}</div></div>`:""}
+ <div class="section"><h2>FAQ</h2><div class="card list">
+ <details class="item static" style="display:block"><summary style="font-weight:600;cursor:pointer">How do I change the date of a cleaning?</summary><div class="small muted" style="margin-top:6px">Send a message with the subject “Reschedule an appointment”. We'll offer you a new time slot.</div></details>
+ <details class="item static" style="display:block"><summary style="font-weight:600;cursor:pointer">How do I pay my invoice?</summary><div class="small muted" style="margin-top:6px">Open the invoice in “Documents”, pay by bank transfer or card, then tap “I've paid this invoice”.</div></details>
+ <details class="item static" style="display:block"><summary style="font-weight:600;cursor:pointer">I'm not happy with a cleaning</summary><div class="small muted" style="margin-top:6px">Choose “Quality complaint”. We'll come back for free if a planned task wasn't done.</div></details>
+ </div></div>`}
+
+
+/* ================= CLEANER SPACE ================= */
+const meAgent=()=>S.team.find(a=>a.id===me)||S.team[0];
+function aHeader(eyebrow,title){const a=meAgent();return`${demoBar()}<div class="top"><div class="grow"><div class="eyebrow">${eyebrow}</div><h1>${title}</h1></div><button class="avatar" data-act="amenu" aria-label="My account" style="background:var(--gold);color:#fff">${esc(a.name[0])}</button></div>`}
+const myJobs=()=>S.jobs.filter(j=>j.agent===meAgent().name&&j.status!=="Cancelled");
+function agentCard(j){const c=client(j.clientId),pl=jobPlace(j);const done=j.status==="Completed";
+ return`<div class="card pad stack" style="gap:8px"><div class="row between"><span class="num" style="font-family:var(--display);font-weight:800;font-size:20px">${j.start} – ${j.end}</span>${pill([done?"Completed":j.checkin?"In progress":"To do",done?"p-green":j.checkin?"p-blue":"p-grey"])}</div>
+ <div><b>${esc(c.name)}</b>${pl.name?` <span class="xs muted">· ${esc(pl.name)}</span>`:""}<div class="small muted">${esc(j.service)}</div></div>
+ <a class="small" href="${mapLink(pl.addr)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">${esc(pl.addr)} · Directions ›</a>
+ ${pl.access?`<div class="access"><b>Access &amp; instructions:</b> ${esc(pl.access)}</div>`:""}${c.notes?`<div class="xs muted">${esc(c.notes)}</div>`:""}
+ ${j.checkin?`<div class="xs" style="color:var(--accent);font-weight:600">Clocked in at ${j.checkin.time}${j.checkout?" · out "+j.checkout.time:""}</div>`:""}
+ ${done?"":`<div class="btns">${j.checkin?`<button class="btn primary" data-act="ajobdone" data-id="${j.id}">Complete the job</button>`:`<button class="btn primary" data-act="checkin" data-id="${j.id}">I've arrived</button>`}<button class="btn" data-act="incident" data-id="${j.id}">Report</button></div>`}</div>`}
+function vAJour(){const a=meAgent();const t=today();const l=myJobs().filter(j=>j.date===t).sort((x,y)=>x.start.localeCompare(y.start));const h=new Date().getHours();
+ return`${aHeader(new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"}),(h<12?"Good morning, ":h<18?"Good afternoon, ":"Good evening, ")+esc(first(a.name)))}
+ ${isAbsent(a.name,t)?`<div class="note" style="margin-bottom:12px">You have approved time off today.</div>`:""}
+ <div class="hero"><div class="eyebrow">My day</div><div class="big" style="font-size:28px">${l.length} job${l.length>1?"s":""}</div><div class="sub"><span>${l.reduce((x,j)=>x+toH(j.end)-toH(j.start),0)} h planned</span><span>${l.filter(j=>j.status==="Completed").length} completed</span></div></div>
+ <div class="section">${l.length?l.map(agentCard).join(""):`<div class="card empty">No jobs today.</div>`}</div>`}
+function vASemaine(){const days=[...Array(7)].map((_,i)=>off(i));return`${aHeader("Next 7 days","My schedule")}
+ ${days.map(d=>{const l=myJobs().filter(j=>j.date===d).sort((x,y)=>x.start.localeCompare(y.start));return`<div class="section"><div class="row between"><h2>${d===today()?"Today":JOURS[new Date(d+"T12:00:00").getDay()]+" "+fd(d)}</h2>${isAbsent(meAgent().name,d)?`<span class="pill p-amber">Off</span>`:`<span class="small muted">${l.length} job${l.length>1?"s":""}</span>`}</div>${l.length?l.map(j=>{const c=client(j.clientId),pl=jobPlace(j);return`<div class="card pad row" style="gap:12px"><b class="num">${j.start}</b><span class="grow"><div class="t">${esc(c.name)}</div><div class="xs muted">${esc(pl.addr)}</div></span>${pill([j.status==="Completed"?"Done":"Planned",j.status==="Completed"?"p-green":"p-grey"])}</div>`}).join(""):""}</div>`}).join("")}`}
+function vAHeures(){const a=meAgent();const m=today().slice(0,7);const done=myJobs().filter(j=>j.date.slice(0,7)===m&&j.status==="Completed").sort((x,y)=>y.date.localeCompare(x.date));const h=done.reduce((x,j)=>x+jobHours(j),0);const plan=myJobs().filter(j=>j.date.slice(0,7)===m).reduce((x,j)=>x+toH(j.end)-toH(j.start),0);const ab=S.absences.filter(x=>x.agent===a.name).sort((x,y)=>y.from.localeCompare(x.from));
+ return`${aHeader("This month","My hours")}
+ <div class="kpis"><div class="kpi"><div class="eyebrow">Hours worked</div><div class="v">${h.toFixed(1)} h</div><div class="xs muted">based on clock-in</div></div><div class="kpi"><div class="eyebrow">Planned this month</div><div class="v">${plan} h</div></div></div>
+ <div class="section"><h2>My completed jobs</h2><div class="card list">${done.length?done.map(j=>`<div class="item static"><span class="grow"><div class="t">${esc(client(j.clientId).name)}</div><div class="xs muted num">${fd(j.date)} · ${j.checkin?j.checkin.time:j.start} → ${j.checkout?j.checkout.time:j.end}</div></span><b class="num small">${jobHours(j).toFixed(1)} h</b></div>`).join(""):`<div class="empty">Nothing this month.</div>`}</div></div>
+ <div class="section"><h2>Request time off</h2><div class="card pad"><form class="stack" id="absf"><div class="grid2"><label class="f">From<input id="ab-f" type="date" value="${off(7)}" required></label><label class="f">To<input id="ab-t" type="date" value="${off(7)}" required></label></div><label class="f">Reason<select id="ab-r">${opts(["Vacation","Sick leave","Doctor's appointment","Family reason","Other"])}</select></label><button class="btn primary" type="submit">Send request</button></form></div></div>
+ ${ab.length?`<div class="section"><h2>My requests</h2><div class="card list">${ab.map(x=>`<div class="item static"><span class="grow"><div class="t">${esc(x.reason)}</div><div class="xs muted">${x.from===x.to?fd(x.from):fd(x.from)+" → "+fd(x.to)}</div></span>${pill([x.status,x.status==="Approved"?"p-green":x.status==="Declined"?"p-grey":"p-amber"])}</div>`).join("")}</div></div>`:""}`}
+function vASignal(){const a=meAgent();const l=S.incidents.filter(i=>i.agent===a.name).sort((x,y)=>y.date.localeCompare(x.date));return`${aHeader("An issue on site?","Report")}
+ <button class="btn primary block" data-act="incident">Report a problem</button>
+ <div class="xs muted" style="margin-top:8px">Missing supplies, breakage, client not home, no access: your manager is notified right away.</div>
+ <div class="section"><h2>My reports</h2><div class="card list">${l.length?l.map(i=>`<div class="item static" style="align-items:flex-start"><span class="grow"><div class="t">${esc(i.type)}</div><div class="xs muted">${esc(client(i.clientId).name)} · ${fd(i.date)}</div><div class="small">${esc(i.msg)}</div></span>${pill([i.status==="Open"?"Sent":"Handled",i.status==="Open"?"p-blue":"p-green"])}</div>`).join(""):`<div class="empty">No reports.</div>`}</div></div>`}
+function sIncident(jid){const a=meAgent();const today_=myJobs().filter(j=>j.date===today());let photo=null;
+ sheet(`<form class="stack" id="incf"><h2>Report a problem</h2>
+ <label class="f">Job<select id="in-j">${(today_.length?today_:myJobs().slice(-5)).map(j=>`<option value="${j.id}" ${j.id===jid?"selected":""}>${j.start} · ${esc(client(j.clientId).name)}</option>`).join("")}</select></label>
+ <label class="f">Type<select id="in-t">${opts(["Missing supplies","Breakage or damage","Client not home","No access","Running late","Other"])}</select></label>
+ <label class="f">Details<textarea id="in-m" rows="3" required placeholder="What's happening?"></textarea></label>
+ <label class="btn" style="cursor:pointer">${svg("plus")} Add a photo<input type="file" id="in-p" accept="image/*" capture="environment" hidden></label><div id="in-prev"></div>
+ <button class="btn primary" type="submit">Send to manager</button></form>`);
+ $("#in-p").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{photo=await imgToData(f,560);$("#in-prev").innerHTML=`<img src="${photo}" alt="Preview" style="max-width:140px;border-radius:8px">`}catch(_){}};
+ $("#incf").onsubmit=e=>{e.preventDefault();const j=S.jobs.find(x=>x.id===$("#in-j").value);const m=$("#in-m").value.trim();if(!m){toast("Describe the problem");return}
+  S.incidents.push({id:uid(),agent:a.name,clientId:j?j.clientId:S.clients[0].id,jobId:j?j.id:null,date:today(),type:$("#in-t").value,msg:m,photo,status:"Open"});if(j)log(j.clientId,`Report from ${first(a.name)}: ${$("#in-t").value}`);save();closeSheet();render();toast("Report sent to your manager")}}
+function checkin(jid){const j=S.jobs.find(x=>x.id===jid);let done=false;
+ const rec=pos=>{if(done)return;done=true;j.checkin={time:nowHM()};if(pos&&pos.coords){j.checkin.lat=+pos.coords.latitude.toFixed(5);j.checkin.lng=+pos.coords.longitude.toFixed(5)}j.status="In progress";log(j.clientId,`${first(j.agent)} arrived at ${j.checkin.time}${j.checkin.lat?" (location saved)":""}`);save();render();toast("Clocked in at "+j.checkin.time+(j.checkin.lat?" · location saved":""))};
+ try{if(navigator.geolocation){navigator.geolocation.getCurrentPosition(rec,()=>rec(null),{timeout:8000,maximumAge:60000,enableHighAccuracy:true});setTimeout(()=>rec(null),9000)}else rec(null)}catch(e){rec(null)}}
+function sAMenu(){const a=meAgent();sheet(`<div class="stack"><div class="row"><div class="avatar" style="background:var(--gold);color:#fff">${esc(a.name[0])}</div><div class="grow"><h2>${esc(a.name)}</h2><div class="xs muted">${esc(a.role)} · ${esc(S.settings.name)}</div></div></div>
+ <div class="card pad"><dl class="kv"><dt>Manager</dt><dd>${esc(S.settings.owner)}</dd><dt>Phone</dt><dd class="num" style="user-select:all">${esc(S.settings.phone)}</dd></dl></div>
+ <a class="btn primary block" href="${waLink(S.settings.phone,"Hi, it's "+first(a.name)+".")}">Text my manager</a>
+ <button class="btn block" data-act="switch">${svg("swap")} Back to manager space</button><button class="btn block" data-act="logout">Log out</button></div>`)}
+
+/* ---------- Login ---------- */
+function vLogin(){return`<div class="login"><div class="brand"><div class="mark">N</div><div><h1>NettoPro</h1><div class="small muted">Premium management for cleaning companies</div></div></div>
+ <div class="demo" style="margin:0"><span><b>DEMO</b> · pick a space</span><span class="row" style="gap:6px"><span class="muted">by SACKO CONCEPT</span><img src="${LOGO}" alt="" class="sclogo"></span></div>
+ <button class="role" data-act="login-admin"><span class="ic" style="background:var(--forest);color:var(--gold)">${svg("shield")}</span><span class="grow"><h2>Manager space</h2><span class="small muted">Clients, follow-ups, schedule, quotes, invoices, contracts, team and reports</span></span><span aria-hidden="true">›</span></button>
+ <div class="role" style="flex-direction:column;align-items:stretch;cursor:default"><div class="row" style="gap:14px"><span class="ic" style="background:var(--accent-soft);color:var(--accent)">${svg("user")}</span><span class="grow"><h2>Client portal</h2><span class="small muted">Clients track their cleanings, sign quotes and contracts, view and pay their invoices</span></span></div>
+ <label class="f">Log in as<select id="login-c">${S.clients.filter(c=>c.status!=="Lost").map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("")}</select></label><button class="btn primary" data-act="login-client">Open the client portal</button></div>
+ <div class="role" style="flex-direction:column;align-items:stretch;cursor:default"><div class="row" style="gap:14px"><span class="ic" style="background:var(--gold-soft);color:var(--gold)">${svg("team")}</span><span class="grow"><h2>Cleaner space</h2><span class="small muted">Cleaners see their schedule and access codes, clock in, take photos, get the client's signature and report issues</span></span></div>
+ <label class="f">Log in as<select id="login-a">${S.team.map(a=>`<option value="${a.id}">${esc(a.name)} · ${esc(a.role)}</option>`).join("")}</select></label><button class="btn gold" data-act="login-agent">Open the cleaner space</button></div>
+ <div class="xs muted" style="text-align:center">In the full version, each user logs in with their own email and password.</div></div>`}
+
+/* ================= SHEETS ================= */
+function sheet(html){$("#layer").innerHTML=`<div class="overlay" data-act="close"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`}
+function closeSheet(){$("#layer").innerHTML=""}
+
+function sClient(id){const c=S.clients.find(x=>x.id===id);if(!c)return;
+ const docs=S.docs.filter(d=>d.clientId===id).sort((a,b)=>b.date.localeCompare(a.date));const rels=openRels(id);const acts=S.act.filter(a=>a.clientId===id);
+ const ca=S.docs.filter(d=>d.clientId===id&&d.type==="facture").reduce((a,f)=>a+paid(f),0);
+ sheet(`<div class="stack"><div class="row"><div class="avatar">${esc(c.name[0])}</div><div class="grow"><h2>${esc(c.name)}</h2><div class="row wrap" style="gap:6px;margin-top:4px"><span class="pill ${STATUS[c.status]}">${c.status}</span><span class="pill p-grey">${esc(c.type)}</span></div></div></div>
+ <div class="kpis"><div class="kpi"><div class="eyebrow">Revenue collected</div><div class="v" style="font-size:19px">${eur(ca)}</div></div><div class="kpi"><div class="eyebrow">Potential</div><div class="v" style="font-size:19px">${c.value?eur(c.value):"—"}</div><div class="xs muted">per month</div></div></div>
+ <div class="card pad"><dl class="kv"><dt>Contact</dt><dd>${esc(c.contact)}</dd><dt>Phone</dt><dd class="num" style="user-select:all">${esc(c.phone)}</dd><dt>Email</dt><dd style="user-select:all">${esc(c.email||"—")}</dd><dt>Address</dt><dd>${esc(c.addr)}</dd>${c.access?`<dt>Access</dt><dd>${esc(c.access)}</dd>`:""}${c.notes?`<dt>Notes</dt><dd>${esc(c.notes)}</dd>`:""}</dl></div>
+ <div class="row between"><span class="eyebrow">Service locations</span><button class="btn sm" data-act="addsite" data-id="${id}">+ Location</button></div>
+ ${c.sites&&c.sites.length?`<div class="card list">${c.sites.map(st=>`<div class="item static" style="align-items:flex-start"><span class="grow"><div class="t">${esc(st.name)}</div><div class="xs muted">${esc(st.addr)}</div>${st.access?`<div class="access" style="margin-top:6px">${esc(st.access)}</div>`:""}</span></div>`).join("")}</div>`:`<div class="xs muted">Single location: the main address.</div>`}
+ <label class="f">Status<select id="c-status">${opts(Object.keys(STATUS),c.status)}</select></label>
+ <div class="btns"><button class="btn primary" data-act="newdoc" data-type="devis" data-id="${id}">Quote</button><button class="btn" data-act="newdoc" data-type="facture" data-id="${id}">Invoice</button><button class="btn" data-act="newcontrat" data-id="${id}">Contract</button><button class="btn" data-act="newvisite" data-id="${id}">Site visit</button><button class="btn" data-act="newjob" data-id="${id}">Schedule</button><button class="btn" data-act="newrel" data-id="${id}">Follow-up</button></div>
+ <div class="eyebrow" style="margin-top:6px">Upcoming follow-ups</div><div class="card list">${rels.length?rels.map(relItem).join(""):`<div class="empty">No follow-ups planned.</div>`}</div>
+ ${docs.length?`<div class="eyebrow">Documents</div><div class="card list">${docs.map(docItem).join("")}</div>`:""}
+ <div class="eyebrow">History</div><form class="row" id="notef"><input id="note" class="search" placeholder="Add a note (call, visit…)" aria-label="Note"><button class="btn primary" type="submit">OK</button></form>
+ <div class="card pad"><div class="timeline">${acts.length?acts.map(a=>`<div class="tl"><i></i><div><div class="small">${esc(a.text)}</div><div class="xs muted">${fdy(a.date)}</div></div></div>`).join(""):`<div class="empty">No history yet.</div>`}</div></div></div>`);
+ $("#c-status").onchange=e=>{c.status=e.target.value;log(id,"Status changed: "+c.status);save();render();sClient(id)};
+ $("#notef").onsubmit=e=>{e.preventDefault();const v=$("#note").value.trim();if(!v)return;log(id,v);save();sClient(id);toast("Note added")};
+}
+
+function sRel(id){const r=S.rel.find(x=>x.id===id);if(!r)return;const c=client(r.clientId);const d=S.docs.find(x=>x.id===r.docId);const[tl,tc]=RTYPE[r.type];
+ sheet(`<div class="stack"><div><h2>${esc(c.name)}</h2><div class="row wrap" style="gap:6px;margin-top:4px"><span class="pill ${tc}">${tl}</span>${r.total>1?`<span class="pill p-grey">Follow-up ${r.step}/${r.total}</span>`:""}${pill(relState(r))}</div></div>
+ ${d?`<button class="item card" data-act="doc" data-id="${d.id}"><span class="grow"><div class="t">${d.num}</div><div class="xs muted">${fd(d.date)}</div></span><b class="num small">${eur(d.type==="facture"?reste(d):ttc(d))}</b>${pill(dState(d))}</button>`:""}
+ <div class="card pad"><dl class="kv"><dt>Contact</dt><dd>${esc(c.contact)}</dd><dt>Phone</dt><dd class="num" style="user-select:all">${esc(c.phone)}</dd><dt>Email</dt><dd style="user-select:all">${esc(c.email||"—")}</dd></dl></div>
+ ${r.status==="open"?`<label class="f">Channel<select id="r-ch">${opts(["Email","SMS","WhatsApp","Call","Visit"],r.channel)}</select></label>
+ <label class="f">Message (editable)<textarea id="msg" class="ta">${esc(msgFor(r))}</textarea></label>
+ <div class="grid2"><a class="btn primary" id="r-mail" href="#">Send by email</a><a class="btn" id="r-wa" href="#">Send by SMS</a></div>
+ <button class="btn dark block" data-act="copymsg">Copy message</button>
+ <div class="eyebrow">Follow-up result</div>
+ <div class="btns"><button class="btn primary" data-act="relres" data-id="${r.id}" data-v="Interested">Interested</button><button class="btn" data-act="relres" data-id="${r.id}" data-v="No answer">No answer</button><button class="btn" data-act="relres" data-id="${r.id}" data-v="Call back later">Call back</button><button class="btn danger" data-act="relres" data-id="${r.id}" data-v="Declined">Declined</button></div>
+ <button class="btn block" data-act="relpush" data-id="${r.id}">Postpone 2 days</button>`:`<div class="note">Follow-up ${r.status==="done"?"done":"cancelled"}${r.result?" · "+esc(r.result):""}.</div>`}
+ <button class="btn block" data-act="client" data-id="${c.id}">Open client profile</button></div>`);
+ const ch=$("#r-ch");if(ch)ch.onchange=e=>{r.channel=e.target.value;save()};
+ const upd=()=>{const m=$("#msg");if(!m)return;const w=$("#r-wa"),ml=$("#r-mail");if(w)w.href=waLink(c.phone,m.value);if(ml)ml.href="mailto:"+(c.email||"")+"?subject="+encodeURIComponent(S.settings.name)+"&body="+encodeURIComponent(m.value)};upd();const mm=$("#msg");if(mm)mm.addEventListener("input",upd);
+}
+
+function sNewClient(){sheet(`<form class="stack" id="ncf"><h2>New client</h2>
+ <label class="f">Name or company<input id="n-name" required></label>
+ <div class="grid2"><label class="f">Contact<input id="n-contact"></label><label class="f">Phone<input id="n-phone" inputmode="tel"></label></div>
+ <label class="f">Email<input id="n-email" type="email"></label><label class="f">Address<input id="n-addr"></label>
+ <div class="grid2"><label class="f">Type<select id="n-type">${opts(["Residential","Business","HOA","Retail","Public sector"],"Business")}</select></label><label class="f">Status<select id="n-status">${opts(Object.keys(STATUS),"Lead")}</select></label></div>
+ <label class="f">Monthly potential (${curSym()})<input id="n-value" type="number" inputmode="decimal"></label>
+ <label class="ck"><input type="checkbox" id="n-seq" checked> Schedule 2 prospecting follow-ups (day 2 and day 7)</label>
+ <button class="btn primary" type="submit">Add client</button></form>`);
+ $("#ncf").onsubmit=e=>{e.preventDefault();const nm=$("#n-name").value.trim();const c={id:uid(),name:nm,contact:$("#n-contact").value.trim()||nm,phone:$("#n-phone").value.trim(),email:$("#n-email").value.trim(),addr:$("#n-addr").value.trim(),type:$("#n-type").value,status:$("#n-status").value,value:+$("#n-value").value||0,notes:"",created:today()};S.clients.unshift(c);log(c.id,"Client profile created");
+  if($("#n-seq").checked){addRel(c.id,"prospect",off(2),null,1,2);addRel(c.id,"prospect",off(7),null,2,2)}save();closeSheet();go("clients");toast("Client added with follow-ups")}}
+
+function sNewRel(cid){sheet(`<form class="stack" id="nrf"><h2>Schedule a follow-up</h2><label class="f">Client<select id="nr-c">${clientOpts(cid)}</select></label>
+ <div class="grid2"><label class="f">Type<select id="nr-t">${Object.entries(RTYPE).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join("")}</select></label><label class="f">Date<input id="nr-d" type="date" value="${off(1)}"></label></div>
+ <button class="btn primary" type="submit">Schedule</button></form>`);
+ $("#nrf").onsubmit=e=>{e.preventDefault();const dd=$("#nr-d").value||off(1);addRel($("#nr-c").value,$("#nr-t").value,dd,null,1,1);save();closeSheet();relTab=diff(dd)>0?"avenir":diff(dd)<0?"retard":"jour";go("relances");toast("Follow-up scheduled")}}
+
+function sNewJob(cid,req){sheet(`<form class="stack" id="njf"><h2>Schedule a job</h2>
+ <label class="f">Client<select id="j-c">${clientOpts(cid)}</select></label>
+ <label class="f" id="j-site-w">Location<select id="j-site"></select></label>
+ <label class="f">Service<select id="j-s">${opts(S.catalog.map(s=>s.name),req?req.service:"")}</select></label>
+ <div class="grid2"><label class="f">Date<input id="j-d" type="date" value="${req?req.wanted:selDay||today()}" required></label><label class="f">Cleaner<select id="j-a">${opts(S.team.map(a=>a.name))}</select></label></div>
+ <div class="grid2"><label class="f">Start<input id="j-st" type="time" value="09:00" required></label><label class="f">End<input id="j-en" type="time" value="11:00" required></label></div>
+ <label class="f">Repeat<select id="j-r"><option value="1">Just once</option><option value="4">Weekly · 4 weeks</option><option value="8">Weekly · 8 weeks</option><option value="12">Weekly · 12 weeks</option></select></label>
+ <button class="btn primary" type="submit">Schedule</button></form>`);
+ const fillSites=()=>{const c=client($("#j-c").value);const ss=c.sites||[];$("#j-site-w").hidden=!ss.length;$("#j-site").innerHTML=ss.map((x,i)=>`<option value="${i}">${esc(x.name)} · ${esc(x.addr)}</option>`).join("")};fillSites();$("#j-c").onchange=fillSites;
+ $("#njf").onsubmit=e=>{e.preventDefault();const d0=$("#j-d").value;if($("#j-en").value<=$("#j-st").value){toast("End time must be after start time");return}const n=+$("#j-r").value;for(let i=0;i<n;i++)S.jobs.push({id:uid(),clientId:$("#j-c").value,service:$("#j-s").value,date:addDays(d0,i*7),agent:$("#j-a").value,start:$("#j-st").value,end:$("#j-en").value,status:"Scheduled",site:$("#j-site-w").hidden?undefined:+$("#j-site").value});
+  if(isAbsent($("#j-a").value,d0))toast("Heads up: this cleaner is off that day");
+  if(req){req.status="Scheduled";log(req.clientId,"Request scheduled for "+fd(d0))}else log($("#j-c").value,(n>1?n+" jobs scheduled starting ":"Job scheduled for ")+fd(d0));
+  selDay=d0;const wdT=(new Date(today()+"T12:00:00").getDay()+6)%7;weekOff=Math.floor((diff(d0)+wdT)/7);save();closeSheet();go("planning");toast(n>1?n+" jobs scheduled":"Job scheduled")}}
+
+function lineHTML(sel,q){return`<div class="line"><select class="l-s" aria-label="Service">${S.catalog.map((s,i)=>`<option value="${i}" ${s.name===sel?"selected":""}>${esc(s.name)} · ${eur(s.price)}/${esc(s.unit)}</option>`).join("")}</select><input class="l-q" type="number" inputmode="decimal" value="${q||1}" min="0" step="any" aria-label="Quantity"><button type="button" class="x" data-rm="1" aria-label="Remove line">×</button></div>`}
+function freeLine(n,p,q){return`<div class="line cl"><input class="l-n" value="${esc(n||"")}" placeholder="Service" aria-label="Service"><input class="l-p" type="number" step="any" inputmode="decimal" value="${p??""}" placeholder="Price" aria-label="Unit price excl. tax"><input class="l-q" type="number" step="any" inputmode="decimal" value="${q??1}" aria-label="Quantity"><button type="button" class="x" data-rm="1" aria-label="Remove line">×</button></div>`}
+function sDocForm(type,cid,preset){const isF=type==="facture";
+ sheet(`<form class="stack" id="ndf"><h2>${isF?"New invoice":"New quote"}</h2>
+ <label class="f">Client<select id="d-c">${clientOpts(cid)}</select></label>
+ <div class="row between"><span class="eyebrow">Services</span><span class="eyebrow">Quantity</span></div>
+ ${preset?`<div class="note">Quote priced automatically from the site visit. Adjust prices if needed.</div>`:""}
+ <div class="stack" id="lines" style="gap:8px">${preset?preset.map(l=>freeLine(l.s,l.p,l.q)).join(""):lineHTML()}</div>
+ <div class="btns"><button type="button" class="btn sm" id="addl">+ Catalog service</button><button type="button" class="btn sm" id="addf">+ Custom line</button></div>
+ <div class="grid2"><label class="f">Discount (%)<input id="d-rem" type="number" min="0" max="100" step="any" value="0"></label><label class="f">Date<input id="d-date" type="date" value="${today()}"></label></div>
+ <div class="card pad"><div class="row between small muted"><span>Subtotal</span><span class="num" id="t-ht"></span></div><div class="row between small muted"><span>Sales tax ${S.settings.tva}%</span><span class="num" id="t-tva"></span></div><div class="row between" style="margin-top:6px"><b>Total</b><b class="num" id="t-ttc" style="font-family:var(--display);font-size:21px"></b></div></div>
+ <div class="note">${isF?"2 payment reminders will be scheduled: on the due date, then 7 days later.":"3 follow-ups will be scheduled automatically: day 2, day 7 and day 15."}</div>
+ <button class="btn primary" type="submit">${isF?"Issue invoice":"Create and send quote"}</button></form>`);
+ const lineVal=l=>{if(l.classList.contains("cl"))return{s:l.querySelector(".l-n").value.trim()||"Service",u:"flat rate",p:+l.querySelector(".l-p").value||0,q:+l.querySelector(".l-q").value||0};const s=S.catalog[l.querySelector(".l-s").value];return{s:s.name,u:s.unit,p:s.price,q:+l.querySelector(".l-q").value||0}};
+ const recalc=()=>{let h=0;$$("#lines .line").forEach(l=>{const v=lineVal(l);h+=v.p*v.q});h*=1-(+$("#d-rem").value||0)/100;const t=h*S.settings.tva/100;$("#t-ht").textContent=eur(h);$("#t-tva").textContent=eur(t);$("#t-ttc").textContent=eur(h+t)};
+ $("#ndf").addEventListener("input",recalc);$("#ndf").addEventListener("change",recalc);
+ $("#addl").onclick=()=>{$("#lines").insertAdjacentHTML("beforeend",lineHTML());recalc()};$("#addf").onclick=()=>{$("#lines").insertAdjacentHTML("beforeend",freeLine());recalc()};
+ $("#lines").addEventListener("click",e=>{if(e.target.dataset.rm&&$$("#lines .line").length>1){e.target.closest(".line").remove();recalc()}});
+ recalc();
+ $("#ndf").onsubmit=e=>{e.preventDefault();const lines=$$("#lines .line").map(lineVal).filter(l=>l.q>0);
+  if(!lines.length){toast("Add at least one service");return}
+  const c=S.clients.find(x=>x.id===$("#d-c").value);const d={id:uid(),type,num:nextNum(type),clientId:c.id,date:$("#d-date").value||today(),lines,remise:+$("#d-rem").value||0};
+  if(isF){d.pays=[];seqFacture(d);log(c.id,`Invoice ${d.num} issued (${eur(ttc(d))})`)}else{d.status="Sent";seqDevis(d);if(["Lead","Negotiation"].includes(c.status))c.status="Quote sent";S.rel.forEach(r=>{if(r.clientId===c.id&&r.type==="prospect"&&r.status==="open")r.status="cancel"});log(c.id,`Quote ${d.num} sent (${eur(ttc(d))})`)}
+  S.docs.push(d);save();docTab=type;go("documents");sDoc(d.id);toast(isF?"Invoice issued · reminders scheduled":"Quote created · 3 follow-ups scheduled")}}
+
+function sContrat(cid){sheet(`<form class="stack" id="nctf"><h2>New cleaning contract</h2>
+ <label class="f">Client<select id="ct-c">${clientOpts(cid)}</select></label>
+ <div class="eyebrow">Cleaning days</div><div class="row wrap" style="gap:6px">${[1,2,3,4,5,6,7].map(d=>`<label class="ck" style="padding:8px 10px"><input type="checkbox" class="ct-day" value="${d}" ${[1,3,5].includes(d)?"checked":""}>${WD[d]}</label>`).join("")}</div>
+ <div class="grid2"><label class="f">Visit start<input id="ct-t1" type="time" value="18:30"></label><label class="f">End<input id="ct-t2" type="time" value="20:30"></label></div>
+ <label class="f">Assigned cleaner<select id="ct-a">${opts(S.team.map(a=>a.name))}</select></label>
+ <label class="f">Included services<textarea id="ct-s" rows="3">Floor and surface cleaning, restrooms, trash removal, interior windows once a month.</textarea></label>
+ <div class="grid2"><label class="f">Amount excl. tax / month<input id="ct-m" type="number" step="any" value="760" required></label><label class="f">Term (months)<input id="ct-d" type="number" value="12"></label></div>
+ <div class="grid2"><label class="f">Start date<input id="ct-st" type="date" value="${off(7)}"></label><label class="f">Notice (months)<input id="ct-n" type="number" value="1"></label></div>
+ <div class="note">The contract appears in the client portal, ready to sign. Once signed, all visits are added to the schedule automatically.</div>
+ <button class="btn primary" type="submit">Generate contract</button></form>`);
+ $("#nctf").onsubmit=e=>{e.preventDefault();const days=$$(".ct-day:checked").map(x=>+x.value);if(!days.length){toast("Pick at least one cleaning day");return}const d={id:uid(),type:"contrat",num:nextNum("contrat"),clientId:$("#ct-c").value,date:today(),status:"To sign",days,t1:$("#ct-t1").value,t2:$("#ct-t2").value,agent:$("#ct-a").value,freq:`${days.length} visit${days.length>1?"s":""} per week (${days.map(x=>WD[x]).join(", ")}), from ${$("#ct-t1").value} to ${$("#ct-t2").value}`,services:$("#ct-s").value,monthly:+$("#ct-m").value||0,months:+$("#ct-d").value||12,start:$("#ct-st").value||today(),notice:+$("#ct-n").value||1};
+  S.docs.push(d);log(d.clientId,`Contract ${d.num} sent for signature`);save();docTab="contrat";go("documents");sDoc(d.id);toast("Contract generated · visible in the client portal")}}
+
+function sVisite(cid){const B=["Floors","Windows","Restrooms","Kitchen","Disinfection","Carpet","Trash","Common areas"];
+ sheet(`<form class="stack" id="nvf"><h2>Site visit</h2><label class="f">Client<select id="v-c">${clientOpts(cid)}</select></label>
+ <div class="grid2"><label class="f">Type of premises<select id="v-l">${opts(["Offices","Retail store","Clinic / medical office","Condo / HOA building","Hotel / restaurant","Home"])}</select></label><label class="f">Size (sq ft)<input id="v-s" type="number" value="1600"></label></div>
+ <div class="grid2"><label class="f">Restrooms<input id="v-w" type="number" value="2"></label><label class="f">Desired frequency<select id="v-f">${opts(["One-off","Once a week","2–3 times a week","Every day"])}</select></label></div>
+ <label class="f">Available hours<input id="v-h" value="Before 8 am or after 6 pm"></label>
+ <div class="eyebrow">Needs</div><div class="checks">${B.map(b=>`<label class="ck"><input type="checkbox" value="${b}" class="v-b" ${["Floors","Restrooms"].includes(b)?"checked":""}>${b}</label>`).join("")}</div>
+ <label class="f">Notes<textarea id="v-n" rows="3" placeholder="Access, equipment, constraints…"></textarea></label>
+ <button class="btn primary" type="submit">Save the visit</button></form>`);
+ $("#nvf").onsubmit=e=>{e.preventDefault();const d={id:uid(),type:"visite",num:nextNum("visite"),clientId:$("#v-c").value,date:today(),status:"Done",locaux:$("#v-l").value,surface:+$("#v-s").value||0,sanitaires:+$("#v-w").value||0,freq:$("#v-f").value,horaires:$("#v-h").value,besoins:$$(".v-b:checked").map(x=>x.value),notes:$("#v-n").value};
+  S.docs.push(d);log(d.clientId,`Site visit completed (${d.surface.toLocaleString("en-US")} sq ft)`);save();docTab="visite";go("documents");sDoc(d.id);toast("Visit saved")}}
+
+function initPad(cv){const r=window.devicePixelRatio||1;const w=cv.clientWidth,h=cv.clientHeight;cv.width=w*r;cv.height=h*r;const x=cv.getContext("2d");x.scale(r,r);x.lineWidth=2.4;x.lineCap="round";x.lineJoin="round";x.strokeStyle="#14302A";let draw=false,has=false,last=null;
+ const p=e=>{const b=cv.getBoundingClientRect();return[e.clientX-b.left,e.clientY-b.top]};
+ cv.addEventListener("pointerdown",e=>{draw=true;last=p(e);try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+ cv.addEventListener("pointermove",e=>{if(!draw)return;const q=p(e);x.beginPath();x.moveTo(last[0],last[1]);x.lineTo(q[0],q[1]);x.stroke();last=q;has=true});
+ ["pointerup","pointercancel","pointerleave"].forEach(t=>cv.addEventListener(t,()=>draw=false));
+ return{clear:()=>{x.clearRect(0,0,w,h);has=false},empty:()=>!has,data:()=>cv.toDataURL("image/png")}}
+function sBon(jid){const j=S.jobs.find(x=>x.id===jid);const c=client(j.clientId);
+ sheet(`<div class="stack"><h2>Job completion</h2><div class="small muted">${esc(c.name)} · ${esc(j.service)} · ${j.start}–${j.end} · ${esc(j.agent)}</div>
+ <div class="eyebrow">Quality checklist</div><div class="card pad tasks">${Object.entries(CHECK).map(([z,ts])=>`<div class="eyebrow" style="margin-top:6px;color:var(--accent)">${z}</div>${ts.map(t=>`<label class="ck"><input type="checkbox" class="bk" value="${esc(z+" · "+t)}" checked>${esc(t)}</label>`).join("")}`).join("")}</div>
+ <div class="eyebrow">Before / after photos (4 max)</div><label class="btn" style="cursor:pointer">${svg("plus")} Take or add photos<input type="file" id="b-ph" accept="image/*" capture="environment" multiple hidden></label><div class="photos" id="b-prev"></div>
+ <div class="eyebrow">Supplies used</div><div class="card list">${S.stock.map(p=>`<div class="item static"><span class="grow small">${esc(p.name)} <span class="xs muted">(${p.qty} in stock)</span></span><input type="number" min="0" step="1" value="0" class="b-use" data-id="${p.id}" aria-label="Quantity of ${esc(p.name)}" style="width:64px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:6px;font:600 14px var(--body);text-align:center"></div>`).join("")}</div>
+ <label class="f">Notes<textarea id="b-obs" rows="2" placeholder="Nothing to report"></textarea></label>
+ <div class="eyebrow">Client signature</div><canvas class="sigpad" id="pad" aria-label="Signature area"></canvas><div class="row between"><button class="btn sm" id="clr" type="button">Clear</button><span class="xs muted">Sign with your finger</span></div>
+ <button class="btn primary block" id="bok">Confirm and generate the work order</button></div>`);
+ const pad=initPad($("#pad"));$("#clr").onclick=()=>pad.clear();let photos=[];
+ $("#b-ph").onchange=async e=>{for(const f of [...e.target.files]){if(photos.length>=4)break;try{photos.push(await imgToData(f,560))}catch(_){}}$("#b-prev").innerHTML=photos.map(p=>`<img src="${p}" alt="Job photo">`).join("");e.target.value=""};
+ $("#bok").onclick=()=>{const used=[];$$(".b-use").forEach(i=>{const q=+i.value||0;if(q>0){const p=S.stock.find(x=>x.id===i.dataset.id);if(p){p.qty=Math.max(0,p.qty-q);used.push(q+" × "+p.name)}}});if(!j.checkin)j.checkin={time:j.start};j.checkout={time:nowHM()<j.checkin.time?j.end:nowHM()};const checks={};$$(".bk").forEach(x=>checks[x.value]=x.checked);const tot=Object.keys(checks).length,ok=Object.values(checks).filter(Boolean).length;const sg=!pad.empty();
+  j.status="Completed";const d={id:uid(),type:"bon",num:nextNum("bon"),clientId:j.clientId,date:j.date,status:sg?"Signed":"To sign",sig:sg?pad.data():null,signedAt:sg?today():null,job:{start:j.start,end:j.end,agent:j.agent,service:j.service,in:j.checkin.time,out:j.checkout.time,place:jobPlace(j).addr},checks,score:Math.round(ok/tot*100),obs:$("#b-obs").value.trim()||"Nothing to report",photos,used};
+  S.docs.push(d);addRel(j.clientId,"satisfaction",off(1),null,1,1);log(j.clientId,`Job completed · work order ${d.num} (${d.score}%)${photos.length?" · "+photos.length+" photo"+(photos.length>1?"s":""):""}`);save();render();sDoc(d.id);toast(used.length?"Work order generated · supplies updated":"Work order generated · satisfaction check tomorrow")}}
+function sSign(docId){const d=S.docs.find(x=>x.id===docId);sheet(`<div class="stack"><h2>Sign ${d.type==="devis"?"the quote":d.type==="contrat"?"the contract":"the work order"}</h2><div class="small muted">${d.num} · ${esc(client(d.clientId).name)}${d.type==="devis"?" · "+eur(ttc(d))+" incl. tax":d.type==="contrat"?" · "+eur(d.monthly)+" excl. tax / month":""}</div>
+ <div class="note">By signing, you accept ${d.type==="devis"?"the quote and its terms (30% deposit upon signature)":d.type==="contrat"?"the terms of the contract":"that the job was completed properly"}.</div>
+ <canvas class="sigpad" id="pad" aria-label="Signature area"></canvas><div class="row between"><button class="btn sm" id="clr" type="button">Clear</button><span class="xs muted">Sign with your finger</span></div>
+ <button class="btn primary block" id="sok">Sign and confirm</button></div>`);
+ const pad=initPad($("#pad"));$("#clr").onclick=()=>pad.clear();
+ $("#sok").onclick=()=>{if(pad.empty()){toast("Sign inside the box to confirm");return}d.sig=pad.data();d.signedAt=today();
+  if(d.type==="devis")acceptDevis(d);else{d.status="Signed";log(d.clientId,`${d.num} signed electronically`);if(d.type==="contrat"){addRel(d.clientId,"renouvellement",addDays(d.start,d.months*30-30),d.id,1,1);const c=S.clients.find(x=>x.id===d.clientId);if(c){c.status="Active client";c.value=Math.max(c.value||0,d.monthly)}var nj=genContractJobs(d)}}
+  save();render();sDoc(d.id);toast(nj?`Contract signed · ${nj} visits added to the schedule`:"Document signed")}}
+function acceptDevis(d){d.status="Accepted";cancelRels(d.id);const c=S.clients.find(x=>x.id===d.clientId);if(c)c.status="Active client";log(d.clientId,`Quote ${d.num} accepted${d.sig?" and signed":""}`)}
+
+function paperHead(d,title){const c=client(d.clientId);return`<div class="band"></div>
+ <div class="row between" style="align-items:flex-start;gap:8px"><div class="row" style="align-items:flex-start;gap:10px;min-width:0"><div class="logo">${esc(S.settings.name[0])}</div><div style="min-width:0"><b style="font-size:13.5px;color:#1E5B41">${esc(S.settings.name)}</b><div style="color:#6b7a72;font-size:10.5px">${esc(S.settings.addr)}<br>${esc(S.settings.phone)}</div></div></div><div style="text-align:right;flex:none"><div class="title">${title}</div><div style="font-size:10.5px;color:#6b7a72">${d.num}<br>${fdy(d.date)}</div></div></div>
+ <div class="lbl">${d.type==="visite"?"Prospect / client":"Bill to"}</div><b>${esc(c.name)}</b><div style="color:#555;font-size:11.5px">${esc(c.contact)} · ${esc(c.addr||"")}</div>`}
+function sigBlock(d,left){return`<div class="sigs"><div class="sig">${left||"For "+esc(S.settings.name)}<div style="font-family:var(--display);font-size:16px;color:#1E5B41;margin-top:14px">${esc(left?"":S.settings.owner)}</div></div><div class="sig">Client signature${d.sig?`<img src="${d.sig}" alt="Client signature"><div>Signed on ${fdy(d.signedAt)}</div>`:d.signedAt?`<div style="margin-top:14px;color:#1E5B41;font-weight:700">Signed electronically on ${fdy(d.signedAt)}</div>`:`<div style="margin-top:14px">Awaiting signature</div>`}</div></div>`}
+function paper(d){const T={devis:"QUOTE",facture:d.kind==="acompte"?"DEPOSIT INVOICE":"INVOICE",avoir:"CREDIT NOTE",contrat:"CONTRACT",bon:"WORK ORDER",visite:"SITE VISIT"}[d.type];
+ let b=paperHead(d,T);
+ if(["devis","facture","avoir"].includes(d.type)){const sg=d.type==="avoir"?-1:1;
+  b+=`${d.ref?`<div style="font-size:11px;color:#6b7a72;margin-top:6px">Ref. ${esc(d.ref)}</div>`:""}<div class="tw"><table><thead><tr><th>Service</th><th class="r">Qty</th><th class="r">Unit price</th><th class="r">Amount</th></tr></thead><tbody>${d.lines.map(l=>`<tr><td>${esc(l.s)}</td><td class="r">${l.q} ${esc(l.u)}</td><td class="r">${eur(l.p)}</td><td class="r">${eur(sg*l.p*l.q)}</td></tr>`).join("")}</tbody></table></div>
+  <table class="tot">${d.remise?`<tr><td>Discount ${d.remise}%</td><td class="r">−${eur(gross(d)*d.remise/100)}</td></tr>`:""}<tr><td>Subtotal</td><td class="r">${eur(sg*ht(d))}</td></tr><tr><td>Sales tax ${S.settings.tva}%</td><td class="r">${eur(sg*tva(d))}</td></tr><tr class="ttc"><td>TOTAL</td><td class="r">${eur(sg*ttc(d))}</td></tr>
+  ${d.type==="facture"&&!d.cancelled?(d.pays||[]).map(p=>`<tr><td style="color:#1E5B41">${p.ok?"Paid":"Reported"} on ${fd(p.date)} · ${esc(p.mode)}</td><td class="r" style="color:#1E5B41">−${eur(p.amount)}</td></tr>`).join("")+`<tr><td><b>Balance due</b></td><td class="r"><b>${eur(reste(d))}</b></td></tr>`:""}</table>
+  <div class="lbl">Terms</div><div style="font-size:11px;color:#555">${d.type==="devis"?"Quote valid for 30 days. 30% deposit upon signature, balance due upon completion. Products and equipment provided. Fully insured (general liability).":d.type==="avoir"?"Credit note issued to cancel invoice "+esc(d.ref||"")+". Amount credited to your account.":d.cancelled?"Invoice cancelled by credit note.":"Due on "+fdy(due(d))+". Payment by bank transfer ("+esc(S.settings.iban)+") or card. Late fees may apply."}</div>
+  ${d.type==="devis"?sigBlock(d):""}`}
+ else if(d.type==="contrat"){const end=addDays(d.start,d.months*30);
+  b+=`<div class="art"><b>Section 1 · Purpose.</b> The provider will clean the client's premises located at ${esc(client(d.clientId).addr)}.</div>
+  <div class="art"><b>Section 2 · Services.</b> ${esc(d.services)}</div>
+  <div class="art"><b>Section 3 · Frequency.</b> ${esc(d.freq)}, according to a schedule agreed with the client.</div>
+  <div class="art"><b>Section 4 · Price.</b> ${eur(d.monthly)} per month excl. tax, i.e. ${eur(ttc(d))} incl. tax, invoiced at the start of each month and payable within ${S.settings.delay} days.</div>
+  <div class="art"><b>Section 5 · Term.</b> ${d.months} months starting ${fdy(d.start)}, until ${fdy(end)}, renewing automatically.</div>
+  <div class="art"><b>Section 6 · Termination.</b> Either party may terminate in writing with ${d.notice} month${d.notice>1?"s'":"'s"} notice.</div>
+  <div class="art"><b>Section 7 · Insurance and quality.</b> The provider carries general liability insurance. Each visit comes with a work order and a quality check.</div>${sigBlock(d)}`}
+ else if(d.type==="bon"){const ent=Object.entries(d.checks||{});
+  b+=`<div class="lbl">Job</div><div>${esc(d.job.service)} · scheduled ${d.job.start}–${d.job.end} · Cleaner: ${esc(d.job.agent)}</div>${d.job.in?`<div>Clock-in: ${d.job.in}${d.job.out?" · out "+d.job.out:""}</div>`:""}${d.job.place?`<div style="color:#555;font-size:11.5px">${esc(d.job.place)}</div>`:""}
+  ${ent.length?`<div class="tw"><table><thead><tr><th>Quality check</th><th class="r">Status</th></tr></thead><tbody>${ent.map(([k,v])=>`<tr><td>${esc(k)}</td><td class="r" style="color:${v?"#1E5B41":"#C2412D"};font-weight:700">${v?"✓ Done":"✗ Not done"}</td></tr>`).join("")}</tbody></table></div>`:""}
+  <table class="tot"><tr class="ttc"><td>Quality score</td><td class="r">${d.score}%</td></tr></table>
+  ${d.used&&d.used.length?`<div class="lbl">Supplies used</div><div>${d.used.map(esc).join(" · ")}</div>`:""}<div class="lbl">Notes</div><div>${esc(d.obs)}</div>${d.photos&&d.photos.length?`<div class="lbl">Photos</div><div class="photos" style="margin-top:6px">${d.photos.map(p=>`<img src="${p}" alt="Job photo">`).join("")}</div>`:""}${sigBlock(d,"Cleaner: "+esc(d.job.agent))}`}
+ else if(d.type==="visite"){b+=`<div class="tw"><table><tbody><tr><td>Type of premises</td><td class="r">${esc(d.locaux)}</td></tr><tr><td>Size</td><td class="r">${(+d.surface).toLocaleString("en-US")} sq ft</td></tr><tr><td>Restrooms</td><td class="r">${d.sanitaires}</td></tr><tr><td>Desired frequency</td><td class="r">${esc(d.freq)}</td></tr>${d.horaires?`<tr><td>Hours</td><td class="r">${esc(d.horaires)}</td></tr>`:""}</tbody></table></div><div class="lbl">Identified needs</div><div>${(d.besoins||[]).map(esc).join(" · ")||"—"}</div>${d.notes?`<div class="lbl">Notes</div><div>${esc(d.notes)}</div>`:""}`}
+ b+=`<div style="margin-top:14px;padding-top:8px;border-top:1px solid #edf3ef;font-size:10px;color:#8a9a92;text-align:center">${esc(S.settings.name)} · ${esc(S.settings.siret)} · ${esc(S.settings.email)}</div>`;
+ return`<div class="paper">${b}</div>`}
+
+function shareText(d){const c=client(d.clientId);const lab={devis:"quote",facture:"invoice",avoir:"credit note",contrat:"contract",bon:"work order",visite:"site visit report"}[d.type];const amt=d.type==="facture"?" for "+eur(reste(d)||ttc(d)):["devis","avoir"].includes(d.type)?" for "+eur(ttc(d)):"";return`Hi ${first(c.contact)}, here is your ${lab} ${d.num}${amt}. You can also find it in your client portal${d.status==="To sign"||(d.type==="devis"&&d.status==="Sent")?", ready to sign":""}.
+
+${S.settings.name} · ${S.settings.phone}`}
+function sDoc(id){const d=S.docs.find(x=>x.id===id);if(!d)return;const A=mode==="admin",CL=mode==="client";let act="";
+ if(A){
+  if(d.type==="devis"&&d.status==="Sent")act=`<button class="btn primary" data-act="accept" data-id="${d.id}">Client accepted</button><button class="btn" data-act="signdoc" data-id="${d.id}">Get it signed now</button><button class="btn danger" data-act="refuse" data-id="${d.id}">Declined</button>`;
+  if(d.type==="devis"&&d.status==="Accepted")act=`<button class="btn primary" data-act="invoice" data-id="${d.id}">Invoice${d.deposit?" the balance":""}</button>${d.deposit?"":`<button class="btn" data-act="deposit" data-id="${d.id}">30% deposit invoice</button>`}<button class="btn" data-act="tocontrat" data-id="${d.id}">Create a contract</button><button class="btn" data-act="tojob" data-id="${d.id}">Schedule</button>`;
+  if(d.type==="facture"&&!d.cancelled){const pend=(d.pays||[]).filter(p=>!p.ok);act=pend.map(p=>`<button class="btn gold" data-act="confirmpay" data-id="${d.id}" data-p="${p.id}">Confirm ${eur(p.amount)} received</button>`).join("")+(reste(d)>0?`<button class="btn primary" data-act="pay" data-id="${d.id}">Record a payment</button><button class="btn" data-act="remind" data-id="${d.id}">Payment reminder</button>`:"")+`<button class="btn" data-act="avoir" data-id="${d.id}">Issue a credit note</button>`}
+  if(["contrat","bon"].includes(d.type)&&d.status==="To sign")act=`<button class="btn primary" data-act="signdoc" data-id="${d.id}">Get it signed now</button>`;
+  if(d.type==="visite")act=`<button class="btn primary" data-act="devisvisite" data-id="${d.id}">Create the priced quote</button><button class="btn" data-act="newcontrat" data-id="${d.clientId}">Offer a contract</button>`;
+ }else if(CL){
+  if(d.type==="devis"&&d.status==="Sent")act=`<button class="btn primary" data-act="signdoc" data-id="${d.id}">Accept and sign</button>`;
+  if(d.status==="To sign")act=`<button class="btn primary" data-act="signdoc" data-id="${d.id}">Sign</button>`;
+  if(d.type==="facture"&&reste(d)>0)act=(d.pays||[]).some(p=>!p.ok)?`<div class="note">Payment reported, awaiting confirmation.</div>`:`<button class="btn primary" data-act="cpay" data-id="${d.id}">I've paid this invoice</button>`;
+ }
+ sheet(`<div class="stack">${paper(d)}<div class="row between">${pill(dState(d))}<button class="btn sm" data-act="close-btn">Close</button></div>${act?`<div class="btns">${act}</div>`:""}${A?`<div class="eyebrow">Send to client</div><div class="btns"><a class="btn primary" href="mailto:${esc(client(d.clientId).email||"")}?subject=${encodeURIComponent(d.num+" · "+S.settings.name)}&body=${encodeURIComponent(shareText(d))}">Email</a><a class="btn" href="${waLink(client(d.clientId).phone,shareText(d))}">SMS</a><button class="btn" data-act="print">Print or PDF</button></div>`:`<div class="btns"><button class="btn" data-act="print">Print or PDF</button></div>`}<div id="extra"></div></div>`)}
+
+function sPay(id){const d=S.docs.find(x=>x.id===id);sheet(`<form class="stack" id="pf"><h2>Record a payment</h2><div class="small muted">${d.num} · balance ${eur(reste(d))}</div>
+ <div class="grid2"><label class="f">Amount (${curSym()})<input id="p-a" type="number" step="any" value="${reste(d)}" required></label><label class="f">Date<input id="p-d" type="date" value="${today()}"></label></div>
+ <label class="f">Method<select id="p-m">${opts(["Bank transfer","Card","Cash","Check","Zelle / Venmo"])}</select></label><button class="btn primary" type="submit">Save</button></form>`);
+ $("#pf").onsubmit=e=>{e.preventDefault();const a=+$("#p-a").value;if(!(a>0)){toast("Enter an amount");return}d.pays=d.pays||[];d.pays.push({id:uid(),date:$("#p-d").value||today(),amount:a,mode:$("#p-m").value,ok:true});if(reste(d)<=0)cancelRels(d.id);log(d.clientId,`Payment received: ${eur(a)} (${$("#p-m").value})`);save();render();sDoc(d.id);toast(reste(d)<=0?"Invoice paid in full":"Partial payment recorded")}}
+function sCPay(id){const d=S.docs.find(x=>x.id===id);sheet(`<form class="stack" id="cpf"><h2>Report a payment</h2><div class="small muted">${d.num} · ${eur(reste(d))} due</div><div class="note">Payment details: ${esc(S.settings.iban)}</div>
+ <label class="f">Amount paid (${curSym()})<input id="cp-a" type="number" step="any" value="${reste(d)}"></label><label class="f">Method<select id="cp-m">${opts(["Bank transfer","Card","Check","Cash","Zelle / Venmo"])}</select></label><button class="btn primary" type="submit">Send</button></form>`);
+ $("#cpf").onsubmit=e=>{e.preventDefault();const a=+$("#cp-a").value||0;if(!(a>0)){toast("Enter an amount");return}d.pays=d.pays||[];d.pays.push({id:uid(),date:today(),amount:a,mode:$("#cp-m").value,ok:false});log(d.clientId,`Payment reported by client: ${eur(a)}`);save();render();sDoc(d.id);toast("Thank you! The company will confirm receipt")}}
+function sRate(jid){const j=S.jobs.find(x=>x.id===jid);let n=5;sheet(`<form class="stack" id="rtf"><h2>Your review</h2><div class="small muted">${esc(j.service)} · ${fd(j.date)} · ${esc(j.agent)}</div>
+ <div class="stars" id="stars">${[1,2,3,4,5].map(i=>`<button type="button" class="on" data-s="${i}" aria-label="${i} star${i>1?"s":""}">★</button>`).join("")}</div>
+ <label class="f">Comment<textarea id="rt-c" rows="3" placeholder="What did you like?"></textarea></label><button class="btn primary" type="submit">Send my review</button></form>`);
+ $("#stars").onclick=e=>{const s=e.target.dataset.s;if(!s)return;n=+s;$$("#stars button").forEach(b=>b.classList.toggle("on",+b.dataset.s<=n))};
+ $("#rtf").onsubmit=e=>{e.preventDefault();j.rating={stars:n,comment:$("#rt-c").value.trim()};S.rel.forEach(r=>{if(r.clientId===j.clientId&&r.type==="satisfaction"&&r.status==="open"){r.status="done";r.result="Rated "+n+"/5"}});log(j.clientId,`Client review: ${n}/5${j.rating.comment?" “"+j.rating.comment+"”":""}`);save();closeSheet();render();toast("Thanks for your review!")}}
+
+function sNotifs(){const n=notifs();sheet(`<div class="stack"><h2>Notifications</h2><div class="card list">${n.length?n.map(x=>`<button class="item" data-act="notifgo" data-go2="${x.go}" data-tab="${x.tab||""}"><span class="dot" style="background:var(${x.cls==="p-red"?"--red":x.cls==="p-gold"?"--gold":x.cls==="p-blue"?"--blue":"--amber"})"></span><span class="grow small" style="font-weight:600">${esc(x.t)}</span><span aria-hidden="true">›</span></button>`).join(""):`<div class="empty">You're all caught up.</div>`}</div></div>`)}
+function sMenu(){sheet(`<div class="stack"><div class="row"><div class="avatar">${esc(S.settings.name[0])}</div><div class="grow"><h2>${esc(S.settings.name)}</h2><div class="xs muted">Manager space · ${esc(S.settings.owner)}</div></div></div>${toolsGrid()}
+ <div class="grid2"><button class="btn" data-act="switch">${svg("swap")} Client portal</button><button class="btn" data-act="switchagent">${svg("swap")} Cleaner space</button></div><button class="btn block" data-act="logout">Log out</button>${pitch()}</div>`)}
+function sCMenu(){const c=client(me);sheet(`<div class="stack"><div class="row"><div class="avatar" style="background:var(--accent);color:var(--accent-ink)">${esc(c.name[0])}</div><div class="grow"><h2>${esc(c.name)}</h2><div class="xs muted">${esc(c.email||c.contact)}</div></div></div>
+ <div class="card pad"><dl class="kv"><dt>Address</dt><dd>${esc(c.addr)}</dd><dt>Phone</dt><dd>${esc(c.phone)}</dd></dl></div>
+ <button class="btn block" data-act="switch">${svg("swap")} Back to manager space</button><button class="btn block" data-act="logout">Log out</button></div>`)}
+function sOffer(){sheet(`<div class="stack"><div class="row" style="gap:12px"><img src="${LOGO}" alt="SACKO CONCEPT" style="width:56px;height:56px;border-radius:50%"><h2>NettoPro full version</h2></div><div class="small muted">Set up and branded for your company by SACKO CONCEPT.</div>
+ ${[["Standard","Web app under your brand · manager and client spaces · up to 50 cleaners · follow-ups, quotes, invoices, contracts, e-signature"],["Premium","Everything in Standard · Android and iPhone apps under your brand · unlimited cleaners · GPS clock-in and photos · profitability reports"],["Peace of mind","Everything in Premium · online payments included · we handle everything for you: data, updates, priority support"]].map(([n,d],i)=>`<div class="card pad stack" style="gap:4px;${i===1?"outline:2px solid var(--gold)":""}"><div class="row between"><h3>${n}</h3>${i===1?`<span class="pill p-gold">Most popular</span>`:""}</div><div class="small muted">${d}</div></div>`).join("")}
+ <div class="note">Your own data can be imported (Excel / CSV), and every screen can be adapted to the way your company works.</div>
+ <div class="xs muted" style="text-align:center">Interested? Send me a message on the platform where you found this demo.</div></div>`)}
+function sAddStock(){sheet(`<form class="stack" id="asf"><h2>New product</h2><label class="f">Name<input id="as-n" required></label><div class="grid2"><label class="f">Quantity<input id="as-q" type="number" value="10"></label><label class="f">Alert level<input id="as-m" type="number" value="5"></label></div><label class="f">Unit<input id="as-u" value="piece"></label><button class="btn primary" type="submit">Add</button></form>`);
+ $("#asf").onsubmit=e=>{e.preventDefault();S.stock.push({id:uid(),name:$("#as-n").value.trim(),qty:+$("#as-q").value||0,min:+$("#as-m").value||0,unit:$("#as-u").value});save();closeSheet();render();toast("Product added")}}
+
+
+
+/* ---------- TASKS & REMINDERS ---------- */
+let taskWeekOff=0,taskDay="";
+const PRIO={"High":"p-red","Normal":"p-blue","Low":"p-grey"};
+function taskRow(t){const late=!t.done&&(diff(t.date)<0||(diff(t.date)===0&&t.time<=nowHM()));
+ return`<div class="item static"><input type="checkbox" ${t.done?"checked":""} data-act="tdone" data-id="${t.id}" aria-label="Mark “${esc(t.title)}” as done" style="width:22px;height:22px;accent-color:var(--accent);flex:none;cursor:pointer"><span class="grow"><div class="t" style="${t.done?"text-decoration:line-through;color:var(--muted)":""}">${esc(t.title)}</div><div class="row xs wrap" style="gap:6px;margin-top:3px"><span class="num muted">${diff(t.date)===0?"":fd(t.date)+" · "}${t.time}</span><span class="pill ${PRIO[t.prio]}">${t.prio}</span>${t.repeat!=="none"?`<span class="pill p-gold">${t.repeat==="weekly"?"Weekly":"Daily"}</span>`:""}${late?`<span class="pill p-red">${diff(t.date)<0?"Overdue":"Now"}</span>`:""}</div></span><button class="x" style="width:36px" data-act="tdel" data-id="${t.id}" aria-label="Delete task">×</button></div>`}
+function vTaches(){const base=addDays(today(),taskWeekOff*7);const wd=(new Date(base+"T12:00:00").getDay()+6)%7;const mon=addDays(base,-wd);const days=[...Array(7)].map((_,i)=>addDays(mon,i));
+ if(!days.includes(taskDay))taskDay=days.includes(today())?today():days[0];
+ const l=S.tasks.filter(t=>t.date===taskDay).sort((a,b)=>(a.done-b.done)||a.time.localeCompare(b.time));
+ const wk=S.tasks.filter(t=>days.includes(t.date));const late=S.tasks.filter(t=>!t.done&&diff(t.date)<0);
+ let perm="unsupported";try{if("Notification"in window)perm=Notification.permission}catch(e){}
+ return`${back("Tasks &amp; reminders","Week of "+fd(mon))}
+ ${perm==="granted"?`<div class="note" style="margin-bottom:12px">Reminders are on for this device: a notification appears at the time of each task.</div>`:perm==="unsupported"?`<div class="note" style="margin-bottom:12px">Reminders appear inside the app at the scheduled time.</div>`:`<button class="btn dark block" style="margin-bottom:12px" data-act="notifperm">${svg("bell")} Turn on reminders on this phone</button>`}
+ <div class="kpis" style="margin-bottom:12px"><div class="kpi"><div class="eyebrow">This week</div><div class="v">${wk.filter(t=>t.done).length}/${wk.length}</div><div class="xs muted">tasks done</div></div><div class="kpi ${late.length?"alert":""}"><div class="eyebrow">Overdue</div><div class="v">${late.length}</div><div class="xs muted">to reschedule or do</div></div></div>
+ <div class="row between" style="margin-bottom:10px"><button class="btn sm" data-act="twk" data-v="-1">‹ Prev</button><span class="small muted">Week of ${fd(mon)}</span><button class="btn sm" data-act="twk" data-v="1">Next ›</button></div>
+ <div class="week">${days.map(d=>{const dt=new Date(d+"T12:00:00");const n=S.tasks.filter(t=>t.date===d&&!t.done).length;return`<button class="day ${d===taskDay?"on":""} ${d===today()?"today":""}" data-act="tday" data-v="${d}">${JOURS[dt.getDay()]}<b>${dt.getDate()}</b><span class="m ${n?"":"off"}"></span></button>`}).join("")}</div>
+ ${late.length&&taskDay===today()?`<div class="section"><h2>Overdue</h2><div class="card list">${late.map(taskRow).join("")}</div></div>`:""}
+ <div class="section"><div class="row between"><h2>${taskDay===today()?"Today":JOURS[new Date(taskDay+"T12:00:00").getDay()]+" "+fd(taskDay)}</h2><span class="small muted">${l.filter(t=>!t.done).length} to do</span></div><div class="card list">${l.length?l.map(taskRow).join(""):`<div class="empty">No tasks that day. Tap “+ Task”.</div>`}</div></div>`}
+function sNewTask(){sheet(`<form class="stack" id="ntf"><h2>New task</h2>
+ <label class="f">What needs to be done?<input id="t-t" required placeholder="E.g. call a client, order supplies…"></label>
+ <div class="grid2"><label class="f">Date<input id="t-d" type="date" value="${taskDay||today()}" required></label><label class="f">Reminder time<input id="t-h" type="time" value="09:00" required></label></div>
+ <div class="grid2"><label class="f">Priority<select id="t-p">${opts(["High","Normal","Low"],"Normal")}</select></label><label class="f">Repeat<select id="t-r"><option value="none">No</option><option value="daily">Daily</option><option value="weekly">Weekly</option></select></label></div>
+ <div class="note">When the time comes, NettoPro sends you a reminder.</div>
+ <button class="btn primary" type="submit">Schedule task</button></form>`);
+ $("#ntf").onsubmit=e=>{e.preventDefault();const t={id:uid(),title:$("#t-t").value.trim(),date:$("#t-d").value,time:$("#t-h").value,prio:$("#t-p").value,repeat:$("#t-r").value,done:false,notified:false};S.tasks.push(t);taskDay=t.date;const wdT=(new Date(today()+"T12:00:00").getDay()+6)%7;taskWeekOff=Math.floor((diff(t.date)+wdT)/7);save();closeSheet();go("taches");toast("Task scheduled · reminder on "+fd(t.date)+" at "+t.time)}}
+function checkReminders(){if(mode!=="admin")return;const now=nowHM(),t0=today();let hit=0;
+ S.tasks.forEach(t=>{if(t.done||t.notified||t.date!==t0||t.time>now)return;t.notified=true;hit++;
+  toast("⏰ Reminder: "+t.title);
+  try{if("Notification"in window&&Notification.permission==="granted")new Notification("NettoPro · reminder",{body:t.time+" · "+t.title,icon:LOGO})}catch(e){}});
+ if(hit){save();render()}}
+setInterval(checkReminders,30000);
+
+/* ---------- EXCEL / CSV IMPORT ---------- */
+const IMPORT={
+ clients:{title:"Import your clients",cols:["Name","Contact","Phone","Email","Address","Type","Status","Monthly potential"],ex:["Grand Atlantic Hotel","Mark Davis","(555) 123-4567","contact@grandatlantic.com","300 Ocean Dr, Miami, FL","Retail","Lead","540"],
+  map:{name:["name","company","business","client","nom","entreprise"],contact:["contact","contact name","first name","manager","owner"],phone:["phone","telephone","tel","mobile","cell","whatsapp"],email:["email","e-mail","mail"],addr:["address","city","location","street"],type:["type","category"],status:["status","stage"],value:["potential","amount","value","budget","monthly"]}},
+ tarifs:{title:"Import your prices",cols:["Service","Unit","Price excl. tax"],ex:["Office cleaning","visit","95"],
+  map:{name:["service","name","description","item"],unit:["unit","uom"],price:["price","rate","amount","cost"]}}};
+const norm=s=>String(s??"").trim().toLowerCase();
+function parseCSV(t){t=t.replace(/^﻿/,"");const first=t.split(/\r?\n/)[0]||"";const sep=(first.match(/;/g)||[]).length>(first.match(/,/g)||[]).length?";":(first.includes("\t")?"\t":",");
+ const rows=[];let row=[],cur="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){cur+='"';i++}else q=false}else cur+=ch}else if(ch==='"')q=true;else if(ch===sep){row.push(cur);cur=""}else if(ch==="\n"||ch==="\r"){if(ch==="\r"&&t[i+1]==="\n")i++;row.push(cur);rows.push(row);row=[];cur=""}else cur+=ch}
+ if(cur!==""||row.length){row.push(cur);rows.push(row)}return rows.filter(r=>r.some(c=>String(c).trim()!==""))}
+function mapRows(kind,rows){const spec=IMPORT[kind].map;const head=rows[0].map(norm);const idx={};
+ for(const[k,al]of Object.entries(spec)){const i=head.findIndex(h=>al.some(a=>h===a||h.startsWith(a)));if(i>=0)idx[k]=i}
+ const hasHead=Object.keys(idx).length>0;const body=hasHead?rows.slice(1):rows;
+ if(!hasHead){Object.keys(spec).forEach((k,i)=>idx[k]=i)}
+ return body.map(r=>{const o={};for(const k in idx)o[k]=String(r[idx[k]]??"").trim();return o}).filter(o=>o.name)}
+let pending=null;
+function sImport(kind){const I=IMPORT[kind];pending=null;
+ sheet(`<div class="stack"><h2>${I.title}</h2><div class="small muted">Excel file (.xlsx) or CSV. The first row holds the column titles, in any order.</div>
+ <div class="card pad"><div class="eyebrow" style="margin-bottom:8px">Recognized columns</div><div class="row wrap" style="gap:6px">${I.cols.map(c=>`<span class="pill p-grey">${esc(c)}</span>`).join("")}</div></div>
+ <button class="btn" data-act="tpl" data-v="${kind}">Download the template</button>
+ <label class="f">Choose your file<input type="file" id="imp-file" accept=".csv,.xlsx,.xls,text/csv"></label>
+ <div id="imp-prev"></div>
+ <div class="note">In the full version, SACKO CONCEPT imports your data for you: just send your file.</div></div>`);
+ $("#imp-file").onchange=async e=>{const f=e.target.files[0];if(!f)return;let rows=[];
+  try{if(/\.xlsx?$/i.test(f.name)){if(!window.XLSX){toast("Excel reading unavailable here: save the file as CSV");return}const wb=XLSX.read(await f.arrayBuffer(),{type:"array"});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:""})}else rows=parseCSV(await f.text())}catch(err){toast("Unreadable file: check the format");return}
+  if(!rows.length){toast("The file is empty");return}
+  const items=mapRows(kind,rows);pending={kind,items};
+  $("#imp-prev").innerHTML=items.length?`<div class="stack"><div class="eyebrow">${items.length} row${items.length>1?"s":""} ready to import</div><div class="card list">${items.slice(0,5).map(o=>`<div class="item static"><span class="grow"><div class="t">${esc(o.name)}</div><div class="xs muted">${esc(kind==="clients"?[o.contact,o.phone,o.addr].filter(Boolean).join(" · "):curSym()+(o.price||"?")+" / "+(o.unit||"flat rate"))}</div></span></div>`).join("")}${items.length>5?`<div class="item static xs muted">and ${items.length-5} more…</div>`:""}</div><button class="btn primary block" data-act="doimport">Import ${items.length} row${items.length>1?"s":""}</button></div>`:`<div class="note">No rows recognized. Make sure the “${kind==="clients"?"Name":"Service"}” column is filled in.</div>`};
+}
+function doImport(){if(!pending)return;const{kind,items}=pending;let n=0;
+ if(kind==="clients"){const ST=Object.keys(STATUS),TY=["Residential","Business","HOA","Retail","Public sector"];
+  items.forEach(o=>{if(S.clients.some(c=>norm(c.name)===norm(o.name)))return;const st=ST.find(x=>norm(x)===norm(o.status))||"Lead";const ty=TY.find(x=>norm(x)===norm(o.type))||"Business";
+   const c={id:uid(),name:o.name,contact:o.contact||o.name,phone:o.phone||"",email:o.email||"",addr:o.addr||"",type:ty,status:st,value:parseFloat(String(o.value||"").replace(/[\s,$]/g,""))||0,notes:"",created:today()};S.clients.push(c);log(c.id,"Client imported from a file");n++})}
+ else items.forEach(o=>{const p=parseFloat(String(o.price||"").replace(/[\s,$]/g,""));if(!(p>=0))return;const ex=S.catalog.find(s=>norm(s.name)===norm(o.name));if(ex){ex.price=p;if(o.unit)ex.unit=o.unit}else S.catalog.push({name:o.name,unit:o.unit||"flat rate",price:p});n++});
+ pending=null;save();closeSheet();render();toast(n?`${n} row${n>1?"s":""} imported`:"Nothing new to import (duplicates skipped)")}
+function downloadTpl(kind){const I=IMPORT[kind];const csv="﻿"+[I.cols,I.ex].map(r=>r.map(c=>/[,"\n]/.test(c)?`"${c.replace(/"/g,'""')}"`:c).join(",")).join("\r\n");
+ try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download=`nettopro-${kind}-template.csv`;document.body.appendChild(a);a.click();a.remove();toast("Template downloaded")}catch(e){toast("Download unavailable here")}}
+
+/* ================= RENDER & ROUTING ================= */
+const ADMIN={taches:vTaches,accueil:vAccueil,clients:vClients,planning:vPlanning,relances:vRelances,documents:vDocuments,rapports:vRapports,stock:vStock,equipe:vEquipe,tarifs:vTarifs,demandes:vDemandes,reglages:vReglages};
+const AGENT={"a-jour":vAJour,"a-semaine":vASemaine,"a-heures":vAHeures,"a-signal":vASignal};
+const AGTABS=[["a-jour","Today","home"],["a-semaine","Week","cal"],["a-heures","My hours","chart"],["a-signal","Report","inbox"]];
+const CLIENT={"c-accueil":vCAccueil,"c-docs":vCDocs,"c-inter":vCInter,"c-demande":vCDemande,"c-support":vCSupport};
+const ATABS=[["accueil","Home","home"],["clients","Clients","users"],["planning","Schedule","cal"],["relances","Follow-ups","send"],["documents","Documents","doc"]];
+const CTABS=[["c-accueil","Home","home"],["c-docs","Documents","doc"],["c-inter","Cleanings","cal"],["c-demande","Request","plus"],["c-support","Support","help"]];
+const FAB={taches:["Task","task"],clients:["Client","client"],planning:["Schedule","job"],relances:["Follow-up","rel"],documents:[null,"doc"]};
+function render(){
+ if(!mode){$("#app").innerHTML=vLogin();$("#nav").hidden=true;$("#fab").hidden=true;return}
+ const V=mode==="admin"?ADMIN:mode==="agent"?AGENT:CLIENT;if(!V[view])view=mode==="admin"?"accueil":mode==="agent"?"a-jour":"c-accueil";
+ $("#app").innerHTML=V[view]();$("#nav").hidden=false;
+ const tabs=mode==="admin"?ATABS:mode==="agent"?AGTABS:CTABS;const rl=S.rel.filter(r=>r.status==="open"&&diff(r.due)<=0).length;
+ $("#tabs").innerHTML=tabs.map(([k,l,i])=>`<a href="#${k}" class="${k===view?"on":""}" ${k===view?'aria-current="page"':""}>${svg(i)}<span>${l}</span>${k==="relances"&&rl?`<span class="badge">${rl}</span>`:""}</a>`).join("");
+ const f=mode==="admin"&&FAB[view];$("#fab").hidden=!f;
+ if(f){const lab=f[0]||{devis:"Quote",facture:"Invoice",contrat:"Contract",bon:"Schedule",visite:"Visit"}[docTab];$("#fab").innerHTML=`<span>+</span>${lab}`}
+ const q=$("#q");if(q)q.oninput=e=>{query=e.target.value;const pos=e.target.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos)};
+ const sf=$("#setf");if(sf)sf.onsubmit=e=>{e.preventDefault();const g=k=>$("#s-"+k).value;Object.assign(S.settings,{name:g("name").trim()||S.settings.name,owner:g("owner"),tva:+g("tva")||0,addr:g("addr"),phone:g("phone"),email:g("email"),siret:g("siret"),delay:+g("delay")||30,iban:g("iban"),currency:g("cur"),m2:+g("m2")||0.04});Object.keys(fmtCache).forEach(k=>delete fmtCache[k]);save();render();toast("Settings saved")};
+ const af=$("#absf");if(af)af.onsubmit=e=>{e.preventDefault();const f=$("#ab-f").value,t=$("#ab-t").value;if(t<f){toast("End date must be after start date");return}S.absences.push({id:uid(),agent:meAgent().name,from:f,to:t,reason:$("#ab-r").value,status:"Pending"});save();render();toast("Request sent to your manager")};
+ const rf=$("#reqf");if(rf)rf.onsubmit=e=>{e.preventDefault();S.requests.push({id:uid(),clientId:me,date:today(),wanted:$("#r-d").value,service:$("#r-s").value,notes:$("#r-n").value.trim(),status:"New"});log(me,"Cleaning request sent: "+$("#r-s").value);save();render();toast("Request sent to "+S.settings.name)};
+ const tf=$("#tkf");if(tf)tf.onsubmit=e=>{e.preventDefault();const m=$("#tk-m").value.trim();if(!m){toast("Write your message");return}S.tickets.push({id:uid(),clientId:me,date:today(),subject:$("#tk-s").value,msg:m,urgent:$("#tk-u").checked,status:"Open",reply:""});log(me,"Support message: "+$("#tk-s").value);save();render();toast("Message sent · "+S.settings.name+" will reply soon")};
+ $$("[data-price]").forEach(inp=>inp.onchange=e=>{S.catalog[+e.target.dataset.price].price=+e.target.value||0;save();toast("Price updated")});
+}
+let keepSheet=false;
+function go(v){if(location.hash!=="#"+v){keepSheet=true;location.hash=v}else{view=v;render();scrollTo(0,0)}}
+function route(){view=location.hash.slice(1);if(!keepSheet)closeSheet();keepSheet=false;render();scrollTo(0,0)}
+addEventListener("hashchange",route);
+
+$("#fab").onclick=()=>{const f=FAB[view];if(!f)return;if(f[1]==="task")sNewTask();else if(f[1]==="client")sNewClient();else if(f[1]==="job")sNewJob();else if(f[1]==="rel")sNewRel();
+ else if(docTab==="contrat")sContrat();else if(docTab==="visite")sVisite();else if(docTab==="bon")go("planning");else sDocForm(docTab)};
+
+document.addEventListener("click",e=>{
+ const g=e.target.closest("[data-go]");if(g){closeSheet();go(g.dataset.go);return}
+ const el=e.target.closest("[data-act]");if(!el)return;const a=el.dataset.act,id=el.dataset.id;
+ if(a==="close"){if(e.target===el)closeSheet();return}
+ const D=()=>S.docs.find(x=>x.id===id);
+ switch(a){
+  case"close-btn":closeSheet();break;
+  case"login-admin":mode="admin";me=null;saveUI();go("accueil");break;
+  case"login-client":mode="client";me=$("#login-c").value;saveUI();go("c-accueil");break;
+  case"switch":closeSheet();if(mode==="admin"){mode="client";me=S.clients.find(c=>c.id===me)?me:S.clients[0].id;saveUI();go("c-accueil")}else{mode="admin";saveUI();go("accueil")}break;
+  case"switchagent":closeSheet();mode="agent";me=S.team[0].id;saveUI();go("a-jour");break;
+  case"login-agent":mode="agent";me=$("#login-a").value;saveUI();go("a-jour");break;
+  case"amenu":sAMenu();break;
+  case"checkin":checkin(id);break;
+  case"ajobdone":sBon(id);break;
+  case"incident":sIncident(id);break;
+  case"incok":{const i=S.incidents.find(x=>x.id===id);i.status="Handled";save();render();toast("Report handled");break}
+  case"absok":case"absno":{const a=S.absences.find(x=>x.id===id);a.status=el.dataset.act==="absok"?"Approved":"Declined";save();render();toast(a.status==="Approved"?"Time off approved · check replacements in the schedule":"Time off declined");break}
+  case"reassign":{const j=S.jobs.find(x=>x.id===id);const free=S.team.filter(a=>a.name!==j.agent&&!isAbsent(a.name,j.date));sheet(`<div class="stack"><h2>Replace ${esc(j.agent)}</h2><div class="small muted">${fd(j.date)} · ${j.start}–${j.end} · ${esc(client(j.clientId).name)}</div><div class="card list">${free.map(a=>{const busy=S.jobs.filter(x=>x.agent===a.name&&x.date===j.date&&x.status!=="Cancelled").length;return`<button class="item" data-act="doreassign" data-id="${j.id}" data-v="${esc(a.name)}"><div class="avatar av-s">${esc(a.name[0])}</div><span class="grow"><div class="t">${esc(a.name)}</div><div class="xs muted">${busy} job${busy>1?"s":""} that day</div></span><span aria-hidden="true">›</span></button>`}).join("")||`<div class="empty">No cleaner available.</div>`}</div></div>`);break}
+  case"doreassign":{const j=S.jobs.find(x=>x.id===id);const old=j.agent;j.agent=el.dataset.v;log(j.clientId,`Job on ${fd(j.date)}: ${first(old)} replaced by ${first(j.agent)}`);save();closeSheet();render();toast(first(j.agent)+" will handle the job");break}
+  case"print":try{window.print()}catch(e){toast("Printing unavailable here")}break;
+  case"devisvisite":{const v=D();const pm={"One-off":1,"Once a week":4,"2–3 times a week":10,"Every day":22}[v.freq]||4;const pp=Math.max(40,Math.round(v.surface*(S.settings.m2||0.04)));const cat=n=>S.catalog.find(x=>x.name===n);const L=[{s:`${v.locaux} cleaning (${(+v.surface).toLocaleString("en-US")} sq ft) · per visit`,p:pp,q:pm}];
+   if(v.sanitaires>2)L.push({s:`Additional restrooms (${v.sanitaires-2})`,p:10,q:(v.sanitaires-2)*pm});
+   if((v.besoins||[]).includes("Windows"))L.push({s:"Window cleaning (monthly)",p:(cat("Window cleaning")||{price:8}).price,q:Math.max(1,Math.round(v.surface/150))});
+   if((v.besoins||[]).includes("Disinfection"))L.push({s:"Full disinfection (monthly)",p:(cat("Full disinfection")||{price:220}).price,q:1});
+   if((v.besoins||[]).includes("Carpet"))L.push({s:"Carpet shampooing (quarterly)",p:(cat("Carpet shampooing")||{price:0.6}).price,q:Math.round(v.surface*0.3)});
+   sDocForm("devis",v.clientId,L);break}
+  case"addsite":{const c=S.clients.find(x=>x.id===id);sheet(`<form class="stack" id="stf"><h2>New location · ${esc(c.name)}</h2><label class="f">Location name<input id="st-n" required placeholder="E.g. Warehouse, North branch…"></label><label class="f">Address<input id="st-a" required></label><label class="f">Access &amp; instructions<textarea id="st-c" rows="2" placeholder="Code, keys, contact person, hours…"></textarea></label><button class="btn primary" type="submit">Add location</button></form>`);
+   $("#stf").onsubmit=ev=>{ev.preventDefault();c.sites=c.sites||[];if(!c.sites.length)c.sites.push({name:"Main location",addr:c.addr,access:c.access||""});c.sites.push({name:$("#st-n").value.trim(),addr:$("#st-a").value.trim(),access:$("#st-c").value.trim()});log(c.id,"Location added: "+$("#st-n").value.trim());save();sClient(c.id);toast("Location added")};break}
+  case"logout":closeSheet();mode=null;saveUI();if(location.hash)location.hash="";render();break;
+  case"menu":sMenu();break; case"cmenu":sCMenu();break; case"notifs":sNotifs();break;
+  case"notifgo":closeSheet();if(el.dataset.tab)docTab=el.dataset.tab;if(el.dataset.go2==="relances")relTab="retard";go(el.dataset.go2);break;
+  case"client":sClient(id);break;
+  case"filter":filter=el.dataset.v;render();break;
+  case"day":selDay=el.dataset.v;render();break;
+  case"wk":weekOff+=+el.dataset.v;selDay="";render();break;
+  case"reltab":relTab=el.dataset.v;render();break;
+  case"doctab":docTab=el.dataset.v;render();break;
+  case"doc":sDoc(id);break;
+  case"rel":sRel(id);break;
+  case"copymsg":copyText($("#msg").value);break;
+  case"copytpl":copyText(TPL[el.dataset.k][+el.dataset.i]({...TPLCTX,ent:S.settings.name}));break;
+  case"relres":{const r=S.rel.find(x=>x.id===id);r.status="done";r.result=el.dataset.v;if(r.due>today())r.due=today();const c=S.clients.find(x=>x.id===r.clientId);log(r.clientId,`Follow-up${r.total>1?" "+r.step+"/"+r.total:""} (${RTYPE[r.type][0]}, ${r.channel}): ${r.result}`);
+   if(r.result==="Declined"){if(r.docId)S.rel.forEach(x=>{if(x.docId===r.docId&&x.status==="open")x.status="cancel"});else S.rel.forEach(x=>{if(x.clientId===r.clientId&&x.type===r.type&&x.status==="open")x.status="cancel"});if(r.type==="devis"){const d=S.docs.find(x=>x.id===r.docId);if(d)d.status="Declined"}if(r.type==="prospect"&&c)c.status="Lost"}
+   if(r.result==="Call back later")addRel(r.clientId,r.type,off(3),r.docId,r.step,r.total);
+   if(r.result==="Interested"&&c&&c.status==="Lead")c.status="Negotiation";
+   save();closeSheet();render();toast("Follow-up saved to history");break}
+  case"relpush":{const r=S.rel.find(x=>x.id===id);r.due=addDays(r.due<today()?today():r.due,2);save();closeSheet();render();toast("Postponed to "+fd(r.due));break}
+  case"newdoc":sDocForm(el.dataset.type,id);break;
+  case"newcontrat":sContrat(id);break; case"newvisite":sVisite(id);break; case"newjob":sNewJob(id);break; case"newrel":sNewRel(id);break;
+  case"qa-devis":sDocForm("devis");break; case"qa-facture":sDocForm("facture");break; case"qa-job":sNewJob();break; case"qa-client":sNewClient();break;
+  case"jobdone":sBon(id);break;
+  case"jobcancel":{const j=S.jobs.find(x=>x.id===id);j.status="Cancelled";log(j.clientId,"Job on "+fd(j.date)+" cancelled");save();render();break}
+  case"accept":{const d=D();acceptDevis(d);save();render();sDoc(id);toast("Quote accepted · follow-ups stopped");break}
+  case"refuse":{const d=D();d.status="Declined";cancelRels(d.id);log(d.clientId,`Quote ${d.num} declined`);save();render();sDoc(id);break}
+  case"signdoc":sSign(id);break;
+  case"deposit":{const d=D();const amt=Math.round(ht(d)*0.3*100)/100;const f={id:uid(),type:"facture",kind:"acompte",num:nextNum("facture"),clientId:d.clientId,date:today(),ref:d.num,lines:[{s:"30% deposit on quote "+d.num,u:"flat rate",p:amt,q:1}],pays:[]};d.deposit=f.id;S.docs.push(f);seqFacture(f);log(d.clientId,`Deposit invoice ${f.num} issued (${eur(ttc(f))})`);save();docTab="facture";render();sDoc(f.id);toast("Deposit invoice issued");break}
+  case"invoice":{const d=D();const lines=JSON.parse(JSON.stringify(d.lines)).map(l=>({...l,p:Math.round(l.p*(1-(d.remise||0)/100)*100)/100}));const dep=S.docs.find(x=>x.id===d.deposit);if(dep)lines.push({s:"Deposit already invoiced ("+dep.num+")",u:"flat rate",p:-ht(dep),q:1});
+   const f={id:uid(),type:"facture",num:nextNum("facture"),clientId:d.clientId,date:today(),ref:d.num,lines,pays:[]};d.status="Invoiced";S.docs.push(f);seqFacture(f);log(d.clientId,`Invoice ${f.num} issued from ${d.num}`);save();docTab="facture";render();sDoc(f.id);toast("Invoice "+f.num+" issued");break}
+  case"tocontrat":sContrat(D().clientId);break; case"tojob":sNewJob(D().clientId);break;
+  case"pay":sPay(id);break; case"cpay":sCPay(id);break;
+  case"confirmpay":{const d=D();const p=d.pays.find(x=>x.id===el.dataset.p);p.ok=true;if(reste(d)<=0)cancelRels(d.id);log(d.clientId,`Payment confirmed: ${eur(p.amount)}`);save();render();sDoc(id);toast("Payment confirmed");break}
+  case"remind":{const d=D();const r={type:"paiement",step:diff(due(d))<-7?2:1,clientId:d.clientId,docId:d.id};$("#extra").innerHTML=`<div class="stack"><textarea id="msg" class="ta" aria-label="Reminder message">${esc(msgFor(r))}</textarea><button class="btn dark" data-act="copymsg">Copy message</button></div>`;break}
+  case"avoir":{const d=D();const av={id:uid(),type:"avoir",num:nextNum("avoir"),clientId:d.clientId,date:today(),ref:d.num,lines:JSON.parse(JSON.stringify(d.lines)),remise:d.remise||0};d.cancelled=true;cancelRels(d.id);S.docs.push(av);log(d.clientId,`Credit note ${av.num} issued for ${d.num}`);save();render();sDoc(av.id);toast("Credit note issued · invoice cancelled");break}
+  case"rate":sRate(id);break;
+  case"planreq":{const r=S.requests.find(x=>x.id===id);sNewJob(r.clientId,r);break}
+  case"refusereq":{const r=S.requests.find(x=>x.id===id);r.status="Declined";log(r.clientId,"Cleaning request declined");save();render();break}
+  case"stk":{const s=S.stock.find(x=>x.id===id);s.qty=Math.max(0,s.qty+ +el.dataset.v);save();render();break}
+  case"addstock":sAddStock();break;
+  case"addagent":sheet(`<form class="stack" id="aaf"><h2>New cleaner</h2><label class="f">Name<input id="aa-n" required></label><div class="grid2"><label class="f">Role<input id="aa-r" value="Cleaner"></label><label class="f">Hourly rate (${curSym()})<input id="aa-t" type="number" step="any" value="18"></label></div><button class="btn primary" type="submit">Add</button></form>`);
+   $("#aaf").onsubmit=ev=>{ev.preventDefault();S.team.push({id:uid(),name:$("#aa-n").value.trim(),role:$("#aa-r").value,rate:+$("#aa-t").value||0});save();closeSheet();render();toast("Cleaner added")};break;
+  case"addsvc":sheet(`<form class="stack" id="nsf"><h2>New service</h2><label class="f">Name<input id="v-n" required></label><div class="grid2"><label class="f">Unit<select id="v-u">${opts(["visit","hour","sq ft","flat rate","unit"])}</select></label><label class="f">Price excl. tax<input id="v-p" type="number" step="any" required></label></div><button class="btn primary" type="submit">Add</button></form>`);
+   $("#nsf").onsubmit=ev=>{ev.preventDefault();S.catalog.push({name:$("#v-n").value.trim(),unit:$("#v-u").value,price:+$("#v-p").value||0});save();closeSheet();render();toast("Service added")};break;
+  case"offer":sOffer();break;
+  case"tkreply":{const t=S.tickets.find(x=>x.id===id);const v=($("#rep-"+id)||{}).value||"";if(!v.trim()){toast("Write a reply");break}t.reply=v.trim();t.status="Resolved";t.repliedAt=today();log(t.clientId,"Support: reply sent ("+t.subject+")");save();render();toast("Reply sent to the client");break}
+  case"tdone":{const t=S.tasks.find(x=>x.id===id);t.done=!t.done;if(t.done&&t.repeat!=="none"&&!t.spawned){t.spawned=true;S.tasks.push({...t,id:uid(),date:addDays(t.date,t.repeat==="weekly"?7:1),done:false,notified:false,spawned:false})}save();render();if(t.done)toast(t.repeat!=="none"?"Done · next one on "+fd(addDays(t.date,t.repeat==="weekly"?7:1)):"Task done");break}
+  case"tdel":{S.tasks=S.tasks.filter(x=>x.id!==id);save();render();toast("Task deleted");break}
+  case"tday":taskDay=el.dataset.v;render();break;
+  case"twk":taskWeekOff+=+el.dataset.v;taskDay="";render();break;
+  case"notifperm":try{Notification.requestPermission().then(()=>render(),()=>toast("Reminders blocked by the browser"))}catch(e){toast("Reminders unavailable here")}break;
+  case"import":sImport(el.dataset.v);break; case"tpl":downloadTpl(el.dataset.v);break; case"doimport":doImport();break;
+  case"reset":if(el.dataset.confirm){S=seed();save();filter="All";query="";weekOff=0;selDay=today();go("accueil");toast("Demo reset")}else{el.dataset.confirm="1";el.textContent="Tap again to confirm"}break;
+ }
+});
+addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
+
+const sp=$("#splash");let shown=false;try{shown=sessionStorage.getItem(KEY+"-splash")==="1"}catch(e){}
+const hideSplash=()=>{if(!sp.isConnected)return;sp.style.opacity="0";setTimeout(()=>sp.remove(),500);try{sessionStorage.setItem(KEY+"-splash","1")}catch(e){}};
+if(shown)sp.remove();else{sp.onclick=hideSplash;setTimeout(hideSplash,2600)}
+view=location.hash.slice(1);render();setTimeout(checkReminders,3000);
+})();
+</script>
+
+<script src="../../sacko-config.js"></script>
+<script src="../../sacko-track.js" defer></script>
+</body>
+</html>
