@@ -63,7 +63,7 @@ function renderPros(){
   const rank={"Grande":0,"Moyenne":1,"À qualifier":2};
   const rs=all.filter(r=>F[pFilter](r)&&(!pCountry||r.Pays===pCountry)&&(!pSize||r.Taille===pSize)&&(!pMob||!!pWa(r))&&(!q||[r.Agence,r.Ville,r.Pays,r.Infos].join(" ").toLowerCase().includes(q))).sort((a,b)=>(pTaskDue(b)-pTaskDue(a))||(pDue(b)-pDue(a))||((rank[a.Taille]??3)-(rank[b.Taille]??3)));
   const done=all.filter(r=>(r.Statut||"À contacter")!=="À contacter").length;
-  el.innerHTML='<div class="toolbar"><h1>Prospects</h1><button class="btn sm" id="pTplBtn">Mes messages</button><input class="search" id="prosq" type="search" placeholder="Agence, ville, pays…" value="'+esc(q)+'"></div>'+
+  el.innerHTML='<div class="toolbar"><h1>Prospects</h1><button class="btn sm dark" id="pAddBtn">+ Ajouter</button><button class="btn sm" id="pTplBtn">Mes messages</button><input class="search" id="prosq" type="search" placeholder="Agence, ville, pays…" value="'+esc(q)+'"></div>'+
     '<div class="pros-sum"><div><b>'+all.length+'</b><span>agences</span></div><div><b>'+done+'</b><span>contactées</span></div><div><b>'+cnt("À relancer")+'</b><span>à relancer</span></div><div><b>'+cnt("Clients")+'</b><span>clients</span></div></div>'+
     '<div class="chips">'+Object.keys(F).map(k=>'<button class="chip" data-pf="'+esc(k)+'" aria-pressed="'+(k===pFilter)+'">'+esc(k)+' · '+cnt(k)+'</button>').join("")+'</div>'+
     '<div class="pros-filters"><select id="pCountry" aria-label="Pays"><option value="">Tous les pays</option>'+countries.map(c=>'<option'+(c===pCountry?' selected':'')+'>'+esc(c)+'</option>').join("")+'</select><select id="pSize" aria-label="Taille"><option value="">Toutes tailles</option>'+["Grande","Moyenne","À qualifier"].map(s=>'<option'+(s===pSize?' selected':'')+'>'+s+'</option>').join("")+'</select><label class="small muted"><input type="checkbox" id="pMob"'+(pMob?' checked':'')+'> Avec WhatsApp</label></div>'+
@@ -74,6 +74,7 @@ function renderPros(){
   $("pMob").onchange=e=>{pMob=e.target.checked;renderPros()};
   $("prosq").oninput=()=>keepFocus("prosq",renderPros);
   $("pTplBtn").onclick=editTpl;
+  $("pAddBtn").onclick=()=>addPros(countries);
   el.querySelectorAll("[data-pr]").forEach(b=>b.onclick=()=>openPros(all.find(r=>r._row===+b.dataset.pr)));
 }
 async function pSet(r,s,quiet){
@@ -165,5 +166,31 @@ function editTpl(){
     '<div class="acts"><button class="btn gold" id="tplSave">Enregistrer</button><button class="btn" id="tplReset">Revenir aux messages d\'origine</button></div>';
   $("tplSave").onclick=()=>{const n={};Object.keys(P_TPL).forEach(k=>{const v=$("tpl_"+k).value.trim();if(v&&v!==P_TPL[k].t)n[k]=v});store.set(P_TPL_KEY,JSON.stringify(n));toast("Messages enregistrés");closeSheet()};
   $("tplReset").onclick=()=>{store.del(P_TPL_KEY);toast("Messages d'origine remis");editTpl()};
+  openSheet();
+}
+
+function addPros(countries){
+  $("sheetTitle").textContent="Nouveau prospect";
+  const f=(id,lab,type,ph,extra)=>'<label class="pros-tpl"><b>'+lab+'</b><input id="pa_'+id+'" type="'+type+'" placeholder="'+esc(ph||"")+'"'+(extra||"")+'></label>';
+  $("sheetBody").innerHTML='<p class="muted small" style="margin:0">Le prospect est ajouté à ta feuille Google et apparaît tout de suite dans ta liste.</p>'+
+    f("ag","Nom de l\'agence *","text","Ex. Alpha Sécurité")+
+    f("pays","Pays *","text","Ex. Bénin",' list="pa_pl"')+'<datalist id="pa_pl">'+countries.map(c=>'<option value="'+esc(c)+'">').join("")+'</datalist>'+
+    f("ville","Ville / quartier","text","Ex. Cotonou, Fidjrossè")+
+    f("tel","Téléphone *","tel","+229 01 97 00 00 00")+
+    '<label class="pros-tpl"><b>Type de numéro</b><select id="pa_type"><option>Mobile</option><option>Fixe</option></select></label>'+
+    '<label class="pros-tpl"><b>Taille</b><select id="pa_taille"><option>À qualifier</option><option>Moyenne</option><option>Grande</option></select></label>'+
+    f("mail","E-mail","email","direction@agence.com")+f("fb","Facebook","url","Lien de la page Facebook")+
+    '<label class="pros-tpl"><b>Infos</b><textarea id="pa_infos" rows="2" placeholder="Nombre d\'agents, où tu l\'as trouvée…"></textarea></label>'+
+    '<p class="err" id="pa_err"></p><div class="acts"><button class="btn gold" id="pa_save">Ajouter le prospect</button></div>';
+  $("pa_save").onclick=async()=>{
+    const v=id=>$("pa_"+id).value.trim();
+    if(!v("ag")||!v("pays")||!v("tel")){$("pa_err").textContent="Remplis au moins le nom, le pays et le téléphone.";return}
+    let tel=v("tel");if(!tel.startsWith("+"))tel="+"+tel.replace(/^00/,"");
+    const d={"Date":dayKey(new Date()),"Pays":v("pays"),"Agence":v("ag"),"Ville":v("ville"),"Téléphone":"'"+tel,"Type":$("pa_type").value,"Taille":$("pa_taille").value,"Infos":v("infos"),"Statut":"À contacter","WhatsApp":$("pa_type").value==="Mobile"?"'"+tel:"","E-mail":v("mail"),"Facebook":v("fb")};
+    if(demo){P_SAMPLE.push(["Date","Pays","Agence","Ville","Téléphone","Type","Taille","Infos","Autres numéros","Statut","Notes","WhatsApp","E-mail","Facebook"].map(h=>String(d[h]||"").replace(/^'/,"")));toast("Prospect ajouté");closeSheet();renderAll();return}
+    $("pa_save").disabled=true;
+    try{const j=await api({action:"contact",row:"nouveau",valeur:JSON.stringify(d)});if(!j.ok)throw 0;toast("Prospect ajouté");closeSheet();await load()}
+    catch(e){$("pa_save").disabled=false;$("pa_err").textContent="Le prospect n'a pas été ajouté. Vérifie que l'étape Apps Script est faite, puis réessaie."}
+  };
   openSheet();
 }
