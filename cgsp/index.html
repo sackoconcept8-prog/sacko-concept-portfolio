@@ -275,6 +275,14 @@ tbody tr:last-child td{border-bottom:0}
 /* ===== Direction générale ===== */
 .dg-hero{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:22px 24px;border-radius:20px;background:linear-gradient(135deg,#FFFFFF,#EAF1FD);border:1px solid var(--line);box-shadow:var(--shadow);margin-bottom:16px}
 .dg-hero h2{font-size:25px}
+.dg-hero>.grow{flex:1 1 300px}
+.tbl-wrap td{white-space:nowrap}.tbl-wrap td.sm:not(:has(.b)){white-space:normal;min-width:120px}
+#mapDash .m3d-leg{display:none}
+@media (max-width:760px){.dg-hero>.grow{flex:none}.gpin:not(.hq) b{display:none}
+.tabs{display:flex;max-width:100%;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.tabs::-webkit-scrollbar{display:none}.tabs button{flex:none;white-space:nowrap}
+.ph>.row{max-width:100%}}
+@media (max-width:760px){.dg-hero{flex-direction:column;align-items:stretch;padding:18px;gap:14px}.dg-hero h2{font-size:22px}.dg-hero>.row{width:100%;flex-wrap:nowrap}.dg-hero>.row .btn{flex:1;padding:10px 8px;font-size:13.5px}
+.task{padding:12px}.task .pill{display:none}.hbar .lb{width:110px}.m3d-leg{right:12px;gap:8px;font-size:11px}.m3d-bar button{padding:5px 9px}}
 .task{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line)}
 .task:last-child{border-bottom:0}
 .task .tk{width:22px;height:22px;border-radius:7px;border:2px solid var(--silver);flex:none;display:grid;place-items:center;cursor:pointer;background:#fff;margin-top:1px}
@@ -1518,7 +1526,7 @@ hydrateIcons();
 (()=>{const sp=document.getElementById("splash");if(!sp)return;const d=matchMedia("(prefers-reduced-motion: reduce)").matches?1200:3200;setTimeout(()=>{sp.classList.add("out");setTimeout(()=>sp.remove(),750)},d)})();
 const h=location.hash.slice(1);if(["dir","rh","agent","sup","client","direction"].includes(h))enter(h==="direction"?"dir":h);
 window.addEventListener("hashchange",()=>{const x=location.hash.slice(1);if(!x)showLogin();else if(["dir","rh","agent","sup","client"].includes(x)&&x!==role)enter(x)});
-setInterval(()=>{if(role&&role!=="agent")renderTop()},30000);
+setInterval(()=>{if(["dir","rh","client"].includes(role))renderTop()},30000);
 </script>
 <script src="../sacko-config.js"></script>
 <script src="../sacko-track.js" defer></script>
