@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <style>
 :root{
   --bg:#F5F7FB;--surface:#FFFFFF;--surface2:#EEF3FB;--fg:#0F1B2D;--muted:#5E6B80;--line:#E1E7F0;
@@ -57,7 +58,7 @@ textarea.input{min-height:90px;resize:vertical}
 /* ===== Écran d'accueil ===== */
 #login{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;background:radial-gradient(1200px 500px at 50% -10%,#DDE8FB,transparent),var(--bg)}
 #login .brand{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;margin-bottom:28px}
-#login .brand img{width:110px;filter:drop-shadow(0 10px 22px rgba(15,27,45,.18))}
+#login .brand img{width:76px;filter:drop-shadow(0 10px 22px rgba(15,27,45,.18))}
 #login .brand h1{font-size:30px}
 #login .grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;width:100%;max-width:1280px}
 .space{text-align:left;cursor:pointer;padding:22px;border-radius:20px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow);transition:transform .15s,border-color .15s;display:flex;flex-direction:column;gap:10px}
@@ -227,9 +228,56 @@ tbody tr:last-child td{border-bottom:0}
   #printArea{position:absolute;left:0;top:0;width:100%}
   .modal{position:static;transform:none;box-shadow:none;width:100%;max-height:none}
 }
+
+/* ===== Écran d'ouverture ===== */
+#splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(900px 520px at 50% 38%,#FFFFFF 0%,#EAF1FD 55%,#DCE7FA 100%);transition:opacity .7s ease,transform .7s ease}
+#splash.out{opacity:0;transform:scale(1.04);pointer-events:none}
+.sp-stage{position:relative;width:230px;height:230px;display:grid;place-items:center;perspective:900px}
+.sp-ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;background:conic-gradient(from 0deg,rgba(29,95,209,0),rgba(29,95,209,.85),rgba(201,209,220,.2),rgba(29,95,209,0)) border-box;-webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spSpin 2.4s linear infinite}
+.sp-ring.r2{inset:22px;animation-duration:3.6s;animation-direction:reverse;opacity:.7}
+.sp-glow{position:absolute;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(47,123,240,.28),rgba(47,123,240,0) 70%);animation:spPulse 1.6s ease-in-out infinite}
+.sp-logo{position:relative;width:132px;filter:drop-shadow(0 18px 26px rgba(15,27,45,.22));transform-style:preserve-3d;animation:spFlip 2.6s cubic-bezier(.65,0,.35,1) both}
+.sp-name{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.01em;opacity:0;animation:spUp .7s .9s ease both}
+.sp-sub{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--muted);opacity:0;animation:spUp .7s 1.1s ease both}
+.sp-bar{width:180px;height:4px;border-radius:9px;background:#D7E2F5;overflow:hidden;margin-top:10px}
+.sp-bar i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,var(--blue2),var(--blue));animation:spLoad 3s ease forwards}
+@keyframes spSpin{to{transform:rotate(360deg)}}
+@keyframes spPulse{50%{transform:scale(1.18);opacity:.6}}
+@keyframes spFlip{0%{transform:rotateY(-540deg) scale(.4);opacity:0}60%{opacity:1}100%{transform:rotateY(0) scale(1)}}
+@keyframes spUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes spLoad{to{width:100%}}
+@media (prefers-reduced-motion:reduce){.sp-logo,.sp-ring,.sp-glow{animation:none}}
+/* ===== Carte 3D ===== */
+.m3d{position:relative;background:linear-gradient(180deg,#EEF4FF,#F8FAFE)}
+.m3d .maplibregl-ctrl-group{border-radius:12px;box-shadow:var(--shadow)}
+.m3d-bar{position:absolute;top:12px;left:12px;z-index:3;display:flex;gap:6px;flex-wrap:wrap}
+.m3d-bar button{border:1px solid var(--line);background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:10px;padding:6px 11px;font-weight:600;font-size:12.5px;cursor:pointer;box-shadow:0 2px 10px rgba(15,27,45,.08)}
+.m3d-bar button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.m3d-leg{position:absolute;left:12px;bottom:12px;z-index:3;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:12px;padding:8px 11px;font-size:12px;display:flex;gap:12px;flex-wrap:wrap;box-shadow:0 2px 10px rgba(15,27,45,.08)}
+.m3d-leg span{display:inline-flex;align-items:center;gap:6px}.m3d-leg i{width:18px;height:3px;border-radius:3px;display:inline-block}
+.pin3d{width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 3px 10px rgba(15,27,45,.35);cursor:pointer}
+.pin3d::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px solid currentColor;opacity:.6;animation:pinPing 2s ease-out infinite}
+.pin3d.sos{width:24px;height:24px}.pin3d.sos::after{animation-duration:.9s}
+.pin3d b{position:absolute;left:50%;top:-30px;transform:translateX(-50%);white-space:nowrap;background:#fff;color:var(--fg);font:600 11.5px var(--body);padding:3px 8px;border-radius:8px;box-shadow:0 2px 8px rgba(15,27,45,.15);pointer-events:none}
+.hq3d{width:42px;height:42px;border-radius:50%;background:#fff;border:2px solid var(--blue);box-shadow:0 6px 18px rgba(29,95,209,.35);display:grid;place-items:center}
+.hq3d img{width:30px}
+@keyframes pinPing{0%{transform:scale(.5);opacity:.8}100%{transform:scale(1.8);opacity:0}}
+.maplibregl-popup-content{border-radius:14px!important;box-shadow:0 10px 30px rgba(15,27,45,.18)!important;padding:12px 14px!important}
+/* ===== Direction générale ===== */
+.dg-hero{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:22px 24px;border-radius:20px;background:linear-gradient(135deg,#FFFFFF,#EAF1FD);border:1px solid var(--line);box-shadow:var(--shadow);margin-bottom:16px}
+.dg-hero h2{font-size:25px}
+.task{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.task:last-child{border-bottom:0}
+.task .tk{width:22px;height:22px;border-radius:7px;border:2px solid var(--silver);flex:none;display:grid;place-items:center;cursor:pointer;background:#fff;margin-top:1px}
+.task.done .tk{background:var(--green);border-color:var(--green);color:#fff}
+.task.done .tt{text-decoration:line-through;color:var(--muted)}
+.hbar{display:flex;align-items:center;gap:10px;font-size:13px;margin:9px 0}.hbar .lb{width:150px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hbar .tr{flex:1;height:9px;border-radius:9px;background:var(--surface2);overflow:hidden}.hbar .tr i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--blue2),var(--blue))}
 </style>
 </head>
 <body>
+
+<!-- ===== Écran d'ouverture ===== -->
+<div id="splash" aria-hidden="true"><div class="sp-stage"><div class="sp-ring"></div><div class="sp-ring r2"></div><div class="sp-glow"></div><img class="sp-logo" src="logo-cgsp-256.png" alt=""></div><div class="sp-name">CGSP-Sécurité</div><div class="sp-sub">Compagnie de Gardiennage et de Sécurité Privée</div><div class="sp-bar"><i></i></div></div>
 
 <!-- ===== Choix de l'espace ===== -->
 <section id="login">
@@ -240,7 +288,7 @@ tbody tr:last-child td{border-bottom:0}
     <p class="muted" style="margin:0;max-width:560px">Sites, agents, planning jour et nuit, pointage géolocalisé, main courante, paie, facturation et espace client. Tout votre métier dans un seul logiciel.</p>
   </div>
   <div class="grid">
-    <button class="space" data-go="dir"><div class="si" style="background:var(--blue-soft);color:var(--blue)" data-i="shield"></div><h3>Direction générale</h3><p>Vue en direct de tous les sites, alertes, chiffre d'affaires et décisions.</p><span class="go">Ouvrir l'espace →</span></button>
+    <button class="space" data-go="dir"><div class="si" style="background:var(--blue-soft);color:var(--blue)" data-i="shield"></div><h3>Direction générale</h3><p>Rapports, chiffre d'affaires, décisions à prendre et carte 3D de tous les sites.</p><span class="go">Ouvrir l'espace →</span></button>
     <button class="space" data-go="rh"><div class="si" style="background:var(--violet-soft);color:var(--violet)" data-i="users"></div><h3>RH et exploitation</h3><p>Agents, planning, remplacements, congés, cartes professionnelles et paie.</p><span class="go">Ouvrir l'espace →</span></button>
     <button class="space" data-go="agent"><div class="si" style="background:var(--green-soft);color:var(--green)" data-i="phone"></div><h3>Application agent</h3><p>Sur le téléphone de l'agent : pointage, rondes, incidents, planning.</p><span class="go">Ouvrir l'application →</span></button>
     <button class="space" data-go="sup"><div class="si" style="background:var(--red-soft);color:var(--red)" data-i="shield"></div><h3>Superviseur</h3><p>Sur le téléphone du superviseur : tournée de nuit, visites de contrôle, alertes SOS, rapport de nuit.</p><span class="go">Ouvrir l'application →</span></button>
@@ -279,6 +327,7 @@ tbody tr:last-child td{border-bottom:0}
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script>
 /* ============================================================
    CGSP-Sécurité · Logiciel de gestion (démo SACKO CONCEPT)
@@ -518,14 +567,14 @@ function modal(title,body,foot="",wide=false){const m=$("#modal");m.innerHTML=`<
 
 /* ---------- navigation ---------- */
 const NAV={
-  dir:[["Pilotage",[["dash","home","Tableau de bord"],["live","map","Carte en direct"],["messages","send","Messagerie agents"],["requests","msg","Demandes clients"],["supervision","shield","Supervision"],["rapports","chart","Rapports"]]],["Exploitation",[["sites","building","Sites clients"],["agents","users","Agents"],["planning","calendar","Planning"],["pointage","clock","Pointage"],["courante","book","Main courante"],["rondes","route","Rondes"]]],["Gestion",[["conges","leave","Congés et absences"],["docs","pen","Documents RH"],["paie","wallet","Paie"],["stock","box","Matériel et stock"],["factures","file","Facturation"],["reglages","settings","Paramètres"]]]],
+  dir:[["Pilotage",[["dash","home","Tableau de bord"],["taches","check","Mes tâches"],["rapports","chart","Rapports"],["live","map","Carte 3D en direct"]]],["Suivi de l'entreprise",[["factures","wallet","Chiffre d'affaires"],["requests","msg","Demandes clients"]]]],
   rh:[["Ressources humaines",[["dash","home","Tableau de bord RH"],["agents","users","Agents"],["planning","calendar","Planning"],["pointage","clock","Pointage"],["conges","leave","Congés et absences"],["docs","pen","Documents RH"],["messages","send","Messagerie agents"],["paie","wallet","Paie"],["stock","box","Matériel et stock"],["rapports","chart","Rapports"]]],["Terrain",[["courante","book","Main courante"],["rondes","route","Rondes"],["supervision","shield","Supervision"],["live","map","Carte en direct"]]]],
   client:[["Mon espace",[["cdash","home","Accueil"],["corder","cart","Commander un service"],["cmsg","msg","Plaintes et suggestions"],["creport","chart","Rapports de sécurité"],["cinv","file","Mes factures"]]]]
 };
 const CLIENT_SITE="s1";
 function badges(){
   const p=planFor(S.day);
-  return {supervision:S.sos.filter(x=>x.status!=="Clôturée").length,docs:S.docs.filter(d=>d.reply&&d.status==="Répondu").length,stock:S.stock.filter(m=>m.qty<m.min).length+S.matReq.filter(r=>r.status==="En attente").length,messages:S.msgs.filter(m=>m.to==="rh"&&!m.handled).length,requests:S.requests.filter(r=>r.status==="Nouvelle").length,planning:p._holes.length,conges:S.leaves.filter(l=>l.status==="En attente").length,courante:S.incidents.filter(i=>i.status==="En cours").length,factures:S.invoices.filter(i=>i.status==="En retard").length};
+  return {taches:(S.dgTasks||[]).filter(t=>!t.done&&t.due<=S.day).length,supervision:S.sos.filter(x=>x.status!=="Clôturée").length,docs:S.docs.filter(d=>d.reply&&d.status==="Répondu").length,stock:S.stock.filter(m=>m.qty<m.min).length+S.matReq.filter(r=>r.status==="En attente").length,messages:S.msgs.filter(m=>m.to==="rh"&&!m.handled).length,requests:S.requests.filter(r=>r.status==="Nouvelle").length,planning:p._holes.length,conges:S.leaves.filter(l=>l.status==="En attente").length,courante:S.incidents.filter(i=>i.status==="En cours").length,factures:S.invoices.filter(i=>i.status==="En retard").length};
 }
 function renderSide(){
   const b=badges();
@@ -536,7 +585,7 @@ function renderSide(){
   $("#switch").onclick=()=>{location.hash="";showLogin()};
 }
 function renderTop(){
-  const names={dir:["Direction générale","Directeur général"],rh:["Service RH","Responsable RH"],client:[SI(CLIENT_SITE).contact,SI(CLIENT_SITE).name]};
+  const names={dir:[DG_NAME,"Directeur général"],rh:["Service RH","Responsable RH"],client:[SI(CLIENT_SITE).contact,SI(CLIENT_SITE).name]};
   const [n,r]=names[role];$("#meName").textContent=n;$("#meRole").textContent=r;$("#meAv").outerHTML=`<div id="meAv">${av(n,32)}</div>`;
   const notes=notifs();const nb=notes.filter(x=>!S.seen[x.k]).length;const bn=$("#bellN");bn.hidden=!nb;bn.textContent=nb;
   const d=new Date();$("#clock").textContent=fdl(today())+" · "+pad(d.getHours())+":"+pad(d.getMinutes())+" · Relève de "+SHIFTS[curShift()].l.toLowerCase();
@@ -544,6 +593,13 @@ function renderTop(){
 function notifs(){
   const out=[];const p=planFor(S.day);
   if(role==="client"){S.requests.filter(r=>r.site===CLIENT_SITE&&r.answer).forEach(r=>out.push({k:"ra"+r.id,i:"msg",c:"var(--blue)",t:"Réponse de CGSP : "+r.subject,s:fd(r.date),go:"cmsg"}));return out}
+  if(role==="dir"){
+    S.sos.filter(x=>x.status!=="Clôturée").forEach(x=>out.push({k:"sos"+x.id+x.status,i:"alert",c:"var(--red)",t:"🚨 SOS : "+A(x.agent).name,s:SI(x.site).name+" · "+x.time+" · "+x.status,go:"live"}));
+    dgTasks().filter(t=>!t.done&&t.due<=S.day).forEach(t=>out.push({k:"t"+t.id,i:"check",c:"var(--blue)",t:"Tâche : "+t.title,s:t.due<S.day?"En retard · prévue le "+fd(t.due):"À faire aujourd'hui",go:"taches"}));
+    S.invoices.filter(i=>i.status==="En retard").forEach(i=>out.push({k:"f"+i.id,i:"wallet",c:"var(--amber)",t:"Facture impayée : "+SI(i.site).name,s:fcfa(i.amount),go:"factures"}));
+    S.requests.filter(r=>r.status==="Nouvelle").forEach(r=>out.push({k:"r"+r.id,i:"msg",c:"var(--blue)",t:r.kind+" client : "+r.subject,s:SI(r.site).name,go:"requests"}));
+    return out;
+  }
   S.sos.filter(x=>x.status!=="Clôturée").forEach(x=>out.unshift({k:"sos"+x.id+x.status,i:"alert",c:"var(--red)",t:"🚨 SOS : "+A(x.agent).name,s:SI(x.site).name+" · "+x.time+" · "+x.status,go:"supervision"}));
   p._holes.forEach(h=>out.push({k:"h"+h.site+h.shift+S.day,i:"alert",c:"var(--red)",t:`Poste non couvert : ${SI(h.site).name} (${SHIFTS[h.shift].l.toLowerCase()})`,s:"Aujourd'hui · à traiter",go:"planning"}));
   S.incidents.filter(i=>i.status==="En cours").forEach(i=>out.push({k:"i"+i.id,i:"book",c:"var(--amber)",t:i.type+" · "+SI(i.site).name,s:fd(i.date)+" à "+i.time,go:"courante"}));
@@ -570,7 +626,7 @@ function render(keepSearch){
   Object.values(maps).forEach(m=>{try{m.remove()}catch(e){}});maps={};
   renderSide();renderTop();
   if(!keepSearch){filt.q="";$("#q").value=""}
-  const V={dash:role==="rh"?vDashRH:vDash,live:vLive,requests:vRequests,sites:vSites,agents:vAgents,planning:vPlanning,pointage:vPointage,courante:vCourante,rondes:vRondes,conges:vConges,paie:vPaie,factures:vFactures,reglages:vReglages,messages:vMessages,stock:vStock,docs:vDocs,rapports:vRapports,supervision:vSup,cdash:vCDash,corder:vCOrder,cmsg:vCMsg,creport:vCReport,cinv:vCInv}[view]||vDash;
+  const V={dash:role==="rh"?vDashRH:role==="dir"?vDashDG:vDash,taches:vTaches,live:vLive,requests:vRequests,sites:vSites,agents:vAgents,planning:vPlanning,pointage:vPointage,courante:vCourante,rondes:vRondes,conges:vConges,paie:vPaie,factures:vFactures,reglages:vReglages,messages:vMessages,stock:vStock,docs:vDocs,rapports:vRapports,supervision:vSup,cdash:vCDash,corder:vCOrder,cmsg:vCMsg,creport:vCReport,cinv:vCInv}[view]||vDash;
   $("#view").innerHTML=(role!=="client"?sosBanner():"")+V();hydrateIcons($("#view"));bindSos();
   (afterRender[view]||(()=>{}))();
   window.scrollTo(0,0);
@@ -636,7 +692,7 @@ function vDash(){
     <div class="card"><div class="ch"><h3>Demandes clients</h3><button class="btn sm ghost" data-goto="requests">Ouvrir</button></div><div class="list">${S.requests.slice(0,4).map(r=>`<div class="li click" data-goto="requests"><span style="color:${r.kind==="Plainte"?"var(--red)":r.kind==="Commande"?"var(--green)":"var(--blue)"}">${ic(r.kind==="Commande"?"cart":r.kind==="Plainte"?"alert":"star")}</span><div class="grow"><div class="sm b">${esc(r.subject)}</div><div class="xs muted">${r.kind} · ${esc(SI(r.site).name)}</div></div>${reqPill(r.status)}</div>`).join("")}</div></div>
   </div>`;
 }
-afterRender.dash=()=>{if(role==="dir")buildMap("mapDash");bindCommon()};
+afterRender.dash=()=>{if(role==="dir"){buildMap3D("mapDash",{compact:true});bindTasks()}bindCommon()};
 function bindCommon(){
   $$("[data-goto]").forEach(b=>b.onclick=()=>{view=b.dataset.goto;render()});
   $$("[data-repl]").forEach(b=>b.onclick=e=>{e.stopPropagation();const [s,sh]=b.dataset.repl.split("|");replacement(s,sh)});
@@ -651,6 +707,147 @@ function replacement(siteId,sh){
   modal(`Remplaçant · ${esc(SI(siteId).name)}`,`<p class="muted sm" style="margin-top:0">Relève de ${SHIFTS[sh].l.toLowerCase()} (${SHIFTS[sh].start} – ${SHIFTS[sh].end}). Agents disponibles, du plus adapté au moins adapté :</p>
   ${free.slice(0,8).map(({a,rest})=>`<div class="li">${av(a.name)}<div class="grow"><div class="sm b">${esc(a.name)}</div><div class="xs muted">${a.grade}${a.site?" · titulaire "+esc(SI(a.site).name):""} · ${rest?"jour de repos":"disponible"} · ${a.phone}</div></div><button class="btn sm pri" data-pick="${a.id}">Affecter</button></div>`).join("")||"<p>Aucun agent disponible.</p>"}`);
   $$("[data-pick]").forEach(b=>b.onclick=()=>{const k=siteId+"|"+sh;S.overrides[S.day]=S.overrides[S.day]||{};(S.overrides[S.day][k]=S.overrides[S.day][k]||[]).push(b.dataset.pick);S.log.push({t:Date.now(),txt:"Remplacement : "+A(b.dataset.pick).name+" → "+SI(siteId).name});S.msgs.unshift({id:uid(),from:"rh",to:b.dataset.pick,kind:"Convocation",txt:`Convocation : vous remplacez ce ${sh==="N"?"soir":"jour"} au poste ${SI(siteId).name} (${SI(siteId).loc}), relève de ${SHIFTS[sh].l.toLowerCase()} ${SHIFTS[sh].start} – ${SHIFTS[sh].end}. Merci de confirmer.`,date:S.day,time:hm(nowMin()),read:{},ack:{}});save();closeAll();toast(`${A(b.dataset.pick).name} affecté · convocation envoyée sur son téléphone`);render()});
+}
+
+
+/* ---------- Carte 3D premium (MapLibre) ---------- */
+const HQ={lat:6.3685,lng:2.4215,name:"Siège CGSP-Sécurité"};
+function circlePoly(lat,lng,r,n=40,wob=0){const pts=[];for(let i=0;i<=n;i++){const a=2*Math.PI*i/n;const rr=r*(1+wob*Math.sin(a*3));pts.push([lng+rr*Math.cos(a)/(111320*Math.cos(lat*Math.PI/180)),lat+rr*Math.sin(a)/110540])}return pts}
+function arcLine(a,b,n=48){const [x1,y1]=a,[x2,y2]=b;const mx=(x1+x2)/2,my=(y1+y2)/2;const dx=x2-x1,dy=y2-y1;const cx=mx-dy*.28,cy=my+dx*.28;const out=[];for(let i=0;i<=n;i++){const t=i/n;out.push([(1-t)*(1-t)*x1+2*(1-t)*t*cx+t*t*x2,(1-t)*(1-t)*y1+2*(1-t)*t*cy+t*t*y2])}return out}
+function buildMap3D(el,opts={}){
+  const box=document.getElementById(el);if(!box)return;
+  if(!window.maplibregl){buildMap(el,opts);return}
+  try{const c=document.createElement("canvas");if(!(c.getContext("webgl2")||c.getContext("webgl")))throw 0}catch(e){buildMap(el,opts);return}
+  box.classList.add("m3d");
+  const col={green:"#14915A",amber:"#E08A00",red:"#D2362B"};
+  let map;try{map=new maplibregl.Map({container:el,style:"https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",center:[2.405,6.372],zoom:opts.compact?11.9:12.4,pitch:60,bearing:-24,antialias:true,attributionControl:{compact:true},scrollZoom:!opts.compact,maxPitch:78})}catch(e){box.classList.remove("m3d");buildMap(el,opts);return}
+  const ctl={raf:0,rot:true,alive:true,remove(){this.alive=false;cancelAnimationFrame(this.raf);try{map.remove()}catch(e){}}};maps[el]=ctl;
+  map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),"top-right");
+  box.insertAdjacentHTML("beforeend",`<div class="m3d-bar"><button data-m3="3d" class="on">3D</button><button data-m3="2d">2D</button><button data-m3="rot" class="on">Rotation</button><button data-m3="fit">Recentrer</button></div><div class="m3d-leg"><span><i style="background:#1D5FD1"></i>Liaison siège</span>${opts.compact?"":`<span><i style="background:#14915A"></i>Ronde en cours</span>`}<span><i style="background:#14915A;height:9px;width:9px;border-radius:50%"></i>Couvert</span><span><i style="background:#E08A00;height:9px;width:9px;border-radius:50%"></i>À surveiller</span><span><i style="background:#D2362B;height:9px;width:9px;border-radius:50%"></i>Non couvert / SOS</span></div>`);
+  const stopRot=()=>{ctl.rot=false;box.querySelector('[data-m3="rot"]').classList.remove("on")};
+  ["mousedown","touchstart","wheel"].forEach(ev=>map.getCanvasContainer().addEventListener(ev,stopRot,{passive:true}));
+  const fit=()=>{const b=new maplibregl.LngLatBounds();S.sites.forEach(s=>b.extend([s.lng,s.lat]));b.extend([HQ.lng,HQ.lat]);const pit=box.querySelector('[data-m3="2d"]').classList.contains("on")?0:60;const cam=map.cameraForBounds(b,{padding:opts.compact?24:50,bearing:0});if(!cam)return;map.easeTo({center:cam.center,zoom:cam.zoom-(pit?0.15:0),pitch:pit,bearing:pit?-24:0,duration:1200})};
+  box.querySelectorAll("[data-m3]").forEach(b=>b.onclick=()=>{const k=b.dataset.m3;
+    if(k==="3d"||k==="2d"){box.querySelector('[data-m3="3d"]').classList.toggle("on",k==="3d");box.querySelector('[data-m3="2d"]').classList.toggle("on",k==="2d");map.easeTo({pitch:k==="3d"?60:0,bearing:k==="3d"?-24:0,duration:1100});if(k==="2d")stopRot()}
+    if(k==="rot"){ctl.rot=!ctl.rot;b.classList.toggle("on",ctl.rot)}
+    if(k==="fit")fit()});
+  map.on("load",()=>{if(!ctl.alive)return;ctl.ready=true;
+    try{map.setSky&&map.setSky({"sky-color":"#DDE9FB","horizon-color":"#F4F8FF","fog-color":"#F4F8FF","sky-horizon-blend":.6,"horizon-fog-blend":.8,"fog-ground-blend":.4})}catch(e){}
+    try{map.setLight({anchor:"viewport",color:"#ffffff",intensity:.35,position:[1.3,210,40]})}catch(e){}
+    // bâtiments 3D
+    if((map.getSource("carto")||{}).type==="vector")try{const lbl=(map.getStyle().layers.find(l=>l.type==="symbol")||{}).id;
+      map.addLayer({id:"b3d",type:"fill-extrusion",source:"carto","source-layer":"building",minzoom:13.5,paint:{"fill-extrusion-color":"#D9E2EF","fill-extrusion-height":["coalesce",["get","render_height"],8],"fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":.85}},lbl)}catch(e){}
+    const states=S.sites.map(s=>({s,h:siteHealth(s),sos:S.sos.some(x=>x.site===s.id&&x.status!=="Clôturée")}));
+    // colonnes des sites
+    map.addSource("pillars",{type:"geojson",data:{type:"FeatureCollection",features:states.map(({s,h,sos})=>({type:"Feature",properties:{c:sos?col.red:col[h.state],ht:260+140*h.need},geometry:{type:"Polygon",coordinates:[circlePoly(s.lat,s.lng,130,32)]}}))}});
+    map.addLayer({id:"pillars",type:"fill-extrusion",source:"pillars",paint:{"fill-extrusion-color":["get","c"],"fill-extrusion-height":["get","ht"],"fill-extrusion-opacity":.82}});
+    map.addSource("halo",{type:"geojson",data:{type:"FeatureCollection",features:states.map(({s,h,sos})=>({type:"Feature",properties:{c:sos?col.red:col[h.state]},geometry:{type:"Polygon",coordinates:[circlePoly(s.lat,s.lng,300,48)]}}))}});
+    map.addLayer({id:"halo",type:"fill",source:"halo",paint:{"fill-color":["get","c"],"fill-opacity":.08}},"pillars");
+    map.addLayer({id:"halo-l",type:"line",source:"halo",paint:{"line-color":["get","c"],"line-width":1.2,"line-opacity":.45,"line-dasharray":[2,2]}},"pillars");
+    // liaisons siège -> sites (traînée lumineuse animée)
+    const arcs=states.map(({s},i)=>({type:"Feature",properties:{i},geometry:{type:"LineString",coordinates:arcLine([HQ.lng,HQ.lat],[s.lng,s.lat])}}));
+    map.addSource("arcs",{type:"geojson",lineMetrics:true,data:{type:"FeatureCollection",features:arcs}});
+    map.addLayer({id:"arcs-base",type:"line",source:"arcs",layout:{"line-cap":"round"},paint:{"line-color":"#1D5FD1","line-width":2,"line-opacity":.22}});
+    map.addLayer({id:"arcs-glow",type:"line",source:"arcs",layout:{"line-cap":"round"},paint:{"line-width":7,"line-blur":4,"line-gradient":["interpolate",["linear"],["line-progress"],0,"rgba(47,123,240,0)",1,"rgba(47,123,240,0)"]}});
+    map.addLayer({id:"arcs-flow",type:"line",source:"arcs",layout:{"line-cap":"round"},paint:{"line-width":3,"line-gradient":["interpolate",["linear"],["line-progress"],0,"rgba(47,123,240,0)",1,"rgba(47,123,240,0)"]}});
+    // rondes des agents en poste
+    const rounds=states.filter(({h})=>h.pun.length||h.team.length).map(({s},i)=>({type:"Feature",properties:{},geometry:{type:"LineString",coordinates:circlePoly(s.lat,s.lng,140+(i%3)*25,36,.18)}}));
+    if(!opts.compact){map.addSource("rounds",{type:"geojson",data:{type:"FeatureCollection",features:rounds}});
+      map.addLayer({id:"rounds",type:"line",source:"rounds",layout:{"line-cap":"round","line-join":"round"},paint:{"line-color":"#14915A","line-width":2.6,"line-opacity":.9,"line-dasharray":[0,4,3]}})}
+    // points de pointage GPS
+    if(opts.punches){const pf=[];states.forEach(({h})=>h.pun.forEach(x=>pf.push({type:"Feature",properties:{c:x.d>300?col.red:"#1D5FD1",t:A(x.agent).name+" · "+x.in+" · "+metres(x.d)},geometry:{type:"Point",coordinates:[x.lng,x.lat]}})));
+      map.addSource("pun",{type:"geojson",data:{type:"FeatureCollection",features:pf}});
+      map.addLayer({id:"pun",type:"circle",source:"pun",paint:{"circle-radius":5.5,"circle-color":["get","c"],"circle-stroke-color":"#fff","circle-stroke-width":2}});
+      const tip=new maplibregl.Popup({closeButton:false,offset:10});
+      map.on("mouseenter","pun",e=>{map.getCanvas().style.cursor="pointer";tip.setLngLat(e.features[0].geometry.coordinates).setHTML(`<div style="font:12.5px Inter,sans-serif">${esc(e.features[0].properties.t)}</div>`).addTo(map)});
+      map.on("mouseleave","pun",()=>{map.getCanvas().style.cursor="";tip.remove()})}
+    // marqueurs
+    const hq=document.createElement("div");hq.className="hq3d";hq.innerHTML=`<img src="logo-cgsp-96.png" alt="">`;
+    new maplibregl.Marker({element:hq}).setLngLat([HQ.lng,HQ.lat]).setPopup(new maplibregl.Popup({offset:24}).setHTML(`<b style="font:600 14px Inter,sans-serif">${HQ.name}</b><div style="color:#5E6B80;font:12.5px Inter,sans-serif">${esc(S.settings.addr)}</div>`)).addTo(map);
+    states.forEach(({s,h,sos})=>{const e=document.createElement("div");const c=sos?col.red:col[h.state];e.className="pin3d"+(sos?" sos":"");e.style.background=c;e.style.color=c;if(!opts.compact)e.innerHTML=`<b>${esc(s.name)}</b>`;
+      const names=h.team.map(id=>{const pu=h.pun.find(x=>x.agent===id);const st=punchStatus(pu);return `<div style="display:flex;justify-content:space-between;gap:10px"><span>${esc(A(id).name)}</span><b style="color:${!pu?"#5E6B80":st.c==="p-green"?"#14915A":st.c==="p-red"?"#D2362B":"#B86E00"}">${pu?st.l:"Pas encore pointé"}</b></div>`}).join("");
+      new maplibregl.Marker({element:e}).setLngLat([s.lng,s.lat]).setPopup(new maplibregl.Popup({offset:16,maxWidth:"300px"}).setHTML(`<div style="min-width:230px;font:13px Inter,sans-serif"><b style="font-size:14px">${esc(s.name)}</b><div style="color:#5E6B80;margin-bottom:6px">${esc(s.loc)} · ${h.team.length}/${h.need} agent(s)</div>${sos?`<div style="color:#D2362B;font-weight:700;margin-bottom:6px">🚨 Alerte SOS en cours</div>`:""}${h.hole?`<div style="color:#D2362B;font-weight:700;margin-bottom:6px">⚠ ${h.hole.missing} poste(s) non couvert(s)</div>`:""}${names||"<i>Aucun agent</i>"}</div>`)).addTo(map)});
+    fit();
+    // animation
+    const dash=[[0,4,3],[0.5,4,2.5],[1,4,2],[1.5,4,1.5],[2,4,1],[2.5,4,0.5],[3,4,0],[0,0.5,3,3.5],[0,1,3,3],[0,1.5,3,2.5],[0,2,3,2],[0,2.5,3,1.5],[0,3,3,1],[0,3.5,3,0.5]];
+    let t0=performance.now(),last=-1;
+    const tick=now=>{if(!ctl.alive)return;
+      const p=((now-t0)/2600)%1;const a=Math.max(0,p-.22),b=Math.min(1,p+.0001);
+      try{const stops=[0,a,Math.min(.9998,Math.max(a+.0001,p)),Math.min(.9999,Math.max(a+.0002,p)+.0001),1];const ex=al=>["interpolate",["linear"],["line-progress"],stops[0],"rgba(47,123,240,0)",stops[1],"rgba(47,123,240,0)",stops[2],`rgba(47,123,240,${al})`,stops[3],"rgba(47,123,240,0)",stops[4],"rgba(47,123,240,0)"];
+        map.setPaintProperty("arcs-flow","line-gradient",ex(1));map.setPaintProperty("arcs-glow","line-gradient",ex(.55))}catch(e){}
+      const st=Math.floor(now/70)%dash.length;if(st!==last&&map.getLayer("rounds")){map.setPaintProperty("rounds","line-dasharray",dash[st]);last=st}
+      if(ctl.rot&&!map.isMoving())map.setBearing(map.getBearing()+0.04);
+      ctl.raf=requestAnimationFrame(tick)};
+    ctl.raf=requestAnimationFrame(tick);
+  });
+  map.on("error",e=>{if(!ctl.ready&&e&&e.error&&/style\.json|Failed to fetch|NetworkError|AJAXError/i.test(String(e.error.message||e.error))){ctl.remove();box.innerHTML="";box.classList.remove("m3d");buildMap(el,opts)}});
+}
+
+/* ---------- Direction générale ---------- */
+const DG_NAME="Ulrich HOUNNOUKPE";
+function dgTasks(){
+  if(!S.dgTasks){const T=S.day;const late=S.invoices.find(i=>i.status==="En retard");const oldest=[...S.sites].sort((a,b)=>a.since.localeCompare(b.since))[0];
+    const mass=S.agents.filter(a=>a.status==="Actif").reduce((x,a)=>x+payOf(a).brut,0);
+    S.dgTasks=[
+      {id:uid(),title:"Valider la paie du mois avant virement",cat:"Finance",prio:"Haute",due:T,from:"Service RH",note:"Masse salariale brute : "+fcfa(mass)+". Les bulletins sont prêts dans l'espace RH.",done:false},
+      {id:uid(),title:"Signer le renouvellement du contrat · "+oldest.name,cat:"Commercial",prio:"Haute",due:addDays(T,2),from:"Personnel",note:"Client depuis le "+fd(oldest.since)+" · "+fcfa(oldest.contract)+" par mois. Proposer une révision tarifaire.",done:false},
+      late?{id:uid(),title:"Appeler le client pour l'impayé · "+SI(late.site).name,cat:"Finance",prio:"Haute",due:T,from:"Comptabilité",note:"Facture "+late.num+" · "+fcfa(late.amount)+" en retard.",done:false}:null,
+      {id:uid(),title:"Décider du recrutement de 4 agents proposé par les RH",cat:"Décision",prio:"Normale",due:addDays(T,1),from:"Service RH",note:"Besoin lié aux nouveaux sites et aux congés de fin d'année.",done:false},
+      {id:uid(),title:"Rendez-vous prospect · Groupe scolaire Les Lauriers",cat:"Commercial",prio:"Normale",due:addDays(T,3),from:"Personnel",note:"Présentation de l'offre de gardiennage jour et nuit (2 agents).",done:false},
+      {id:uid(),title:"Approuver le budget matériel du trimestre",cat:"Finance",prio:"Normale",due:addDays(T,4),from:"Service RH",note:"Tenues, torches, talkies-walkies : voir les demandes de stock.",done:false},
+      {id:uid(),title:"Réunion mensuelle avec les superviseurs",cat:"Pilotage",prio:"Normale",due:addDays(T,5),from:"Personnel",note:"Ordre du jour : ponctualité, incidents du mois, rondes de nuit.",done:false},
+      {id:uid(),title:"Renouveler l'agrément de société de sécurité",cat:"Conformité",prio:"Normale",due:addDays(T,20),from:"Personnel",note:"Dossier à déposer auprès du ministère de l'Intérieur.",done:false},
+      {id:uid(),title:"Lire le rapport mensuel et le valider",cat:"Pilotage",prio:"Normale",due:addDays(T,-1),from:"Personnel",note:"",done:true}
+    ].filter(Boolean);save()}
+  return S.dgTasks;
+}
+const CATC={Finance:"var(--green)",Commercial:"var(--blue)",Décision:"var(--violet)",Pilotage:"var(--steel)",Conformité:"var(--amber)"};
+function taskRow(t){return `<div class="task ${t.done?"done":""}"><span class="tk" data-tk="${t.id}">${t.done?ic("check"):""}</span><div class="grow"><div class="sm b tt">${esc(t.title)}</div><div class="xs muted">${t.due<S.day&&!t.done?`<b style="color:var(--red)">En retard · ${fd(t.due)}</b>`:t.due===S.day?"Aujourd'hui":"Pour le "+fd(t.due)} · <span style="color:${CATC[t.cat]||"var(--muted)"};font-weight:600">${esc(t.cat)}</span>${t.from!=="Personnel"?" · demandé par "+esc(t.from):""}</div>${t.note?`<div class="xs muted" style="margin-top:3px">${esc(t.note)}</div>`:""}</div>${t.prio==="Haute"&&!t.done?`<span class="pill p-red">Prioritaire</span>`:""}</div>`}
+function bindTasks(){$$("[data-tk]").forEach(b=>b.onclick=()=>{const t=dgTasks().find(x=>x.id===b.dataset.tk);t.done=!t.done;save();toast(t.done?"Tâche terminée":"Tâche rouverte");render(true)});$$("[data-deltk]").forEach(b=>b.onclick=()=>{S.dgTasks=dgTasks().filter(x=>x.id!==b.dataset.deltk);save();render(true)});const n=$("#newTask");if(n)n.onclick=newTask}
+function newTask(){
+  modal("Nouvelle tâche",`<div class="field"><label>Tâche</label><input class="input" id="nt-t" placeholder="Ex. Rencontrer le directeur de la banque"></div><div class="row"><div class="field grow"><label>Catégorie</label><select class="input" id="nt-c">${Object.keys(CATC).map(c=>`<option>${c}</option>`).join("")}</select></div><div class="field grow"><label>Pour le</label><input class="input" type="date" id="nt-d" value="${S.day}"></div></div><div class="field"><label>Priorité</label><select class="input" id="nt-p"><option>Normale</option><option>Haute</option></select></div><div class="field"><label>Note</label><textarea class="input" id="nt-n"></textarea></div>`,`<button class="btn" data-close2>Annuler</button><button class="btn pri" id="nt-ok">Ajouter</button>`);
+  $("#nt-ok").onclick=()=>{const t=$("#nt-t").value.trim();if(!t){toast("Écrivez la tâche","alert");return}dgTasks().unshift({id:uid(),title:t,cat:$("#nt-c").value,prio:$("#nt-p").value,due:$("#nt-d").value||S.day,from:"Personnel",note:$("#nt-n").value.trim(),done:false});save();closeAll();toast("Tâche ajoutée");render(true)};
+  $$("[data-close2]").forEach(b=>b.onclick=closeAll);
+}
+function vTaches(){
+  const f=filt.tk||"todo";const all=dgTasks();const list=all.filter(t=>f==="todo"?!t.done:f==="done"?t.done:true).sort((a,b)=>(a.done-b.done)||a.due.localeCompare(b.due)||(a.prio==="Haute"?-1:1));
+  const todo=all.filter(t=>!t.done);
+  return ph("Mes tâches",`${todo.length} à faire · ${todo.filter(t=>t.due<S.day).length} en retard · décisions et rendez-vous du directeur général`,`<div class="tabs">${[["todo","À faire"],["done","Terminées"],["all","Toutes"]].map(([k,l])=>`<button data-tkf="${k}" class="${f===k?"on":""}">${l}</button>`).join("")}</div><button class="btn pri" id="newTask">${ic("plus")} Nouvelle tâche</button>`)+
+  `<div class="kpis">${kpi("À faire",todo.length,"tâches ouvertes","check")}${kpi("Prioritaires",todo.filter(t=>t.prio==="Haute").length,"à traiter en premier","alert","var(--red)")}${kpi("Demandées par l'équipe",todo.filter(t=>t.from!=="Personnel").length,"RH, comptabilité","users","var(--violet)")}${kpi("Terminées",all.filter(t=>t.done).length,"depuis le début du mois","star","var(--green)")}</div>
+  <div class="card">${list.map(t=>taskRow(t).replace(/<\/div>$/,`<button class="iconbtn" title="Supprimer" data-deltk="${t.id}">${ic("x")}</button></div>`)).join("")||`<div class="pad muted sm">Aucune tâche ici.</div>`}</div>`;
+}
+afterRender.taches=()=>{bindTasks();$$("[data-tkf]").forEach(b=>b.onclick=()=>{filt.tk=b.dataset.tkf;render(true)})};
+function vDashDG(){
+  const sh=curShift(),sd=curShiftDate(),p=planFor(sd);
+  const ca=S.sites.reduce((a,s)=>a+s.contract,0);
+  const unpaid=S.invoices.filter(i=>i.status!=="Payée").reduce((a,i)=>a+i.amount,0);
+  const lateInv=S.invoices.filter(i=>i.status==="En retard");
+  const covered=S.sites.filter(s=>!p._holes.find(h=>h.site===s.id&&h.shift===sh)).length;
+  const pp=S.punches.filter(x=>x.date>=addDays(S.day,-13));const ponct=pp.length?Math.round(100*pp.filter(x=>toMin(x.in)-toMin(SHIFTS[x.shift].start)<=10&&x.d<=300).length/pp.length):100;
+  const inc7=S.incidents.filter(i=>i.date>=addDays(S.day,-6));
+  const compl=S.requests.filter(r=>r.kind==="Plainte"&&r.status!=="Traitée");
+  const act=S.agents.filter(a=>a.status==="Actif").length;
+  const mass=S.agents.filter(a=>a.status==="Actif").reduce((x,a)=>x+payOf(a).brut,0);
+  const tasks=dgTasks().filter(t=>!t.done).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,5);
+  const top=[...S.sites].sort((a,b)=>b.contract-a.contract);const mx=top[0].contract;
+  const reps=["fac","paie","inc","ron","abs","ret"].map(k=>REPORTS.find(r=>r[0]===k)).filter(Boolean);
+  return `<div class="dg-hero"><div class="grow"><div class="xs muted b" style="letter-spacing:.08em;text-transform:uppercase">Direction générale · CGSP-Sécurité</div><h2>Bonjour ${DG_NAME} 👋</h2><div class="muted sm">${fdl(S.day)} · ${tasks.length} tâche(s) à traiter · relève de ${SHIFTS[sh].l.toLowerCase()} en cours</div></div><div class="row wrapf"><button class="btn" data-goto="taches">${ic("check")} Mes tâches</button><button class="btn pri" data-goto="rapports">${ic("chart")} Voir les rapports</button></div></div>
+  <div class="kpis">
+    ${kpi("Chiffre d'affaires mensuel",fcfa(ca).replace(" F CFA",""),"F CFA · "+S.sites.length+" contrats","wallet","var(--green)")}
+    ${kpi("Impayés",fcfa(unpaid).replace(" F CFA",""),`F CFA · ${lateInv.length} facture(s) en retard`,"file",lateInv.length?"var(--red)":"var(--green)")}
+    ${kpi("Couverture des sites",Math.round(100*covered/S.sites.length)+" %",`${covered} / ${S.sites.length} sites couverts`,"building",covered<S.sites.length?"var(--amber)":"var(--green)")}
+    ${kpi("Ponctualité · 14 jours",ponct+" %",pp.length+" pointages analysés","clock")}
+    ${kpi("Incidents · 7 jours",inc7.length,compl.length+" plainte(s) client ouverte(s)","book","var(--violet)")}
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="ch"><h3>Mes tâches</h3><button class="btn sm ghost" data-goto="taches">Tout voir</button></div>${tasks.map(taskRow).join("")||`<div class="pad muted sm">Rien à faire pour le moment.</div>`}</div>
+    <div class="card"><div class="ch"><h3>Vue 3D des sites</h3><button class="btn sm ghost" data-goto="live">Plein écran</button></div><div id="mapDash" class="mapbox"></div></div>
+  </div>
+  <div class="grid3">
+    <div class="card"><div class="ch"><h3>Rapports clés</h3><button class="btn sm ghost" data-goto="rapports">Tous les rapports</button></div><div class="list">${reps.map(([k,l,i,c])=>{const d=repData(k);return `<div class="li click" data-goto="rapports"><span style="color:${c}">${ic(i)}</span><div class="grow"><div class="sm b">${l}</div><div class="xs muted">${esc(d.sum)}</div></div></div>`}).join("")}</div></div>
+    <div class="card pad"><div class="ch" style="padding:0 0 6px"><h3>Chiffre d'affaires par client</h3></div>${top.map(s=>`<div class="hbar"><span class="lb">${esc(s.name)}</span><span class="tr"><i style="width:${Math.round(100*s.contract/mx)}%"></i></span><b class="xs" style="width:76px;text-align:right">${fcfa(s.contract).replace(" F CFA","")}</b></div>`).join("")}</div>
+    <div class="card"><div class="ch"><h3>L'entreprise en bref</h3></div><dl class="kv" style="padding:0 16px 14px"><dt>Effectif</dt><dd>${act} agents actifs</dd><dt>Masse salariale</dt><dd>${fcfa(mass)} brut / mois</dd><dt>Marge brute estimée</dt><dd><b style="color:var(--green)">${fcfa(ca-mass)}</b> / mois</dd><dt>Postes non couverts</dt><dd>${p._holes.length?`<span class="pill p-red">${p._holes.length} · géré par les RH</span>`:`<span class="pill p-green">Aucun</span>`}</dd><dt>Alertes SOS</dt><dd>${S.sos.filter(x=>x.status!=="Clôturée").length?`<span class="pill p-red">En cours</span>`:`<span class="pill p-green">Aucune</span>`}</dd><dt>Envoi des rapports</dt><dd>${S.reportSched.week?"Chaque lundi":""}${S.reportSched.week&&S.reportSched.month?" et ":""}${S.reportSched.month?"le 1er du mois":""}${!S.reportSched.week&&!S.reportSched.month?"Désactivé":""}</dd></dl></div>
+  </div>`;
 }
 
 /* ---------- Tableau de bord RH ---------- */
@@ -675,8 +872,8 @@ afterRender.dash_rh=null;
 const _ad=afterRender.dash;afterRender.dash=()=>{_ad();if(role==="rh"){bindLeaveBtns();const n=$("#newAgent");if(n)n.onclick=newAgent}};
 
 /* ---------- Carte en direct ---------- */
-function vLive(){const sh=curShift();return ph("Carte en direct",`Relève de ${SHIFTS[sh].l.toLowerCase()} · cercles de 300 m autour de chaque site · points = position GPS des pointages`,`<button class="btn" id="refreshMap">${ic("refresh")} Actualiser</button>`)+`<div class="card"><div id="mapLive" class="mapbox big"></div></div>`}
-afterRender.live=()=>{buildMap("mapLive",{punches:true});$("#refreshMap").onclick=()=>{render();toast("Carte actualisée")}};
+function vLive(){const sh=curShift();return ph("Carte 3D en direct",`Relève de ${SHIFTS[sh].l.toLowerCase()} · colonnes = sites (hauteur = effectif) · lignes animées = liaisons du siège et rondes des agents`,`<button class="btn" id="refreshMap">${ic("refresh")} Actualiser</button>`)+`<div class="card"><div id="mapLive" class="mapbox big"></div></div>`}
+afterRender.live=()=>{buildMap3D("mapLive",{punches:true});$("#refreshMap").onclick=()=>{render();toast("Carte actualisée")}};
 
 /* ---------- Sites ---------- */
 function vSites(){
@@ -1307,6 +1504,7 @@ function enter(r){
 }
 $$(".space").forEach(b=>b.onclick=()=>{location.hash=b.dataset.go;enter(b.dataset.go)});
 hydrateIcons();
+(()=>{const sp=document.getElementById("splash");if(!sp)return;const d=matchMedia("(prefers-reduced-motion: reduce)").matches?1200:3200;setTimeout(()=>{sp.classList.add("out");setTimeout(()=>sp.remove(),750)},d)})();
 const h=location.hash.slice(1);if(["dir","rh","agent","sup","client","direction"].includes(h))enter(h==="direction"?"dir":h);
 window.addEventListener("hashchange",()=>{const x=location.hash.slice(1);if(!x)showLogin();else if(["dir","rh","agent","sup","client"].includes(x)&&x!==role)enter(x)});
 setInterval(()=>{if(role&&role!=="agent")renderTop()},30000);
