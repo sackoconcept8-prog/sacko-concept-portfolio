@@ -11,7 +11,7 @@ const REQ = {
   clients:{title:"Demandes clients", statuses:["À faire","En cours","Terminé"], name:"Entreprise", person:"Contact", sub:["Application","Type de demande"], first:"À faire"}
 };
 const DOC_ST = ["Brouillon","Envoyé","Accepté","Paiement à vérifier","Payée","Livré","Annulé"];
-const PILL = {"Nouveau":"p-new","À relancer":"p-new","À faire":"p-new","Devis envoyé":"p-wip","En discussion":"p-wip","Relancé":"p-wip","Intéressé":"p-gold","En cours":"p-wip","Devis demandé":"p-vio","Gagné":"p-ok","Terminé":"p-ok","Perdu":"p-off","Pas intéressé":"p-off","Brouillon":"p-off","Envoyé":"p-wip","Accepté":"p-vio","Paiement à vérifier":"p-red","Payée":"p-ok","Livré":"p-ok","Annulé":"p-off"};
+const PILL = {"À contacter":"p-new","Contacté":"p-wip","Démo faite":"p-vio","Nouveau":"p-new","À relancer":"p-new","À faire":"p-new","Devis envoyé":"p-wip","En discussion":"p-wip","Relancé":"p-wip","Intéressé":"p-gold","En cours":"p-wip","Devis demandé":"p-vio","Gagné":"p-ok","Terminé":"p-ok","Perdu":"p-off","Pas intéressé":"p-off","Brouillon":"p-off","Envoyé":"p-wip","Accepté":"p-vio","Paiement à vérifier":"p-red","Payée":"p-ok","Livré":"p-ok","Annulé":"p-off"};
 const STAGES = [["interesse","Intéressés","p-gold","Intéressé"],["demande","Devis demandé","p-vio","Devis demandé"],["envoye","Devis envoyé","p-wip","Devis envoyé"],["gagne","Gagnés","p-ok","Client"],["perdu","Perdus","p-off","Perdu"]];
 const PRESETS = [["NettoPro – formule Standard",1],["NettoPro – formule Premium",1],["RH Pro – formule Standard",1],["RH Pro – formule Premium",1],["StockPro – formule Standard",1],["PhonePro – formule Standard",1],["Option Sérénité (par mois)",3],["Personnalisation à votre image",1],["Import de vos données Excel",1]];
 const SETTINGS = ["Nom légal","Adresse","EIN","E-mail","Téléphone / WhatsApp","Site","PayPal","Numéro Mobile Money","Lien Mobile Money par défaut","Acompte par défaut (%)","Validité devis (jours)","Conditions","Virement bancaire"];
@@ -129,7 +129,7 @@ function contacts(){
 }
 
 /* ---------- vues ---------- */
-function setView(v){view=v;document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-current",t.dataset.v===v?"page":"false"));["home","crm","req","sales","stats"].forEach(x=>$("v-"+x).hidden=x!==v);renderAll();window.scrollTo(0,0)}
+function setView(v){view=v;document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-current",t.dataset.v===v?"page":"false"));["home","crm","pros","req","sales","stats"].forEach(x=>$("v-"+x).hidden=x!==v);renderAll();window.scrollTo(0,0)}
 function renderAll(){
   if(!data)return;
   const ins=rowsOf("inscriptions"),dv=rowsOf("devis"),cl=rowsOf("clients"),docs=rowsOf("documents");
@@ -138,7 +138,8 @@ function renderAll(){
   b("b-crm",ins.filter(r=>(r.Statut||"À relancer")==="À relancer").length);
   b("b-sales",docs.filter(d=>["Accepté","Paiement à vérifier"].includes(d.Statut)).length);
   const h=new Date().getHours();$("hello").textContent=(h<12?"Bonjour":h<18?"Bon après-midi":"Bonsoir")+" Hawa";
-  ({home:renderHome,crm:renderCRM,req:renderReq,sales:renderSales,stats:renderStats})[view]();
+  b("b-pros",pBadge());
+  ({home:renderHome,crm:renderCRM,pros:renderPros,req:renderReq,sales:renderSales,stats:renderStats})[view]();
 }
 
 /* ---- Accueil : bilan du jour ---- */
