@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<title>Fiche client · SACKO CONCEPT</title>
+<title>Devis client · SACKO CONCEPT</title>
 <link rel="icon" href="../assets/sacko-logo-96.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" defer></script>
 <style>
-:root{--blue:#1D5FD1;--blue2:#2F7BF0;--ink:#0F1B2D;--muted:#5E6B80;--line:#E3E9F2;--soft:#F3F7FD;--green:#14915A;--red:#D2362B;--amber:#E08A00;--bg:#F6F8FC}
+:root{--blue:#1D5FD1;--blue2:#2F7BF0;--ink:#0F1B2D;--muted:#5E6B80;--line:#E3E9F2;--soft:#F3F7FD;--green:#14915A;--red:#D2362B;--bg:#F6F8FC}
 *{box-sizing:border-box}html,body{margin:0}
-body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
-header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+body{-webkit-print-color-adjust:exact;print-color-adjust:exact;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.93);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .hd{max-width:860px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px}
 .hd img{width:34px;height:34px}.hd b{font-size:14px;letter-spacing:.06em}.hd small{display:block;color:var(--muted);font-size:11px}
 .hd .sp{flex:1}
@@ -23,7 +23,6 @@ header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdro
 main{max-width:860px;margin:0 auto;padding:16px 16px 120px}
 h1{font-size:24px;margin:6px 0 4px;letter-spacing:-.02em}
 .lead{color:var(--muted);margin:0 0 14px;font-size:14px}
-.prog{height:6px;border-radius:6px;background:#E3EAF6;overflow:hidden;margin:6px 0 16px}.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--blue2),var(--blue));width:0;transition:width .3s}
 details.sec{background:#fff;border:1px solid var(--line);border-radius:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(15,27,45,.04)}
 details.sec>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:11px;font-weight:700;font-size:15.5px}
 details.sec>summary::-webkit-details-marker{display:none}
@@ -38,144 +37,185 @@ label.f{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:
 label.f em{color:var(--red);font-style:normal}
 input,select,textarea{font:15px Inter;color:var(--ink);border:1px solid #D5DEEB;border-radius:11px;padding:10px 12px;background:#fff;width:100%;outline:none}
 input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,95,209,.12)}
-textarea{min-height:76px;resize:vertical}
-.chips{display:flex;flex-wrap:wrap;gap:7px}
+textarea{min-height:70px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:5px}
 .chips label{display:inline-flex;align-items:center;gap:6px;border:1px solid #D5DEEB;border-radius:30px;padding:7px 12px;font-size:13.5px;cursor:pointer;background:#fff;user-select:none}
 .chips input{width:auto;margin:0;accent-color:var(--blue)}
 .chips label:has(input:checked){border-color:var(--blue);background:#EEF4FE;color:var(--blue);font-weight:600}
+.chips small{color:var(--muted);font-weight:500}
 .hint{font-size:12px;color:var(--muted);font-weight:500}
 .rng{display:flex;align-items:center;gap:12px}.rng input{padding:0;border:0;accent-color:var(--blue)}
 .rng b{min-width:56px;text-align:right;color:var(--blue);font-size:18px}
-.calc{grid-column:1/-1;background:var(--soft);border:1px solid #DCE6F6;border-radius:12px;padding:10px 12px;font-size:13.5px;display:flex;gap:16px;flex-wrap:wrap}
-.calc b{color:var(--blue)}
-.users{grid-column:1/-1;display:flex;flex-direction:column;gap:8px}
-.urow{display:grid;grid-template-columns:1.3fr 1fr 1fr 1.3fr 36px;gap:7px;align-items:center}
-.urow input,.urow select{padding:8px 9px;font-size:14px}
-.x{border:0;background:#FDECEA;color:var(--red);border-radius:9px;height:36px;cursor:pointer;font-size:16px}
+/* devis box */
+.quote{grid-column:1/-1;border:2px solid var(--blue);border-radius:14px;overflow:hidden;background:#fff}
+.quote .ql{display:flex;justify-content:space-between;gap:10px;padding:9px 13px;border-bottom:1px solid var(--line);font-size:14px}
+.quote .ql span:last-child{font-weight:700;white-space:nowrap}
+.quote .ql.tot{background:linear-gradient(135deg,#1D5FD1,#2F7BF0);color:#fff;font-size:16px;border:0}
+.quote .ql.sub{color:var(--muted);font-size:13px}
+.quote .ql.neg span:last-child{color:var(--green)}
+.sugg{grid-column:1/-1;background:var(--soft);border:1px solid #DCE6F6;border-radius:12px;padding:10px 12px;font-size:13.5px}
+.sugg b{color:var(--blue)}
 .btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;font:600 14px Inter;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:7px;justify-content:center}
 .btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
 .btn.grn{background:var(--green);border-color:var(--green);color:#fff}
 .btn.sm{padding:7px 10px;font-size:13px;border-radius:10px}
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
-.bar .in{max-width:860px;margin:0 auto;display:flex;gap:8px;align-items:center}
-.bar .st{flex:1;font-size:12px;color:var(--muted)}
+.bar .in{max-width:860px;margin:0 auto;display:flex;gap:7px;align-items:center}
+.bar .st{flex:1;font-size:12px;color:var(--muted);min-width:0}
 .list{display:flex;flex-direction:column;gap:10px}
-.item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px 15px;display:flex;gap:12px;align-items:center}
+.item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px 15px;display:flex;gap:10px;align-items:center}
 .item .grow{flex:1;min-width:0}.item b{display:block;font-size:15.5px}.item small{color:var(--muted);font-size:12.5px}
+.item .amt{font-weight:800;color:var(--blue);white-space:nowrap;font-size:14px}
 .pill{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
 .p-int{background:#E7EFFD;color:var(--blue)}.p-rel{background:#FFF3DF;color:#A86400}.p-sig{background:#E2F5EC;color:var(--green)}.p-no{background:#EEF1F5;color:var(--muted)}
 .empty{text-align:center;color:var(--muted);padding:40px 10px;background:#fff;border:1px dashed #CFDAEA;border-radius:16px}
 .top{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tarifs{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:grid;grid-template-columns:1fr 160px;gap:8px 12px;align-items:center}
+.tarifs h3{grid-column:1/-1;margin:8px 0 0;font-size:14px;color:var(--blue);text-transform:uppercase;letter-spacing:.06em}
+.tarifs h3:first-child{margin-top:0}
+.tarifs label{font-size:14px}.tarifs input{text-align:right;padding:8px 10px}
 .toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:40;pointer-events:none}
 .toast.on{opacity:1;transform:translateX(-50%)}
 #print{display:none}
-@media (max-width:640px){.body{grid-template-columns:1fr}.urow{grid-template-columns:1fr 1fr;}.urow .x{grid-column:2;justify-self:end;width:44px}.hd small{display:none}.tabs button{padding:7px 9px}}
+@media (max-width:640px){.body{grid-template-columns:1fr}.hd small{display:none}.tabs button{padding:7px 8px;font-size:12.5px}.tarifs{grid-template-columns:1fr 120px}.bar .st{display:none}}
 @media print{
-  @page{size:A4;margin:14mm 14mm 18mm}
-  body{background:#fff;font-size:10pt}
+  @page{size:A4;margin:12mm 14mm 20mm}
+  body{background:#fff;font-size:9.6pt;color:#0F1B2D}
   header,main,.bar,.toast{display:none!important}
   #print{display:block}
-  .pv-h{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--blue);padding-bottom:8px;margin-bottom:10px}
-  .pv-h img{width:40px}.pv-h h2{margin:0;font-size:16pt}.pv-h small{color:var(--muted)}
-  .pv-s{break-inside:avoid;margin-bottom:9px}
-  .pv-s h3{font-size:10.5pt;color:var(--blue);margin:0 0 4px;text-transform:uppercase;letter-spacing:.06em}
-  .pv-s table{width:100%;border-collapse:collapse;font-size:9.4pt}
-  .pv-s td{border:1px solid #E3E9F2;padding:4px 7px;vertical-align:top}
-  .pv-s td:first-child{width:38%;color:#5E6B80;background:#F7F9FD}
-  .pv-f{position:fixed;bottom:0;left:0;right:0;font-size:7pt;color:#7C889B;border-top:1px solid #E3E9F2;padding-top:4px}
+  .d-top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--blue);padding-bottom:9px;margin-bottom:12px}
+  .d-top .br{display:flex;gap:9px;align-items:center}.d-top img{width:44px}
+  .d-top .br b{font-size:12pt;letter-spacing:.08em}.d-top .br small{display:block;color:var(--muted);font-size:7.5pt;letter-spacing:.08em;text-transform:uppercase}
+  .d-top h2{margin:0;font-size:20pt;color:var(--blue);text-align:right}.d-top .meta{text-align:right;font-size:8.6pt;color:var(--muted)}
+  .d-par{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+  .d-par div{border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:8.8pt}
+  .d-par h4{margin:0 0 3px;font-size:7.6pt;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  table.d{width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:10px}
+  table.d th{background:#F3F7FD;text-align:left;font-size:7.6pt;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+  table.d td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.d td.r,table.d th.r{text-align:right;white-space:nowrap}
+  table.d tr.tot td{background:#1D5FD1;color:#fff;font-weight:800;font-size:10.5pt;border:0}
+  table.d tr.sub td{color:var(--muted)}
+  .d-inc{font-size:8.3pt;color:var(--muted);margin-top:2px}
+  .d-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;break-inside:avoid}
+  .d-grid>div{border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:8.6pt}
+  .d-grid h4{margin:0 0 4px;font-size:8.6pt;color:var(--blue)}
+  .d-grid ul{margin:0;padding-left:14px}
+  .d-sig{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;break-inside:avoid}
+  .d-sig div{border:1px solid var(--line);border-radius:9px;height:30mm;padding:7px 10px;font-size:8.4pt;color:var(--muted)}
+  .d-sig b{color:#0F1B2D}
+  .d-foot{position:fixed;bottom:0;left:0;right:0;font-size:6.8pt;color:#7C889B;border-top:1px solid var(--line);padding-top:4px;line-height:1.45}
+  .d-foot b{color:#4A5568}
 }
 </style>
 </head>
 <body>
-<header><div class="hd"><img src="../assets/sacko-logo-96.png" alt=""><div><b>SACKO CONCEPT</b><small>Fiche de renseignements client</small></div><span class="sp"></span>
-<div class="tabs"><button id="tNew" class="on">Fiche</button><button id="tList">Mes fiches <span id="nb"></span></button></div></div></header>
+<header><div class="hd"><img src="../assets/sacko-logo-96.png" alt=""><div><b>SACKO CONCEPT</b><small>Informations pour le devis</small></div><span class="sp"></span>
+<div class="tabs"><button id="tNew" class="on">Devis</button><button id="tList">Mes devis <span id="nb"></span></button><button id="tTar">Tarifs</button></div></div></header>
 
 <main id="vForm">
-  <h1 id="ttl">Nouvelle fiche client</h1>
-  <p class="lead">À remplir pendant ou juste après la réunion. Tout est enregistré automatiquement sur ce téléphone.</p>
-  <div class="prog"><i id="pg"></i></div>
+  <h1 id="ttl">Nouveau devis</h1>
+  <p class="lead">Notez les informations pendant ou juste après la réunion. Le prix se calcule tout seul selon la taille de l'agence, et vous pouvez l'ajuster.</p>
   <form id="f" autocomplete="off"></form>
 </main>
 
 <main id="vList" hidden>
-  <h1>Mes fiches clients</h1>
-  <p class="lead">Les fiches sont enregistrées sur cet appareil. Exportez-les régulièrement en Excel pour les garder.</p>
-  <div class="top"><button class="btn pri" id="bNew">＋ Nouvelle fiche</button><button class="btn" id="bXlsAll">⬇ Tout exporter en Excel</button><button class="btn" id="bJson">Sauvegarde</button><label class="btn" style="cursor:pointer">Restaurer<input type="file" id="fJson" accept=".json" hidden></label></div>
+  <h1>Mes devis</h1>
+  <p class="lead">Enregistrés sur cet appareil. Exportez-les régulièrement en Excel pour les garder.</p>
+  <div class="top"><button class="btn pri" id="bNew">＋ Nouveau devis</button><button class="btn" id="bXlsAll">⬇ Tout exporter en Excel</button><button class="btn" id="bJson">Sauvegarde</button><label class="btn" style="cursor:pointer">Restaurer<input type="file" id="fJson" accept=".json" hidden></label></div>
   <div class="list" id="lst"></div>
 </main>
 
+<main id="vTar" hidden>
+  <h1>Mes tarifs</h1>
+  <p class="lead">Ces prix servent au calcul automatique des devis. Modifiez-les quand vous voulez : ils restent enregistrés sur cet appareil.</p>
+  <div class="tarifs" id="tar"></div>
+  <div class="top" style="margin-top:12px"><button class="btn" id="bTarReset">Revenir aux tarifs conseillés</button></div>
+</main>
+
 <div class="bar" id="bar"><div class="in"><span class="st" id="st">Brouillon</span>
-  <button class="btn sm" id="bWa" title="Envoyer sur WhatsApp">WhatsApp</button>
-  <button class="btn sm" id="bPdf" title="Imprimer ou enregistrer en PDF">PDF</button>
-  <button class="btn sm" id="bXls" title="Exporter en Excel">Excel</button>
-  <button class="btn grn" id="bSave">Enregistrer</button></div></div>
+  <button class="btn sm" id="bWa">WhatsApp</button>
+  <button class="btn sm" id="bXls">Excel</button>
+  <button class="btn pri sm" id="bPdf">📄 Devis PDF</button>
+  <button class="btn grn sm" id="bSave">Enregistrer</button></div></div>
 <div class="toast" id="toast"></div>
 <div id="print"></div>
 
 <script>
+/* ---------- Tarifs ---------- */
+const DEF_TARIFS={
+  base_simple:230000,base_complet:3200000,base_elite:7000000,
+  t2:40,t3:100,villes:10,
+  o_iphone:1500000,o_sms:400000,o_borne:300000,o_rapports:300000,o_formation:500000,o_store:800000,o_email:150000,o_sur:0,
+  heberg_complet:0,heberg_elite:0
+};
+const TAR_LABELS=[
+ ["Prix de départ des formules (jusqu'à 50 agents)"],
+ ["base_simple","RH SécuriPro Simple"],["base_complet","SécuriPro Complet"],["base_elite","SécuriPro Elite"],
+ ["Majoration selon la taille (%)"],
+ ["t2","De 51 à 150 agents (+ %)"],["t3","Plus de 150 agents (+ %)"],["villes","Par ville supplémentaire (+ %)"],
+ ["Options (ajoutées à Simple et Complet ; comprises dans Elite)"],
+ ["o_iphone","Application iPhone (App Store)"],["o_sms","Alertes SMS"],["o_borne","Mode borne (poste de garde)"],["o_rapports","Rapports mensuels aux clients"],["o_formation","Formation sur place"],["o_store","Publication à son nom (Google Play / App Store)"],["o_email","Adresses e-mail pro (par an)"],
+ ["Hébergement à partir de la 2e année (laisser 0 pour ne pas l'afficher)"],
+ ["heberg_complet","Complet, par an"],["heberg_elite","Elite, par an"]
+];
+const OPTS=[["o_iphone","Application iPhone"],["o_sms","Alertes SMS"],["o_borne","Mode borne (poste de garde)"],["o_rapports","Rapports mensuels aux clients"],["o_formation","Formation sur place"],["o_store","Application à son nom (Google Play / App Store)"],["o_email","Adresses e-mail pro"]];
+const FORM={"RH SécuriPro Simple":"base_simple","SécuriPro Complet":"base_complet","SécuriPro Elite":"base_elite"};
+const INCL={
+ "RH SécuriPro Simple":"Fiches agents et cartes professionnelles, planning jour et nuit, gestion des congés, pointage simple, messages RH, import des agents et des sites, prise en main en visio.",
+ "SécuriPro Complet":"5 espaces (direction, RH, superviseur, agents, clients), pointage GPS, rondes QR, SOS et contrôles de nuit, main courante, documents RH et paie, facturation et stock, rapports automatiques, carte 3D en direct, application Android, hébergement sécurisé et nom de domaine, 1re année d'hébergement et de maintenance offerte, code source fourni sous licence.",
+ "SécuriPro Elite":"Tout SécuriPro Complet, plus : application iPhone, alertes SMS, mode borne, rapports mensuels aux clients, formation sur place, assistance prioritaire, publication à votre nom, 1re année d'hébergement et de maintenance offerte, code source fourni sous licence."
+};
+const TKEY="sacko_tarifs_v1",KEY="sacko_devis_v1",NKEY="sacko_devis_num";
+let T=Object.assign({},DEF_TARIFS,lj(TKEY,{}));
+function lj(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
+function sj(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast("Stockage indisponible")}}
+
+/* ---------- Formulaire ---------- */
 const SECTIONS=[
  {t:"Entreprise",f:[
   ["societe","Raison sociale",1,"text","Ex. CGSP-Sécurité"],["sigle","Sigle ou nom commercial"],
-  ["secteur","Secteur","","select",["Sécurité privée / gardiennage","Nettoyage","Sécurité et nettoyage","Autre"]],["pays","Pays","","select",["Bénin","Togo","Mali","Côte d'Ivoire","Sénégal","Burkina Faso","Niger","Cameroun","Gabon","Congo","Guinée","Autre"]],
-  ["ville","Ville du siège"],["adresse","Adresse du siège"],
-  ["rccm","N° RCCM"],["ifu","N° IFU"],
-  ["tel_ent","Téléphone de l'entreprise","","tel"],["email_ent","E-mail de l'entreprise","","email"],
-  ["domaine","Site web ou nom de domaine existant","","text","Ex. cgsp-securite.com"],["couleurs","Couleurs de la marque","","text","Ex. bleu et blanc"]]},
- {t:"Contacts",f:[
-  ["dir_nom","Nom du directeur",1],["dir_fct","Fonction","","text","Directeur général"],
-  ["dir_tel","Téléphone / WhatsApp du directeur","","tel"],["dir_email","E-mail du directeur","","email"],
-  ["rp_nom","Responsable du projet (souvent le RH)"],["rp_fct","Fonction"],
-  ["rp_tel","Téléphone / WhatsApp","","tel"],["rp_email","E-mail","","email"]]},
+  ["pays","Pays","","select",["Bénin","Togo","Mali","Côte d'Ivoire","Sénégal","Burkina Faso","Niger","Cameroun","Gabon","Congo","Guinée","Autre"]],["ville","Ville du siège"],
+  ["adresse","Adresse","full"],["rccm","N° RCCM"],["ifu","N° IFU"]]},
+ {t:"Interlocuteur",f:[
+  ["dir_nom","Nom du décideur",1],["dir_fct","Fonction","","text","Directeur général"],
+  ["dir_tel","Téléphone / WhatsApp","","tel"],["dir_email","E-mail","","email"]]},
  {t:"Taille de l'agence",f:[
   ["nb_agents","Nombre d'agents",1,"number"],["nb_sup","Nombre de superviseurs","","number"],
-  ["nb_sites","Nombre de sites gardés",1,"number"],["nb_clients","Nombre de clients","","number"],
-  ["villes","Villes où l'agence travaille","full"],
-  ["releve_jour","Relève de jour","","text","Ex. 7 h – 19 h"],["releve_nuit","Relève de nuit","","text","Ex. 19 h – 7 h"],
-  ["outils","Outils utilisés aujourd'hui","full","chips",["Cahiers / papier","Excel","WhatsApp","Un autre logiciel","Rien"]],
-  ["outil_nom","Si autre logiciel : lequel, et ce qui ne va pas","full","textarea"]]},
- {t:"Problèmes et besoins",f:[
-  ["problemes","Problèmes principaux","full","chips",["Retards","Absences","Agents qui dorment la nuit","Rondes non prouvées","Postes non couverts","Calcul de la paie","Factures et impayés","Plaintes de clients","Matériel perdu","Suivi des sanctions"]],
-  ["priorite","Le problème n°1 selon le client","full","textarea"],
-  ["formule","Formule qui intéresse le client","","select",["RH SécuriPro Simple","SécuriPro Complet","SécuriPro Elite","Pas encore décidé"]],
-  ["options","Options souhaitées","full","chips",["Application iPhone","Alertes SMS","Mode borne (poste de garde)","Rapports mensuels aux clients","Formation sur place","Application à son nom (Google Play / App Store)","Adresses e-mail pro"]],
-  ["autres","Autres demandes ou fonctions sur mesure","full","textarea"]]},
- {t:"Paie et règles RH",f:[
-  ["jour_paie","Jour de paie","","text","Ex. le 30 du mois"],["prime_nuit","Prime de nuit","","text","Ex. 5 000 F / mois"],
-  ["anciennete","Prime d'ancienneté","","text"],["cnss","Cotisations CNSS","","select",["Oui, déclarées","Non","Partiellement","À vérifier"]],
-  ["avances","Avances sur salaire","","select",["Oui","Non"]],["mode_paie","Mode de paiement des agents","","select",["Espèces","Mobile Money","Virement","Mixte"]],
-  ["regles","Autres règles (retenues, sanctions, congés…)","full","textarea"]]},
- {t:"Utilisateurs à créer",users:true},
- {t:"Documents à recevoir",f:[
-  ["docs","Cochez à la réception","full","chips",["Logo en bonne qualité","Liste des agents (Excel)","Liste des sites + GPS","Liste des clients + contrats","Règles de paie","RCCM et IFU","Pièce d'identité du gérant (Elite)","Accès au nom de domaine"]],
-  ["docs_note","Remarques","full","textarea"]]},
- {t:"Offre et suite à donner",f:[
-  ["prix","Prix proposé (F CFA)",1,"number"],["acompte","Acompte choisi par le client","","range"],
-  ["calc","","full","calc"],
-  ["paiement","Moyen de paiement","","select",["Virement","Mobile Money","Espèces auprès d'un représentant","À définir"]],["echeance","Paiement du solde","","select",["À la réception (PV)","En plusieurs fois","À définir"]],
-  ["date_rdv","Date de la réunion","","date"],["date_debut","Démarrage souhaité","","date"],
-  ["statut","Statut","","select",["Intéressé","À relancer","Devis envoyé","Signé","Pas intéressé"]],["relance","Date de relance","","date"],
-  ["notes","Notes de la réunion","full","textarea"]]}
+  ["nb_sites","Nombre de sites gardés","","number"],["nb_clients","Nombre de clients","","number"],
+  ["nb_villes","Nombre de villes","","number","1"],["outils","Outil utilisé aujourd'hui","","select",["Cahiers / papier","Excel","WhatsApp","Un autre logiciel","Rien"]]]},
+ {t:"Besoins",f:[
+  ["problemes","Problèmes principaux","full","chips",["Retards","Absences","Agents qui dorment la nuit","Rondes non prouvées","Postes non couverts","Calcul de la paie","Factures et impayés","Plaintes de clients","Matériel perdu"]],
+  ["formule","Formule retenue",1,"select",Object.keys(FORM)],
+  ["options","Options souhaitées","full","opts"],
+  ["sur_mesure","Fonctions sur mesure demandées","full","textarea"],["sur_prix","Prix du sur-mesure (F CFA)","","number","0"]]},
+ {t:"Prix et paiement",f:[
+  ["calc","","full","quote"],
+  ["remise","Remise accordée (%)","","number","0"],["prix_force","Prix final ajusté à la main (facultatif)","","number","Laisser vide = prix calculé"],
+  ["acompte","Acompte choisi par le client","full","range"],
+  ["paiement","Moyen de paiement","","select",["Virement","Mobile Money","Espèces auprès d'un représentant","À définir"]],["delai","Délai de mise en service","","select",["2 à 3 semaines","4 à 6 semaines","6 à 8 semaines"]],
+  ["validite","Devis valable jusqu'au","","date"]]},
+ {t:"Suivi",f:[
+  ["date_rdv","Date de la réunion","","date"],["statut","Statut","","select",["Intéressé","Devis envoyé","À relancer","Signé","Pas intéressé"]],
+  ["relance","Date de relance","","date"],["notes","Notes de la réunion","full","textarea"]]}
 ];
-const ROLES=["Directeur","RH","Comptable","Superviseur","Chef de poste","Autre"];
-const KEY="sacko_fiches_v1";
-let store=load(),cur=null,dirty=false;
-function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){toast("Stockage indisponible sur ce navigateur")}}
+let store=lj(KEY,{}),cur=null,dirty=false;
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fcfa=n=>(Math.round(+n||0)).toLocaleString("fr-FR").replace(/ | /g," ")+" F CFA";
+const fd=d=>d?new Date(d).toLocaleDateString("fr-FR"):"";
 function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),2200)}
 
 function build(){
   const f=$("#f");f.innerHTML="";
   SECTIONS.forEach((s,i)=>{
-    const d=document.createElement("details");d.className="sec";if(i===0)d.open=true;
+    const d=document.createElement("details");d.className="sec";d.open=i<1||i===4;
     let h=`<summary><span class="num">${i+1}</span>${s.t}<span class="cnt" data-c="${i}"></span></summary><div class="body">`;
-    if(s.users){h+=`<div class="users" id="users"></div><div class="full"><button type="button" class="btn sm" id="addU">＋ Ajouter un utilisateur</button> <span class="hint">Direction, RH, superviseurs… Les agents seront importés depuis la liste Excel.</span></div>`}
-    else s.f.forEach(([k,l,req,type,opt])=>{
-      const full=req==="full"||["textarea","chips","calc"].includes(type)?" full":"";const star=req===1?" <em>*</em>":"";
-      if(type==="calc"){h+=`<div class="calc" id="calc"></div>`;return}
+    s.f.forEach(([k,l,req,type,opt])=>{
+      const full=req==="full"||["textarea","chips","quote","opts","range"].includes(type)?" full":"";const star=req===1?" <em>*</em>":"";
+      if(type==="quote"){h+=`<div class="sugg" id="sugg"></div><div class="quote" id="quote"></div>`;return}
       if(type==="chips"){h+=`<div class="f${full}"><label class="f">${l}</label><div class="chips">${opt.map(o=>`<label><input type="checkbox" name="${k}" value="${esc(o)}">${esc(o)}</label>`).join("")}</div></div>`;return}
+      if(type==="opts"){h+=`<div class="f${full}"><label class="f">${l}</label><div class="chips" id="optbox">${OPTS.map(([ok,ol])=>`<label><input type="checkbox" name="options" value="${ok}">${esc(ol)} <small data-op="${ok}"></small></label>`).join("")}</div><span class="hint" id="optnote"></span></div>`;return}
       let inp;
       if(type==="select")inp=`<select name="${k}"><option value="">—</option>${opt.map(o=>`<option>${esc(o)}</option>`).join("")}</select>`;
       else if(type==="textarea")inp=`<textarea name="${k}"></textarea>`;
@@ -185,100 +225,132 @@ function build(){
     });
     d.innerHTML=h+"</div>";f.appendChild(d);
   });
-  $("#addU").onclick=()=>{addUser();change()};
   f.addEventListener("input",change);f.addEventListener("change",change);
-}
-function addUser(u={}){
-  const r=document.createElement("div");r.className="urow";
-  r.innerHTML=`<input data-u="nom" placeholder="Nom et prénom" value="${esc(u.nom)}"><select data-u="role">${ROLES.map(x=>`<option ${u.role===x?"selected":""}>${x}</option>`).join("")}</select><input data-u="tel" type="tel" placeholder="Téléphone" value="${esc(u.tel)}"><input data-u="email" type="email" placeholder="E-mail" value="${esc(u.email)}"><button type="button" class="x" title="Retirer">✕</button>`;
-  r.querySelector(".x").onclick=()=>{r.remove();change()};$("#users").appendChild(r);
 }
 function read(){
   const o={};const f=$("#f");
-  SECTIONS.forEach(s=>s.f&&s.f.forEach(([k,,,type])=>{if(type==="calc")return;
-    if(type==="chips")o[k]=$$(`[name="${k}"]:checked`).map(x=>x.value);else o[k]=f.elements[k].value.trim()}));
-  o.users=$$("#users .urow").map(r=>({nom:r.querySelector('[data-u="nom"]').value.trim(),role:r.querySelector('[data-u="role"]').value,tel:r.querySelector('[data-u="tel"]').value.trim(),email:r.querySelector('[data-u="email"]').value.trim()})).filter(u=>u.nom||u.tel||u.email);
+  SECTIONS.forEach(s=>s.f.forEach(([k,,,type])=>{if(type==="quote")return;
+    if(type==="chips"||type==="opts")o[k]=$$(`[name="${k}"]:checked`).map(x=>x.value);else o[k]=f.elements[k].value.trim()}));
   return o;
 }
 function fill(o){
   build();const f=$("#f");
-  SECTIONS.forEach(s=>s.f&&s.f.forEach(([k,,,type])=>{if(type==="calc")return;
-    if(type==="chips")$$(`[name="${k}"]`).forEach(x=>x.checked=(o[k]||[]).includes(x.value));
+  SECTIONS.forEach(s=>s.f.forEach(([k,,,type])=>{if(type==="quote")return;
+    if(type==="chips"||type==="opts")$$(`[name="${k}"]`).forEach(x=>x.checked=(o[k]||[]).includes(x.value));
     else if(o[k]!=null&&o[k]!=="")f.elements[k].value=o[k]}));
-  const us=o.users&&o.users.length?o.users:[{role:"Directeur"},{role:"RH"}];us.forEach(addUser);
+  if(!o.validite){const d=new Date();d.setDate(d.getDate()+30);f.elements.validite.value=d.toISOString().slice(0,10)}
+  if(!o.date_rdv)f.elements.date_rdv.value=new Date().toISOString().slice(0,10);
   refresh();
 }
+/* calcul */
+function quote(o){
+  const ag=+o.nb_agents||0,vi=Math.max(1,+o.nb_villes||1),key=FORM[o.formule];
+  const L=[];if(!key)return {L,total:0,ok:false};
+  const base=+T[key]||0;L.push({k:"base",l:`${o.formule}`,d:INCL[o.formule],v:base});
+  const pct=ag>150?+T.t3:ag>50?+T.t2:0;
+  if(pct)L.push({l:`Taille de l'agence : ${ag} agents (+${pct} %)`,v:Math.round(base*pct/100)});
+  if(vi>1&&+T.villes)L.push({l:`${vi} villes (+${T.villes} % par ville supplémentaire)`,v:Math.round(base*(vi-1)*T.villes/100)});
+  const elite=o.formule==="SécuriPro Elite";
+  (o.options||[]).forEach(ok=>{const nm=(OPTS.find(x=>x[0]===ok)||[])[1];if(!nm)return;
+    const inc=elite&&ok!=="o_email";L.push({l:nm+(ok==="o_email"?" (1re année)":""),v:inc?0:+T[ok]||0,inc})});
+  if(+o.sur_prix)L.push({l:"Fonctions sur mesure"+(o.sur_mesure?" : "+o.sur_mesure:""),v:+o.sur_prix});
+  const brut=L.reduce((a,x)=>a+x.v,0);
+  const rem=Math.min(100,Math.max(0,+o.remise||0));const remV=Math.round(brut*rem/100);
+  let total=brut-remV;const forced=+o.prix_force>0;if(forced)total=+o.prix_force;
+  total=Math.round(total/5000)*5000;
+  const acc=+o.acompte||40;
+  const heb=elite?+T.heberg_elite:o.formule==="SécuriPro Complet"?+T.heberg_complet:0;
+  return {L,brut,rem,remV,total,forced,acc,accV:Math.round(total*acc/100),solde:total-Math.round(total*acc/100),heb,ok:true,pct};
+}
 function refresh(){
-  const o=read();
-  const acc=+o.acompte||40;$("#accv").textContent=acc+" %";
-  const p=+o.prix||0;$("#calc").innerHTML=p?`<span>Acompte : <b>${fcfa(p*acc/100)}</b></span><span>Solde à la réception : <b>${fcfa(p*(100-acc)/100)}</b></span>`:`<span class="hint">Saisissez le prix pour calculer l'acompte et le solde.</span>`;
-  // progression
-  const keys=["societe","pays","ville","tel_ent","dir_nom","dir_tel","rp_nom","rp_tel","nb_agents","nb_sites","nb_clients","formule","prix","statut","date_rdv"];
-  const done=keys.filter(k=>o[k]).length+(o.problemes.length?1:0)+(o.users.length?1:0);$("#pg").style.width=Math.round(100*done/(keys.length+2))+"%";
-  SECTIONS.forEach((s,i)=>{const c=$(`[data-c="${i}"]`);if(!c)return;if(s.users){c.textContent=o.users.length?o.users.length+" utilisateur(s)":"";return}
-    const n=s.f.filter(([k,,,t])=>t!=="calc"&&(Array.isArray(o[k])?o[k].length:o[k])).length;const tot=s.f.filter(x=>x[3]!=="calc").length;c.textContent=n?`${n}/${tot}`:""});
-  $("#ttl").textContent=o.societe?o.societe:"Nouvelle fiche client";
+  const o=read();const q=quote(o);
+  $("#accv").textContent=(+o.acompte||40)+" %";
+  const elite=o.formule==="SécuriPro Elite";
+  $$("[data-op]").forEach(e=>{const k=e.dataset.op;e.textContent=elite&&k!=="o_email"?"· compris":+T[k]?"· +"+fcfa(T[k]).replace(" F CFA",""):""});
+  const ag=+o.nb_agents||0;
+  $("#sugg").innerHTML=!o.formule?`Choisissez la <b>formule</b> et le <b>nombre d'agents</b> : le prix se calcule automatiquement.`:
+    `Prix de départ ${esc(o.formule)} : <b>${fcfa(T[FORM[o.formule]])}</b> jusqu'à 50 agents.${ag?` Pour <b>${ag} agents</b> : ${ag>150?`+${T.t3} %`:ag>50?`+${T.t2} %`:"pas de majoration"}.`:""}`;
+  $("#quote").innerHTML=!q.ok?`<div class="ql sub"><span>Le devis apparaîtra ici</span><span></span></div>`:
+    q.L.map(x=>`<div class="ql"><span>${esc(x.l)}</span><span>${x.inc?"Compris":fcfa(x.v)}</span></div>`).join("")+
+    (q.remV?`<div class="ql neg"><span>Remise de ${q.rem} %</span><span>− ${fcfa(q.remV)}</span></div>`:"")+
+    (q.forced?`<div class="ql sub"><span>Prix ajusté à la main</span><span>calculé : ${fcfa(q.brut-q.remV)}</span></div>`:"")+
+    `<div class="ql tot"><span>Total</span><span>${fcfa(q.total)}</span></div>`+
+    `<div class="ql sub"><span>Acompte à la signature (${q.acc} %)</span><span>${fcfa(q.accV)}</span></div><div class="ql sub"><span>Solde à la réception</span><span>${fcfa(q.solde)}</span></div>`+
+    (q.heb?`<div class="ql sub"><span>Hébergement et maintenance à partir de la 2e année</span><span>${fcfa(q.heb)} / an</span></div>`:"");
+  SECTIONS.forEach((s,i)=>{const c=$(`[data-c="${i}"]`);if(!c)return;if(i===4){c.textContent=q.ok?fcfa(q.total):"";return}
+    const fs=s.f.filter(x=>x[3]!=="quote");const n=fs.filter(([k])=>Array.isArray(o[k])?o[k].length:o[k]).length;c.textContent=n?`${n}/${fs.length}`:""});
+  $("#ttl").textContent=o.societe||"Nouveau devis";
   return o;
 }
-function change(){dirty=true;const o=refresh();autosave(o)}
-let tm;function autosave(o){clearTimeout(tm);tm=setTimeout(()=>{if(!o.societe){$("#st").textContent="Brouillon · saisissez la raison sociale";return}save(true)},700)}
+function change(){dirty=true;const o=refresh();clearTimeout(change.t);change.t=setTimeout(()=>{if(o.societe)save(true);else $("#st").textContent="Brouillon · saisissez la raison sociale"},700)}
 function save(auto){
-  const o=read();if(!o.societe){toast("Indiquez la raison sociale");$("#f").elements.societe.focus();return false}
-  if(!cur)cur="f"+Date.now().toString(36);
-  const prev=store[cur]||{};o.id=cur;o.cree=prev.cree||new Date().toISOString();o.maj=new Date().toISOString();
-  store[cur]=o;persist();dirty=false;counts();
-  $("#st").textContent="Enregistré à "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
-  if(!auto)toast("Fiche enregistrée");return true;
+  const o=read();if(!o.societe){toast("Indiquez la raison sociale");const d=$("details");d.open=true;$("#f").elements.societe.focus();return false}
+  if(!cur)cur="d"+Date.now().toString(36);
+  const prev=store[cur]||{};o.id=cur;o.num=prev.num||nextNum();o.cree=prev.cree||new Date().toISOString();o.maj=new Date().toISOString();o.total=quote(o).total;
+  store[cur]=o;sj(KEY,store);dirty=false;counts();
+  $("#st").textContent=`${o.num} · enregistré à `+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+  if(!auto)toast("Devis enregistré");return true;
 }
+function nextNum(){const y=new Date().getFullYear();let n=lj(NKEY,{});n[y]=(n[y]||0)+1;sj(NKEY,n);return `DEV-${y}-${String(n[y]).padStart(3,"0")}`}
 function counts(){const n=Object.keys(store).length;$("#nb").textContent=n?`(${n})`:""}
-function show(v){$("#vForm").hidden=v!=="form";$("#vList").hidden=v!=="list";$("#bar").hidden=v!=="form";$("#tNew").classList.toggle("on",v==="form");$("#tList").classList.toggle("on",v==="list");if(v==="list")renderList();scrollTo(0,0)}
+function show(v){["Form","List","Tar"].forEach(x=>$("#v"+x).hidden=v!==x.toLowerCase());$("#bar").hidden=v!=="form";$("#tNew").classList.toggle("on",v==="form");$("#tList").classList.toggle("on",v==="list");$("#tTar").classList.toggle("on",v==="tar");if(v==="list")renderList();if(v==="tar")renderTar();scrollTo(0,0)}
 const PILL={"Intéressé":"p-int","À relancer":"p-rel","Devis envoyé":"p-int","Signé":"p-sig","Pas intéressé":"p-no"};
 function renderList(){
   const arr=Object.values(store).sort((a,b)=>b.maj.localeCompare(a.maj));
-  $("#lst").innerHTML=arr.length?arr.map(o=>`<div class="item"><div class="grow"><b>${esc(o.societe)}</b><small>${esc([o.ville,o.pays].filter(Boolean).join(", "))}${o.nb_agents?" · "+esc(o.nb_agents)+" agents":""}${o.formule?" · "+esc(o.formule):""}${o.relance?" · relance le "+new Date(o.relance).toLocaleDateString("fr-FR"):""}</small></div>${o.statut?`<span class="pill ${PILL[o.statut]||"p-no"}">${esc(o.statut)}</span>`:""}<button class="btn sm" data-open="${o.id}">Ouvrir</button><button class="btn sm" data-del="${o.id}" title="Supprimer">🗑</button></div>`).join(""):`<div class="empty">Aucune fiche pour l'instant.<br><br><button class="btn pri" onclick="newForm()">＋ Nouvelle fiche</button></div>`;
-  $$("[data-open]").forEach(b=>b.onclick=()=>{cur=b.dataset.open;fill(store[cur]);$("#st").textContent="Fiche ouverte";show("form")});
-  $$("[data-del]").forEach(b=>b.onclick=()=>{const o=store[b.dataset.del];if(confirmDel(o)){delete store[b.dataset.del];persist();counts();renderList();toast("Fiche supprimée")}});
+  $("#lst").innerHTML=arr.length?arr.map(o=>`<div class="item"><div class="grow"><b>${esc(o.societe)}</b><small>${esc(o.num)} · ${esc(o.formule||"formule ?")}${o.nb_agents?" · "+esc(o.nb_agents)+" agents":""}${o.relance?" · relance le "+fd(o.relance):""}</small></div><span class="amt">${o.total?fcfa(o.total).replace(" F CFA"," F"):""}</span>${o.statut?`<span class="pill ${PILL[o.statut]||"p-no"}">${esc(o.statut)}</span>`:""}<button class="btn sm" data-open="${o.id}">Ouvrir</button><button class="btn sm" data-del="${o.id}" title="Supprimer">🗑</button></div>`).join(""):`<div class="empty">Aucun devis pour l'instant.<br><br><button class="btn pri" onclick="newForm()">＋ Nouveau devis</button></div>`;
+  $$("[data-open]").forEach(b=>b.onclick=()=>{cur=b.dataset.open;fill(store[cur]);$("#st").textContent=store[cur].num;show("form")});
+  $$("[data-del]").forEach(b=>b.onclick=()=>{const o=store[b.dataset.del];if(confirm(`Supprimer le devis « ${o.societe} » ?`)){delete store[b.dataset.del];sj(KEY,store);counts();renderList();toast("Devis supprimé")}});
 }
-function confirmDel(o){return window.confirm(`Supprimer la fiche « ${o.societe} » ?`)}
+function renderTar(){
+  $("#tar").innerHTML=TAR_LABELS.map(x=>x.length===1?`<h3>${esc(x[0])}</h3>`:`<label for="t_${x[0]}">${esc(x[1])}</label><input id="t_${x[0]}" data-t="${x[0]}" type="number" inputmode="numeric" min="0" value="${T[x[0]]}">`).join("");
+  $$("[data-t]").forEach(i=>i.oninput=()=>{T[i.dataset.t]=+i.value||0;sj(TKEY,T)});
+}
+$("#bTarReset").onclick=()=>{if(confirm("Revenir aux tarifs conseillés ?")){T=Object.assign({},DEF_TARIFS);sj(TKEY,T);renderTar();toast("Tarifs réinitialisés")}};
 function newForm(){cur=null;fill({});$("#st").textContent="Brouillon";show("form")}
-// ---- exports ----
-function rows(o){
-  const out=[];SECTIONS.forEach(s=>{if(s.users){(o.users||[]).forEach((u,i)=>out.push([s.t,`Utilisateur ${i+1}`,[u.nom,u.role,u.tel,u.email].filter(Boolean).join(" · ")]));return}
-    s.f.forEach(([k,l,,type])=>{if(type==="calc"){if(o.prix){const a=+o.acompte||40;out.push([s.t,"Acompte",fcfa(o.prix*a/100)]);out.push([s.t,"Solde à la réception",fcfa(o.prix*(100-a)/100)])}return}
-      let v=o[k];if(Array.isArray(v))v=v.join(", ");if(type==="range"&&v)v+=" %";if(k==="prix"&&v)v=fcfa(v);if(type==="date"&&v)v=new Date(v).toLocaleDateString("fr-FR");if(v)out.push([s.t,l,v])})});
-  return out;
-}
-function flat(o){const r={"Raison sociale":o.societe};SECTIONS.forEach(s=>{if(s.users){r["Utilisateurs"]=(o.users||[]).map(u=>[u.nom,u.role,u.tel,u.email].filter(Boolean).join(" / ")).join(" | ");return}s.f.forEach(([k,l,,t])=>{if(t==="calc"||k==="societe")return;let v=o[k];if(Array.isArray(v))v=v.join(", ");r[l]=v??""})});r["Créée le"]=new Date(o.cree).toLocaleString("fr-FR");r["Mise à jour"]=new Date(o.maj).toLocaleString("fr-FR");return r}
-function xls(list,name){
-  if(!window.XLSX){toast("Connexion nécessaire pour l'export Excel");return}
-  const wb=XLSX.utils.book_new();
-  const ws=XLSX.utils.json_to_sheet(list.map(flat));ws["!cols"]=Object.keys(flat(list[0])).map(()=>({wch:24}));XLSX.utils.book_append_sheet(wb,ws,"Fiches clients");
-  if(list.length===1){const d=XLSX.utils.aoa_to_sheet([["Rubrique","Champ","Valeur"],...rows(list[0])]);d["!cols"]=[{wch:22},{wch:38},{wch:60}];XLSX.utils.book_append_sheet(wb,d,"Détail");
-    const u=XLSX.utils.json_to_sheet((list[0].users||[]).map(x=>({Nom:x.nom,Rôle:x.role,Téléphone:x.tel,"E-mail":x.email})));XLSX.utils.book_append_sheet(wb,u,"Utilisateurs")}
-  XLSX.writeFile(wb,name);
-}
+
+/* ---------- Exports ---------- */
+function flat(o){const q=quote(o);return {"N° devis":o.num,"Date":fd(o.maj),"Raison sociale":o.societe,"Sigle":o.sigle,"Pays":o.pays,"Ville":o.ville,"Adresse":o.adresse,"RCCM":o.rccm,"IFU":o.ifu,"Décideur":o.dir_nom,"Fonction":o.dir_fct,"Téléphone":o.dir_tel,"E-mail":o.dir_email,"Agents":o.nb_agents,"Superviseurs":o.nb_sup,"Sites":o.nb_sites,"Clients":o.nb_clients,"Villes":o.nb_villes,"Outil actuel":o.outils,"Problèmes":(o.problemes||[]).join(", "),"Formule":o.formule,"Options":(o.options||[]).map(k=>(OPTS.find(x=>x[0]===k)||[,k])[1]).join(", "),"Sur mesure":o.sur_mesure,"Remise %":o.remise,"Total F CFA":q.total,"Acompte %":o.acompte||40,"Acompte F CFA":q.accV,"Solde F CFA":q.solde,"Paiement":o.paiement,"Délai":o.delai,"Valable jusqu'au":fd(o.validite),"Réunion":fd(o.date_rdv),"Statut":o.statut,"Relance":fd(o.relance),"Notes":o.notes}}
+function xls(list,name){if(!window.XLSX){toast("Connexion nécessaire pour l'export Excel");return}const wb=XLSX.utils.book_new();const ws=XLSX.utils.json_to_sheet(list.map(flat));ws["!cols"]=Object.keys(flat(list[0])).map(()=>({wch:20}));XLSX.utils.book_append_sheet(wb,ws,"Devis");XLSX.writeFile(wb,name)}
 const slug=s=>String(s||"client").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/gi,"-").replace(/^-|-$/g,"");
 function pdf(o){
-  const by={};rows(o).forEach(([s,l,v])=>(by[s]=by[s]||[]).push([l,v]));
-  $("#print").innerHTML=`<div class="pv-h"><img src="../assets/sacko-logo-512.png"><div><h2>Fiche client · ${esc(o.societe)}</h2><small>Établie le ${new Date(o.maj).toLocaleDateString("fr-FR")} par SACKO CONCEPT</small></div></div>`+
-   Object.entries(by).map(([s,ls])=>`<div class="pv-s"><h3>${esc(s)}</h3><table>${ls.map(([l,v])=>`<tr><td>${esc(l)}</td><td>${esc(v)}</td></tr>`).join("")}</table></div>`).join("")+
-   `<div class="pv-f"><b>SACKO CONCEPT LLC</b> · 8206 Louisiana Blvd NE, Ste A 8694, Albuquerque, NM 87113, États-Unis · EIN 35-2950833 · +1 505 464 2331<br><b>SACKO CONCEPT Bénin</b> · RCCM RB/ABC/24 A 100536 · Abomey-Calavi, Bénin · +229 01 57 23 63 73 · contact@sackoconcept.com · sackoconcept.com</div>`;
-  setTimeout(()=>print(),150);
+  const q=quote(o);if(!q.ok){toast("Choisissez une formule");return}
+  const cli=[o.societe,o.sigle&&`(${o.sigle})`].filter(Boolean).join(" ");
+  $("#print").innerHTML=`
+  <div class="d-top"><div class="br"><img src="../assets/sacko-logo-512.png"><div><b>SACKO CONCEPT</b><small>Studio digital &amp; solutions métier</small></div></div>
+   <div><h2>DEVIS</h2><div class="meta">N° <b>${esc(o.num)}</b><br>Date : ${fd(o.maj)}<br>Valable jusqu'au : ${fd(o.validite)||"30 jours"}</div></div></div>
+  <div class="d-par"><div><h4>Émetteur</h4><b>SACKO CONCEPT</b><br>RCCM RB/ABC/24 A 100536 · Abomey-Calavi, Bénin<br>SACKO CONCEPT LLC · EIN 35-2950833<br>+229 01 57 23 63 73 · contact@sackoconcept.com</div>
+   <div><h4>Client</h4><b>${esc(cli)}</b><br>${esc([o.adresse,o.ville,o.pays].filter(Boolean).join(", "))}${o.rccm?`<br>RCCM ${esc(o.rccm)}`:""}${o.ifu?` · IFU ${esc(o.ifu)}`:""}<br>À l'attention de ${esc(o.dir_nom)}${o.dir_fct?", "+esc(o.dir_fct):""}${o.dir_tel?`<br>${esc(o.dir_tel)}`:""}${o.dir_email?` · ${esc(o.dir_email)}`:""}</div></div>
+  <p style="margin:0 0 8px;font-size:9.4pt"><b>Objet :</b> logiciel de gestion SécuriPro pour ${esc(o.societe)}${o.nb_agents?` (${esc(o.nb_agents)} agents`:""}${o.nb_sites?`, ${esc(o.nb_sites)} sites`:""}${o.nb_agents?")":""}.</p>
+  <table class="d"><tr><th>Désignation</th><th class="r">Montant</th></tr>
+   ${q.L.map(x=>`<tr><td><b>${esc(x.l)}</b>${x.d?`<div class="d-inc">${esc(x.d)}</div>`:""}</td><td class="r">${x.inc?"Compris":fcfa(x.v)}</td></tr>`).join("")}
+   ${q.remV?`<tr><td>Remise de ${q.rem} %</td><td class="r">− ${fcfa(q.remV)}</td></tr>`:""}
+   ${q.forced?`<tr><td>Ajustement commercial</td><td class="r">${fcfa(q.total-(q.brut-q.remV))}</td></tr>`:""}
+   <tr class="tot"><td>TOTAL</td><td class="r">${fcfa(q.total)}</td></tr>
+   <tr class="sub"><td>Acompte à la signature (${q.acc} %)</td><td class="r">${fcfa(q.accV)}</td></tr>
+   <tr class="sub"><td>Solde à la signature du procès-verbal de réception</td><td class="r">${fcfa(q.solde)}</td></tr>
+   ${q.heb?`<tr class="sub"><td>Hébergement et maintenance à partir de la 2e année</td><td class="r">${fcfa(q.heb)} / an</td></tr>`:""}
+  </table>
+  <div class="d-grid"><div><h4>Ce qui est compris</h4><ul><li>Personnalisation à vos couleurs et à votre nom</li><li>Import de vos agents, sites et clients</li><li>Création des accès de chaque utilisateur</li><li>Formation de vos équipes</li><li>Garantie de 3 mois après la mise en service</li></ul></div>
+   <div><h4>Conditions</h4><ul><li>Acompte de ${q.acc} % à la signature, solde à la réception</li><li>Paiement : ${esc(o.paiement||"virement, Mobile Money ou auprès de nos représentants")}</li><li>Mise en service : ${esc(o.delai||"4 à 6 semaines")} après l'acompte</li><li>Licence d'utilisation non exclusive : SécuriPro reste la propriété de SACKO CONCEPT</li><li>Montants en F CFA</li></ul></div></div>
+  <div class="d-sig"><div><b>Bon pour accord · le client</b><br>Date, nom, signature et cachet</div><div><b>SACKO CONCEPT</b><br>Hawa Sacko, fondatrice</div></div>
+  <div class="d-foot"><b>SACKO CONCEPT LLC</b> · 8206 Louisiana Blvd NE, Ste A 8694, Albuquerque, NM 87113, États-Unis · EIN 35-2950833 · +1 505 464 2331<br><b>SACKO CONCEPT Bénin</b> · RCCM RB/ABC/24 A 100536 · Abomey-Calavi, Bénin · +229 01 57 23 63 73 · contact@sackoconcept.com · sackoconcept.com</div>`;
+  const t=document.title;document.title=`Devis ${o.num} - ${o.societe}`;setTimeout(()=>{print();document.title=t},200);
 }
-function wa(o){
-  const L=[`*Fiche client · ${o.societe}*`];let last="";rows(o).forEach(([s,l,v])=>{if(s!==last){L.push("",`*${s}*`);last=s}L.push(`• ${l} : ${v}`)});
-  open("https://wa.me/?text="+encodeURIComponent(L.join("\n")),"_blank");
-}
-const need=()=>{if(!save(true)){return null}return store[cur]};
+function wa(o){const q=quote(o);const L=[`*Devis ${o.num} · ${o.societe}*`,"",`Formule : ${o.formule||"—"}`,`Agents : ${o.nb_agents||"—"} · Sites : ${o.nb_sites||"—"}`];
+  if(q.ok){q.L.slice(1).forEach(x=>L.push(`• ${x.l} : ${x.inc?"compris":fcfa(x.v)}`));if(q.remV)L.push(`• Remise ${q.rem} % : − ${fcfa(q.remV)}`);L.push("",`*Total : ${fcfa(q.total)}*`,`Acompte (${q.acc} %) : ${fcfa(q.accV)}`,`Solde à la réception : ${fcfa(q.solde)}`)}
+  if(o.statut)L.push("",`Statut : ${o.statut}${o.relance?" · relance le "+fd(o.relance):""}`);if(o.notes)L.push(`Notes : ${o.notes}`);
+  open("https://wa.me/?text="+encodeURIComponent(L.join("\n")),"_blank")}
+const need=()=>save(true)?store[cur]:null;
 $("#bSave").onclick=()=>save(false);
-$("#bXls").onclick=()=>{const o=need();o&&xls([o],`Fiche-${slug(o.societe)}.xlsx`)};
+$("#bXls").onclick=()=>{const o=need();o&&xls([o],`${o.num}-${slug(o.societe)}.xlsx`)};
 $("#bPdf").onclick=()=>{const o=need();o&&pdf(o)};
 $("#bWa").onclick=()=>{const o=need();o&&wa(o)};
-$("#bXlsAll").onclick=()=>{const l=Object.values(store);if(!l.length){toast("Aucune fiche à exporter");return}xls(l,`Fiches-clients-SACKO-${new Date().toISOString().slice(0,10)}.xlsx`)};
-$("#bJson").onclick=()=>{const b=new Blob([JSON.stringify(store,null,1)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`sauvegarde-fiches-${new Date().toISOString().slice(0,10)}.json`;a.click()};
-$("#fJson").onchange=e=>{const fl=e.target.files[0];if(!fl)return;fl.text().then(t=>{try{const d=JSON.parse(t);Object.assign(store,d);persist();counts();renderList();toast(Object.keys(d).length+" fiche(s) restaurée(s)")}catch(x){toast("Fichier invalide")}})};
-$("#tNew").onclick=()=>{if($("#vForm").hidden){newForm()}};
+$("#bXlsAll").onclick=()=>{const l=Object.values(store);if(!l.length){toast("Aucun devis à exporter");return}xls(l,`Devis-SACKO-${new Date().toISOString().slice(0,10)}.xlsx`)};
+$("#bJson").onclick=()=>{const b=new Blob([JSON.stringify({devis:store,tarifs:T,num:lj(NKEY,{})},null,1)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`sauvegarde-devis-${new Date().toISOString().slice(0,10)}.json`;a.click()};
+$("#fJson").onchange=e=>{const fl=e.target.files[0];if(!fl)return;fl.text().then(t=>{try{const d=JSON.parse(t);Object.assign(store,d.devis||{});sj(KEY,store);if(d.tarifs){T=Object.assign({},DEF_TARIFS,d.tarifs);sj(TKEY,T)}if(d.num)sj(NKEY,d.num);counts();renderList();toast("Sauvegarde restaurée")}catch(x){toast("Fichier invalide")}})};
+$("#tNew").onclick=()=>{if($("#vForm").hidden){if(cur&&store[cur]){fill(store[cur]);show("form")}else newForm()}};
 $("#tList").onclick=()=>{if(dirty&&read().societe)save(true);show("list")};
+$("#tTar").onclick=()=>{if(dirty&&read().societe)save(true);show("tar")};
 $("#bNew").onclick=newForm;
 window.addEventListener("beforeunload",()=>{if(dirty&&read().societe)save(true)});
 fill({});counts();
