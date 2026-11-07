@@ -225,6 +225,28 @@ dl.fields dd{margin:0;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
 .pc-row.task.due{background:var(--red-soft)}
 .pc-row.task .pc-val{white-space:normal}
 .pros-tpl select{border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;background:var(--surface);width:100%}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:10px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px;min-width:0;box-shadow:0 1px 2px rgba(22,21,26,.04)}
+.pcard.due{border-color:#F1B9AE;box-shadow:inset 3px 0 0 var(--red)}
+.pc-open{display:flex;align-items:center;gap:12px;border:0;background:none;padding:0;text-align:left;cursor:pointer;width:100%;color:inherit;font:inherit;min-width:0}
+.pc-open .mid{flex:1;min-width:0}
+.pc-open .t{display:block;font-weight:700;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc-open .s{display:block;color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
+.pc-meta code{font-family:var(--mono);font-size:13.5px;font-variant-numeric:tabular-nums}
+.tg{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 7px;border-radius:6px}
+.tg-a{background:var(--blue-soft);color:var(--blue)} .tg-b{background:var(--gold-soft);color:#8A6516} .tg-c{background:var(--surface2);color:var(--muted)}
+.ptask{font-size:12.5px;color:var(--muted)} .ptask.due{color:var(--red);font-weight:700}
+.pc-acts{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
+.pc-acts .qa{padding:9px 6px;min-width:0}
+.pc-open .t::after{content:" ›";color:var(--muted);font-weight:400}
+.qa{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:10px;padding:8px 11px;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);text-decoration:none;cursor:pointer;white-space:nowrap;font-family:inherit}
+.qa svg{width:16px;height:16px;flex:none}
+.qa.wa{background:#1FA855;border-color:#1FA855;color:#fff}
+.qa.wa:hover{background:#18934A}
+.qa.fb{color:#1665D8;border-color:#CFE0FA;background:#F1F6FE}
+.qa.more{margin-left:auto;padding:8px}
+.pc-row .qa{flex:none}
 </style>
 </head>
 <body>

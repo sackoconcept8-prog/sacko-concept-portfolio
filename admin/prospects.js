@@ -24,6 +24,32 @@ function pAuto(r){if(pDue(r))return"relance";if(/Buea|Bamenda/i.test(r.Ville||""
 function pWa(r){if(r.Statut==="Pas sur WhatsApp")return"";return digits(r.WhatsApp)||(r.Type==="Mobile"?digits(r["Téléphone"]):"")}
 function pMobile(r){return r.Type==="Mobile"?digits(r["Téléphone"]):digits(r.WhatsApp)}
 function pFb(r){const v=String(r.Facebook||"").trim();if(!v)return"";return /^https?:/.test(v)?v:"https://www.facebook.com/"+v.replace(/^@/,"")}
+const PI = {
+  wa:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20l1.2-5.3A8.4 8.4 0 1 1 21 11.5z"/></svg>',
+  tel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>',
+  mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>',
+  sms:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+  fb:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg>',
+  more:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>'
+};
+function pLinks(r,tk){
+  const msg=pMsg(r,tk),wa=pWa(r),mob=pMobile(r),tel=digits(r["Téléphone"]),mail=String(r["E-mail"]||"").trim(),fb=pFb(r);
+  const subj=tk==="en"?"SécuriPro – management software for security companies":"SécuriPro – logiciel de gestion pour sociétés de gardiennage";
+  return {msg,wa,mob,tel,mail,fb,
+    waH:wa?"https://wa.me/"+wa+"?text="+encodeURIComponent(msg):"",
+    smsH:mob?"sms:+"+mob+"?&body="+encodeURIComponent(msg):"",
+    telH:tel?"tel:+"+tel:"",
+    mailH:mail?"mailto:"+mail+"?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(msg):"",
+    fbH:fb||"https://www.facebook.com/search/pages/?q="+encodeURIComponent(r.Agence+" "+(r.Pays||""))};
+}
+function pMarkSent(r,tk,how){
+  if(how==="fb"){try{navigator.clipboard.writeText(pMsg(r,tk)).then(()=>toast("Message copié : colle-le dans Messenger")).catch(()=>{})}catch(e){}}
+  if(how==="tel")return;
+  const o=pJSON(P_DONE_KEY);o[pKey(r)]=Date.now();store.set(P_DONE_KEY,JSON.stringify(o));
+  const cur=r.Statut||"À contacter";
+  if(cur==="À contacter"||cur==="Pas sur WhatsApp")return pSet(r,"Contacté",true).then(renderAll);
+  if(tk==="relance"&&cur==="Contacté")return pSet(r,"Relancé",true).then(renderAll);
+}
 function pClient(r){return r.Statut==="Client"||r.Statut==="Gagné"}
 function pTask(r){return String(r["Prochaine action"]||"").trim()}
 function pTaskDay(r){const d=r["Date action"];return d?dayKey(d):""}
@@ -67,7 +93,16 @@ function renderPros(){
     '<div class="pros-sum"><div><b>'+all.length+'</b><span>agences</span></div><div><b>'+done+'</b><span>contactées</span></div><div><b>'+cnt("À relancer")+'</b><span>à relancer</span></div><div><b>'+cnt("Clients")+'</b><span>clients</span></div></div>'+
     '<div class="chips">'+Object.keys(F).map(k=>'<button class="chip" data-pf="'+esc(k)+'" aria-pressed="'+(k===pFilter)+'">'+esc(k)+' · '+cnt(k)+'</button>').join("")+'</div>'+
     '<div class="pros-filters"><select id="pCountry" aria-label="Pays"><option value="">Tous les pays</option>'+countries.map(c=>'<option'+(c===pCountry?' selected':'')+'>'+esc(c)+'</option>').join("")+'</select><select id="pSize" aria-label="Taille"><option value="">Toutes tailles</option>'+["Grande","Moyenne","À qualifier"].map(s=>'<option'+(s===pSize?' selected':'')+'>'+s+'</option>').join("")+'</select><label class="small muted"><input type="checkbox" id="pMob"'+(pMob?' checked':'')+'> Avec WhatsApp</label></div>'+
-    '<div class="list">'+(rs.length?rs.map(r=>{const st=r.Statut||"À contacter";const due=pDue(r);return '<button class="item" data-pr="'+r._row+'"><span class="avatar" style="background:'+avColor(r.Agence)+'">'+esc(initials(r.Agence))+'</span><span class="mid"><span class="t">'+esc(r.Agence)+'</span><span class="s">'+esc([r.Pays,r.Ville].filter(Boolean).join(" · "))+'</span></span><span class="end"><span class="pill '+(due?"p-red":(PILL[st]||"p-off"))+'">'+(due?"À relancer":esc(st))+'</span><span class="d'+(pTaskDue(r)?' due':'')+'">'+(pTask(r)?esc(pTask(r))+(pTaskDay(r)?" · "+esc(pShortDate(pTaskDay(r))):""):esc(r.Taille||"")+(pWa(r)?"":" · à appeler"))+'</span></span></button>'}).join(""):'<div class="empty">Aucune agence dans ce filtre.</div>')+'</div>';
+    '<div class="pgrid">'+(rs.length?rs.map(r=>{const st=r.Statut||"À contacter";const due=pDue(r),td=pTaskDue(r);const tk=pAuto(r);const L=pLinks(r,tk);
+      return '<article class="pcard'+(due||td?' due':'')+'">'+
+        '<button class="pc-open" data-pr="'+r._row+'"><span class="avatar" style="background:'+avColor(r.Agence)+'">'+esc(initials(r.Agence))+'</span><span class="mid"><span class="t">'+esc(r.Agence)+'</span><span class="s">'+esc([r.Pays,r.Ville].filter(Boolean).join(" · "))+'</span></span><span class="pill '+(due?"p-red":(PILL[st]||"p-off"))+'">'+(due?"À relancer":esc(st))+'</span></button>'+
+        '<div class="pc-meta"><code>'+esc(r["Téléphone"]||"")+'</code>'+(r.Taille?'<span class="tg tg-'+(r.Taille==="Grande"?"a":r.Taille==="Moyenne"?"b":"c")+'">'+esc(r.Taille)+'</span>':'')+(pTask(r)?'<span class="ptask'+(td?' due':'')+'">'+esc(pTask(r))+(pTaskDay(r)?' · '+esc(pShortDate(pTaskDay(r))):'')+'</span>':'')+'</div>'+
+        '<div class="pc-acts">'+
+          (L.wa?'<a class="qa wa" data-q="wa" data-row="'+r._row+'" href="'+L.waH+'" target="_blank" rel="noopener">'+PI.wa+'WhatsApp</a>':(L.mob?'<a class="qa" data-q="sms" data-row="'+r._row+'" href="'+L.smsH+'">'+PI.sms+'SMS</a>':''))+
+          (L.telH?'<a class="qa" data-q="tel" data-row="'+r._row+'" href="'+L.telH+'">'+PI.tel+'Appeler</a>':'')+
+          (L.mail?'<a class="qa" data-q="mail" data-row="'+r._row+'" href="'+L.mailH+'">'+PI.mail+'E-mail</a>':'')+
+          '<a class="qa fb" data-q="fb" data-row="'+r._row+'" href="'+esc(L.fbH)+'" target="_blank" rel="noopener">'+PI.fb+'Facebook</a>'+
+        '</div></article>'}).join(""):'<div class="empty">Aucune agence dans ce filtre.</div>')+'</div>';
   el.querySelectorAll("[data-pf]").forEach(b=>b.onclick=()=>{pFilter=b.dataset.pf;renderPros()});
   $("pCountry").onchange=e=>{pCountry=e.target.value;renderPros()};
   $("pSize").onchange=e=>{pSize=e.target.value;renderPros()};
@@ -76,6 +111,7 @@ function renderPros(){
   $("pTplBtn").onclick=editTpl;
   $("pAddBtn").onclick=()=>addPros(countries);
   el.querySelectorAll("[data-pr]").forEach(b=>b.onclick=()=>openPros(all.find(r=>r._row===+b.dataset.pr)));
+  el.querySelectorAll("[data-q]").forEach(a=>a.addEventListener("click",()=>{const r=all.find(x=>x._row===+a.dataset.row);if(!r)return;if(a.dataset.q==="fb"&&!pFb(r))return;pMarkSent(r,pAuto(r),a.dataset.q)}));
 }
 async function pSet(r,s,quiet){
   r.Statut=s;
@@ -100,10 +136,10 @@ function openPros(r,tk){
     (pDue(r)?'<div class="demo-bar" style="margin:0">Contactée il y a plus de 7 jours sans réponse : c\'est le moment de la relance unique.</div>':'')+
     '<div class="pros-tel"><code>'+esc(r["Téléphone"]||"")+'</code><span class="pill '+(r.Type==="Mobile"?"p-ok":"p-off")+'">'+esc(r.Type||"")+'</span>'+(r.Taille?'<span class="pill p-gold">'+esc(r.Taille)+'</span>':'')+(P_VISIT.includes(r.Pays)?'<span class="pill p-vio">Visite possible</span>':'')+'</div>'+
     '<div class="pc"><div class="eyebrow">Contacts</div>'+
-      line("WhatsApp",wa?("+"+wa):"",wa?'<a class="btn sm dark" data-send="wa" href="https://wa.me/'+wa+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener">Envoyer</a>':'')+
-      line("E-mail",mail,mail?'<a class="btn sm dark" data-send="mail" href="mailto:'+esc(mail)+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg)+'">Envoyer</a>':'<a class="btn sm" href="'+mailSearch+'" target="_blank" rel="noopener">Chercher</a>')+
-      line("Facebook",fb?"Page trouvée":"",fb?'<a class="btn sm dark" data-send="fb" href="'+esc(fb)+'" target="_blank" rel="noopener">Copier et ouvrir</a>':'<a class="btn sm" href="'+fbSearch+'" target="_blank" rel="noopener">Chercher</a>')+
-      '<div class="acts">'+(tel?'<a class="btn sm" href="tel:+'+tel+'">Appeler</a>':'')+(mob?'<a class="btn sm" data-send="sms" href="sms:+'+mob+'?&body='+encodeURIComponent(msg)+'">SMS</a>':'')+'<button class="btn sm" id="pEdit">Ajouter un contact</button></div>'+
+      line("WhatsApp",wa?("+"+wa):"",wa?'<a class="qa wa" data-send="wa" href="https://wa.me/'+wa+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener">'+PI.wa+'Envoyer</a>':'')+
+      line("E-mail",mail,mail?'<a class="qa" data-send="mail" href="mailto:'+esc(mail)+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg)+'">'+PI.mail+'Envoyer</a>':'<a class="qa" href="'+mailSearch+'" target="_blank" rel="noopener">Chercher</a>')+
+      line("Facebook",fb?"Page trouvée":"",fb?'<a class="qa fb" data-send="fb" href="'+esc(fb)+'" target="_blank" rel="noopener">'+PI.fb+'Copier et ouvrir</a>':'<a class="qa fb" href="'+fbSearch+'" target="_blank" rel="noopener">'+PI.fb+'Chercher</a>')+
+      '<div class="acts">'+(tel?'<a class="qa" href="tel:+'+tel+'">'+PI.tel+'Appeler</a>':'')+(mob?'<a class="qa" data-send="sms" href="sms:+'+mob+'?&body='+encodeURIComponent(msg)+'">'+PI.sms+'SMS</a>':'')+'<button class="qa" id="pEdit">+ Ajouter un contact</button></div>'+
     '</div>'+
     (!wa?'<p class="muted small" style="margin:0">'+(r.Type==="Fixe"?'Numéro fixe : appelle et demande le WhatsApp ou l\'e-mail du gérant, puis ajoute-le avec « Ajouter un contact ».':'Pas de WhatsApp : envoie un SMS, ou cherche sa page Facebook.')+'</p>':'')+
     '<div><div class="eyebrow" style="margin-bottom:8px">Message</div><div class="status-row">'+Object.keys(P_TPL).map(k=>'<button type="button" data-tk="'+k+'" aria-pressed="'+(k===tk)+'">'+esc(P_TPL[k].n)+'</button>').join("")+'</div></div>'+
@@ -134,14 +170,7 @@ function openPros(r,tk){
   const td=$("pTaskDone");if(td)td.onclick=async()=>{const now=new Date().toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});
     const ok=await pSave(r,{"Notes":(now+" : fait – "+pTask(r))+(r.Notes?"\n"+r.Notes:""),"Prochaine action":"","Date action":""});
     toast(ok?"Tâche terminée":"Tâche terminée (sur ce téléphone)");openPros(r,tk);renderAll()};
-  $("sheetBody").querySelectorAll("[data-send]").forEach(a=>a.addEventListener("click",()=>{
-    if(a.dataset.send==="fb")copy(msg,"Message copié : colle-le dans Messenger");
-    const o=pJSON(P_DONE_KEY);o[pKey(r)]=Date.now();store.set(P_DONE_KEY,JSON.stringify(o));
-    const cur=r.Statut||"À contacter";
-    if(cur==="À contacter"||cur==="Pas sur WhatsApp")pSet(r,"Contacté",true).then(renderAll);
-    else if(tk==="relance"&&cur==="Contacté")pSet(r,"Relancé",true).then(renderAll);
-    setTimeout(()=>openPros(r,tk),300);
-  }));
+  $("sheetBody").querySelectorAll("[data-send]").forEach(a=>a.addEventListener("click",()=>{pMarkSent(r,tk,a.dataset.send);setTimeout(()=>openPros(r,tk),300)}));
   openSheet();
 }
 function editContacts(r,tk){
