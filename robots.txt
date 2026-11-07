@@ -1,5 +1,6 @@
 User-agent: *
 Disallow: /admin/
+Disallow: /fiche-client/
 Allow: /
 
 Sitemap: https://www.sackoconcept.com/sitemap.xml

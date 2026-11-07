@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Fiche client · SACKO CONCEPT</title>
+<link rel="icon" href="../assets/sacko-logo-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" defer></script>
+<style>
+:root{--blue:#1D5FD1;--blue2:#2F7BF0;--ink:#0F1B2D;--muted:#5E6B80;--line:#E3E9F2;--soft:#F3F7FD;--green:#14915A;--red:#D2362B;--amber:#E08A00;--bg:#F6F8FC}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hd{max-width:860px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.hd img{width:34px;height:34px}.hd b{font-size:14px;letter-spacing:.06em}.hd small{display:block;color:var(--muted);font-size:11px}
+.hd .sp{flex:1}
+.tabs{display:flex;gap:6px}
+.tabs button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 11px;font:600 13px Inter;cursor:pointer;color:var(--ink)}
+.tabs button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+main{max-width:860px;margin:0 auto;padding:16px 16px 120px}
+h1{font-size:24px;margin:6px 0 4px;letter-spacing:-.02em}
+.lead{color:var(--muted);margin:0 0 14px;font-size:14px}
+.prog{height:6px;border-radius:6px;background:#E3EAF6;overflow:hidden;margin:6px 0 16px}.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--blue2),var(--blue));width:0;transition:width .3s}
+details.sec{background:#fff;border:1px solid var(--line);border-radius:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(15,27,45,.04)}
+details.sec>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:11px;font-weight:700;font-size:15.5px}
+details.sec>summary::-webkit-details-marker{display:none}
+.num{width:28px;height:28px;border-radius:50%;background:#E7EFFD;color:var(--blue);display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+details[open] .num{background:var(--blue);color:#fff}
+summary .cnt{margin-left:auto;font-size:12px;color:var(--muted);font-weight:600}
+summary::after{content:"›";font-size:22px;color:var(--muted);transform:rotate(90deg);transition:.2s;margin-left:6px}
+details[open]>summary::after{transform:rotate(-90deg)}
+.body{padding:0 16px 16px;display:grid;grid-template-columns:1fr 1fr;gap:11px 12px}
+.full{grid-column:1/-1}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:#33415A}
+label.f em{color:var(--red);font-style:normal}
+input,select,textarea{font:15px Inter;color:var(--ink);border:1px solid #D5DEEB;border-radius:11px;padding:10px 12px;background:#fff;width:100%;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,95,209,.12)}
+textarea{min-height:76px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chips label{display:inline-flex;align-items:center;gap:6px;border:1px solid #D5DEEB;border-radius:30px;padding:7px 12px;font-size:13.5px;cursor:pointer;background:#fff;user-select:none}
+.chips input{width:auto;margin:0;accent-color:var(--blue)}
+.chips label:has(input:checked){border-color:var(--blue);background:#EEF4FE;color:var(--blue);font-weight:600}
+.hint{font-size:12px;color:var(--muted);font-weight:500}
+.rng{display:flex;align-items:center;gap:12px}.rng input{padding:0;border:0;accent-color:var(--blue)}
+.rng b{min-width:56px;text-align:right;color:var(--blue);font-size:18px}
+.calc{grid-column:1/-1;background:var(--soft);border:1px solid #DCE6F6;border-radius:12px;padding:10px 12px;font-size:13.5px;display:flex;gap:16px;flex-wrap:wrap}
+.calc b{color:var(--blue)}
+.users{grid-column:1/-1;display:flex;flex-direction:column;gap:8px}
+.urow{display:grid;grid-template-columns:1.3fr 1fr 1fr 1.3fr 36px;gap:7px;align-items:center}
+.urow input,.urow select{padding:8px 9px;font-size:14px}
+.x{border:0;background:#FDECEA;color:var(--red);border-radius:9px;height:36px;cursor:pointer;font-size:16px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;font:600 14px Inter;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:7px;justify-content:center}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.grn{background:var(--green);border-color:var(--green);color:#fff}
+.btn.sm{padding:7px 10px;font-size:13px;border-radius:10px}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.bar .in{max-width:860px;margin:0 auto;display:flex;gap:8px;align-items:center}
+.bar .st{flex:1;font-size:12px;color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px 15px;display:flex;gap:12px;align-items:center}
+.item .grow{flex:1;min-width:0}.item b{display:block;font-size:15.5px}.item small{color:var(--muted);font-size:12.5px}
+.pill{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.p-int{background:#E7EFFD;color:var(--blue)}.p-rel{background:#FFF3DF;color:#A86400}.p-sig{background:#E2F5EC;color:var(--green)}.p-no{background:#EEF1F5;color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px;background:#fff;border:1px dashed #CFDAEA;border-radius:16px}
+.top{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:40;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%)}
+#print{display:none}
+@media (max-width:640px){.body{grid-template-columns:1fr}.urow{grid-template-columns:1fr 1fr;}.urow .x{grid-column:2;justify-self:end;width:44px}.hd small{display:none}.tabs button{padding:7px 9px}}
+@media print{
+  @page{size:A4;margin:14mm 14mm 18mm}
+  body{background:#fff;font-size:10pt}
+  header,main,.bar,.toast{display:none!important}
+  #print{display:block}
+  .pv-h{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--blue);padding-bottom:8px;margin-bottom:10px}
+  .pv-h img{width:40px}.pv-h h2{margin:0;font-size:16pt}.pv-h small{color:var(--muted)}
+  .pv-s{break-inside:avoid;margin-bottom:9px}
+  .pv-s h3{font-size:10.5pt;color:var(--blue);margin:0 0 4px;text-transform:uppercase;letter-spacing:.06em}
+  .pv-s table{width:100%;border-collapse:collapse;font-size:9.4pt}
+  .pv-s td{border:1px solid #E3E9F2;padding:4px 7px;vertical-align:top}
+  .pv-s td:first-child{width:38%;color:#5E6B80;background:#F7F9FD}
+  .pv-f{position:fixed;bottom:0;left:0;right:0;font-size:7pt;color:#7C889B;border-top:1px solid #E3E9F2;padding-top:4px}
+}
+</style>
+</head>
+<body>
+<header><div class="hd"><img src="../assets/sacko-logo-96.png" alt=""><div><b>SACKO CONCEPT</b><small>Fiche de renseignements client</small></div><span class="sp"></span>
+<div class="tabs"><button id="tNew" class="on">Fiche</button><button id="tList">Mes fiches <span id="nb"></span></button></div></div></header>
+
+<main id="vForm">
+  <h1 id="ttl">Nouvelle fiche client</h1>
+  <p class="lead">À remplir pendant ou juste après la réunion. Tout est enregistré automatiquement sur ce téléphone.</p>
+  <div class="prog"><i id="pg"></i></div>
+  <form id="f" autocomplete="off"></form>
+</main>
+
+<main id="vList" hidden>
+  <h1>Mes fiches clients</h1>
+  <p class="lead">Les fiches sont enregistrées sur cet appareil. Exportez-les régulièrement en Excel pour les garder.</p>
+  <div class="top"><button class="btn pri" id="bNew">＋ Nouvelle fiche</button><button class="btn" id="bXlsAll">⬇ Tout exporter en Excel</button><button class="btn" id="bJson">Sauvegarde</button><label class="btn" style="cursor:pointer">Restaurer<input type="file" id="fJson" accept=".json" hidden></label></div>
+  <div class="list" id="lst"></div>
+</main>
+
+<div class="bar" id="bar"><div class="in"><span class="st" id="st">Brouillon</span>
+  <button class="btn sm" id="bWa" title="Envoyer sur WhatsApp">WhatsApp</button>
+  <button class="btn sm" id="bPdf" title="Imprimer ou enregistrer en PDF">PDF</button>
+  <button class="btn sm" id="bXls" title="Exporter en Excel">Excel</button>
+  <button class="btn grn" id="bSave">Enregistrer</button></div></div>
+<div class="toast" id="toast"></div>
+<div id="print"></div>
+
+<script>
+const SECTIONS=[
+ {t:"Entreprise",f:[
+  ["societe","Raison sociale",1,"text","Ex. CGSP-Sécurité"],["sigle","Sigle ou nom commercial"],
+  ["secteur","Secteur","","select",["Sécurité privée / gardiennage","Nettoyage","Sécurité et nettoyage","Autre"]],["pays","Pays","","select",["Bénin","Togo","Mali","Côte d'Ivoire","Sénégal","Burkina Faso","Niger","Cameroun","Gabon","Congo","Guinée","Autre"]],
+  ["ville","Ville du siège"],["adresse","Adresse du siège"],
+  ["rccm","N° RCCM"],["ifu","N° IFU"],
+  ["tel_ent","Téléphone de l'entreprise","","tel"],["email_ent","E-mail de l'entreprise","","email"],
+  ["domaine","Site web ou nom de domaine existant","","text","Ex. cgsp-securite.com"],["couleurs","Couleurs de la marque","","text","Ex. bleu et blanc"]]},
+ {t:"Contacts",f:[
+  ["dir_nom","Nom du directeur",1],["dir_fct","Fonction","","text","Directeur général"],
+  ["dir_tel","Téléphone / WhatsApp du directeur","","tel"],["dir_email","E-mail du directeur","","email"],
+  ["rp_nom","Responsable du projet (souvent le RH)"],["rp_fct","Fonction"],
+  ["rp_tel","Téléphone / WhatsApp","","tel"],["rp_email","E-mail","","email"]]},
+ {t:"Taille de l'agence",f:[
+  ["nb_agents","Nombre d'agents",1,"number"],["nb_sup","Nombre de superviseurs","","number"],
+  ["nb_sites","Nombre de sites gardés",1,"number"],["nb_clients","Nombre de clients","","number"],
+  ["villes","Villes où l'agence travaille","full"],
+  ["releve_jour","Relève de jour","","text","Ex. 7 h – 19 h"],["releve_nuit","Relève de nuit","","text","Ex. 19 h – 7 h"],
+  ["outils","Outils utilisés aujourd'hui","full","chips",["Cahiers / papier","Excel","WhatsApp","Un autre logiciel","Rien"]],
+  ["outil_nom","Si autre logiciel : lequel, et ce qui ne va pas","full","textarea"]]},
+ {t:"Problèmes et besoins",f:[
+  ["problemes","Problèmes principaux","full","chips",["Retards","Absences","Agents qui dorment la nuit","Rondes non prouvées","Postes non couverts","Calcul de la paie","Factures et impayés","Plaintes de clients","Matériel perdu","Suivi des sanctions"]],
+  ["priorite","Le problème n°1 selon le client","full","textarea"],
+  ["formule","Formule qui intéresse le client","","select",["RH SécuriPro Simple","SécuriPro Complet","SécuriPro Elite","Pas encore décidé"]],
+  ["options","Options souhaitées","full","chips",["Application iPhone","Alertes SMS","Mode borne (poste de garde)","Rapports mensuels aux clients","Formation sur place","Application à son nom (Google Play / App Store)","Adresses e-mail pro"]],
+  ["autres","Autres demandes ou fonctions sur mesure","full","textarea"]]},
+ {t:"Paie et règles RH",f:[
+  ["jour_paie","Jour de paie","","text","Ex. le 30 du mois"],["prime_nuit","Prime de nuit","","text","Ex. 5 000 F / mois"],
+  ["anciennete","Prime d'ancienneté","","text"],["cnss","Cotisations CNSS","","select",["Oui, déclarées","Non","Partiellement","À vérifier"]],
+  ["avances","Avances sur salaire","","select",["Oui","Non"]],["mode_paie","Mode de paiement des agents","","select",["Espèces","Mobile Money","Virement","Mixte"]],
+  ["regles","Autres règles (retenues, sanctions, congés…)","full","textarea"]]},
+ {t:"Utilisateurs à créer",users:true},
+ {t:"Documents à recevoir",f:[
+  ["docs","Cochez à la réception","full","chips",["Logo en bonne qualité","Liste des agents (Excel)","Liste des sites + GPS","Liste des clients + contrats","Règles de paie","RCCM et IFU","Pièce d'identité du gérant (Elite)","Accès au nom de domaine"]],
+  ["docs_note","Remarques","full","textarea"]]},
+ {t:"Offre et suite à donner",f:[
+  ["prix","Prix proposé (F CFA)",1,"number"],["acompte","Acompte choisi par le client","","range"],
+  ["calc","","full","calc"],
+  ["paiement","Moyen de paiement","","select",["Virement","Mobile Money","Espèces auprès d'un représentant","À définir"]],["echeance","Paiement du solde","","select",["À la réception (PV)","En plusieurs fois","À définir"]],
+  ["date_rdv","Date de la réunion","","date"],["date_debut","Démarrage souhaité","","date"],
+  ["statut","Statut","","select",["Intéressé","À relancer","Devis envoyé","Signé","Pas intéressé"]],["relance","Date de relance","","date"],
+  ["notes","Notes de la réunion","full","textarea"]]}
+];
+const ROLES=["Directeur","RH","Comptable","Superviseur","Chef de poste","Autre"];
+const KEY="sacko_fiches_v1";
+let store=load(),cur=null,dirty=false;
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){toast("Stockage indisponible sur ce navigateur")}}
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fcfa=n=>(Math.round(+n||0)).toLocaleString("fr-FR").replace(/ | /g," ")+" F CFA";
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),2200)}
+
+function build(){
+  const f=$("#f");f.innerHTML="";
+  SECTIONS.forEach((s,i)=>{
+    const d=document.createElement("details");d.className="sec";if(i===0)d.open=true;
+    let h=`<summary><span class="num">${i+1}</span>${s.t}<span class="cnt" data-c="${i}"></span></summary><div class="body">`;
+    if(s.users){h+=`<div class="users" id="users"></div><div class="full"><button type="button" class="btn sm" id="addU">＋ Ajouter un utilisateur</button> <span class="hint">Direction, RH, superviseurs… Les agents seront importés depuis la liste Excel.</span></div>`}
+    else s.f.forEach(([k,l,req,type,opt])=>{
+      const full=req==="full"||["textarea","chips","calc"].includes(type)?" full":"";const star=req===1?" <em>*</em>":"";
+      if(type==="calc"){h+=`<div class="calc" id="calc"></div>`;return}
+      if(type==="chips"){h+=`<div class="f${full}"><label class="f">${l}</label><div class="chips">${opt.map(o=>`<label><input type="checkbox" name="${k}" value="${esc(o)}">${esc(o)}</label>`).join("")}</div></div>`;return}
+      let inp;
+      if(type==="select")inp=`<select name="${k}"><option value="">—</option>${opt.map(o=>`<option>${esc(o)}</option>`).join("")}</select>`;
+      else if(type==="textarea")inp=`<textarea name="${k}"></textarea>`;
+      else if(type==="range")inp=`<div class="rng"><input type="range" name="${k}" min="30" max="50" step="5" value="40"><b id="accv">40 %</b></div><span class="hint">Entre 30 % et 50 %, au choix du client</span>`;
+      else inp=`<input name="${k}" type="${type||"text"}" ${type==="number"?'inputmode="numeric" min="0"':""} placeholder="${esc(opt||"")}">`;
+      h+=`<label class="f${full}"><span>${l}${star}</span>${inp}</label>`;
+    });
+    d.innerHTML=h+"</div>";f.appendChild(d);
+  });
+  $("#addU").onclick=()=>{addUser();change()};
+  f.addEventListener("input",change);f.addEventListener("change",change);
+}
+function addUser(u={}){
+  const r=document.createElement("div");r.className="urow";
+  r.innerHTML=`<input data-u="nom" placeholder="Nom et prénom" value="${esc(u.nom)}"><select data-u="role">${ROLES.map(x=>`<option ${u.role===x?"selected":""}>${x}</option>`).join("")}</select><input data-u="tel" type="tel" placeholder="Téléphone" value="${esc(u.tel)}"><input data-u="email" type="email" placeholder="E-mail" value="${esc(u.email)}"><button type="button" class="x" title="Retirer">✕</button>`;
+  r.querySelector(".x").onclick=()=>{r.remove();change()};$("#users").appendChild(r);
+}
+function read(){
+  const o={};const f=$("#f");
+  SECTIONS.forEach(s=>s.f&&s.f.forEach(([k,,,type])=>{if(type==="calc")return;
+    if(type==="chips")o[k]=$$(`[name="${k}"]:checked`).map(x=>x.value);else o[k]=f.elements[k].value.trim()}));
+  o.users=$$("#users .urow").map(r=>({nom:r.querySelector('[data-u="nom"]').value.trim(),role:r.querySelector('[data-u="role"]').value,tel:r.querySelector('[data-u="tel"]').value.trim(),email:r.querySelector('[data-u="email"]').value.trim()})).filter(u=>u.nom||u.tel||u.email);
+  return o;
+}
+function fill(o){
+  build();const f=$("#f");
+  SECTIONS.forEach(s=>s.f&&s.f.forEach(([k,,,type])=>{if(type==="calc")return;
+    if(type==="chips")$$(`[name="${k}"]`).forEach(x=>x.checked=(o[k]||[]).includes(x.value));
+    else if(o[k]!=null&&o[k]!=="")f.elements[k].value=o[k]}));
+  const us=o.users&&o.users.length?o.users:[{role:"Directeur"},{role:"RH"}];us.forEach(addUser);
+  refresh();
+}
+function refresh(){
+  const o=read();
+  const acc=+o.acompte||40;$("#accv").textContent=acc+" %";
+  const p=+o.prix||0;$("#calc").innerHTML=p?`<span>Acompte : <b>${fcfa(p*acc/100)}</b></span><span>Solde à la réception : <b>${fcfa(p*(100-acc)/100)}</b></span>`:`<span class="hint">Saisissez le prix pour calculer l'acompte et le solde.</span>`;
+  // progression
+  const keys=["societe","pays","ville","tel_ent","dir_nom","dir_tel","rp_nom","rp_tel","nb_agents","nb_sites","nb_clients","formule","prix","statut","date_rdv"];
+  const done=keys.filter(k=>o[k]).length+(o.problemes.length?1:0)+(o.users.length?1:0);$("#pg").style.width=Math.round(100*done/(keys.length+2))+"%";
+  SECTIONS.forEach((s,i)=>{const c=$(`[data-c="${i}"]`);if(!c)return;if(s.users){c.textContent=o.users.length?o.users.length+" utilisateur(s)":"";return}
+    const n=s.f.filter(([k,,,t])=>t!=="calc"&&(Array.isArray(o[k])?o[k].length:o[k])).length;const tot=s.f.filter(x=>x[3]!=="calc").length;c.textContent=n?`${n}/${tot}`:""});
+  $("#ttl").textContent=o.societe?o.societe:"Nouvelle fiche client";
+  return o;
+}
+function change(){dirty=true;const o=refresh();autosave(o)}
+let tm;function autosave(o){clearTimeout(tm);tm=setTimeout(()=>{if(!o.societe){$("#st").textContent="Brouillon · saisissez la raison sociale";return}save(true)},700)}
+function save(auto){
+  const o=read();if(!o.societe){toast("Indiquez la raison sociale");$("#f").elements.societe.focus();return false}
+  if(!cur)cur="f"+Date.now().toString(36);
+  const prev=store[cur]||{};o.id=cur;o.cree=prev.cree||new Date().toISOString();o.maj=new Date().toISOString();
+  store[cur]=o;persist();dirty=false;counts();
+  $("#st").textContent="Enregistré à "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+  if(!auto)toast("Fiche enregistrée");return true;
+}
+function counts(){const n=Object.keys(store).length;$("#nb").textContent=n?`(${n})`:""}
+function show(v){$("#vForm").hidden=v!=="form";$("#vList").hidden=v!=="list";$("#bar").hidden=v!=="form";$("#tNew").classList.toggle("on",v==="form");$("#tList").classList.toggle("on",v==="list");if(v==="list")renderList();scrollTo(0,0)}
+const PILL={"Intéressé":"p-int","À relancer":"p-rel","Devis envoyé":"p-int","Signé":"p-sig","Pas intéressé":"p-no"};
+function renderList(){
+  const arr=Object.values(store).sort((a,b)=>b.maj.localeCompare(a.maj));
+  $("#lst").innerHTML=arr.length?arr.map(o=>`<div class="item"><div class="grow"><b>${esc(o.societe)}</b><small>${esc([o.ville,o.pays].filter(Boolean).join(", "))}${o.nb_agents?" · "+esc(o.nb_agents)+" agents":""}${o.formule?" · "+esc(o.formule):""}${o.relance?" · relance le "+new Date(o.relance).toLocaleDateString("fr-FR"):""}</small></div>${o.statut?`<span class="pill ${PILL[o.statut]||"p-no"}">${esc(o.statut)}</span>`:""}<button class="btn sm" data-open="${o.id}">Ouvrir</button><button class="btn sm" data-del="${o.id}" title="Supprimer">🗑</button></div>`).join(""):`<div class="empty">Aucune fiche pour l'instant.<br><br><button class="btn pri" onclick="newForm()">＋ Nouvelle fiche</button></div>`;
+  $$("[data-open]").forEach(b=>b.onclick=()=>{cur=b.dataset.open;fill(store[cur]);$("#st").textContent="Fiche ouverte";show("form")});
+  $$("[data-del]").forEach(b=>b.onclick=()=>{const o=store[b.dataset.del];if(confirmDel(o)){delete store[b.dataset.del];persist();counts();renderList();toast("Fiche supprimée")}});
+}
+function confirmDel(o){return window.confirm(`Supprimer la fiche « ${o.societe} » ?`)}
+function newForm(){cur=null;fill({});$("#st").textContent="Brouillon";show("form")}
+// ---- exports ----
+function rows(o){
+  const out=[];SECTIONS.forEach(s=>{if(s.users){(o.users||[]).forEach((u,i)=>out.push([s.t,`Utilisateur ${i+1}`,[u.nom,u.role,u.tel,u.email].filter(Boolean).join(" · ")]));return}
+    s.f.forEach(([k,l,,type])=>{if(type==="calc"){if(o.prix){const a=+o.acompte||40;out.push([s.t,"Acompte",fcfa(o.prix*a/100)]);out.push([s.t,"Solde à la réception",fcfa(o.prix*(100-a)/100)])}return}
+      let v=o[k];if(Array.isArray(v))v=v.join(", ");if(type==="range"&&v)v+=" %";if(k==="prix"&&v)v=fcfa(v);if(type==="date"&&v)v=new Date(v).toLocaleDateString("fr-FR");if(v)out.push([s.t,l,v])})});
+  return out;
+}
+function flat(o){const r={"Raison sociale":o.societe};SECTIONS.forEach(s=>{if(s.users){r["Utilisateurs"]=(o.users||[]).map(u=>[u.nom,u.role,u.tel,u.email].filter(Boolean).join(" / ")).join(" | ");return}s.f.forEach(([k,l,,t])=>{if(t==="calc"||k==="societe")return;let v=o[k];if(Array.isArray(v))v=v.join(", ");r[l]=v??""})});r["Créée le"]=new Date(o.cree).toLocaleString("fr-FR");r["Mise à jour"]=new Date(o.maj).toLocaleString("fr-FR");return r}
+function xls(list,name){
+  if(!window.XLSX){toast("Connexion nécessaire pour l'export Excel");return}
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.json_to_sheet(list.map(flat));ws["!cols"]=Object.keys(flat(list[0])).map(()=>({wch:24}));XLSX.utils.book_append_sheet(wb,ws,"Fiches clients");
+  if(list.length===1){const d=XLSX.utils.aoa_to_sheet([["Rubrique","Champ","Valeur"],...rows(list[0])]);d["!cols"]=[{wch:22},{wch:38},{wch:60}];XLSX.utils.book_append_sheet(wb,d,"Détail");
+    const u=XLSX.utils.json_to_sheet((list[0].users||[]).map(x=>({Nom:x.nom,Rôle:x.role,Téléphone:x.tel,"E-mail":x.email})));XLSX.utils.book_append_sheet(wb,u,"Utilisateurs")}
+  XLSX.writeFile(wb,name);
+}
+const slug=s=>String(s||"client").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/gi,"-").replace(/^-|-$/g,"");
+function pdf(o){
+  const by={};rows(o).forEach(([s,l,v])=>(by[s]=by[s]||[]).push([l,v]));
+  $("#print").innerHTML=`<div class="pv-h"><img src="../assets/sacko-logo-512.png"><div><h2>Fiche client · ${esc(o.societe)}</h2><small>Établie le ${new Date(o.maj).toLocaleDateString("fr-FR")} par SACKO CONCEPT</small></div></div>`+
+   Object.entries(by).map(([s,ls])=>`<div class="pv-s"><h3>${esc(s)}</h3><table>${ls.map(([l,v])=>`<tr><td>${esc(l)}</td><td>${esc(v)}</td></tr>`).join("")}</table></div>`).join("")+
+   `<div class="pv-f"><b>SACKO CONCEPT LLC</b> · 8206 Louisiana Blvd NE, Ste A 8694, Albuquerque, NM 87113, États-Unis · EIN 35-2950833 · +1 505 464 2331<br><b>SACKO CONCEPT Bénin</b> · RCCM RB/ABC/24 A 100536 · Abomey-Calavi, Bénin · +229 01 57 23 63 73 · contact@sackoconcept.com · sackoconcept.com</div>`;
+  setTimeout(()=>print(),150);
+}
+function wa(o){
+  const L=[`*Fiche client · ${o.societe}*`];let last="";rows(o).forEach(([s,l,v])=>{if(s!==last){L.push("",`*${s}*`);last=s}L.push(`• ${l} : ${v}`)});
+  open("https://wa.me/?text="+encodeURIComponent(L.join("\n")),"_blank");
+}
+const need=()=>{if(!save(true)){return null}return store[cur]};
+$("#bSave").onclick=()=>save(false);
+$("#bXls").onclick=()=>{const o=need();o&&xls([o],`Fiche-${slug(o.societe)}.xlsx`)};
+$("#bPdf").onclick=()=>{const o=need();o&&pdf(o)};
+$("#bWa").onclick=()=>{const o=need();o&&wa(o)};
+$("#bXlsAll").onclick=()=>{const l=Object.values(store);if(!l.length){toast("Aucune fiche à exporter");return}xls(l,`Fiches-clients-SACKO-${new Date().toISOString().slice(0,10)}.xlsx`)};
+$("#bJson").onclick=()=>{const b=new Blob([JSON.stringify(store,null,1)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`sauvegarde-fiches-${new Date().toISOString().slice(0,10)}.json`;a.click()};
+$("#fJson").onchange=e=>{const fl=e.target.files[0];if(!fl)return;fl.text().then(t=>{try{const d=JSON.parse(t);Object.assign(store,d);persist();counts();renderList();toast(Object.keys(d).length+" fiche(s) restaurée(s)")}catch(x){toast("Fichier invalide")}})};
+$("#tNew").onclick=()=>{if($("#vForm").hidden){newForm()}};
+$("#tList").onclick=()=>{if(dirty&&read().societe)save(true);show("list")};
+$("#bNew").onclick=newForm;
+window.addEventListener("beforeunload",()=>{if(dirty&&read().societe)save(true)});
+fill({});counts();
+</script>
+</body>
+</html>
