@@ -1,9 +1,11 @@
 /* ---------- Prospects : agences de sécurité à démarcher (feuille « Prospects ») ---------- */
-const P_ST = ["À contacter","Pas sur WhatsApp","Contacté","Relancé","En discussion","Intéressé","Démo faite","Gagné","Pas intéressé"];
+const P_ST = ["À contacter","Pas sur WhatsApp","Contacté","Relancé","A répondu","Intéressé","Démo faite","Devis envoyé","Client","Pas intéressé"];
+const P_ACTIONS = ["Rappeler","Envoyer la démo","Faire la démo","Envoyer le devis","Relancer le devis","Visite sur place"];
 const P_DONE_KEY = "sc_pros_contact";
 const P_TPL_KEY = "sc_pros_tpl";
 const P_EDIT_KEY = "sc_pros_edit";
 const P_FIELDS = ["WhatsApp","E-mail","Facebook"];
+const P_EDITABLE = P_FIELDS.concat(["Notes","Prochaine action","Date action"]);
 const P_VISIT = ["Togo","Bénin","Mali"]; // représentants sur place (Lomé, Cotonou, Bamako)
 const P_TPL = {
   premier:{n:"Premier contact",d:"Agences moyennes et petites",t:"Bonjour,\nJ'aimerais m'entretenir avec vous au sujet de la gestion de vos agents.\nNous avons conçu SécuriPro, un logiciel pour les sociétés de gardiennage : planning, pointage, rondes et alerte SOS.\nJe peux vous le présenter en 15 minutes.\nHawa Sacko · SACKO CONCEPT"},
@@ -22,6 +24,18 @@ function pAuto(r){if(pDue(r))return"relance";if(/Buea|Bamenda/i.test(r.Ville||""
 function pWa(r){if(r.Statut==="Pas sur WhatsApp")return"";return digits(r.WhatsApp)||(r.Type==="Mobile"?digits(r["Téléphone"]):"")}
 function pMobile(r){return r.Type==="Mobile"?digits(r["Téléphone"]):digits(r.WhatsApp)}
 function pFb(r){const v=String(r.Facebook||"").trim();if(!v)return"";return /^https?:/.test(v)?v:"https://www.facebook.com/"+v.replace(/^@/,"")}
+function pClient(r){return r.Statut==="Client"||r.Statut==="Gagné"}
+function pTask(r){return String(r["Prochaine action"]||"").trim()}
+function pTaskDay(r){const d=r["Date action"];return d?dayKey(d):""}
+function pTaskDue(r){return !!pTask(r)&&(!pTaskDay(r)||pTaskDay(r)<=dayKey(new Date()))}
+function pShortDate(k){if(!k)return"";const d=new Date(k+"T12:00:00");return isNaN(d)?k:d.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})}
+async function pSave(r,ch){
+  Object.assign(r,ch);let saved=demo;
+  if(!demo){try{saved=true;for(const f in ch){const j=await api({action:"contact",row:r._row,champ:f,valeur:ch[f]});if(!j.ok){saved=false;break}
+    const T=data.prospects;const i=T.headers.indexOf(f);if(i>=0){const row=T.rows.find(x=>x.row===r._row);if(row)row.values[i]=ch[f]}}}catch(e){saved=false}}
+  if(!saved){const ed=pJSON(P_EDIT_KEY);ed[r._row]=Object.assign(ed[r._row]||{},ch,{Agence:r.Agence});store.set(P_EDIT_KEY,JSON.stringify(ed))}
+  return saved;
+}
 function pMsg(r,k){return pTpl(k).split("{agence}").join(r.Agence||"votre agence")}
 const P_SAMPLE = [
   ["2026-11-05","Sénégal","DIS – Dakar Intérim Sécurité","Dakar","+221 33 825 58 34","Fixe","Grande","Plus de 1 000 agents, convoyage de fonds.","","À contacter","","","contact@exemple-dis.sn",""],
@@ -35,25 +49,25 @@ function pRows(){
   if(data&&data.prospects)rs=rowsOf("prospects").sort((a,b)=>a._row-b._row);
   else if(demo){const h=["Date","Pays","Agence","Ville","Téléphone","Type","Taille","Infos","Autres numéros","Statut","Notes","WhatsApp","E-mail","Facebook"];rs=P_SAMPLE.map((v,i)=>{const o={_row:i+2,_k:"prospects"};h.forEach((x,j)=>o[x]=v[j]||"");return o})}
   if(!rs)return null;
-  const ed=pJSON(P_EDIT_KEY);rs.forEach(r=>{const e=ed[r._row];if(e&&e.Agence===r.Agence)P_FIELDS.forEach(f=>{if(e[f]!==undefined)r[f]=e[f]})});
+  const ed=pJSON(P_EDIT_KEY);rs.forEach(r=>{const e=ed[r._row];if(e&&e.Agence===r.Agence)P_EDITABLE.forEach(f=>{if(e[f]!==undefined)r[f]=e[f]})});
   return rs;
 }
-function pBadge(){const rs=pRows()||[];return rs.filter(pDue).length}
+function pBadge(){const rs=pRows()||[];return rs.filter(r=>pDue(r)||pTaskDue(r)).length}
 function renderPros(){
   const all=pRows();const el=$("v-pros");
   if(!all){el.innerHTML='<div class="toolbar"><h1>Prospects</h1></div><div class="empty" style="text-align:left;line-height:1.6"><b style="color:var(--fg)">Encore une petite étape pour voir tes 235 agences ici.</b><br>Tes prospects sont déjà dans ta feuille Google, onglet <b>Prospects</b>. Pour que l\'application les lise :<br>1. Ouvre ta feuille « SACKO CONCEPT – Demandes de devis », puis <b>Extensions › Apps Script</b>.<br>2. Trouve la ligne qui commence par <code>const FEUILLES = {</code> et ajoute juste après l\'accolade : <code>prospects: "Prospects", </code><br>3. Clique <b>Déployer › Gérer les déploiements</b>, le crayon, <b>Version : Nouvelle version</b>, puis <b>Déployer</b>.<br>4. Reviens ici et touche la flèche ronde.</div>';return}
   const q=(($("prosq")||{}).value||"").trim().toLowerCase();
   const countries=[...new Set(all.map(r=>r.Pays))].sort((a,b)=>a.localeCompare(b,"fr"));
-  const F={"À faire":r=>(r.Statut||"À contacter")==="À contacter","À relancer":pDue,"À appeler":r=>!pWa(r)&&!["Gagné","Pas intéressé"].includes(r.Statut),"En cours":r=>["Contacté","Relancé","En discussion","Intéressé","Démo faite"].includes(r.Statut),"Gagnés":r=>r.Statut==="Gagné","Tous":()=>true};
+  const F={"À faire":r=>(r.Statut||"À contacter")==="À contacter","Tâches du jour":pTaskDue,"À relancer":pDue,"À appeler":r=>!pWa(r)&&!pClient(r)&&r.Statut!=="Pas intéressé","En cours":r=>["Contacté","Relancé","A répondu","Intéressé","Démo faite","Devis envoyé","En discussion"].includes(r.Statut),"Clients":pClient,"Tous":()=>true};
   const cnt=k=>all.filter(F[k]).length;
   const rank={"Grande":0,"Moyenne":1,"À qualifier":2};
-  const rs=all.filter(r=>F[pFilter](r)&&(!pCountry||r.Pays===pCountry)&&(!pSize||r.Taille===pSize)&&(!pMob||!!pWa(r))&&(!q||[r.Agence,r.Ville,r.Pays,r.Infos].join(" ").toLowerCase().includes(q))).sort((a,b)=>(pDue(b)-pDue(a))||((rank[a.Taille]??3)-(rank[b.Taille]??3)));
+  const rs=all.filter(r=>F[pFilter](r)&&(!pCountry||r.Pays===pCountry)&&(!pSize||r.Taille===pSize)&&(!pMob||!!pWa(r))&&(!q||[r.Agence,r.Ville,r.Pays,r.Infos].join(" ").toLowerCase().includes(q))).sort((a,b)=>(pTaskDue(b)-pTaskDue(a))||(pDue(b)-pDue(a))||((rank[a.Taille]??3)-(rank[b.Taille]??3)));
   const done=all.filter(r=>(r.Statut||"À contacter")!=="À contacter").length;
   el.innerHTML='<div class="toolbar"><h1>Prospects</h1><button class="btn sm" id="pTplBtn">Mes messages</button><input class="search" id="prosq" type="search" placeholder="Agence, ville, pays…" value="'+esc(q)+'"></div>'+
-    '<div class="pros-sum"><div><b>'+all.length+'</b><span>agences</span></div><div><b>'+done+'</b><span>contactées</span></div><div><b>'+cnt("À relancer")+'</b><span>à relancer</span></div><div><b>'+cnt("Gagnés")+'</b><span>gagnées</span></div></div>'+
+    '<div class="pros-sum"><div><b>'+all.length+'</b><span>agences</span></div><div><b>'+done+'</b><span>contactées</span></div><div><b>'+cnt("À relancer")+'</b><span>à relancer</span></div><div><b>'+cnt("Clients")+'</b><span>clients</span></div></div>'+
     '<div class="chips">'+Object.keys(F).map(k=>'<button class="chip" data-pf="'+esc(k)+'" aria-pressed="'+(k===pFilter)+'">'+esc(k)+' · '+cnt(k)+'</button>').join("")+'</div>'+
     '<div class="pros-filters"><select id="pCountry" aria-label="Pays"><option value="">Tous les pays</option>'+countries.map(c=>'<option'+(c===pCountry?' selected':'')+'>'+esc(c)+'</option>').join("")+'</select><select id="pSize" aria-label="Taille"><option value="">Toutes tailles</option>'+["Grande","Moyenne","À qualifier"].map(s=>'<option'+(s===pSize?' selected':'')+'>'+s+'</option>').join("")+'</select><label class="small muted"><input type="checkbox" id="pMob"'+(pMob?' checked':'')+'> Avec WhatsApp</label></div>'+
-    '<div class="list">'+(rs.length?rs.map(r=>{const st=r.Statut||"À contacter";const due=pDue(r);return '<button class="item" data-pr="'+r._row+'"><span class="avatar" style="background:'+avColor(r.Agence)+'">'+esc(initials(r.Agence))+'</span><span class="mid"><span class="t">'+esc(r.Agence)+'</span><span class="s">'+esc([r.Pays,r.Ville].filter(Boolean).join(" · "))+'</span></span><span class="end"><span class="pill '+(due?"p-red":(PILL[st]||"p-off"))+'">'+(due?"À relancer":esc(st))+'</span><span class="d">'+esc(r.Taille||"")+(pWa(r)?"":" · à appeler")+'</span></span></button>'}).join(""):'<div class="empty">Aucune agence dans ce filtre.</div>')+'</div>';
+    '<div class="list">'+(rs.length?rs.map(r=>{const st=r.Statut||"À contacter";const due=pDue(r);return '<button class="item" data-pr="'+r._row+'"><span class="avatar" style="background:'+avColor(r.Agence)+'">'+esc(initials(r.Agence))+'</span><span class="mid"><span class="t">'+esc(r.Agence)+'</span><span class="s">'+esc([r.Pays,r.Ville].filter(Boolean).join(" · "))+'</span></span><span class="end"><span class="pill '+(due?"p-red":(PILL[st]||"p-off"))+'">'+(due?"À relancer":esc(st))+'</span><span class="d'+(pTaskDue(r)?' due':'')+'">'+(pTask(r)?esc(pTask(r))+(pTaskDay(r)?" · "+esc(pShortDate(pTaskDay(r))):""):esc(r.Taille||"")+(pWa(r)?"":" · à appeler"))+'</span></span></button>'}).join(""):'<div class="empty">Aucune agence dans ce filtre.</div>')+'</div>';
   el.querySelectorAll("[data-pf]").forEach(b=>b.onclick=()=>{pFilter=b.dataset.pf;renderPros()});
   $("pCountry").onchange=e=>{pCountry=e.target.value;renderPros()};
   $("pSize").onchange=e=>{pSize=e.target.value;renderPros()};
@@ -95,14 +109,30 @@ function openPros(r,tk){
     '<p class="pros-msg">'+esc(msg)+'</p>'+
     '<div class="acts"><button class="btn" id="pCopy">Copier le message</button><button class="btn" id="pCopyN">Copier le numéro</button></div>'+
     (t?'<p class="muted small" style="margin:0">Message envoyé le '+new Date(t).toLocaleDateString("fr-FR",{day:"numeric",month:"long"})+'.</p>':'')+
-    '<div><div class="eyebrow" style="margin-bottom:8px">Statut</div><div class="status-row">'+P_ST.map(s=>'<button type="button" data-ps="'+esc(s)+'" aria-pressed="'+(s===st)+'">'+esc(s)+'</button>').join("")+'</div></div>'+
-    '<dl class="fields">'+["Pays","Ville","Infos","Autres numéros","Notes"].filter(x=>r[x]).map(x=>'<div><dt>'+esc(x)+'</dt><dd>'+esc(r[x])+'</dd></div>').join("")+'</dl>';
+    '<div><div class="eyebrow" style="margin-bottom:8px">Statut</div><div class="status-row">'+P_ST.map(s=>'<button type="button" data-ps="'+esc(s)+'" aria-pressed="'+(s===(st==="Gagné"?"Client":st))+'">'+esc(s)+'</button>').join("")+'</div></div>'+
+    '<div class="pc"><div class="eyebrow">Suivi</div>'+
+      (pTask(r)?'<div class="pc-row task'+(pTaskDue(r)?' due':'')+'"><span class="pc-val"><b>'+esc(pTask(r))+'</b>'+(pTaskDay(r)?' · '+esc(pShortDate(pTaskDay(r))):'')+'</span><button class="btn sm dark" id="pTaskDone">Tâche terminée</button></div>':'')+
+      '<label class="pros-tpl"><b>Prochaine action</b><input id="pt_action" list="pt_list" value="'+esc(pTask(r))+'" placeholder="Ex. Rappeler, Envoyer la démo…"><datalist id="pt_list">'+P_ACTIONS.map(a=>'<option value="'+esc(a)+'">').join("")+'</datalist></label>'+
+      '<div class="chips" style="margin:0">'+[["Demain",1],["Dans 3 jours",3],["Dans 7 jours",7]].map(x=>'<button type="button" class="chip" data-pd="'+x[1]+'">'+x[0]+'</button>').join("")+'</div>'+
+      '<label class="pros-tpl"><b>Date</b><input id="pt_date" type="date" value="'+esc(pTaskDay(r))+'"></label>'+
+      '<label class="pros-tpl"><b>Notes</b><textarea id="pt_notes" rows="3" placeholder="Ce qu\'il a dit, qui décide, budget…">'+esc(r.Notes||"")+'</textarea></label>'+
+      '<div class="acts"><button class="btn gold" id="pt_save">Enregistrer le suivi</button></div>'+
+    '</div>'+
+    '<dl class="fields">'+["Pays","Ville","Infos","Autres numéros"].filter(x=>r[x]).map(x=>'<div><dt>'+esc(x)+'</dt><dd>'+esc(r[x])+'</dd></div>').join("")+'</dl>';
   $("sheetBody").querySelectorAll("[data-tk]").forEach(b=>b.onclick=()=>openPros(r,b.dataset.tk));
   $("sheetBody").querySelectorAll("[data-ps]").forEach(b=>b.onclick=async()=>{await pSet(r,b.dataset.ps);openPros(r,tk);renderAll()});
   const copy=(txt,ok)=>{try{navigator.clipboard.writeText(txt).then(()=>toast(ok)).catch(()=>toast("Copie impossible : sélectionne le texte"))}catch(e){toast("Copie impossible : sélectionne le texte")}};
   $("pCopy").onclick=()=>copy(msg,"Message copié");
   $("pCopyN").onclick=()=>copy(r["Téléphone"]||"","Numéro copié");
   $("pEdit").onclick=()=>editContacts(r,tk);
+  $("sheetBody").querySelectorAll("[data-pd]").forEach(b=>b.onclick=()=>{const d=new Date();d.setDate(d.getDate()+(+b.dataset.pd));$("pt_date").value=dayKey(d);if(!$("pt_action").value)$("pt_action").value="Rappeler"});
+  $("pt_save").onclick=async()=>{const ch={};const v={"Prochaine action":$("pt_action").value.trim(),"Date action":$("pt_date").value,"Notes":$("pt_notes").value.trim()};
+    Object.keys(v).forEach(f=>{if(v[f]!==String(f==="Date action"?pTaskDay(r):(r[f]||"")))ch[f]=v[f]});
+    if(!Object.keys(ch).length)return toast("Rien à enregistrer");
+    const ok=await pSave(r,ch);toast(ok?"Suivi enregistré":"Suivi enregistré sur ce téléphone");openPros(r,tk);renderAll()};
+  const td=$("pTaskDone");if(td)td.onclick=async()=>{const now=new Date().toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});
+    const ok=await pSave(r,{"Notes":(now+" : fait – "+pTask(r))+(r.Notes?"\n"+r.Notes:""),"Prochaine action":"","Date action":""});
+    toast(ok?"Tâche terminée":"Tâche terminée (sur ce téléphone)");openPros(r,tk);renderAll()};
   $("sheetBody").querySelectorAll("[data-send]").forEach(a=>a.addEventListener("click",()=>{
     if(a.dataset.send==="fb")copy(msg,"Message copié : colle-le dans Messenger");
     const o=pJSON(P_DONE_KEY);o[pKey(r)]=Date.now();store.set(P_DONE_KEY,JSON.stringify(o));
@@ -123,13 +153,7 @@ function editContacts(r,tk){
   $("peSave").onclick=async()=>{
     const ch={};P_FIELDS.forEach(f=>{const v=$("pe_"+f.replace(/\W/g,"")).value.trim();if(v!==String(r[f]||""))ch[f]=v});
     if(!Object.keys(ch).length)return openPros(r,tk);
-    Object.assign(r,ch);
-    let saved=demo;
-    if(!demo){try{saved=true;for(const f in ch){const j=await api({action:"contact",row:r._row,champ:f,valeur:ch[f]});if(!j.ok){saved=false;break}
-      const T=data.prospects;let i=T.headers.indexOf(f);if(i>=0){const row=T.rows.find(x=>x.row===r._row);if(row)row.values[i]=ch[f]}}}catch(e){saved=false}}
-    if(!saved){const ed=pJSON(P_EDIT_KEY);ed[r._row]=Object.assign(ed[r._row]||{},ch,{Agence:r.Agence});store.set(P_EDIT_KEY,JSON.stringify(ed))}
-    toast(saved?"Contact enregistré":"Contact enregistré sur ce téléphone");
-    openPros(r,tk);renderAll();
+    const ok=await pSave(r,ch);toast(ok?"Contact enregistré":"Contact enregistré sur ce téléphone");openPros(r,tk);renderAll();
   };
   openSheet();
 }
