@@ -38,6 +38,8 @@ await cp(join(root,'stockpro'),join(out,'stockpro'), {recursive:true});
 for (const file of ['stockpro/index.html','stockpro/dollars/index.html','stockpro/fcfa/index.html','stockpro/demo/index.html','stockpro/sacko-logo.jpg']) await readFile(join(out,file));
 await cp(join(root,'phonepro'),join(out,'phonepro'), {recursive:true});
 await cp(join(root,'cgsp'),join(out,'cgsp'), {recursive:true});
+await cp(join(root,'fiche-client'),join(out,'fiche-client'), {recursive:true});
+await readFile(join(out,'fiche-client/index.html'));
 for (const file of ['cgsp/index.html','cgsp/logo-cgsp-96.png','cgsp/logo-cgsp-256.png','cgsp/icon-192.png']) await readFile(join(out,file));
 for (const file of ['phonepro/index.html','phonepro/dollars/index.html','phonepro/fcfa/index.html','phonepro/demo/index.html','phonepro/sacko-logo.jpg']) await readFile(join(out,file));
 for(const list of Object.values(packages)) for(const pack of list) {
