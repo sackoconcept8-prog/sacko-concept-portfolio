@@ -259,6 +259,15 @@ tbody tr:last-child td{border-bottom:0}
 .pin3d::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px solid currentColor;opacity:.6;animation:pinPing 2s ease-out infinite}
 .pin3d.sos{width:24px;height:24px}.pin3d.sos::after{animation-duration:.9s}
 .pin3d b{position:absolute;left:50%;top:-30px;transform:translateX(-50%);white-space:nowrap;background:#fff;color:var(--fg);font:600 11.5px var(--body);padding:3px 8px;border-radius:8px;box-shadow:0 2px 8px rgba(15,27,45,.15);pointer-events:none}
+.gpin{display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.gpin .dp{width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:-2px 3px 8px rgba(15,27,45,.35);display:grid;place-items:center;border:2px solid rgba(255,255,255,.9)}
+.gpin .dp::after{content:"";width:10px;height:10px;border-radius:50%;background:#7A1A12;opacity:.85}
+.gpin.ok .dp::after,.gpin.am .dp::after{background:#fff;opacity:1}
+.gpin .sh{width:12px;height:4px;border-radius:50%;background:rgba(0,0,0,.25);margin-top:3px;filter:blur(1px)}
+.gpin b{white-space:nowrap;background:#fff;color:var(--fg);font:600 11.5px var(--body);padding:3px 8px;border-radius:8px;box-shadow:0 2px 8px rgba(15,27,45,.15);margin-bottom:5px;pointer-events:none}
+.gpin.hq .dp{width:38px;height:38px;background:#EA4335}
+.gpin.hq b{background:#EA4335;color:#fff}
+.gpin.sos .dp{animation:pulse 1s infinite}
 .hq3d{width:42px;height:42px;border-radius:50%;background:#fff;border:2px solid var(--blue);box-shadow:0 6px 18px rgba(29,95,209,.35);display:grid;place-items:center}
 .hq3d img{width:30px}
 @keyframes pinPing{0%{transform:scale(.5);opacity:.8}100%{transform:scale(1.8);opacity:0}}
@@ -711,7 +720,7 @@ function replacement(siteId,sh){
 
 
 /* ---------- Carte 3D premium (MapLibre) ---------- */
-const HQ={lat:6.3685,lng:2.4215,name:"Siège CGSP-Sécurité"};
+const HQ={lat:6.3712,lng:2.4505,name:"Siège CGSP-Sécurité"};
 function circlePoly(lat,lng,r,n=40,wob=0){const pts=[];for(let i=0;i<=n;i++){const a=2*Math.PI*i/n;const rr=r*(1+wob*Math.sin(a*3));pts.push([lng+rr*Math.cos(a)/(111320*Math.cos(lat*Math.PI/180)),lat+rr*Math.sin(a)/110540])}return pts}
 function arcLine(a,b,n=48){const [x1,y1]=a,[x2,y2]=b;const mx=(x1+x2)/2,my=(y1+y2)/2;const dx=x2-x1,dy=y2-y1;const cx=mx-dy*.28,cy=my+dx*.28;const out=[];for(let i=0;i<=n;i++){const t=i/n;out.push([(1-t)*(1-t)*x1+2*(1-t)*t*cx+t*t*x2,(1-t)*(1-t)*y1+2*(1-t)*t*cy+t*t*y2])}return out}
 function buildMap3D(el,opts={}){
@@ -720,7 +729,7 @@ function buildMap3D(el,opts={}){
   try{const c=document.createElement("canvas");if(!(c.getContext("webgl2")||c.getContext("webgl")))throw 0}catch(e){buildMap(el,opts);return}
   box.classList.add("m3d");
   const col={green:"#14915A",amber:"#E08A00",red:"#D2362B"};
-  let map;try{map=new maplibregl.Map({container:el,style:"https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",center:[2.405,6.372],zoom:opts.compact?11.9:12.4,pitch:60,bearing:-24,antialias:true,attributionControl:{compact:true},scrollZoom:!opts.compact,maxPitch:78})}catch(e){box.classList.remove("m3d");buildMap(el,opts);return}
+  let map;try{map=new maplibregl.Map({container:el,style:"https://tiles.openfreemap.org/styles/liberty",center:[2.405,6.372],zoom:opts.compact?11.9:12.4,pitch:60,bearing:-24,antialias:true,attributionControl:{compact:true},scrollZoom:!opts.compact,maxPitch:78})}catch(e){box.classList.remove("m3d");buildMap(el,opts);return}
   const ctl={raf:0,rot:true,alive:true,remove(){this.alive=false;cancelAnimationFrame(this.raf);try{map.remove()}catch(e){}}};maps[el]=ctl;
   map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),"top-right");
   box.insertAdjacentHTML("beforeend",`<div class="m3d-bar"><button data-m3="3d" class="on">3D</button><button data-m3="2d">2D</button><button data-m3="rot" class="on">Rotation</button><button data-m3="fit">Recentrer</button></div><div class="m3d-leg"><span><i style="background:#1D5FD1"></i>Liaison siège</span>${opts.compact?"":`<span><i style="background:#14915A"></i>Ronde en cours</span>`}<span><i style="background:#14915A;height:9px;width:9px;border-radius:50%"></i>Couvert</span><span><i style="background:#E08A00;height:9px;width:9px;border-radius:50%"></i>À surveiller</span><span><i style="background:#D2362B;height:9px;width:9px;border-radius:50%"></i>Non couvert / SOS</span></div>`);
@@ -762,11 +771,13 @@ function buildMap3D(el,opts={}){
       map.on("mouseenter","pun",e=>{map.getCanvas().style.cursor="pointer";tip.setLngLat(e.features[0].geometry.coordinates).setHTML(`<div style="font:12.5px Inter,sans-serif">${esc(e.features[0].properties.t)}</div>`).addTo(map)});
       map.on("mouseleave","pun",()=>{map.getCanvas().style.cursor="";tip.remove()})}
     // marqueurs
-    const hq=document.createElement("div");hq.className="hq3d";hq.innerHTML=`<img src="logo-cgsp-96.png" alt="">`;
+    const hq=document.createElement("div");hq.className="gpin hq";hq.innerHTML=`<b>${HQ.name}</b><span class="dp"></span><span class="sh"></span>`;
+    new maplibregl.Marker({element:hq,anchor:"bottom"}).setLngLat([HQ.lng,HQ.lat]).setPopup(new maplibregl.Popup({offset:44}).setHTML(`<b style="font:600 14px Inter,sans-serif">${HQ.name}</b><div style="color:#5E6B80;font:12.5px Inter,sans-serif">${esc(S.settings.addr)}</div>`)).addTo(map);
+    hq.addEventListener("click",()=>{stopRot();map.flyTo({center:[HQ.lng,HQ.lat],zoom:16.6,pitch:60,duration:1600})});
     new maplibregl.Marker({element:hq}).setLngLat([HQ.lng,HQ.lat]).setPopup(new maplibregl.Popup({offset:24}).setHTML(`<b style="font:600 14px Inter,sans-serif">${HQ.name}</b><div style="color:#5E6B80;font:12.5px Inter,sans-serif">${esc(S.settings.addr)}</div>`)).addTo(map);
-    states.forEach(({s,h,sos})=>{const e=document.createElement("div");const c=sos?col.red:col[h.state];e.className="pin3d"+(sos?" sos":"");e.style.background=c;e.style.color=c;if(!opts.compact)e.innerHTML=`<b>${esc(s.name)}</b>`;
+    states.forEach(({s,h,sos})=>{const e=document.createElement("div");const c=sos?col.red:col[h.state];e.className="gpin "+(sos?"sos":h.state==="red"?"":"ok");e.innerHTML=`${opts.compact?"":`<b>${esc(s.name)}</b>`}<span class="dp" style="background:${c}"></span><span class="sh"></span>`;e.addEventListener("click",()=>{stopRot();map.flyTo({center:[s.lng,s.lat],zoom:16.6,pitch:60,duration:1600})});
       const names=h.team.map(id=>{const pu=h.pun.find(x=>x.agent===id);const st=punchStatus(pu);return `<div style="display:flex;justify-content:space-between;gap:10px"><span>${esc(A(id).name)}</span><b style="color:${!pu?"#5E6B80":st.c==="p-green"?"#14915A":st.c==="p-red"?"#D2362B":"#B86E00"}">${pu?st.l:"Pas encore pointé"}</b></div>`}).join("");
-      new maplibregl.Marker({element:e}).setLngLat([s.lng,s.lat]).setPopup(new maplibregl.Popup({offset:16,maxWidth:"300px"}).setHTML(`<div style="min-width:230px;font:13px Inter,sans-serif"><b style="font-size:14px">${esc(s.name)}</b><div style="color:#5E6B80;margin-bottom:6px">${esc(s.loc)} · ${h.team.length}/${h.need} agent(s)</div>${sos?`<div style="color:#D2362B;font-weight:700;margin-bottom:6px">🚨 Alerte SOS en cours</div>`:""}${h.hole?`<div style="color:#D2362B;font-weight:700;margin-bottom:6px">⚠ ${h.hole.missing} poste(s) non couvert(s)</div>`:""}${names||"<i>Aucun agent</i>"}</div>`)).addTo(map)});
+      new maplibregl.Marker({element:e,anchor:"bottom"}).setLngLat([s.lng,s.lat]).setPopup(new maplibregl.Popup({offset:opts.compact?36:56,maxWidth:"300px"}).setHTML(`<div style="min-width:230px;font:13px Inter,sans-serif"><b style="font-size:14px">${esc(s.name)}</b><div style="color:#5E6B80;margin-bottom:6px">${esc(s.loc)} · ${h.team.length}/${h.need} agent(s)</div>${sos?`<div style="color:#D2362B;font-weight:700;margin-bottom:6px">🚨 Alerte SOS en cours</div>`:""}${h.hole?`<div style="color:#D2362B;font-weight:700;margin-bottom:6px">⚠ ${h.hole.missing} poste(s) non couvert(s)</div>`:""}${names||"<i>Aucun agent</i>"}</div>`)).addTo(map)});
     fit();
     // animation
     const dash=[[0,4,3],[0.5,4,2.5],[1,4,2],[1.5,4,1.5],[2,4,1],[2.5,4,0.5],[3,4,0],[0,0.5,3,3.5],[0,1,3,3],[0,1.5,3,2.5],[0,2,3,2],[0,2.5,3,1.5],[0,3,3,1],[0,3.5,3,0.5]];
@@ -780,7 +791,7 @@ function buildMap3D(el,opts={}){
       ctl.raf=requestAnimationFrame(tick)};
     ctl.raf=requestAnimationFrame(tick);
   });
-  map.on("error",e=>{if(!ctl.ready&&e&&e.error&&/style\.json|Failed to fetch|NetworkError|AJAXError/i.test(String(e.error.message||e.error))){ctl.remove();box.innerHTML="";box.classList.remove("m3d");buildMap(el,opts)}});
+  map.on("error",e=>{if(!ctl.ready&&e&&e.error&&/styles|style\.json|Failed to fetch|NetworkError|AJAXError/i.test(String(e.error.message||e.error))){ctl.remove();box.innerHTML="";box.classList.remove("m3d");buildMap(el,opts)}});
 }
 
 /* ---------- Direction générale ---------- */
