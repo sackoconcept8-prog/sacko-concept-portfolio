@@ -1137,7 +1137,90 @@ function sAddKey(){sheet(`<form class="stack" id="akf"><h2>Nouvelle clé ou badg
  <label class="f">Détenue par<select id="ak-h">${opts(["Bureau",...S.team.map(a=>a.name)],"Bureau")}</select></label><button class="btn primary" type="submit">Ajouter</button></form>`);
  $("#akf").onsubmit=e=>{e.preventDefault();const k={id:uid(),clientId:$("#ak-c").value,label:$("#ak-l").value.trim(),holder:$("#ak-h").value,since:today()};if(!k.label)return;S.keys.push(k);log(k.clientId,`Clé « ${k.label} » enregistrée (${holderLabel(k.holder).toLowerCase()})`);save();closeSheet();render();toast("Clé ajoutée")}}
 
-const ADMIN={taches:vTaches,accueil:vAccueil,clients:vClients,planning:vPlanning,relances:vRelances,documents:vDocuments,rapports:vRapports,stock:vStock,equipe:()=>vEquipe()+equipeExtra(),qualite:vQualite,cles:vCles,tarifs:vTarifs,demandes:vDemandes,reglages:vReglages};
+/* ---------- Badges employés ---------- */
+LIBS.pdf="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+const BW=1011,BH=638;/* 85,6 × 54 mm à 300 dpi */
+function nextMatricule(){const n=S.team.reduce((m,a)=>{const x=/(\d+)$/.exec(a.matricule||"");return x?Math.max(m,+x[1]):m},0)+1;return "AG-"+String(n).padStart(4,"0")}
+function loadImg(src){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=src})}
+function rrect(x,X,Y,W,H,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+W,Y,X+W,Y+H,r);x.arcTo(X+W,Y+H,X,Y+H,r);x.arcTo(X,Y+H,X,Y,r);x.arcTo(X,Y,X+W,Y,r);x.closePath()}
+function coverImg(x,im,X,Y,W,H){const k=Math.max(W/im.width,H/im.height),w=im.width*k,h=im.height*k;x.drawImage(im,X+(W-w)/2,Y+(H-h)/2,w,h)}
+function fitText(x,t,max,size,weight,fam){let s=size;do{x.font=`${weight} ${s}px ${fam}`;if(x.measureText(t).width<=max)break;s-=2}while(s>16);return s}
+async function drawLogo(x,X,Y,S0){const lg=S.settings.logo;
+ if(lg){try{const im=await loadImg(lg);const k=Math.min(S0/im.width,S0/im.height);x.drawImage(im,X+(S0-im.width*k)/2,Y+(S0-im.height*k)/2,im.width*k,im.height*k);return}catch(e){}}
+ const ini=S.settings.name.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+ x.fillStyle="#3FA877";x.beginPath();x.arc(X+S0/2,Y+S0/2,S0/2,0,7);x.fill();x.fillStyle="#fff";x.font=`800 ${S0*.42}px "Bricolage Grotesque",sans-serif`;x.textAlign="center";x.textBaseline="middle";x.fillText(ini,X+S0/2,Y+S0/2+2);x.textAlign="left";x.textBaseline="alphabetic"}
+function drawQR(x,text,X,Y,size){const q=qrcode(0,"M");q.addData(text);q.make();const n=q.getModuleCount(),m=2,c=size/(n+m*2);x.fillStyle="#fff";x.fillRect(X,Y,size,size);x.fillStyle="#14302A";
+ for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))x.fillRect(Math.floor(X+(k+m)*c),Math.floor(Y+(r+m)*c),Math.ceil(c),Math.ceil(c))}
+async function badgeCanvases(a){try{await document.fonts.ready}catch(e){}
+ const D='"Bricolage Grotesque",sans-serif',B='Figtree,sans-serif',G="#3FA877",F="#14302A",M="#5C7268";
+ /* recto */
+ const r=document.createElement("canvas");r.width=BW;r.height=BH;const x=r.getContext("2d");
+ x.fillStyle="#fff";x.fillRect(0,0,BW,BH);
+ x.fillStyle="#E7F1EB";x.fillRect(0,0,BW,150);x.fillStyle=G;x.fillRect(0,150,BW,8);
+ x.save();rrect(x,36,25,100,100,22);x.fillStyle="#fff";x.fill();x.restore();await drawLogo(x,44,33,84);
+ x.fillStyle=F;fitText(x,S.settings.name,700,46,800,D);x.fillText(S.settings.name,160,78);
+ x.fillStyle=M;x.font=`600 26px ${B}`;x.fillText("Carte professionnelle",160,118);
+ /* photo */
+ x.save();rrect(x,40,190,250,310,24);x.clip();x.fillStyle="#E7F1EB";x.fillRect(40,190,250,310);
+ if(a.photo){try{coverImg(x,await loadImg(a.photo),40,190,250,310)}catch(e){}}else{x.fillStyle="#9AABA3";x.font=`800 120px ${D}`;x.textAlign="center";x.fillText((a.name[0]||"?").toUpperCase(),165,390);x.textAlign="left"}
+ x.restore();x.strokeStyle="#D6E4DB";x.lineWidth=3;rrect(x,40,190,250,310,24);x.stroke();
+ /* identité */
+ const L=325,W=BW-L-200;
+ x.fillStyle=F;const ns=fitText(x,a.name,BW-L-40,52,800,D);x.fillText(a.name,L,236+Math.max(0,(52-ns)/3));
+ x.fillStyle=G;fitText(x,a.role||"",BW-L-40,32,700,B);x.fillText(a.role||"",L,284);
+ const row=(lab,val,y)=>{x.fillStyle=M;x.font=`600 21px ${B}`;x.fillText(lab.toUpperCase(),L,y);x.fillStyle=F;fitText(x,val||"—",W,28,700,B);x.fillText(val||"—",L,y+33)};
+ row("Matricule",a.matricule,342);row("Valable jusqu'au",a.validUntil?fdy(a.validUntil):"—",428);
+ drawQR(x,`${S.settings.name} · ${a.name} · ${a.matricule} · valable jusqu'au ${a.validUntil?fdy(a.validUntil):"—"} · ${S.settings.phone}`,BW-200,330,170);
+ x.fillStyle=G;x.fillRect(0,BH-58,BW,58);x.fillStyle="#fff";x.font=`700 24px ${B}`;x.textAlign="center";x.fillText(S.settings.phone+(S.settings.email?"  ·  "+S.settings.email:""),BW/2,BH-21);x.textAlign="left";
+ /* verso */
+ const v=document.createElement("canvas");v.width=BW;v.height=BH;const y=v.getContext("2d");
+ y.fillStyle="#fff";y.fillRect(0,0,BW,BH);y.fillStyle="#E7F1EB";y.fillRect(0,0,BW,12);y.fillStyle=G;y.fillRect(0,BH-12,BW,12);
+ await drawLogo(y,BW/2-60,50,120);y.textAlign="center";y.fillStyle=F;fitText(y,S.settings.name,BW-120,40,800,D);y.fillText(S.settings.name,BW/2,225);
+ y.fillStyle=M;y.font=`500 24px ${B}`;y.fillText(S.settings.addr||"",BW/2,265);
+ y.fillStyle=F;y.font=`600 25px ${B}`;["Cette carte est personnelle et doit être portée","de façon visible pendant les interventions."].forEach((t,i)=>y.fillText(t,BW/2,340+i*36));
+ y.fillStyle=M;y.font=`500 23px ${B}`;y.fillText("Carte trouvée ? Merci d'appeler le "+(S.settings.phone||""),BW/2,440);
+ if(a.emergency){y.fillStyle=F;y.font=`700 23px ${B}`;y.fillText("Contact d'urgence : "+a.emergency,BW/2,500)}
+ y.fillStyle=M;y.font=`500 20px ${B}`;y.fillText("Embauche : "+(a.hired?fdy(a.hired):"—")+"   ·   "+(a.matricule||""),BW/2,BH-50);y.textAlign="left";
+ return[r,v]}
+async function badgePDF(a,cv){await loadJS(LIBS.pdf);const{jsPDF}=window.jspdf;const doc=new jsPDF({unit:"mm",format:"a4"});const w=85.6,h=54,X=14,Y=24,gap=10;
+ doc.setFontSize(10);doc.setTextColor(92,114,104);doc.text(`Badge de ${a.name} - ${S.settings.name} - recto et verso à taille réelle (85,6 × 54 mm)`,X,14);
+ [[cv[0],X],[cv[1],X+w+gap]].forEach(([c,x0])=>{doc.addImage(c.toDataURL("image/jpeg",.95),"JPEG",x0,Y,w,h);doc.setDrawColor(190,200,195);doc.setLineWidth(.2);
+  [[x0,Y],[x0+w,Y],[x0,Y+h],[x0+w,Y+h]].forEach(([px,py])=>{doc.line(px-4,py,px-1,py);doc.line(px+1,py,px+4,py);doc.line(px,py-4,px,py-1);doc.line(px,py+1,px,py+4)})});
+ doc.text("Découpez le long des repères, collez recto et verso dos à dos, puis plastifiez.",X,Y+h+12);
+ doc.save("badge-"+a.name.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-")+".pdf")}
+function sBadge(aid){const a0=S.team.find(a=>a.id===aid);let photo=a0&&a0.photo||null;const NEW="__new";
+ const val=a=>({name:a?a.name:"",role:a?a.role:"Agent d'entretien",mat:a&&a.matricule||nextMatricule(),phone:a&&a.phone||"",hired:a&&a.hired||today(),valid:a&&a.validUntil||addDays(today(),365),em:a&&a.emergency||"",rate:a?a.rate:12.5});const v=val(a0);
+ sheet(`<form class="stack" id="bdf"><h2>Badge employé</h2><div class="small muted">Remplissez la fiche, puis générez la carte prête à imprimer.</div>
+ <div class="card pad row" style="gap:12px"><div id="bd-lg" style="width:54px;height:54px;border-radius:12px;background:var(--surface2);display:grid;place-items:center;overflow:hidden;flex:none">${S.settings.logo?`<img src="${S.settings.logo}" alt="Logo" style="max-width:100%;max-height:100%">`:`<span class="xs muted">Logo</span>`}</div><span class="grow"><b class="small">Logo de l'entreprise</b><div class="xs muted">Enregistré une fois pour tous les badges</div></span><label class="btn sm" style="cursor:pointer">${S.settings.logo?"Changer":"Ajouter"}<input type="file" id="bd-l" accept="image/*" hidden></label></div>
+ <label class="f">Employé<select id="bd-a"><option value="${NEW}" ${a0?"":"selected"}>+ Nouvel employé</option>${S.team.map(a=>`<option value="${a.id}" ${a0&&a.id===a0.id?"selected":""}>${esc(a.name)}</option>`).join("")}</select></label>
+ <div class="row" style="gap:14px;align-items:center"><div id="bd-pv" style="width:84px;height:104px;border-radius:14px;background:var(--surface2);overflow:hidden;display:grid;place-items:center;flex:none">${photo?`<img src="${photo}" alt="Photo" style="width:100%;height:100%;object-fit:cover">`:`<span class="xs muted">Photo</span>`}</div>
+ <span class="stack grow" style="gap:6px"><label class="btn" style="cursor:pointer">${svg("plus")} Prendre ou choisir la photo<input type="file" id="bd-p" accept="image/*" capture="user" hidden></label><span class="xs muted">Photo de face, fond clair de préférence</span></span></div>
+ <label class="f">Nom et prénom<input id="bd-n" required value="${esc(v.name)}"></label>
+ <div class="grid2"><label class="f">Poste<input id="bd-r" value="${esc(v.role)}"></label><label class="f">Matricule<input id="bd-m" value="${esc(v.mat)}"></label></div>
+ <div class="grid2"><label class="f">Téléphone<input id="bd-t" type="tel" value="${esc(v.phone)}"></label><label class="f">Taux horaire (${curSym()})<input id="bd-x" type="number" step="any" value="${v.rate}"></label></div>
+ <div class="grid2"><label class="f">Date d'embauche<input id="bd-h" type="date" value="${v.hired}"></label><label class="f">Valable jusqu'au<input id="bd-v" type="date" value="${v.valid}"></label></div>
+ <label class="f">Contact d'urgence (facultatif)<input id="bd-e" value="${esc(v.em)}" placeholder="Nom et téléphone"></label>
+ <button class="btn primary" type="submit">Générer la carte</button><div id="bd-out" class="stack"></div></form>`);
+ $("#bd-a").onchange=e=>{sBadge(e.target.value===NEW?null:e.target.value)};
+ $("#bd-l").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{S.settings.logo=await imgToPNG(f,400);save();$("#bd-lg").innerHTML=`<img src="${S.settings.logo}" alt="Logo" style="max-width:100%;max-height:100%">`;toast("Logo enregistré")}catch(_){toast("Image illisible")}};
+ $("#bd-p").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{photo=await imgToData(f,700);$("#bd-pv").innerHTML=`<img src="${photo}" alt="Photo" style="width:100%;height:100%;object-fit:cover">`}catch(_){toast("Photo illisible")}};
+ $("#bdf").onsubmit=async e=>{e.preventDefault();const name=$("#bd-n").value.trim();if(!name){toast("Indiquez le nom");return}
+  const sel=$("#bd-a").value;let a=S.team.find(x=>x.id===sel);const fields={name,role:$("#bd-r").value.trim(),matricule:$("#bd-m").value.trim()||nextMatricule(),phone:$("#bd-t").value.trim(),rate:+$("#bd-x").value||0,hired:$("#bd-h").value,validUntil:$("#bd-v").value,emergency:$("#bd-e").value.trim(),photo};
+  if(a){const old=a.name;Object.assign(a,fields);if(old!==name){S.jobs.forEach(j=>{if(j.agent===old)j.agent=name});S.absences.forEach(x=>{if(x.agent===old)x.agent=name});S.keys.forEach(k=>{if(k.holder===old)k.holder=name})}}
+  else{a={id:uid(),...fields};S.team.push(a)}
+  a.badgeAt=today();save();render();
+  const out=$("#bd-out");out.innerHTML=`<div class="empty">Création de la carte…</div>`;
+  try{await loadJS(LIBS.qr);const cv=await badgeCanvases(a);out.innerHTML=`<div class="eyebrow">Aperçu recto / verso</div><img src="${cv[0].toDataURL("image/png")}" alt="Recto du badge" style="width:100%;border-radius:12px;border:1px solid var(--line)"><img src="${cv[1].toDataURL("image/png")}" alt="Verso du badge" style="width:100%;border-radius:12px;border:1px solid var(--line)">
+   <button class="btn primary block" type="button" id="bd-pdf">Télécharger le PDF prêt à imprimer</button><button class="btn block" type="button" id="bd-png">Télécharger l'image (recto)</button><div class="xs muted">Le PDF contient le recto et le verso à taille réelle d'une carte bancaire, avec repères de découpe.</div>`;
+   $("#bd-pdf").onclick=async()=>{try{await badgePDF(a,cv);toast("PDF téléchargé")}catch(_){toast("Connexion nécessaire pour créer le PDF")}};
+   $("#bd-png").onclick=()=>{const l=document.createElement("a");l.href=cv[0].toDataURL("image/png");l.download="badge-"+a.matricule+".png";document.body.appendChild(l);l.click();l.remove()};
+   out.scrollIntoView({behavior:"smooth",block:"start"});toast(sel===NEW?"Employé ajouté · carte prête":"Carte prête")}
+  catch(_){out.innerHTML=`<div class="empty">Connexion internet nécessaire pour générer la carte.</div>`}}}
+function imgToPNG(file,max){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const cv=document.createElement("canvas");cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);res(cv.toDataURL("image/png"))};im.onerror=rej;im.src=fr.result};fr.onerror=rej;fr.readAsDataURL(file)})}
+function badgeSection(){return`<div class="section"><h2>Badges employés</h2><div class="card pad stack" style="gap:10px"><span class="small">Créez la carte professionnelle d'un employé avec sa photo et le logo de l'entreprise, prête à imprimer et plastifier.</span><button class="btn primary" data-act="badge">Créer un badge</button></div>
+ <div class="card list" style="margin-top:10px">${S.team.map(a=>`<div class="item static">${a.photo?`<img src="${a.photo}" alt="" class="avatar av-s" style="object-fit:cover;padding:0">`:`<div class="avatar av-s">${esc(a.name[0])}</div>`}<span class="grow"><div class="t">${esc(a.name)}</div><div class="xs muted">${esc(a.matricule||"Sans matricule")}${a.badgeAt?" · badge du "+fd(a.badgeAt):""}</div></span><button class="btn sm" data-act="badge" data-id="${a.id}">${a.badgeAt?"Refaire":"Badge"}</button></div>`).join("")}</div></div>`}
+
+const ADMIN={taches:vTaches,accueil:vAccueil,clients:vClients,planning:vPlanning,relances:vRelances,documents:vDocuments,rapports:vRapports,stock:vStock,equipe:()=>vEquipe()+badgeSection()+equipeExtra(),qualite:vQualite,cles:vCles,tarifs:vTarifs,demandes:vDemandes,reglages:vReglages};
 const AGENT={"a-jour":vAJour,"a-semaine":vASemaine,"a-heures":vAHeures,"a-signal":vASignal};
 const AGTABS=[["a-jour","Aujourd'hui","home"],["a-semaine","Semaine","cal"],["a-heures","Mes heures","chart"],["a-signal","Signaler","inbox"]];
 const CLIENT={"c-accueil":vCAccueil,"c-docs":vCDocs,"c-inter":vCInter,"c-demande":vCDemande,"c-support":vCSupport};
@@ -1204,6 +1287,7 @@ document.addEventListener("click",e=>{
   case"keymove":sKeyMove(id);break;
   case"addkey":sAddKey();break;
   case"payexport":payExport();break;
+  case"badge":sBadge(id);break;
   case"logout":closeSheet();mode=null;saveUI();if(location.hash)location.hash="";render();break;
   case"menu":sMenu();break; case"cmenu":sCMenu();break; case"notifs":sNotifs();break;
   case"notifgo":closeSheet();if(el.dataset.tab)docTab=el.dataset.tab;if(el.dataset.go2==="relances")relTab="retard";go(el.dataset.go2);break;
