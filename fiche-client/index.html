@@ -13,10 +13,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.2/dist/html2pdf.bundle.min.js" defer></script>
 <script src="../sacko-config.js"></script>
 <style>
 :root{--blue:#1D5FD1;--blue2:#2F7BF0;--ink:#0F1B2D;--muted:#5E6B80;--line:#E3E9F2;--soft:#F3F7FD;--green:#14915A;--red:#D2362B;--gold:#B7791F;--goldbg:#FFF7E6;--bg:#F5F7FB}
-*{box-sizing:border-box}html,body{margin:0}
+*{box-sizing:border-box}html,body{margin:0}[hidden]{display:none!important}
 body{-webkit-print-color-adjust:exact;print-color-adjust:exact;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
 button{font-family:inherit}
 header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
@@ -164,41 +165,47 @@ textarea{min-height:76px;resize:vertical}
   .actions{grid-template-columns:1fr 1fr}
   .custom{grid-template-columns:1fr 110px 40px}
 }
+.dv{font-size:9.4pt;color:#0F1B2D;background:#fff}
+#pdfbox{position:fixed;left:-12000px;top:0;width:210mm;background:#fff}
+.dv.pg{width:210mm;height:291mm;padding:12mm 14mm 20mm;position:relative;overflow:hidden;background:#fff}
+.dv .d-top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--blue);padding-bottom:9px;margin-bottom:11px}
+.dv .d-top .br{display:flex;gap:9px;align-items:center}.dv .d-top img{width:44px}
+.dv .d-top .br b{font-size:12pt;letter-spacing:.08em}.dv .d-top .br small{display:block;color:var(--muted);font-size:7.5pt;letter-spacing:.08em;text-transform:uppercase}
+.dv .d-top h2{margin:0;font-size:20pt;color:var(--blue);text-align:right}.dv .d-top .meta{text-align:right;font-size:8.6pt;color:var(--muted)}
+.dv .d-par{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.dv .d-par div{border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:8.6pt}
+.dv .d-par h4,.dv .d-grid h4{margin:0 0 3px;font-size:7.6pt;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.dv .d-offer{background:#FFF7E6;border:1px solid #F1D9A6;color:#8A5A00;border-radius:9px;padding:6px 10px;font-size:8.6pt;margin-bottom:8px}
+.dv table.d{width:100%;border-collapse:collapse;font-size:8.9pt;margin-bottom:9px}
+.dv table.d th{background:#F3F7FD;text-align:left;font-size:7.4pt;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:5px 8px;border-bottom:1px solid var(--line)}
+.dv table.d td{padding:3.5px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.dv table.d td.r,.dv table.d th.r{text-align:right;white-space:nowrap}
+.dv table.d s{color:#98A2B3}
+.dv table.d tr.tot td{background:#1D5FD1;color:#fff;font-weight:800;font-size:10.5pt;border:0}
+.dv table.d tr.sub td{color:var(--muted)}
+.dv table.d tr.eco td{color:#14915A;font-weight:700}
+.dv .d-inc{font-size:8pt;color:var(--muted);margin-top:2px}
+.dv .d-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;break-inside:avoid}
+.dv .d-grid>div{border:1px solid var(--line);border-radius:9px;padding:7px 10px;font-size:8.4pt}
+.dv .d-grid ul{margin:0;padding-left:14px}
+.dv .d-sig{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:9px;margin-top:8px;break-inside:avoid}
+.dv .d-sig>div{border:1px solid var(--line);border-radius:9px;height:36mm;padding:7px 10px;font-size:8.4pt;color:var(--muted)}
+.dv .d-sig b{color:#0F1B2D}
+.dv .d-sign{position:relative;height:23mm}
+.dv .d-sign img.sg{position:absolute;left:0;top:1mm;height:15mm;width:33mm;object-fit:contain;object-position:left center}
+.dv .d-sign svg{position:absolute;right:2mm;top:-4mm;width:29mm;height:29mm;transform:rotate(-9deg);opacity:.88}
+.dv .d-sig .d-ver{display:flex;gap:7px;align-items:center;font-size:7pt;line-height:1.35;color:var(--muted)}
+.dv .d-ver img{width:21mm;height:21mm;flex:none}.dv .d-ver b{color:#0F1B2D;font-size:7.6pt}
+.dv .d-foot{position:absolute;bottom:9mm;left:14mm;right:14mm;font-size:6.8pt;color:#7C889B;border-top:1px solid var(--line);padding-top:4px;line-height:1.45}
+.dv .d-foot b{color:#4A5568}
+.dv .d-sign img.st{position:absolute;right:-1mm;top:-3mm;width:25mm;height:25mm;transform:rotate(-9deg);opacity:.88}
 @media print{
   @page{size:A4;margin:12mm 14mm 20mm}
   body{background:#fff;font-size:9.4pt}
   header,main,.pbar,.toast,#pres{display:none!important}
   #print{display:block}
-  .d-top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--blue);padding-bottom:9px;margin-bottom:11px}
-  .d-top .br{display:flex;gap:9px;align-items:center}.d-top img{width:44px}
-  .d-top .br b{font-size:12pt;letter-spacing:.08em}.d-top .br small{display:block;color:var(--muted);font-size:7.5pt;letter-spacing:.08em;text-transform:uppercase}
-  .d-top h2{margin:0;font-size:20pt;color:var(--blue);text-align:right}.d-top .meta{text-align:right;font-size:8.6pt;color:var(--muted)}
-  .d-par{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
-  .d-par div{border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:8.6pt}
-  .d-par h4,.d-grid h4{margin:0 0 3px;font-size:7.6pt;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-  .d-offer{background:#FFF7E6;border:1px solid #F1D9A6;color:#8A5A00;border-radius:9px;padding:6px 10px;font-size:8.6pt;margin-bottom:8px}
-  table.d{width:100%;border-collapse:collapse;font-size:8.9pt;margin-bottom:9px}
-  table.d th{background:#F3F7FD;text-align:left;font-size:7.4pt;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:5px 8px;border-bottom:1px solid var(--line)}
-  table.d td{padding:3.5px 8px;border-bottom:1px solid var(--line);vertical-align:top}
-  table.d td.r,table.d th.r{text-align:right;white-space:nowrap}
-  table.d s{color:#98A2B3}
-  table.d tr.tot td{background:#1D5FD1;color:#fff;font-weight:800;font-size:10.5pt;border:0}
-  table.d tr.sub td{color:var(--muted)}
-  table.d tr.eco td{color:#14915A;font-weight:700}
-  .d-inc{font-size:8pt;color:var(--muted);margin-top:2px}
-  .d-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;break-inside:avoid}
-  .d-grid>div{border:1px solid var(--line);border-radius:9px;padding:7px 10px;font-size:8.4pt}
-  .d-grid ul{margin:0;padding-left:14px}
-  .d-sig{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:9px;margin-top:8px;break-inside:avoid}
-  .d-sig>div{border:1px solid var(--line);border-radius:9px;height:36mm;padding:7px 10px;font-size:8.4pt;color:var(--muted)}
-  .d-sig b{color:#0F1B2D}
-  .d-sign{position:relative;height:23mm}
-  .d-sign img.sg{position:absolute;left:3mm;top:0;height:19mm;max-width:50mm;object-fit:contain}
-  .d-sign svg{position:absolute;right:2mm;top:-4mm;width:29mm;height:29mm;transform:rotate(-9deg);opacity:.88}
-  .d-sig .d-ver{display:flex;gap:7px;align-items:center;font-size:7pt;line-height:1.35;color:var(--muted)}
-  .d-ver img{width:21mm;height:21mm;flex:none}.d-ver b{color:#0F1B2D;font-size:7.6pt}
-  .d-foot{position:fixed;bottom:0;left:0;right:0;font-size:6.8pt;color:#7C889B;border-top:1px solid var(--line);padding-top:4px;line-height:1.45}
-  .d-foot b{color:#4A5568}
+  .dv .pg{width:auto;height:auto;padding:0}
+  .dv .d-foot{position:fixed;bottom:0;left:0;right:0}
 }
 </style>
 </head>
@@ -227,7 +234,7 @@ textarea{min-height:76px;resize:vertical}
 
 <div id="pres"></div>
 <div class="toast" id="toast"></div>
-<div id="print"></div>
+<div id="print" class="dv"></div><div id="pdfbox" class="dv"></div>
 
 <script>
 /* =================== CATALOGUE =================== */
@@ -279,6 +286,8 @@ const DEF={simple_n:300000,simple_p:230000,simple_min:200000,complet_n:6000000,c
   offre_on:1,offre_fin:"2026-12-31",offre_nom:"Offre spéciale fin d'année",t2:0,t3:0,villes:0,heb_c:0,heb_e:0,salaire:60000,cout_h:2000};
 OPTS.forEach(o=>DEF["op_"+o.id]=o.prix);
 const today=()=>new Date().toISOString().slice(0,10);
+const OWNER_WA="2290157236373",OWNER="Hawa Sacko";
+const prof=()=>lj("sacko_profil",{});const locked=()=>!!lj("sacko_lock","");
 const KEY="sacko_devis_v2",TKEY="sacko_reglages_v2",NKEY="sacko_devis_num";
 const lj=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}};
 const sj=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast("Stockage indisponible sur ce navigateur")}};
@@ -419,7 +428,7 @@ function render(){
    <label class="f"><span>Moyen de paiement</span><select data-k="paiement">${["","Virement","Mobile Money","Espèces auprès d'un représentant"].map(x=>`<option ${o.paiement===x?"selected":""}>${x}</option>`).join("")}</select></label>
    <label class="f"><span>Délai de mise en service</span><select data-k="delai">${["4 à 6 semaines","2 à 3 semaines","6 à 8 semaines"].map(x=>`<option ${o.delai===x?"selected":""}>${x}</option>`).join("")}</select></label>
    ${field("validite","Devis valable jusqu'au","date")}</div>
-   ${q.below?`<div class="alert warn">⚠️ <b>Attention, réservé à vous :</b> ce prix est sous votre prix plancher (${fcfa(q.min)}). Retirez plutôt une option ou étalez le paiement.</div>`:(q.rem||q.forced)?`<div class="alert ok">Prix au-dessus de votre plancher.</div>`:""}`}
+   ${q.below?`<div class="alert warn">⚠️ <b>Attention, réservé à vous :</b> ${locked()?"ce prix est trop bas. Ne l'acceptez pas sans l'accord de Hawa : retirez plutôt une option ou étalez le paiement.":`ce prix est sous votre prix plancher (${fcfa(q.min)}). Retirez plutôt une option ou étalez le paiement.`}</div>`:(q.rem||q.forced)?`<div class="alert ok">Prix au-dessus de votre plancher.</div>`:""}`}
   if(step===7){const pk=o.formule||recoPack();const q=quoteFor(pk);
    h=`<div class="kick">Étape 8 · Récapitulatif</div><h1>${esc(o.societe||"Client")} · ${PACKS[pk].nom}</h1>
    ${!o.formule?`<div class="alert warn">Aucune formule choisie : la formule recommandée est utilisée. <button class="btn sm" onclick="go(4)">Choisir</button></div>`:""}
@@ -433,10 +442,10 @@ function render(){
    <label class="f"><span>Statut</span><select data-k="statut">${["Intéressé","Devis envoyé","À relancer","Signé","Pas intéressé"].map(x=>`<option ${o.statut===x?"selected":""}>${x}</option>`).join("")}</select></label>
    ${field("relance","Date de relance","date")}${field("date_rdv","Date de l'entretien","date")}
    <label class="f full"><span>Notes</span><textarea data-k="notes">${esc(o.notes||"")}</textarea></label></div>
-   <div class="actions"><button class="btn gold" onclick="present()">🎯 Présenter</button><button class="btn pri" onclick="doPdf()">📄 Devis PDF</button><button class="btn grn" onclick="doWa()">WhatsApp client</button>
+   <div class="actions"><button class="btn grn" onclick="sendClient()">📤 Envoyer au client</button><button class="btn pri" onclick="sendCopy()">📩 Copie à Hawa</button><button class="btn gold" onclick="present()">🎯 Présenter</button><button class="btn" onclick="dlPdf()">⬇️ Télécharger le PDF</button>
    <button class="btn" onclick="doXls()">Excel</button><button class="btn" onclick="save(false)">Enregistrer</button><button class="btn" onclick="newForm()">Nouvel entretien</button></div>`}
   v.innerHTML=h;bind();price();
-  $("#bPrev").style.visibility=step?"visible":"hidden";$("#bNext").textContent=step===STEPS.length-1?"Devis PDF":"Suivant ›";
+  $("#bPrev").style.visibility=step?"visible":"hidden";$("#bNext").textContent=step===STEPS.length-1?"📤 Envoyer":"Suivant ›";
 }
 function bind(){
   $$("[data-k]").forEach(i=>{i.oninput=i.onchange=()=>{o[i.dataset.k]=i.value.trim();touch(i.dataset.k)}});
@@ -464,11 +473,11 @@ function price(){
 
 /* =================== ENREGISTREMENT =================== */
 function genCode(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let c="";crypto.getRandomValues(new Uint8Array(8)).forEach(x=>c+=A[x%A.length]);return c}
-function nextNum(){const y=new Date().getFullYear();const n=lj(NKEY,{});n[y]=(n[y]||0)+1;sj(NKEY,n);return `DEV-${y}-${String(n[y]).padStart(3,"0")}`}
+function nextNum(){const y=new Date().getFullYear();const n=lj(NKEY,{});n[y]=(n[y]||0)+1;sj(NKEY,n);const ini=String(prof().ini||"").toUpperCase().replace(/[^A-Z]/g,"").slice(0,3);return `DEV-${y}-${ini?ini+"-":""}${String(n[y]).padStart(3,"0")}`}
 function save(auto){
   if(!o.societe){if(!auto){toast("Indiquez d'abord la raison sociale du client");go(0)}return false}
   if(!cur)cur="d"+Date.now().toString(36);
-  const prev=store[cur]||{};o.id=cur;o.num=prev.num||o.num||nextNum();o.code=prev.code||o.code||genCode();o.cree=prev.cree||new Date().toISOString();o.maj=new Date().toISOString();
+  const prev=store[cur]||{};o.id=cur;o.num=prev.num||o.num||nextNum();o.code=prev.code||o.code||genCode();o.cree=prev.cree||new Date().toISOString();o.par=prev.par||prof().nom||OWNER;o.par_tel=prev.par_tel||prof().tel||"";o.maj=new Date().toISOString();
   const q=quoteFor(o.formule||recoPack());o.total=q.total;o.normal=q.normal;
   store[cur]=JSON.parse(JSON.stringify(o));sj(KEY,store);dirty=false;counts();if(!auto)toast(`Devis ${o.num} enregistré`);return true;
 }
@@ -486,9 +495,26 @@ function renderList(){
   $$("[data-open]").forEach(b=>b.onclick=()=>{cur=b.dataset.open;o=Object.assign(blank(),JSON.parse(JSON.stringify(store[cur])));step=7;show("form");render()});
   $$("[data-del]").forEach(b=>b.onclick=()=>{const x=store[b.dataset.del];if(confirm(`Supprimer le devis « ${x.societe} » ?`)){delete store[b.dataset.del];sj(KEY,store);counts();renderList();toast("Devis supprimé")}});
 }
+function profHtml(){const P=prof();return `<div class="set"><h3>Mon profil</h3><p style="font-size:12.5px;color:var(--muted);margin:0 0 8px">Votre nom apparaît sur les devis (« Présenté par ») et vos initiales dans leur numéro.</p>
+   <div class="grid"><label class="f"><span>Nom et prénom</span><input data-p="nom" value="${esc(P.nom||"")}" placeholder="Ex. Kofi Agbo"></label><label class="f"><span>Initiales</span><input data-p="ini" value="${esc(P.ini||"")}" maxlength="3" placeholder="Ex. KA"></label>
+   <label class="f full"><span>Téléphone / WhatsApp</span><input data-p="tel" value="${esc(P.tel||"")}" placeholder="+229 01 …"></label></div></div>`}
+function bindProf(){$$("[data-p]").forEach(i=>i.oninput=()=>{const P=prof();P[i.dataset.p]=i.value.trim();sj("sacko_profil",P)})}
+function importKit(f){f.text().then(t=>{try{const d=JSON.parse(t);if(!d.kit)throw 0;T=Object.assign({},DEF,d.reglages||{});sj(TKEY,T);sj("sacko_mig_v3",1);if(d.sig)sj("sacko_sig",d.sig);if(d.pin)sj("sacko_pin",d.pin);sj("sacko_lock",d.lock||"");toast("Réglages de Hawa installés ✓");renderSet();price()}catch(e){toast("Ce fichier n'est pas un kit SACKO CONCEPT")}})}
+async function exportKit(){const code=prompt("Choisissez un code de verrouillage (4 chiffres ou plus). Il vous permettra de débloquer les réglages sur le téléphone du collaborateur.");if(!code||code.length<4){toast("Code trop court");return}
+  const kit={kit:1,de:OWNER,date:today(),reglages:T,sig:lj("sacko_sig",""),pin:lj("sacko_pin",""),lock:code};
+  const f=new File([JSON.stringify(kit)],`kit-collaborateur-sacko-${today()}.json`,{type:"application/json"});
+  if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],text:"Kit SécuriPro : ouvrez sackoconcept.com/fiche-client > Réglages > Importer le kit, puis choisissez ce fichier."});return}catch(e){}}
+  dl(f);toast("Kit téléchargé : envoyez ce fichier à votre collaborateur");}
 function renderSet(){
+  if(locked()){$("#vSet").innerHTML=`<h1>Réglages</h1><p class="lead">Les prix, la signature et le cachet sont installés et verrouillés par Hawa Sacko.</p>${profHtml()}
+    <div class="set"><h3>Réglages verrouillés 🔒</h3><p style="font-size:13px;color:var(--muted);margin:0 0 8px">Pour mettre à jour les prix, importez le nouveau kit envoyé par Hawa.</p>
+    <div class="top"><label class="btn sm" style="cursor:pointer">Importer un nouveau kit<input type="file" id="kitIn" accept=".json,application/json" hidden></label><button class="btn sm" id="unlock">Déverrouiller (code)</button></div></div>`;
+    bindProf();$("#kitIn").onchange=e=>e.target.files[0]&&importKit(e.target.files[0]);
+    $("#unlock").onclick=()=>{const c=prompt("Code de verrouillage");if(c&&c===lj("sacko_lock","")){sj("sacko_lock","");toast("Réglages déverrouillés");renderSet()}else if(c)toast("Code incorrect")};return}
   const of=offre();
-  $("#vSet").innerHTML=`<h1>Réglages</h1><p class="lead">Enregistrés sur cet appareil. Le client ne voit jamais cette page.</p>
+  $("#vSet").innerHTML=`<h1>Réglages</h1><p class="lead">Enregistrés sur cet appareil. Le client ne voit jamais cette page.</p>${profHtml()}
+  <div class="set"><h3>Collaborateur sur le terrain</h3><p style="font-size:12.5px;color:var(--muted);margin:0 0 8px">Envoyez vos prix, votre signature et votre cachet à un collaborateur. Sur son téléphone, les réglages seront verrouillés et vos prix planchers cachés.</p>
+   <div class="top" style="margin:0"><button class="btn sm pri" id="kitOut">📦 Créer le kit collaborateur</button><label class="btn sm" style="cursor:pointer">Importer un kit<input type="file" id="kitIn" accept=".json,application/json" hidden></label></div></div>
   <div class="set"><h3>Offre promotionnelle</h3>
    <div class="trow2"><span>Offre active</span><select data-t="offre_on"><option value="1" ${+T.offre_on?"selected":""}>Oui</option><option value="0" ${+T.offre_on?"":"selected"}>Non</option></select></div>
    <div class="trow2"><span>Nom de l'offre</span><input data-t="offre_nom" value="${esc(T.offre_nom)}" style="text-align:left"></div>
@@ -518,7 +544,7 @@ function renderSet(){
   $$("[data-t]").forEach(i=>i.onchange=i.oninput=()=>{const k=i.dataset.t;T[k]=i.type==="number"?(+i.value||0):i.value;sj(TKEY,T)});
   $("#pin").oninput=e=>sj("sacko_pin",e.target.value.trim());
   $("#bReset").onclick=()=>{if(confirm("Revenir aux réglages conseillés ?")){T=Object.assign({},DEF);sj(TKEY,T);renderSet();toast("Réglages réinitialisés")}};
-  initSig();
+  initSig();bindProf();$("#kitOut").onclick=exportKit;$("#kitIn").onchange=e=>e.target.files[0]&&importKit(e.target.files[0]);
 }
 function initSig(){const c=$("#sig"),x=c.getContext("2d");x.lineWidth=5;x.lineCap="round";x.lineJoin="round";x.strokeStyle="#0F2A6B";let dn=false,last=null;
   const pt=e=>{const r=c.getBoundingClientRect();return [(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
@@ -555,14 +581,18 @@ function verifUrl(q){return `${SITE_URL}/verification/?`+new URLSearchParams({n:
 function qrImg(t){try{const qr=qrcode(0,"M");qr.addData(t);qr.make();return qr.createDataURL(4,2)}catch(e){return ""}}
 async function registre(q){const url=window.SACKO_REGISTRE_URL,pin=lj("sacko_pin","");if(!url||!pin)return null;
   try{const r=await fetch(url+"?"+new URLSearchParams({action:"enregistrer",pin,n:o.num,code:o.code,client:o.societe,total:String(q.total),date:fd(o.maj.slice(0,10)),formule:PACKS[q.pk].nom,validite:fd(o.validite)}));return !!(await r.json()).ok}catch(e){return false}}
-async function doPdf(){
-  if(!save(true)){toast("Indiquez d'abord la raison sociale du client");go(0);return}
-  const pk=o.formule||recoPack();const q=quoteFor(pk);const P=PACKS[pk];
-  const rr=await registre(q);if(rr===true)toast("Devis inscrit au registre ✓");else if(rr===false)toast("Registre injoignable : le QR code reste valable");
+let stampPng="";(()=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas");c.width=c.height=600;c.getContext("2d").drawImage(im,0,0,600,600);stampPng=c.toDataURL("image/png")};im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(STAMP.replace('href="#cp"','href="#cp" xlink:href="#cp"').replace('<svg ','<svg xmlns:xlink="http://www.w3.org/1999/xlink" '))})();
+async function prepare(){
+  if(!save(true)){toast("Indiquez d'abord la raison sociale du client");go(0);return null}
+  const pk=o.formule||recoPack();const q=quoteFor(pk);
+  registre(q).then(rr=>{if(rr===true)toast("Devis inscrit au registre ✓")});
+  return q;
+}
+function devisHtml(q){const pk=q.pk;const P=PACKS[pk];
   const cli=[o.societe,o.sigle&&`(${o.sigle})`].filter(Boolean).join(" ");const sig=lj("sacko_sig","");const ech=echeancier(q);
-  $("#print").innerHTML=`<div class="d-top"><div class="br"><img src="../assets/sacko-logo-512.png"><div><b>SACKO CONCEPT</b><small>Studio digital &amp; solutions métier</small></div></div>
-   <div><h2>DEVIS</h2><div class="meta">N° <b>${esc(o.num)}</b><br>Date : ${fd(o.maj.slice(0,10))}<br>Valable jusqu'au : ${fd(o.validite)}</div></div></div>
-  <div class="d-par"><div><h4>Émetteur</h4><b>SACKO CONCEPT</b><br>RCCM RB/ABC/24 A 100536 · Abomey-Calavi, Bénin<br>SACKO CONCEPT LLC · EIN 35-2950833<br>+229 01 57 23 63 73 · contact@sackoconcept.com</div>
+  return `<div class="d-top"><div class="br"><img src="../assets/sacko-logo-512.png"><div><b>SACKO CONCEPT</b><small>Studio digital &amp; solutions métier</small></div></div>
+   <div><h2>DEVIS</h2><div class="meta">N° <b>${esc(o.num)}</b><br>Date : ${fd(o.maj.slice(0,10))}<br>Valable jusqu'au : ${fd(o.validite)}${o.par?`<br>Présenté par : ${esc(o.par)}`:""}</div></div></div>
+  <div class="d-par"><div><h4>Émetteur</h4><b>SACKO CONCEPT</b><br>RCCM RB/ABC/24 A 100536 · Abomey-Calavi, Bénin<br>SACKO CONCEPT LLC · EIN 35-2950833<br>+229 01 57 23 63 73 · contact@sackoconcept.com${o.par&&o.par!==OWNER?`<br>Votre contact : ${esc(o.par)}${o.par_tel?" · "+esc(o.par_tel):""}`:""}</div>
    <div><h4>Client</h4><b>${esc(cli)}</b><br>${esc([o.ville,o.pays].filter(Boolean).join(", "))}${o.rccm?`<br>RCCM ${esc(o.rccm)}`:""}${o.ifu?` · IFU ${esc(o.ifu)}`:""}<br>À l'attention de ${esc(o.dir_nom||"la direction")}${o.dir_fct?", "+esc(o.dir_fct):""}${o.dir_tel?`<br>${esc(o.dir_tel)}`:""}${o.dir_email?` · ${esc(o.dir_email)}`:""}</div></div>
   ${q.of&&q.eco>0?`<div class="d-offer">🎁 <b>${esc(T.offre_nom)}</b> : prix valables jusqu'au ${q.of.fin.toLocaleDateString("fr-FR")}.</div>`:""}
   <table class="d"><tr><th>Désignation</th><th class="r">Prix normal</th><th class="r">Votre prix</th></tr>
@@ -575,25 +605,41 @@ async function doPdf(){
    ${q.heb?`<tr class="sub"><td>Hébergement et maintenance à partir de la 2e année</td><td></td><td class="r">${fcfa(q.heb)} / an</td></tr>`:""}</table>
   <div class="d-grid"><div><h4>Ce qui est compris</h4><ul><li>Personnalisation à vos couleurs et à votre nom</li><li>Import de vos agents, sites et clients</li><li>Création des accès de chaque utilisateur</li><li>Formation de vos équipes</li><li>Garantie de 3 mois après la mise en service</li></ul></div>
    <div><h4>Conditions</h4><ul><li>Acompte de ${q.acc} % à la signature, solde selon l'échéancier</li><li>Paiement : ${esc(o.paiement||"virement, Mobile Money ou auprès de nos représentants")}</li><li>Mise en service : ${esc(o.delai||"4 à 6 semaines")} après l'acompte</li><li>Licence d'utilisation non exclusive : SécuriPro reste la propriété de SACKO CONCEPT</li></ul></div></div>
-  <div class="d-sig"><div><b>Bon pour accord · le client</b><br>Date, nom, signature et cachet</div><div><b>SACKO CONCEPT</b><br>Hawa Sacko, fondatrice · le ${fd(o.maj.slice(0,10))}<div class="d-sign">${sig?`<img class="sg" src="${sig}">`:""}${STAMP}</div></div>
+  <div class="d-sig"><div><b>Bon pour accord · le client</b><br>Date, nom, signature et cachet</div><div><b>SACKO CONCEPT</b><br>Hawa Sacko, fondatrice · le ${fd(o.maj.slice(0,10))}<div class="d-sign">${sig?`<img class="sg" src="${sig}">`:""}<img class="st" src="${stampPng||""}"></div></div>
   <div class="d-ver"><img src="${qrImg(verifUrl(q))}"><div><b>Authenticité</b><br>Scannez le QR code ou allez sur <b>sackoconcept.com/verification</b><br>N° <b>${esc(o.num)}</b><br>Code <b>${esc(o.code)}</b></div></div></div>
-  <div class="d-foot"><b>SACKO CONCEPT LLC</b> · 8206 Louisiana Blvd NE, Ste A 8694, Albuquerque, NM 87113, États-Unis · EIN 35-2950833 · +1 505 464 2331<br><b>SACKO CONCEPT Bénin</b> · RCCM RB/ABC/24 A 100536 · Abomey-Calavi, Bénin · +229 01 57 23 63 73 · contact@sackoconcept.com · sackoconcept.com</div>`;
-  const t=document.title;document.title=`Devis ${o.num} - ${o.societe}`;setTimeout(()=>{print();document.title=t},250);
+  <div class="d-foot"><b>SACKO CONCEPT LLC</b> · 8206 Louisiana Blvd NE, Ste A 8694, Albuquerque, NM 87113, États-Unis · EIN 35-2950833 · +1 505 464 2331<br><b>SACKO CONCEPT Bénin</b> · RCCM RB/ABC/24 A 100536 · Abomey-Calavi, Bénin · +229 01 57 23 63 73 · contact@sackoconcept.com · sackoconcept.com</div>`;}
+async function doPdf(){const q=await prepare();if(!q)return;
+  $("#print").innerHTML=devisHtml(q);const t=document.title;document.title=`Devis ${o.num} - ${o.societe}`;setTimeout(()=>{print();document.title=t},300);}
+async function pdfFile(q){
+  if(!window.html2pdf){toast("Connexion internet nécessaire la première fois pour créer le PDF");return null}
+  const box=$("#pdfbox");box.innerHTML=`<div class="dv pg">${devisHtml(q)}</div>`;
+  await new Promise(r=>setTimeout(r,120));
+  const name=`Devis-${o.num}-${slug(o.societe)}.pdf`;
+  const blob=await html2pdf().set({margin:0,filename:name,image:{type:"jpeg",quality:.96},html2canvas:{scale:2,useCORS:true,backgroundColor:"#fff",scrollX:0,scrollY:0},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},pagebreak:{mode:["legacy"]}}).from(box.firstElementChild).outputPdf("blob");
+  box.innerHTML="";return new File([blob],name,{type:"application/pdf"});
 }
-function doWa(){
-  if(!save(true)){toast("Indiquez d'abord la raison sociale du client");go(0);return}
-  const pk=o.formule||recoPack();const q=quoteFor(pk);const prenom=(o.dir_nom||"").trim();
-  const msg=`Bonjour${prenom?" "+prenom:""},\n\nMerci pour notre échange. Voici votre devis SécuriPro *${o.num}* :\n\n• Formule : ${PACKS[pk].nom}\n${q.eco>0?`• Prix normal : ${fcfa(q.normal)}\n`:""}• *Votre prix : ${fcfa(q.total)}*${q.eco>0?`\n• Économie : ${fcfa(q.eco)}`:""}\n• Acompte à la signature (${q.acc} %) : ${fcfa(q.accV)}\n${q.of?`\n🎁 ${T.offre_nom}, valable jusqu'au ${q.of.fin.toLocaleDateString("fr-FR")}.\n`:""}\nJe vous envoie le devis en PDF. Démo : sackoconcept.com/cgsp\n\nHawa Sacko · SACKO CONCEPT\n+229 01 57 23 63 73`;
-  const tel=(o.dir_tel||"").replace(/[^\d]/g,"");
-  open((tel?`https://wa.me/${tel}?text=`:"https://wa.me/?text=")+encodeURIComponent(msg),"_blank");
+function dl(file){const a=document.createElement("a");a.href=URL.createObjectURL(file);a.download=file.name;document.body.appendChild(a);a.click();a.remove()}
+function msgClient(q){const pk=q.pk;const prenom=(o.dir_nom||"").trim();const par=o.par||OWNER;
+  return `Bonjour${prenom?" "+prenom:""},\n\nMerci pour notre échange. Voici votre devis SécuriPro *${o.num}* :\n\n• Formule : ${PACKS[pk].nom}\n${q.eco>0?`• Prix normal : ${fcfa(q.normal)}\n`:""}• *Votre prix : ${fcfa(q.total)}*${q.eco>0?`\n• Économie : ${fcfa(q.eco)}`:""}\n• Acompte à la signature (${q.acc} %) : ${fcfa(q.accV)}\n${q.of?`\n🎁 ${T.offre_nom}, valable jusqu'au ${q.of.fin.toLocaleDateString("fr-FR")}.\n`:""}\nDémo : sackoconcept.com/cgsp\nVérification du devis : sackoconcept.com/verification\n\n${par} · SACKO CONCEPT${o.par_tel?"\n"+o.par_tel:"\n+229 01 57 23 63 73"}`}
+function msgCopy(q){return `📋 *Copie devis ${o.num}*\nClient : ${o.societe}${o.dir_nom?" ("+o.dir_nom+(o.dir_tel?", "+o.dir_tel:"")+")":""}\nFormule : ${PACKS[q.pk].nom}\nTotal : ${fcfa(q.total)}${q.eco>0?" (normal "+fcfa(q.normal)+")":""}${q.rem?"\nRemise : "+q.rem+" %":""}\nAcompte ${q.acc} % : ${fcfa(q.accV)}\nStatut : ${o.statut||"—"}${o.relance?" · relance le "+fd(o.relance):""}\nPrésenté par : ${o.par||OWNER}${o.notes?"\nNotes : "+o.notes:""}`}
+async function share(file,text,tel){
+  if(file&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],text});return true}catch(e){if(e&&e.name==="AbortError")return false}}
+  if(file)dl(file);
+  open((tel?`https://wa.me/${tel}?text=`:"https://wa.me/?text=")+encodeURIComponent(text+(file?"\n\n(Devis PDF joint)":"")),"_blank");
+  if(file)toast("PDF téléchargé : joignez-le dans la conversation WhatsApp");return true;
 }
-function flat(x){const pk=x.formule||"";const q=PACKS[pk]?quoteFor(pk,x):null;return {"N° devis":x.num,"Date":fd((x.maj||"").slice(0,10)),"Client":x.societe,"Décideur":x.dir_nom,"Fonction":x.dir_fct,"Téléphone":x.dir_tel,"E-mail":x.dir_email,"Ville":x.ville,"Pays":x.pays,"Agents":AG[x.ag]?AG[x.ag][0]:"","Agents (exact)":x.nb_agents,"Sites":x.sites,"Villes":x.villes,"Problèmes":(x.problemes||[]).map(id=>(PROBS.find(p=>p.id===id)||{}).l).join(", "),"Formule":PACKS[pk]?PACKS[pk].nom:"","Options":(x.options||[]).map(id=>(OPTS.find(p=>p.id===id)||{}).nom).concat((x.custom||[]).map(c=>c.l)).filter(Boolean).join(", "),"Prix normal":q?q.normal:"","Total":q?q.total:"","Remise %":x.remise,"Acompte %":x.acompte,"Paiement du solde":x.solde,"Statut":x.statut,"Relance":fd(x.relance),"Notes":x.notes}}
+async function dlPdf(){const q=await prepare();if(!q)return;toast("Création du devis PDF…");const f=await pdfFile(q);if(f){dl(f);toast("Devis PDF téléchargé ✓")}}
+async function sendClient(){const q=await prepare();if(!q)return;toast("Création du devis PDF…");const f=await pdfFile(q);
+  const ok=await share(f,msgClient(q),(o.dir_tel||"").replace(/[^\d]/g,""));
+  if(ok&&o.statut==="Intéressé"){o.statut="Devis envoyé";const d=new Date();d.setDate(d.getDate()+2);o.relance=o.relance||d.toISOString().slice(0,10);save(true);if(step===7)render()}}
+async function sendCopy(){const q=await prepare();if(!q)return;toast("Création du devis PDF…");const f=await pdfFile(q);await share(f,msgCopy(q),OWNER_WA)}
+function flat(x){const pk=x.formule||"";const q=PACKS[pk]?quoteFor(pk,x):null;return {"N° devis":x.num,"Date":fd((x.maj||"").slice(0,10)),"Client":x.societe,"Décideur":x.dir_nom,"Fonction":x.dir_fct,"Téléphone":x.dir_tel,"E-mail":x.dir_email,"Ville":x.ville,"Pays":x.pays,"Agents":AG[x.ag]?AG[x.ag][0]:"","Agents (exact)":x.nb_agents,"Sites":x.sites,"Villes":x.villes,"Problèmes":(x.problemes||[]).map(id=>(PROBS.find(p=>p.id===id)||{}).l).join(", "),"Formule":PACKS[pk]?PACKS[pk].nom:"","Options":(x.options||[]).map(id=>(OPTS.find(p=>p.id===id)||{}).nom).concat((x.custom||[]).map(c=>c.l)).filter(Boolean).join(", "),"Prix normal":q?q.normal:"","Total":q?q.total:"","Remise %":x.remise,"Acompte %":x.acompte,"Paiement du solde":x.solde,"Présenté par":x.par,"Statut":x.statut,"Relance":fd(x.relance),"Notes":x.notes}}
 function xls(list,name){if(!window.XLSX){toast("Connexion internet nécessaire pour l'export Excel");return}const wb=XLSX.utils.book_new();const ws=XLSX.utils.json_to_sheet(list.map(flat));ws["!cols"]=Object.keys(flat(list[0])).map(()=>({wch:20}));XLSX.utils.book_append_sheet(wb,ws,"Devis");XLSX.writeFile(wb,name)}
 const slug=s=>String(s||"client").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/gi,"-").replace(/^-|-$/g,"");
 function doXls(){if(save(true))xls([store[cur]],`${o.num}-${slug(o.societe)}.xlsx`)}
 
 /* =================== ÉVÉNEMENTS =================== */
-$("#bNext").onclick=()=>{if(step===STEPS.length-1)doPdf();else{if(step===0&&!o.societe){toast("Indiquez la raison sociale du client");return}go(step+1)}};
+$("#bNext").onclick=()=>{if(step===STEPS.length-1)sendClient();else{if(step===0&&!o.societe){toast("Indiquez la raison sociale du client");return}go(step+1)}};
 $("#bPrev").onclick=()=>go(step-1);
 $("#bPres").onclick=present;$("#pbPrice").onclick=()=>go(7);
 $("#tNew").onclick=()=>{show("form");render()};
