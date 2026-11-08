@@ -392,8 +392,9 @@ function render(){
    <div class="cards">${PROBS.map(p=>`<button type="button" class="card ${o.problemes.includes(p.id)?"on":""}" data-prob="${p.id}"><span class="ic">${p.ic}</span><span><b>${p.l}</b><small>${p.s}</small></span><span class="ck">✓</span></button>`).join("")}</div>
    ${ps.length?`<div class="reco"><div class="kick">Notre recommandation</div><h3>${PACKS[rp].nom}</h3><ul>${ps.map(p=>`<li>${p.ic} ${esc(p.l)} → <b>${esc(p.s)}</b></li>`).join("")}</ul></div>`:""}`}
   if(step===3){const r=roi();const q=quoteFor(o.formule||recoPack());
-   h=`<div class="kick">Étape 4 · Ses pertes actuelles</div><h1>Combien lui coûtent ces problèmes ?</h1>
-   <div class="ask">Posez 2 ou 3 questions. Les estimations restent prudentes : c'est l'argument qui fait accepter le prix.</div>
+   h=`<div class="kick">Étape 4 · Facultative · pour vous</div><h1>Estimer les pertes du client</h1>
+   <div class="ask">🔒 <b>N'interrogez pas le client directement</b> sur son argent. Estimez vous-même, d'après ce qu'il a dit, ou sautez cette étape avec « Suivant ». Le résultat vous sert à présenter le retour sur investissement.</div>
+   <div style="margin:-6px 0 12px"><button type="button" class="btn sm" onclick="go(4)">Sauter cette étape ›</button></div>
    <div class="roi"><div class="grid" style="grid-template-columns:1fr">
      ${field("r_abs","Jours d'absence non détectés par mois (toute l'agence)","number","Ex. 20")}
      ${field("r_sal","Salaire mensuel moyen d'un agent (F CFA)","number",n0(T.salaire))}
@@ -417,7 +418,7 @@ function render(){
      <ul>${P.inc.map(x=>`<li>${esc(x)}</li>`).join("")}${P.no.map(x=>`<li class="no">${esc(x)}</li>`).join("")}</ul>
      <div class="sel"><button type="button" class="btn wide ${o.formule===pk?"pri":""}">${o.formule===pk?"✓ Formule choisie":"Choisir"}</button></div></div>`}).join("")}</div>`}
   if(step===5){const pk=o.formule||recoPack();
-   h=`<div class="kick">Étape 6 · Les options</div><h1>Options pour ${PACKS[pk].nom}</h1><p class="lead">Touchez pour ajouter ou retirer : le prix se met à jour en bas de l'écran.${pk==="elite"?" Les options marquées « Inclus » sont déjà dans Elite.":""}</p>
+   h=`<div class="kick">Étape 6 · Options (facultatif)</div><h1>Extras en plus de ${PACKS[pk].nom}</h1><p class="lead">La formule est complète à son prix. Ces options sont des <b>extras payants en plus</b>, uniquement si le client les veut. Touchez pour ajouter ou retirer : le prix se met à jour en bas.${pk==="elite"?" Les options marquées « Inclus » sont déjà dans Elite.":""}</p>
    <div class="cards">${OPTS.map(op=>{const inc=pk==="elite"&&op.el;const ok=inc||op.p.includes(pk);const on=o.options.includes(op.id);
      return `<button type="button" class="card ${on&&ok?"on":""} ${ok?"":"lock"}" ${ok?`data-opt="${op.id}"`:""}><span class="ic">${op.ic}</span><span><b>${esc(op.nom)}</b><small>${esc(op.d)}</small><span class="pr ${inc?"inc":""}">${!ok?"Disponible avec Complet":inc?"Inclus":"+ "+fcfa(T["op_"+op.id])}</span></span><span class="ck">✓</span></button>`}).join("")}</div>
    <h2>Options sur mesure demandées par le client</h2><div id="cust">${o.custom.map((c,i)=>`<div class="custom"><input data-cl="${i}" placeholder="Ex. Module de gestion des véhicules" value="${esc(c.l)}"><input data-cp="${i}" type="number" inputmode="numeric" placeholder="Prix F CFA" value="${esc(c.p)}"><button type="button" class="x" data-cx="${i}">✕</button></div>`).join("")}</div>
