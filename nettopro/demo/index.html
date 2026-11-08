@@ -208,6 +208,17 @@ canvas.sigpad{width:100%;height:180px;background:#fff;border:1px dashed var(--li
 .pitch .eyebrow{color:#E2BC69}
 .note{background:var(--gold-soft);color:var(--fg);border-radius:12px;padding:10px 12px;font-size:13px}
 .note svg{width:20px;height:20px;flex:none}
+
+/* Modules v4 : inspections, QR, carte, clés */
+.rate5{display:flex;gap:6px}.rate5 label{flex:1;position:relative}.rate5 input{position:absolute;opacity:0;pointer-events:none}
+.rate5 span{display:block;text-align:center;padding:9px 2px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font:700 14px var(--body);cursor:pointer;color:var(--fg)}
+.rate5 input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.rate5 input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.qrpaper{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.qrbox{display:flex;justify-content:center;padding:10px;background:#fff;border-radius:14px}.qrbox svg{width:210px;height:210px}
+#tmap{height:280px;border-radius:16px;overflow:hidden;border:1px solid var(--line);position:relative;z-index:0;background:var(--surface2)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle}
+@media print{body.qrp .qrpaper.pon,body.qrp .qrpaper.pon *{visibility:visible!important}body.qrp .qrpaper.pon{position:absolute;left:0;top:0;width:100%;border:0}body.qrp .qrpaper.pon button{display:none}}
 </style>
 
 <script data-goatcounter="https://sackoconcept.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
@@ -352,7 +363,7 @@ function seed(){
 }
 let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
 if(!S||!S.clients)S=seed();
-S.tickets=S.tickets||[];S.tasks=S.tasks||[];S.absences=S.absences||[];S.incidents=S.incidents||[];S.settings.currency=S.settings.currency||"EUR";S.settings.m2=S.settings.m2||0.22;
+S.tickets=S.tickets||[];S.tasks=S.tasks||[];S.absences=S.absences||[];S.incidents=S.incidents||[];S.settings.currency=S.settings.currency||"EUR";S.settings.m2=S.settings.m2||0.22;migrate();
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 
 /* ---------- RÈGLES MÉTIER ---------- */
@@ -458,7 +469,7 @@ function vAccueil(){
   <div class="card">${jt.length?jt.map(jobRow).join(""):`<div class="empty">Aucune intervention aujourd'hui.</div>`}</div></div>
  <div class="section"><h2>Outils</h2>${toolsGrid()}</div>`}
 function toolsGrid(){const rq=S.requests.filter(r=>r.status==="Nouvelle").length+S.tickets.filter(t=>t.status==="Ouvert").length,st=S.stock.filter(s=>s.qty<s.min).length;
- return`<div class="tools"><button data-go="taches">${svg("check")}Tâches${S.tasks.filter(t=>!t.done&&diff(t.date)<=0).length?`<span class="badge">${S.tasks.filter(t=>!t.done&&diff(t.date)<=0).length}</span>`:""}</button><button data-go="rapports">${svg("chart")}Rapports</button><button data-go="demandes">${svg("inbox")}Demandes &amp; support${rq?`<span class="badge">${rq}</span>`:""}</button><button data-go="stock">${svg("box")}Stock${st?`<span class="badge">${st}</span>`:""}</button><button data-go="equipe">${svg("team")}Équipe</button><button data-go="tarifs">${svg("tag")}Tarifs</button><button data-go="reglages">${svg("gear")}Réglages</button></div>`}
+ return`<div class="tools"><button data-go="taches">${svg("check")}Tâches${S.tasks.filter(t=>!t.done&&diff(t.date)<=0).length?`<span class="badge">${S.tasks.filter(t=>!t.done&&diff(t.date)<=0).length}</span>`:""}</button><button data-go="rapports">${svg("chart")}Rapports</button><button data-go="demandes">${svg("inbox")}Demandes &amp; support${rq?`<span class="badge">${rq}</span>`:""}</button><button data-go="stock">${svg("box")}Stock${st?`<span class="badge">${st}</span>`:""}</button><button data-go="equipe">${svg("team")}Équipe</button><button data-go="tarifs">${svg("tag")}Tarifs</button><button data-go="qualite">${svg("check")}Qualité${S.jobs.some(j=>j.reprise&&!["Terminée","Annulée"].includes(j.status))?`<span class="badge">${S.jobs.filter(j=>j.reprise&&!["Terminée","Annulée"].includes(j.status)).length}</span>`:""}</button><button data-go="cles">${svg("tag")}Clés &amp; badges</button><button data-go="reglages">${svg("gear")}Réglages</button></div>`}
 function relItem(r){const c=client(r.clientId);const[tl,tc]=RTYPE[r.type];const n=diff(r.due);return`<button class="item" data-act="rel" data-id="${r.id}"><span class="dot" style="background:var(${r.status!=="open"?"--line":n<0?"--red":n===0?"--amber":"--line"})"></span><span class="grow"><div class="t">${esc(c.name)}</div><div class="row xs" style="gap:6px;margin-top:3px"><span class="pill ${tc}">${tl}</span><span class="muted">${r.total>1?`Relance ${r.step}/${r.total} · `:""}${esc(r.channel)}</span></div></span>${pill(relState(r))}</button>`}
 function jobRow(j){const c=client(j.clientId);const pl=jobPlace(j);const abs=!["Terminée","Annulée"].includes(j.status)&&isAbsent(j.agent,j.date);const st={"Terminée":"p-green","En cours":"p-blue","Annulée":"p-red"}[j.status]||"p-grey";
  return`<div class="job"><div><div class="h">${j.start}</div><div class="xs muted">${j.end}</div></div><div class="stack" style="gap:6px;min-width:0"><div class="row between"><b class="t">${esc(c.name)}</b><span class="pill ${st}">${j.status}</span></div><div class="small muted">${esc(j.service)} · ${esc(j.agent)}</div><div class="xs muted">${pl.name?esc(pl.name)+" · ":""}${esc(pl.addr)}</div>${j.checkin?`<div class="xs" style="color:var(--accent);font-weight:600">Pointé ${j.checkin.time}${j.checkout?" → "+j.checkout.time:""}${j.checkin.lat?` · <a href="${mapLink(j.checkin.lat+","+j.checkin.lng)}" target="_blank" rel="noopener" style="color:var(--accent)">position</a>`:""}</div>`:""}${abs?`<div class="row" style="gap:6px"><span class="pill p-red">Agent absent</span>${mode==="admin"?`<button class="btn sm danger" data-act="reassign" data-id="${j.id}">Remplacer</button>`:""}</div>`:""}${j.rating?`<div class="xs" style="color:var(--gold)">${"★".repeat(j.rating.stars)}<span class="muted"> ${esc(j.rating.comment||"")}</span></div>`:""}${mode==="admin"&&j.status!=="Terminée"&&j.status!=="Annulée"?`<div class="btns"><button class="btn sm primary" data-act="jobdone" data-id="${j.id}">Terminer et faire signer</button><button class="btn sm" data-act="jobcancel" data-id="${j.id}">Annuler</button></div>`:""}</div></div>`}
@@ -580,7 +591,7 @@ function vCDocs(){const l=myDocs().sort((a,b)=>b.date.localeCompare(a.date));ret
 function vCInter(){const l=S.jobs.filter(j=>j.clientId===me).sort((a,b)=>(b.date+b.start).localeCompare(a.date+a.start));
  const up=l.filter(j=>j.date>=today()&&!["Terminée","Annulée"].includes(j.status)).reverse(),past=l.filter(j=>!up.includes(j));
  const row=j=>`<div class="item static"><span class="grow"><div class="t">${esc(j.service)}</div><div class="xs muted">${JOURS[new Date(j.date+"T12:00:00").getDay()]} ${fd(j.date)} · ${j.start}–${j.end} · ${esc(first(j.agent))}</div>${j.rating?`<div class="xs" style="color:var(--gold)">${"★".repeat(j.rating.stars)}</div>`:""}</span>${j.status==="Terminée"&&!j.rating?`<button class="btn sm gold" data-act="rate" data-id="${j.id}">Noter</button>`:pill([j.status,{"Terminée":"p-green","Annulée":"p-red","En cours":"p-blue"}[j.status]||"p-grey"])}</div>`;
- return`${cHeader("Espace client","Interventions")}<div class="section" style="margin-top:0"><h2>À venir</h2><div class="card list">${up.map(row).join("")||`<div class="empty">Rien de prévu.</div>`}</div></div><div class="section"><h2>Historique</h2><div class="card list">${past.map(row).join("")||`<div class="empty">Pas encore d'intervention.</div>`}</div></div>`}
+ return`${cHeader("Espace client","Interventions")}${cQuality()}<div class="section" style="margin-top:0"><h2>À venir</h2><div class="card list">${up.map(row).join("")||`<div class="empty">Rien de prévu.</div>`}</div></div><div class="section"><h2>Historique</h2><div class="card list">${past.map(row).join("")||`<div class="empty">Pas encore d'intervention.</div>`}</div></div>`}
 function vCDemande(){const mine=S.requests.filter(r=>r.clientId===me).sort((a,b)=>b.date.localeCompare(a.date));return`${cHeader("Espace client","Demander une intervention")}
  <div class="card pad"><form class="stack" id="reqf"><label class="f">Prestation<select id="r-s">${opts(S.catalog.map(s=>s.name))}</select></label><label class="f">Date souhaitée<input id="r-d" type="date" value="${off(3)}" required></label><label class="f">Précisions<textarea id="r-n" rows="3" placeholder="Surface, accès, horaires…"></textarea></label><button class="btn primary" type="submit">Envoyer la demande</button></form></div>
  ${mine.length?`<div class="section"><h2>Mes demandes</h2><div class="card list">${mine.map(r=>`<div class="item static"><span class="grow"><div class="t">${esc(r.service)}</div><div class="xs muted">Souhaité le ${fd(r.wanted)}</div></span>${pill([r.status==="Nouvelle"?"Envoyée":r.status,r.status==="Planifiée"?"p-green":r.status==="Refusée"?"p-red":"p-blue"])}</div>`).join("")}</div></div>`:""}`}
@@ -612,9 +623,9 @@ function agentCard(j){const c=client(j.clientId),pl=jobPlace(j);const done=j.sta
  return`<div class="card pad stack" style="gap:8px"><div class="row between"><span class="num" style="font-family:var(--display);font-weight:800;font-size:20px">${j.start} – ${j.end}</span>${pill([done?"Terminée":j.checkin?"En cours":"À faire",done?"p-green":j.checkin?"p-blue":"p-grey"])}</div>
  <div><b>${esc(c.name)}</b>${pl.name?` <span class="xs muted">· ${esc(pl.name)}</span>`:""}<div class="small muted">${esc(j.service)}</div></div>
  <a class="small" href="${mapLink(pl.addr)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">${esc(pl.addr)} · Itinéraire ›</a>
- ${pl.access?`<div class="access"><b>Accès et consignes :</b> ${esc(pl.access)}</div>`:""}${c.notes?`<div class="xs muted">${esc(c.notes)}</div>`:""}
- ${j.checkin?`<div class="xs" style="color:var(--accent);font-weight:600">Arrivée pointée à ${j.checkin.time}${j.checkout?" · départ "+j.checkout.time:""}</div>`:""}
- ${done?"":`<div class="btns">${j.checkin?`<button class="btn primary" data-act="ajobdone" data-id="${j.id}">Terminer l'intervention</button>`:`<button class="btn primary" data-act="checkin" data-id="${j.id}">Je suis arrivé(e)</button>`}<button class="btn" data-act="incident" data-id="${j.id}">Signaler</button></div>`}</div>`}
+ ${pl.access?`<div class="access"><b>Accès et consignes :</b> ${esc(pl.access)}</div>`:""}${S.keys.filter(k=>k.clientId===j.clientId&&k.holder===j.agent).map(k=>`<div class="xs" style="font-weight:600">🔑 Vous détenez : ${esc(k.label)}</div>`).join("")}${c.notes?`<div class="xs muted">${esc(c.notes)}</div>`:""}
+ ${j.checkin?`<div class="xs" style="color:var(--accent);font-weight:600">Arrivée pointée à ${j.checkin.time}${j.checkin.method==="QR"?" · QR ✓":""}${j.checkout?" · départ "+j.checkout.time:""}</div>`:""}
+ ${done?"":`<div class="btns">${j.checkin?`<button class="btn primary" data-act="ajobdone" data-id="${j.id}">Terminer l'intervention</button>`:`<button class="btn primary" data-act="qrscan" data-id="${j.id}">Scanner le QR du site</button><button class="btn" data-act="checkin" data-id="${j.id}">Je suis arrivé(e)</button>`}<button class="btn" data-act="incident" data-id="${j.id}">Signaler</button></div>`}</div>`}
 function vAJour(){const a=meAgent();const t=today();const l=myJobs().filter(j=>j.date===t).sort((x,y)=>x.start.localeCompare(y.start));const h=new Date().getHours();
  return`${aHeader(new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}),(h<18?"Bonjour ":"Bonsoir ")+esc(first(a.name)))}
  ${isAbsent(a.name,t)?`<div class="note" style="margin-bottom:12px">Vous êtes en absence validée aujourd'hui.</div>`:""}
@@ -642,8 +653,8 @@ function sIncident(jid){const a=meAgent();const today_=myJobs().filter(j=>j.date
  $("#in-p").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{photo=await imgToData(f,560);$("#in-prev").innerHTML=`<img src="${photo}" alt="Aperçu" style="max-width:140px;border-radius:8px">`}catch(_){}};
  $("#incf").onsubmit=e=>{e.preventDefault();const j=S.jobs.find(x=>x.id===$("#in-j").value);const m=$("#in-m").value.trim();if(!m){toast("Décrivez le problème");return}
   S.incidents.push({id:uid(),agent:a.name,clientId:j?j.clientId:S.clients[0].id,jobId:j?j.id:null,date:today(),type:$("#in-t").value,msg:m,photo,status:"Ouvert"});if(j)log(j.clientId,`Signalement de ${first(a.name)} : ${$("#in-t").value}`);save();closeSheet();render();toast("Signalement envoyé au gérant")}}
-function checkin(jid){const j=S.jobs.find(x=>x.id===jid);let done=false;
- const rec=pos=>{if(done)return;done=true;j.checkin={time:nowHM()};if(pos&&pos.coords){j.checkin.lat=+pos.coords.latitude.toFixed(5);j.checkin.lng=+pos.coords.longitude.toFixed(5)}j.status="En cours";log(j.clientId,`${first(j.agent)} arrivé(e) à ${j.checkin.time}${j.checkin.lat?" (position enregistrée)":""}`);save();render();toast("Arrivée pointée à "+j.checkin.time+(j.checkin.lat?" · position enregistrée":""))};
+function checkin(jid,how){const j=S.jobs.find(x=>x.id===jid);let done=false;
+ const rec=pos=>{if(done)return;done=true;j.checkin={time:nowHM(),method:how||"Bouton"};if(pos&&pos.coords){j.checkin.lat=+pos.coords.latitude.toFixed(5);j.checkin.lng=+pos.coords.longitude.toFixed(5)}j.status="En cours";log(j.clientId,`${first(j.agent)} arrivé(e) à ${j.checkin.time}${how==="QR"?" · QR code du site vérifié":""}${j.checkin.lat?" (position enregistrée)":""}`);save();render();toast("Arrivée pointée à "+j.checkin.time+(how==="QR"?" · site vérifié par QR":"")+(j.checkin.lat?" · position enregistrée":""))};
  try{if(navigator.geolocation){navigator.geolocation.getCurrentPosition(rec,()=>rec(null),{timeout:8000,maximumAge:60000,enableHighAccuracy:true});setTimeout(()=>rec(null),9000)}else rec(null)}catch(e){rec(null)}}
 function sAMenu(){const a=meAgent();sheet(`<div class="stack"><div class="row"><div class="avatar" style="background:var(--gold);color:#fff">${esc(a.name[0])}</div><div class="grow"><h2>${esc(a.name)}</h2><div class="xs muted">${esc(a.role)} · ${esc(S.settings.name)}</div></div></div>
  <div class="card pad"><dl class="kv"><dt>Responsable</dt><dd>${esc(S.settings.owner)}</dd><dt>Téléphone</dt><dd class="num" style="user-select:all">${esc(S.settings.phone)}</dd></dl></div>
@@ -662,7 +673,7 @@ function vLogin(){return`<div class="login"><div class="brand"><div class="mark"
 
 /* ================= FEUILLES ================= */
 function sheet(html){$("#layer").innerHTML=`<div class="overlay" data-act="close"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`}
-function closeSheet(){$("#layer").innerHTML=""}
+function closeSheet(){stopScan();$("#layer").innerHTML=""}
 
 function sClient(id){const c=S.clients.find(x=>x.id===id);if(!c)return;
  const docs=S.docs.filter(d=>d.clientId===id).sort((a,b)=>b.date.localeCompare(a.date));const rels=openRels(id);const acts=S.act.filter(a=>a.clientId===id);
@@ -670,7 +681,7 @@ function sClient(id){const c=S.clients.find(x=>x.id===id);if(!c)return;
  sheet(`<div class="stack"><div class="row"><div class="avatar">${esc(c.name[0])}</div><div class="grow"><h2>${esc(c.name)}</h2><div class="row wrap" style="gap:6px;margin-top:4px"><span class="pill ${STATUS[c.status]}">${c.status}</span><span class="pill p-grey">${esc(c.type)}</span></div></div></div>
  <div class="kpis"><div class="kpi"><div class="eyebrow">CA encaissé</div><div class="v" style="font-size:19px">${eur(ca)}</div></div><div class="kpi"><div class="eyebrow">Potentiel</div><div class="v" style="font-size:19px">${c.value?eur(c.value):"—"}</div><div class="xs muted">par mois</div></div></div>
  <div class="card pad"><dl class="kv"><dt>Contact</dt><dd>${esc(c.contact)}</dd><dt>Téléphone</dt><dd class="num" style="user-select:all">${esc(c.phone)}</dd><dt>Email</dt><dd style="user-select:all">${esc(c.email||"—")}</dd><dt>Adresse</dt><dd>${esc(c.addr)}</dd>${c.access?`<dt>Accès</dt><dd>${esc(c.access)}</dd>`:""}${c.notes?`<dt>Notes</dt><dd>${esc(c.notes)}</dd>`:""}</dl></div>
- <div class="row between"><span class="eyebrow">Sites d'intervention</span><button class="btn sm" data-act="addsite" data-id="${id}">+ Site</button></div>
+ <div class="row between"><span class="eyebrow">Sites d'intervention</span><span class="row" style="gap:6px"><button class="btn sm" data-act="qrsheet" data-id="${id}">QR codes</button><button class="btn sm" data-act="addsite" data-id="${id}">+ Site</button></span></div>
  ${c.sites&&c.sites.length?`<div class="card list">${c.sites.map(st=>`<div class="item static" style="align-items:flex-start"><span class="grow"><div class="t">${esc(st.name)}</div><div class="xs muted">${esc(st.addr)}</div>${st.access?`<div class="access" style="margin-top:6px">${esc(st.access)}</div>`:""}</span></div>`).join("")}</div>`:`<div class="xs muted">Un seul site : l'adresse principale.</div>`}
  <label class="f">Statut<select id="c-status">${opts(Object.keys(STATUS),c.status)}</select></label>
  <div class="btns"><button class="btn primary" data-act="newdoc" data-type="devis" data-id="${id}">Devis</button><button class="btn" data-act="newdoc" data-type="facture" data-id="${id}">Facture</button><button class="btn" data-act="newcontrat" data-id="${id}">Contrat</button><button class="btn" data-act="newvisite" data-id="${id}">Fiche de visite</button><button class="btn" data-act="newjob" data-id="${id}">Planifier</button><button class="btn" data-act="newrel" data-id="${id}">Relance</button></div>
@@ -789,12 +800,13 @@ function sBon(jid){const j=S.jobs.find(x=>x.id===jid);const c=client(j.clientId)
  <div class="eyebrow">Photos avant / après (4 max.)</div><label class="btn" style="cursor:pointer">${svg("plus")} Prendre ou ajouter des photos<input type="file" id="b-ph" accept="image/*" capture="environment" multiple hidden></label><div class="photos" id="b-prev"></div>
  <div class="eyebrow">Produits utilisés</div><div class="card list">${S.stock.map(p=>`<div class="item static"><span class="grow small">${esc(p.name)} <span class="xs muted">(${p.qty} en stock)</span></span><input type="number" min="0" step="1" value="0" class="b-use" data-id="${p.id}" aria-label="Quantité de ${esc(p.name)}" style="width:64px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:6px;font:600 14px var(--body);text-align:center"></div>`).join("")}</div>
  <label class="f">Observations<textarea id="b-obs" rows="2" placeholder="RAS"></textarea></label>
+ <div class="eyebrow">Comment s'est passée l'intervention ?</div><div class="rate5" role="radiogroup" aria-label="Ressenti de l'agent"><label><input type="radio" name="mood" value="bien"><span>😊 Bien</span></label><label><input type="radio" name="mood" value="moyen"><span>😐 Moyen</span></label><label><input type="radio" name="mood" value="difficile"><span>😟 Difficile</span></label></div>
  <div class="eyebrow">Signature du client</div><canvas class="sigpad" id="pad" aria-label="Zone de signature"></canvas><div class="row between"><button class="btn sm" id="clr" type="button">Effacer</button><span class="xs muted">Signez avec le doigt</span></div>
  <button class="btn primary block" id="bok">Valider et générer le bon d'intervention</button></div>`);
  const pad=initPad($("#pad"));$("#clr").onclick=()=>pad.clear();let photos=[];
  $("#b-ph").onchange=async e=>{for(const f of [...e.target.files]){if(photos.length>=4)break;try{photos.push(await imgToData(f,560))}catch(_){}}$("#b-prev").innerHTML=photos.map(p=>`<img src="${p}" alt="Photo de l'intervention">`).join("");e.target.value=""};
  $("#bok").onclick=()=>{const used=[];$$(".b-use").forEach(i=>{const q=+i.value||0;if(q>0){const p=S.stock.find(x=>x.id===i.dataset.id);if(p){p.qty=Math.max(0,p.qty-q);used.push(q+" × "+p.name)}}});if(!j.checkin)j.checkin={time:j.start};j.checkout={time:nowHM()<j.checkin.time?j.end:nowHM()};const checks={};$$(".bk").forEach(x=>checks[x.value]=x.checked);const tot=Object.keys(checks).length,ok=Object.values(checks).filter(Boolean).length;const sg=!pad.empty();
-  j.status="Terminée";const d={id:uid(),type:"bon",num:nextNum("bon"),clientId:j.clientId,date:j.date,status:sg?"Signé":"À signer",sig:sg?pad.data():null,signedAt:sg?today():null,job:{start:j.start,end:j.end,agent:j.agent,service:j.service,in:j.checkin.time,out:j.checkout.time,place:jobPlace(j).addr},checks,score:Math.round(ok/tot*100),obs:$("#b-obs").value.trim()||"RAS",photos,used};
+  j.status="Terminée";const md=$("input[name=mood]:checked");if(md)j.mood=md.value;const d={id:uid(),type:"bon",num:nextNum("bon"),clientId:j.clientId,date:j.date,status:sg?"Signé":"À signer",sig:sg?pad.data():null,signedAt:sg?today():null,job:{start:j.start,end:j.end,agent:j.agent,service:j.service,in:j.checkin.time,out:j.checkout.time,place:jobPlace(j).addr},checks,score:Math.round(ok/tot*100),obs:$("#b-obs").value.trim()||"RAS",photos,used};
   S.docs.push(d);addRel(j.clientId,"satisfaction",off(1),null,1,1);log(j.clientId,`Intervention terminée · bon ${d.num} (${d.score} %)${photos.length?" · "+photos.length+" photo"+(photos.length>1?"s":""):""}`);save();render();sDoc(d.id);toast(used.length?"Bon généré · stock mis à jour":"Bon généré · relance satisfaction demain")}}
 function sSign(docId){const d=S.docs.find(x=>x.id===docId);sheet(`<div class="stack"><h2>Signer ${d.type==="devis"?"le devis":d.type==="contrat"?"le contrat":"le bon d'intervention"}</h2><div class="small muted">${d.num} · ${esc(client(d.clientId).name)}${d.type==="devis"?" · "+eur(ttc(d))+" TTC":d.type==="contrat"?" · "+eur(d.monthly)+" HT / mois":""}</div>
  <div class="note">En signant, vous acceptez ${d.type==="devis"?"le devis et ses conditions (acompte de 30 % à la signature)":d.type==="contrat"?"les conditions du contrat":"la bonne réalisation de l'intervention"}.</div>
@@ -949,7 +961,183 @@ function downloadTpl(kind){const I=IMPORT[kind];const csv="﻿"+[I.cols,I.ex].ma
  try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download=`modele-${kind}-nettopro.csv`;document.body.appendChild(a);a.click();a.remove();toast("Modèle téléchargé")}catch(e){toast("Téléchargement impossible ici")}}
 
 /* ================= RENDU & ROUTAGE ================= */
-const ADMIN={taches:vTaches,accueil:vAccueil,clients:vClients,planning:vPlanning,relances:vRelances,documents:vDocuments,rapports:vRapports,stock:vStock,equipe:vEquipe,tarifs:vTarifs,demandes:vDemandes,reglages:vReglages};
+/* ================= MODULES v4 : QUALITÉ, QR, CARTE, CLÉS, PAIE ================= */
+function migrate(){S.inspections=S.inspections||[];S.keys=S.keys||[];
+ if((S.ver||0)>=4)return;S.ver=4;
+ const byN=n=>S.clients.find(c=>c.name===n);
+ const GEO={"Cabinet Dupont Avocats":[48.8606,2.3376],"Sophie Bernard":[48.8566,2.3889],"Résidence Les Acacias":[48.8597,2.3783],"Boulangerie Le Fournil":[45.764,4.8357],"Hôtel Le Belvédère":[43.6961,7.2718],"Agence ImmoPlus":[43.2965,5.3698],"Clinique Santé Plus":[50.6292,3.0573]};
+ S.clients.forEach(c=>{if(!c.geo&&GEO[c.name])c.geo=GEO[c.name]});
+ const z=Object.keys(CHECK).filter(x=>x!=="Final");const sc=a=>Object.fromEntries(z.map((k,i)=>[k,a[i]==null?5:a[i]]));
+ const c0=byN("Cabinet Dupont Avocats"),c3=byN("Sophie Bernard"),c2=byN("Boulangerie Le Fournil");
+ if(!S.inspections.length){
+  if(c0)S.inspections.push({id:uid(),clientId:c0.id,site:0,date:off(-9),by:S.settings.owner,scores:sc([5,4,5,4]),comment:"Très bon niveau. Vitres de la salle de réunion à surveiller.",photos:[]},
+   {id:uid(),clientId:c0.id,site:1,date:off(-3),by:S.settings.owner,scores:sc([4,4,3,5]),comment:"Sanitaires corrects, consommables à réassortir plus tôt.",photos:[]});
+  if(c3)S.inspections.push({id:uid(),clientId:c3.id,site:0,date:off(-5),by:S.settings.owner,scores:sc([5,5,5,5]),comment:"Cliente très satisfaite, produits sans parfum respectés.",photos:[]})}
+ if(!S.keys.length&&S.team.length){
+  if(c0)S.keys.push({id:uid(),clientId:c0.id,label:"Badge d'accès + clé du local ménage",holder:S.team[0].name,since:off(-40)});
+  if(c3)S.keys.push({id:uid(),clientId:c3.id,label:"Clé de l'appartement",holder:"Bureau",since:off(-12)});
+  if(c2)S.keys.push({id:uid(),clientId:c2.id,label:"Clé de la porte arrière",holder:(S.team[1]||S.team[0]).name,since:off(-6)})}
+ const moods=["bien","bien","moyen","bien","difficile"];S.jobs.filter(j=>j.status==="Terminée"&&!j.mood).slice(0,5).forEach((j,i)=>j.mood=moods[i]);
+}
+
+/* ---------- chargement de bibliothèques à la demande ---------- */
+const LIBS={qr:"https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js",leafJS:"https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js",leafCSS:"https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"};
+const libCache={};
+function loadJS(src){return libCache[src]||(libCache[src]=new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>{delete libCache[src];rej()};document.head.appendChild(s)}))}
+function loadCSS(href){if(document.querySelector(`link[href="${href}"]`))return;const l=document.createElement("link");l.rel="stylesheet";l.href=href;document.head.appendChild(l)}
+
+/* ---------- Contrôle qualité ---------- */
+const ZONES=()=>Object.keys(CHECK).filter(z=>z!=="Final");
+const inspScore=i=>{const v=Object.values(i.scores||{});return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length/5*100):0};
+const scorePill=sc=>sc==null?pill(["—","p-grey"]):pill([sc+" %",sc>=85?"p-green":sc>=70?"p-amber":"p-red"]);
+const inMonth=(d,m)=>!!d&&d.slice(0,7)===m;
+const openReprises=()=>S.jobs.filter(j=>j.reprise&&!["Terminée","Annulée"].includes(j.status));
+function qualStats(cid,m){const f=x=>(!cid||x.clientId===cid)&&(!m||inMonth(x.date,m));
+ const ins=S.inspections.filter(f),bons=S.docs.filter(d=>d.type==="bon"&&f(d)),rt=S.jobs.filter(j=>j.rating&&f(j));
+ const avg=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):null;
+ return{ins,bons,rt,insAvg:avg(ins.map(inspScore)),bonAvg:avg(bons.map(b=>b.score||0)),stars:rt.length?(rt.reduce((a,j)=>a+j.rating.stars,0)/rt.length).toFixed(1):null}}
+function inspRow(i){const c=client(i.clientId);const st=c.sites&&c.sites[i.site];const low=Object.entries(i.scores).filter(([,v])=>v<=2).map(([z])=>z);
+ return`<div class="item static" style="align-items:flex-start"><span class="grow stack" style="gap:5px"><span class="row between"><b class="t">${esc(c.name)}${st?` <span class="xs muted">· ${esc(st.name)}</span>`:""}</b>${scorePill(inspScore(i))}</span>
+ <span class="xs muted">${fdy(i.date)} · par ${esc(i.by)}</span>
+ <span class="row wrap" style="gap:4px">${Object.entries(i.scores).map(([z,v])=>`<span class="pill ${v>=4?"p-green":v===3?"p-amber":"p-red"}">${esc(z)} ${v}/5</span>`).join("")}</span>
+ ${i.comment?`<span class="small">${esc(i.comment)}</span>`:""}${i.photos&&i.photos.length?`<span class="photos">${i.photos.map(p=>`<img src="${p}" alt="Photo d'inspection">`).join("")}</span>`:""}
+ ${low.length?`<span class="xs" style="color:var(--red);font-weight:600">Reprise demandée : ${esc(low.join(", "))}</span>`:""}</span></div>`}
+function vQualite(){const all=qualStats(null,null);const rep=openReprises();
+ const cl=S.clients.filter(c=>S.inspections.some(i=>i.clientId===c.id)||S.docs.some(d=>d.type==="bon"&&d.clientId===c.id));
+ const list=[...S.inspections].sort((a,b)=>b.date.localeCompare(a.date));
+ return`${back("Contrôle qualité","Inspections, reprises et rapports clients")}
+ <div class="kpis"><div class="kpi"><div class="eyebrow">Inspections</div><div class="v">${all.insAvg==null?"—":all.insAvg+" %"}</div><div class="xs muted">${all.ins.length} contrôle${all.ins.length>1?"s":""} sur site</div></div>
+ <div class="kpi"><div class="eyebrow">Auto-contrôle agents</div><div class="v">${all.bonAvg==null?"—":all.bonAvg+" %"}</div><div class="xs muted">${all.bons.length} bon${all.bons.length>1?"s":""} d'intervention</div></div>
+ <div class="kpi"><div class="eyebrow">Note des clients</div><div class="v" style="color:var(--gold)">${all.stars?all.stars+" ★":"—"}</div></div>
+ <div class="kpi ${rep.length?"alert":""}"><div class="eyebrow">Reprises en cours</div><div class="v">${rep.length}</div></div></div>
+ <div class="section"><button class="btn primary block" data-act="newinsp">${svg("check")} Nouvelle inspection</button><div class="xs muted" style="margin-top:8px">Notez chaque zone de 1 à 5. Une note de 2 ou moins planifie automatiquement une intervention de reprise.</div></div>
+ ${rep.length?`<div class="section"><h2>Reprises à faire</h2><div class="card">${rep.map(jobRow).join("")}</div></div>`:""}
+ <div class="section"><h2>Par client</h2><div class="card list">${cl.map(c=>{const q=qualStats(c.id,null);const sc=q.insAvg!=null?q.insAvg:q.bonAvg;return`<div class="item static"><span class="grow"><div class="t">${esc(c.name)}</div><div class="xs muted">${q.ins.length} inspection${q.ins.length>1?"s":""} · ${q.bons.length} bon${q.bons.length>1?"s":""}${q.stars?" · ★ "+q.stars:""}</div></span><span class="stack" style="gap:6px;align-items:flex-end">${scorePill(sc)}<button class="btn sm" data-act="qrep" data-id="${c.id}">Rapport du mois</button></span></div>`}).join("")||`<div class="empty">Pas encore de contrôle.</div>`}</div></div>
+ <div class="section"><h2>Dernières inspections</h2><div class="card list">${list.map(inspRow).join("")||`<div class="empty">Aucune inspection pour l'instant.</div>`}</div></div>`}
+function sInspection(cid){const cs=S.clients.filter(c=>c.status==="Client actif"||S.jobs.some(j=>j.clientId===c.id&&j.status==="Terminée"));if(!cs.length){toast("Aucun client à inspecter");return}
+ if(!cid||!cs.some(c=>c.id===cid))cid=cs[0].id;let photos=[];const zs=ZONES();
+ const siteOpts=id=>{const c=client(id);return c.sites&&c.sites.length?c.sites.map((st,i)=>`<option value="${i}">${esc(st.name)}</option>`).join(""):`<option value="0">Adresse principale</option>`};
+ sheet(`<form class="stack" id="inspf"><h2>Nouvelle inspection</h2><div class="small muted">Contrôle sur site par le responsable · ${fdy(today())}</div>
+ <div class="grid2"><label class="f">Client<select id="ip-c">${cs.map(c=>`<option value="${c.id}" ${c.id===cid?"selected":""}>${esc(c.name)}</option>`).join("")}</select></label><label class="f">Site<select id="ip-s">${siteOpts(cid)}</select></label></div>
+ <div class="card pad stack" style="gap:12px">${zs.map((z,k)=>`<div class="stack" style="gap:6px"><b class="small">${esc(z)}</b><div class="rate5" role="radiogroup" aria-label="Note ${esc(z)}">${[1,2,3,4,5].map(n=>`<label><input type="radio" name="z${k}" value="${n}" ${n===4?"checked":""}><span>${n}</span></label>`).join("")}</div></div>`).join("")}
+ <div class="xs muted">1 = inacceptable · 3 = correct · 5 = parfait</div></div>
+ <label class="f">Commentaire<textarea id="ip-m" rows="2" placeholder="Points forts, points à reprendre…"></textarea></label>
+ <label class="btn" style="cursor:pointer">${svg("plus")} Ajouter des photos (3 max.)<input type="file" id="ip-p" accept="image/*" capture="environment" multiple hidden></label><div class="photos" id="ip-prev"></div>
+ <button class="btn primary" type="submit">Enregistrer l'inspection</button></form>`);
+ $("#ip-c").onchange=e=>{$("#ip-s").innerHTML=siteOpts(e.target.value)};
+ $("#ip-p").onchange=async e=>{for(const f of [...e.target.files]){if(photos.length>=3)break;try{photos.push(await imgToData(f,560))}catch(_){}}$("#ip-prev").innerHTML=photos.map(p=>`<img src="${p}" alt="Photo d'inspection">`).join("");e.target.value=""};
+ $("#inspf").onsubmit=e=>{e.preventDefault();const scores={};zs.forEach((z,k)=>{const r=$(`input[name="z${k}"]:checked`);scores[z]=r?+r.value:4});
+  const c=$("#ip-c").value;const ins={id:uid(),clientId:c,site:+$("#ip-s").value||0,date:today(),by:S.settings.owner,scores,comment:$("#ip-m").value.trim(),photos};S.inspections.push(ins);
+  const low=Object.entries(scores).filter(([,v])=>v<=2).map(([z])=>z);let msg="Inspection enregistrée · "+inspScore(ins)+" %";
+  if(low.length){const d1=off(1);const last=S.jobs.filter(j=>j.clientId===c&&j.status==="Terminée").sort((a,b)=>b.date.localeCompare(a.date))[0];
+   const ag=last&&agentByName(last.agent)&&!isAbsent(last.agent,d1)?last.agent:(S.team.find(a=>!isAbsent(a.name,d1))||S.team[0]).name;
+   const j={id:uid(),date:d1,start:"09:00",end:"10:00",clientId:c,site:ins.site,service:"Reprise qualité : "+low.join(", "),agent:ag,status:"Planifiée",reprise:ins.id};S.jobs.push(j);ins.repriseJob=j.id;
+   log(c,`Inspection qualité ${inspScore(ins)} % · reprise planifiée le ${fd(d1)} avec ${first(ag)} (${low.join(", ")})`);msg="Reprise planifiée demain avec "+first(ag)}
+  else log(c,`Inspection qualité : ${inspScore(ins)} %`);
+  save();closeSheet();render();toast(msg)}}
+function sQualRep(cid){const c=client(cid);const m=today().slice(0,7);const q=qualStats(cid,m);
+ const js=S.jobs.filter(j=>j.clientId===cid&&j.status==="Terminée"&&inMonth(j.date,m));const h=js.reduce((a,j)=>a+jobHours(j),0);
+ const rep=S.jobs.filter(j=>j.clientId===cid&&j.reprise&&j.status==="Terminée"&&inMonth(j.date,m));const tk=S.tickets.filter(t=>t.clientId===cid&&t.status==="Résolu"&&inMonth(t.date,m));
+ const mois=new Date().toLocaleDateString("fr-FR",{month:"long",year:"numeric"});const sc=q.insAvg!=null?q.insAvg:q.bonAvg;
+ const txt=`Bonjour ${first(c.contact)},\n\nVoici votre rapport qualité de ${mois} :\n• ${js.length} intervention${js.length>1?"s":""} réalisée${js.length>1?"s":""} · ${h.toFixed(1).replace(".",",")} h sur site\n${q.bonAvg!=null?`• Contrôle qualité des agents : ${q.bonAvg} %\n`:""}${q.insAvg!=null?`• Inspections de notre responsable : ${q.insAvg} % (${q.ins.length})\n`:""}${q.stars?`• Votre note moyenne : ${q.stars}/5\n`:""}${rep.length?`• ${rep.length} reprise${rep.length>1?"s":""} effectuée${rep.length>1?"s":""} suite à nos contrôles\n`:""}${tk.length?`• ${tk.length} demande${tk.length>1?"s":""} au support traitée${tk.length>1?"s":""}\n`:""}\nMerci pour votre confiance.\n${S.settings.name} · ${S.settings.phone}`;
+ sheet(`<div class="stack"><h2>Rapport qualité · ${esc(c.name)}</h2><div class="small muted">${esc(mois)} · à envoyer au client</div>
+ <div class="kpis"><div class="kpi"><div class="eyebrow">Interventions</div><div class="v">${js.length}</div><div class="xs muted">${h.toFixed(1)} h ce mois</div></div><div class="kpi"><div class="eyebrow">Score qualité</div><div class="v">${sc==null?"—":sc+" %"}</div><div class="xs muted">${q.stars?"Note client ★ "+q.stars:"ce mois-ci"}</div></div></div>
+ <textarea id="msg" class="ta" rows="10" aria-label="Rapport à envoyer">${esc(txt)}</textarea>
+ <div class="btns"><a class="btn primary" href="${waLink(c.phone,txt)}" target="_blank" rel="noopener">Envoyer par WhatsApp</a><button class="btn" data-act="copymsg">Copier le texte</button></div>
+ <div class="xs muted">Envoyé chaque mois, ce rapport prouve la qualité du service et aide à renouveler le contrat.</div></div>`)}
+function cQuality(){const q=qualStats(me,null);const sc=q.insAvg!=null?q.insAvg:q.bonAvg;if(sc==null)return"";
+ const ins=[...q.ins].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,3);
+ return`<div class="section" style="margin-top:0"><h2>Qualité de service</h2><div class="card pad stack" style="gap:8px"><div class="row between"><span class="small">Score qualité moyen</span>${scorePill(sc)}</div>
+ ${q.stars?`<div class="row between"><span class="small">Votre note moyenne</span><b style="color:var(--gold)">★ ${q.stars}</b></div>`:""}
+ ${ins.map(i=>`<div class="row between xs"><span class="muted">Inspection du ${fd(i.date)}</span>${scorePill(inspScore(i))}</div>`).join("")}
+ <div class="xs muted">Nos responsables contrôlent régulièrement vos locaux, zone par zone.</div></div></div>`}
+
+/* ---------- Pointage par QR code ---------- */
+let qrStream=null;
+function stopScan(){if(qrStream){try{qrStream.getTracks().forEach(t=>t.stop())}catch(e){}qrStream=null}}
+const codeFor=(cid,i)=>(String(cid).replace(/[^a-z0-9]/gi,"").slice(0,4)+"-"+(i||0)).toUpperCase();
+const siteCode=j=>codeFor(j.clientId,j.site||0);
+const qrURL=code=>location.href.split("#")[0]+"#qr="+code;
+function qrSVG(text){const q=qrcode(0,"M");q.addData(text);q.make();return q.createSvgTag({cellSize:4,margin:2,scalable:true})}
+async function sQRSheet(cid){const c=client(cid);const sites=c.sites&&c.sites.length?c.sites:[{name:"Site principal",addr:c.addr}];
+ sheet(`<div class="stack"><h2>QR codes de pointage</h2><div class="small muted">${esc(c.name)} · à imprimer et coller à l'entrée de chaque site</div>
+ <div class="stack" id="qrl"><div class="empty">Préparation des QR codes…</div></div>
+ <div class="note">L'agent scanne le QR avec son téléphone en arrivant : le pointage prouve qu'il est bien sur place. Pas de caméra ? Il tape le code écrit sous le QR.</div></div>`);
+ try{await loadJS(LIBS.qr)}catch(e){if($("#qrl"))$("#qrl").innerHTML=`<div class="empty">Connexion internet nécessaire pour générer les QR codes.</div>`;return}
+ if(!$("#qrl"))return;
+ $("#qrl").innerHTML=sites.map((st,i)=>{const code=codeFor(cid,i);return`<div class="qrpaper stack" style="gap:8px;align-items:center;text-align:center"><div class="eyebrow">${esc(S.settings.name)} · Pointage</div><b>${esc(c.name)} · ${esc(st.name)}</b>${st.addr?`<div class="xs muted">${esc(st.addr)}</div>`:""}
+ <div class="qrbox">${qrSVG(qrURL(code))}</div><div class="small">Code du site : <b class="num" style="letter-spacing:.08em">${code}</b></div><div class="xs muted">Agents : scannez ce code à votre arrivée.</div><button class="btn sm" data-act="qrprint">Imprimer</button></div>`}).join("")}
+function qrCheck(raw,jid){let code=String(raw||"").trim().toUpperCase();if(code.includes("QR="))code=code.split("QR=")[1];code=code.replace(/\s/g,"");
+ if(!code){toast("Entrez le code du site");return false}
+ const mine=myJobs().filter(j=>j.date===today()&&!j.checkin&&j.status!=="Terminée");
+ const j=jid?mine.find(x=>x.id===jid):mine.find(x=>siteCode(x)===code);
+ if(!j){toast(jid?"Cette intervention est déjà pointée":"Aucune intervention à pointer aujourd'hui sur ce site");return false}
+ if(siteCode(j)!==code){toast("Ce QR code ne correspond pas à ce site");return false}
+ closeSheet();checkin(j.id,"QR");return true}
+function handleQR(){const h=location.hash;if(!h.startsWith("#qr="))return false;const code=decodeURIComponent(h.slice(4));
+ try{history.replaceState(null,"",location.href.split("#")[0]+(mode==="agent"?"#a-jour":""))}catch(e){}
+ if(mode!=="agent"){view="";render();toast("Connectez-vous à l'espace agent, puis scannez à nouveau le QR code");return true}
+ view="a-jour";render();qrCheck(code,null);return true}
+async function sQRScan(jid){const j=S.jobs.find(x=>x.id===jid);if(!j)return;const c=client(j.clientId),pl=jobPlace(j);
+ sheet(`<div class="stack"><h2>Pointer avec le QR code</h2><div class="small muted">${esc(c.name)}${pl.name?" · "+esc(pl.name):""} · ${j.start}</div>
+ <video id="qv" playsinline muted hidden style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;background:var(--surface2)"></video>
+ <div class="note" id="qh">Visez le QR code collé à l'entrée du site.</div>
+ <form class="row" id="qf"><input id="qc" class="search" placeholder="Ou tapez le code du site" autocomplete="off" autocapitalize="characters" aria-label="Code du site"><button class="btn primary" type="submit">Valider</button></form>
+ <div class="xs muted">Démo : le code de ce site est <b class="num">${siteCode(j)}</b>.</div></div>`);
+ $("#qf").onsubmit=e=>{e.preventDefault();qrCheck($("#qc").value,jid)};
+ if(!("BarcodeDetector" in window)||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$("#qh").textContent="Ouvrez l'appareil photo du téléphone et visez le QR code : le pointage s'ouvre tout seul. Ou tapez le code ci-dessous.";return}
+ try{const det=new BarcodeDetector({formats:["qr_code"]});const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+  const v=$("#qv");if(!v){st.getTracks().forEach(t=>t.stop());return}qrStream=st;v.srcObject=st;v.hidden=false;await v.play();
+  const tick=async()=>{if(!qrStream||!$("#qv"))return;try{const r=await det.detect(v);if(r.length){if(qrCheck(r[0].rawValue,jid))return;await new Promise(z=>setTimeout(z,1500))}}catch(e){}requestAnimationFrame(tick)};tick()}
+ catch(e){stopScan();const h=$("#qh");if(h)h.textContent="Caméra indisponible : tapez le code écrit sous le QR."}}
+
+/* ---------- Équipe : carte, moral, paie ---------- */
+function todayPoints(){return S.jobs.filter(j=>j.date===today()&&j.status!=="Annulée").map(j=>{const c=client(j.clientId);const pos=j.checkin&&j.checkin.lat?[j.checkin.lat,j.checkin.lng]:c.geo;if(!pos)return null;
+ const st=j.status==="Terminée"?["Terminée","#3FA877"]:j.checkin?["En cours depuis "+j.checkin.time,"#2C63A8"]:["Prévue à "+j.start,"#9AABA3"];
+ return{lat:pos[0],lng:pos[1],col:st[1],agent:j.agent,client:c.name,txt:st[0]+(j.checkin&&j.checkin.lat?" · position du pointage":"")}}).filter(Boolean)}
+let tmap=null;
+async function teamMap(){const el=$("#tmap");if(!el)return;const pts=todayPoints();
+ if(!pts.length){el.innerHTML=`<div class="empty" style="padding-top:110px">Aucune intervention localisée aujourd'hui.</div>`;return}
+ loadCSS(LIBS.leafCSS);try{await loadJS(LIBS.leafJS)}catch(e){if($("#tmap"))$("#tmap").innerHTML=`<div class="empty" style="padding-top:110px">Carte indisponible sans connexion.</div>`;return}
+ const box=$("#tmap");if(!box||box._leaflet_id)return;if(tmap){try{tmap.remove()}catch(e){}tmap=null}
+ tmap=L.map(box,{scrollWheelZoom:false});L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(tmap);
+ pts.forEach(p=>L.circleMarker([p.lat,p.lng],{radius:9,color:"#fff",weight:2,fillColor:p.col,fillOpacity:1}).addTo(tmap).bindPopup(`<b>${esc(p.agent)}</b><br>${esc(p.client)}<br><span style="color:#5C7268">${esc(p.txt)}</span>`));
+ const b=pts.map(p=>[p.lat,p.lng]);if(b.length===1)tmap.setView(b[0],14);else tmap.fitBounds(b,{padding:[30,30],maxZoom:14})}
+function equipeExtra(){const since=off(-30);const md=S.jobs.filter(j=>j.mood&&j.date>=since);const cnt=k=>md.filter(j=>j.mood===k).length;
+ const hard=md.filter(j=>j.mood==="difficile").sort((a,b)=>b.date.localeCompare(a.date)).slice(0,3);
+ return`<div class="section"><h2>Carte du jour</h2><div id="tmap" role="region" aria-label="Carte des interventions du jour"></div>
+ <div class="row wrap xs muted" style="gap:12px;margin-top:8px"><span><i class="dot" style="background:#2C63A8"></i>En cours</span><span><i class="dot" style="background:#3FA877"></i>Terminée</span><span><i class="dot" style="background:#9AABA3"></i>Prévue</span></div>
+ <div class="xs muted" style="margin-top:4px">La position de l'agent est enregistrée au moment du pointage.</div></div>
+ <div class="section"><h2>Moral de l'équipe</h2><div class="xs muted" style="margin-bottom:8px">Ressenti des agents en fin d'intervention · 30 derniers jours</div>
+ <div class="card pad row between" style="text-align:center"><span class="grow"><div style="font-size:22px">😊</div><b class="num">${cnt("bien")}</b><div class="xs muted">Bien</div></span><span class="grow"><div style="font-size:22px">😐</div><b class="num">${cnt("moyen")}</b><div class="xs muted">Moyen</div></span><span class="grow"><div style="font-size:22px">😟</div><b class="num" style="${cnt("difficile")?"color:var(--red)":""}">${cnt("difficile")}</b><div class="xs muted">Difficile</div></span></div>
+ ${hard.length?`<div class="card list" style="margin-top:10px">${hard.map(j=>`<div class="item static"><span class="grow"><div class="t">${esc(j.agent)}</div><div class="xs muted">${fd(j.date)} · ${esc(client(j.clientId).name)} · intervention jugée difficile</div></span></div>`).join("")}</div><div class="xs muted" style="margin-top:6px">Un échange rapide avec l'agent évite souvent un départ ou une baisse de qualité.</div>`:""}</div>
+ <div class="section"><h2>Paie</h2><div class="card pad stack" style="gap:10px"><span class="small">Heures pointées du mois par agent, avec absences validées et brut estimé : prêtes pour <b>RH Pro</b> ou votre comptable.</span><button class="btn primary" data-act="payexport">Exporter les heures du mois (Excel)</button></div></div>`}
+function payExport(){const m=today().slice(0,7);const cur=curSym();
+ const rows=S.team.map(a=>{const js=S.jobs.filter(j=>j.agent===a.name&&j.status==="Terminée"&&inMonth(j.date,m));const h=Math.round(js.reduce((x,j)=>x+jobHours(j),0)*100)/100;
+  const ab=S.absences.filter(x=>x.agent===a.name&&x.status==="Validée").reduce((n,x)=>{let k=0,d=x.from,g=0;while(d<=x.to&&g++<400){if(inMonth(d,m))k++;d=addDays(d,1)}return n+k},0);
+  return{"Agent":a.name,"Poste":a.role,"Mois":m,"Interventions":js.length,"Heures pointées":h,["Taux horaire ("+cur+")"]:a.rate,["Brut estimé ("+cur+")"]:Math.round(h*a.rate*100)/100,"Jours d'absence validés":ab}});
+ const name="nettopro-heures-paie-"+m;
+ try{const ws=XLSX.utils.json_to_sheet(rows);ws["!cols"]=Object.keys(rows[0]||{}).map(k=>({wch:Math.max(12,k.length+2)}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Heures "+m);XLSX.writeFile(wb,name+".xlsx");toast("Fichier Excel prêt · à importer dans RH Pro")}
+ catch(e){const keys=Object.keys(rows[0]||{});const csv=[keys.join(";"),...rows.map(r=>keys.map(k=>String(r[k]).replace(/;/g,",")).join(";"))].join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+csv],{type:"text/csv"}));a.download=name+".csv";document.body.appendChild(a);a.click();a.remove();toast("Export CSV prêt")}}
+
+/* ---------- Clés et badges ---------- */
+const holderLabel=h=>h==="Bureau"?"Au bureau":"Chez "+h;
+function vCles(){const ks=[...S.keys].sort((a,b)=>client(a.clientId).name.localeCompare(client(b.clientId).name));const out=ks.filter(k=>k.holder!=="Bureau").length;
+ return`${back("Clés et badges","Qui détient quoi")}
+ <div class="kpis"><div class="kpi"><div class="eyebrow">Clés suivies</div><div class="v">${ks.length}</div></div><div class="kpi"><div class="eyebrow">Chez des agents</div><div class="v">${out}</div></div></div>
+ <div class="note" style="margin:12px 0">Chaque remise est tracée dans l'historique du client : en cas de perte, vous savez qui avait la clé et depuis quand.</div>
+ <div class="card list">${ks.length?ks.map(k=>`<div class="item static"><span class="grow"><div class="t">${esc(k.label)}</div><div class="xs muted">${esc(client(k.clientId).name)} · ${esc(holderLabel(k.holder))} depuis le ${fd(k.since)}</div></span><button class="btn sm" data-act="keymove" data-id="${k.id}">Remettre</button></div>`).join(""):`<div class="empty">Aucune clé enregistrée.</div>`}</div>
+ <div class="section"><button class="btn block" data-act="addkey">Ajouter une clé ou un badge</button></div>`}
+function sKeyMove(id){const k=S.keys.find(x=>x.id===id);if(!k)return;
+ sheet(`<form class="stack" id="kmf"><h2>Remettre la clé</h2><div class="small muted">${esc(k.label)} · ${esc(client(k.clientId).name)}<br>Actuellement : ${esc(holderLabel(k.holder))}</div>
+ <label class="f">Remettre à<select id="km-h">${opts(["Bureau",...S.team.map(a=>a.name)],k.holder)}</select></label><button class="btn primary" type="submit">Enregistrer la remise</button></form>`);
+ $("#kmf").onsubmit=e=>{e.preventDefault();const h=$("#km-h").value;if(h===k.holder){closeSheet();return}k.holder=h;k.since=today();log(k.clientId,`Clé « ${k.label} » : ${h==="Bureau"?"rendue au bureau":"remise à "+h}`);save();closeSheet();render();toast(h==="Bureau"?"Clé rendue au bureau":"Clé remise à "+first(h))}}
+function sAddKey(){sheet(`<form class="stack" id="akf"><h2>Nouvelle clé ou badge</h2><label class="f">Client<select id="ak-c">${clientOpts()}</select></label>
+ <label class="f">Description<input id="ak-l" required placeholder="Ex. : Clé porte principale, badge parking…"></label>
+ <label class="f">Détenue par<select id="ak-h">${opts(["Bureau",...S.team.map(a=>a.name)],"Bureau")}</select></label><button class="btn primary" type="submit">Ajouter</button></form>`);
+ $("#akf").onsubmit=e=>{e.preventDefault();const k={id:uid(),clientId:$("#ak-c").value,label:$("#ak-l").value.trim(),holder:$("#ak-h").value,since:today()};if(!k.label)return;S.keys.push(k);log(k.clientId,`Clé « ${k.label} » enregistrée (${holderLabel(k.holder).toLowerCase()})`);save();closeSheet();render();toast("Clé ajoutée")}}
+
+const ADMIN={taches:vTaches,accueil:vAccueil,clients:vClients,planning:vPlanning,relances:vRelances,documents:vDocuments,rapports:vRapports,stock:vStock,equipe:()=>vEquipe()+equipeExtra(),qualite:vQualite,cles:vCles,tarifs:vTarifs,demandes:vDemandes,reglages:vReglages};
 const AGENT={"a-jour":vAJour,"a-semaine":vASemaine,"a-heures":vAHeures,"a-signal":vASignal};
 const AGTABS=[["a-jour","Aujourd'hui","home"],["a-semaine","Semaine","cal"],["a-heures","Mes heures","chart"],["a-signal","Signaler","inbox"]];
 const CLIENT={"c-accueil":vCAccueil,"c-docs":vCDocs,"c-inter":vCInter,"c-demande":vCDemande,"c-support":vCSupport};
@@ -959,7 +1147,7 @@ const FAB={taches:["Tâche","task"],clients:["Client","client"],planning:["Plani
 function render(){
  if(!mode){$("#app").innerHTML=vLogin();$("#nav").hidden=true;$("#fab").hidden=true;return}
  const V=mode==="admin"?ADMIN:mode==="agent"?AGENT:CLIENT;if(!V[view])view=mode==="admin"?"accueil":mode==="agent"?"a-jour":"c-accueil";
- $("#app").innerHTML=V[view]();$("#nav").hidden=false;
+ $("#app").innerHTML=V[view]();if(mode==="admin"&&view==="equipe")setTimeout(teamMap,0);$("#nav").hidden=false;
  const tabs=mode==="admin"?ATABS:mode==="agent"?AGTABS:CTABS;const rl=S.rel.filter(r=>r.status==="open"&&diff(r.due)<=0).length;
  $("#tabs").innerHTML=tabs.map(([k,l,i])=>`<a href="#${k}" class="${k===view?"on":""}" ${k===view?'aria-current="page"':""}>${svg(i)}<span>${l}</span>${k==="relances"&&rl?`<span class="badge">${rl}</span>`:""}</a>`).join("");
  const f=mode==="admin"&&FAB[view];$("#fab").hidden=!f;
@@ -973,7 +1161,7 @@ function render(){
 }
 let keepSheet=false;
 function go(v){if(location.hash!=="#"+v){keepSheet=true;location.hash=v}else{view=v;render();scrollTo(0,0)}}
-function route(){view=location.hash.slice(1);if(!keepSheet)closeSheet();keepSheet=false;render();scrollTo(0,0)}
+function route(){if(handleQR())return;view=location.hash.slice(1);if(!keepSheet)closeSheet();keepSheet=false;render();scrollTo(0,0)}
 addEventListener("hashchange",route);
 
 $("#fab").onclick=()=>{const f=FAB[view];if(!f)return;if(f[1]==="task")sNewTask();else if(f[1]==="client")sNewClient();else if(f[1]==="job")sNewJob();else if(f[1]==="rel")sNewRel();
@@ -1008,6 +1196,14 @@ document.addEventListener("click",e=>{
    sDocForm("devis",v.clientId,L);break}
   case"addsite":{const c=S.clients.find(x=>x.id===id);sheet(`<form class="stack" id="stf"><h2>Nouveau site · ${esc(c.name)}</h2><label class="f">Nom du site<input id="st-n" required placeholder="Ex. : Entrepôt, Agence Nord…"></label><label class="f">Adresse<input id="st-a" required></label><label class="f">Accès et consignes<textarea id="st-c" rows="2" placeholder="Code, clés, interlocuteur, horaires…"></textarea></label><button class="btn primary" type="submit">Ajouter le site</button></form>`);
    $("#stf").onsubmit=ev=>{ev.preventDefault();c.sites=c.sites||[];if(!c.sites.length)c.sites.push({name:"Site principal",addr:c.addr,access:c.access||""});c.sites.push({name:$("#st-n").value.trim(),addr:$("#st-a").value.trim(),access:$("#st-c").value.trim()});log(c.id,"Site ajouté : "+$("#st-n").value.trim());save();sClient(c.id);toast("Site ajouté")};break}
+  case"newinsp":sInspection(id);break;
+  case"qrep":sQualRep(id);break;
+  case"qrsheet":sQRSheet(id);break;
+  case"qrscan":sQRScan(id);break;
+  case"qrprint":{const b=el.closest(".qrpaper");if(b){b.classList.add("pon");document.body.classList.add("qrp");try{window.print()}catch(_){toast("Impression indisponible ici")}setTimeout(()=>{b.classList.remove("pon");document.body.classList.remove("qrp")},800)}break}
+  case"keymove":sKeyMove(id);break;
+  case"addkey":sAddKey();break;
+  case"payexport":payExport();break;
   case"logout":closeSheet();mode=null;saveUI();if(location.hash)location.hash="";render();break;
   case"menu":sMenu();break; case"cmenu":sCMenu();break; case"notifs":sNotifs();break;
   case"notifgo":closeSheet();if(el.dataset.tab)docTab=el.dataset.tab;if(el.dataset.go2==="relances")relTab="retard";go(el.dataset.go2);break;
@@ -1060,7 +1256,7 @@ document.addEventListener("click",e=>{
   case"twk":taskWeekOff+=+el.dataset.v;taskDay="";render();break;
   case"notifperm":try{Notification.requestPermission().then(()=>render(),()=>toast("Rappels non autorisés par le navigateur"))}catch(e){toast("Rappels non disponibles ici")}break;
   case"import":sImport(el.dataset.v);break; case"tpl":downloadTpl(el.dataset.v);break; case"doimport":doImport();break;
-  case"reset":if(el.dataset.confirm){S=seed();save();filter="Tous";query="";weekOff=0;selDay=today();go("accueil");toast("Démo réinitialisée")}else{el.dataset.confirm="1";el.textContent="Touchez encore pour confirmer"}break;
+  case"reset":if(el.dataset.confirm){S=seed();migrate();save();filter="Tous";query="";weekOff=0;selDay=today();go("accueil");toast("Démo réinitialisée")}else{el.dataset.confirm="1";el.textContent="Touchez encore pour confirmer"}break;
  }
 });
 addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
@@ -1068,7 +1264,7 @@ addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 const sp=$("#splash");let shown=false;try{shown=sessionStorage.getItem(KEY+"-splash")==="1"}catch(e){}
 const hideSplash=()=>{if(!sp.isConnected)return;sp.style.opacity="0";setTimeout(()=>sp.remove(),500);try{sessionStorage.setItem(KEY+"-splash","1")}catch(e){}};
 if(shown)sp.remove();else{sp.onclick=hideSplash;setTimeout(hideSplash,2600)}
-view=location.hash.slice(1);render();setTimeout(checkReminders,3000);
+if(!handleQR()){view=location.hash.slice(1);render()}setTimeout(checkReminders,3000);
 })();
 </script>
 
