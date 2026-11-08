@@ -371,8 +371,8 @@ const chips=(k,arr,multi)=>`<div class="chips">${arr.map(([v,l])=>`<button type=
 
 function render(){
   renderSteps();const v=$("#vForm");let h="";
-  if(step===0){h=`<div class="kick">Étape 1 · Le client</div><h1>Qui est le client ?</h1><p class="lead">${TERRAIN?"Remplissez l'entretien avec le client. À la fin, la fiche part chez Hawa, qui crée le devis.":"Les informations de base, pour le devis."}</p>
-   ${TERRAIN?`<label class="f" style="margin-bottom:12px"><span>Votre nom (vendeur) <em>*</em></span><input data-k="par" type="text" placeholder="Ex. Kofi Agbo" value="${esc(o.par||"")}"></label>`:""}
+  if(step===0){h=`<div class="kick">Étape 1 · Le client</div><h1>Qui est le client ?</h1><p class="lead">${TERRAIN?"Faites l'entretien avec le client. À la fin, générez le devis, envoyez-le au client, puis envoyez la copie à Hawa.":"Les informations de base, pour le devis."}</p>
+   ${TERRAIN?`<label class="f" style="margin-bottom:12px"><span>Votre nom (vendeur) <em>*</em></span><input data-k="par" type="text" placeholder="Ex. Kofi Agbo" value="${esc(o.par||"")}"></label><label class="f" style="margin-bottom:12px"><span>Votre téléphone (vendeur)</span><input data-k="par_tel" type="tel" placeholder="+229 01 …" value="${esc(o.par_tel||"")}"></label>`:""}
    <div class="grid">${field("societe","Raison sociale","text","Ex. CGSP-Sécurité",1)}${field("sigle","Sigle ou nom commercial")}
    ${field("dir_nom","Nom du décideur","text","",1)}${field("dir_fct","Fonction","text","Directeur général")}
    ${field("dir_tel","Téléphone / WhatsApp","tel","+229 01 …")}${field("dir_email","E-mail","email")}
@@ -447,10 +447,10 @@ function render(){
    <label class="f"><span>Statut</span><select data-k="statut">${["Intéressé","Devis envoyé","À relancer","Signé","Pas intéressé"].map(x=>`<option ${o.statut===x?"selected":""}>${x}</option>`).join("")}</select></label>
    ${field("relance","Date de relance","date")}${field("date_rdv","Date de l'entretien","date")}
    <label class="f full"><span>Notes</span><textarea data-k="notes">${esc(o.notes||"")}</textarea></label></div>
-   <div class="actions">${TERRAIN?`<button class="btn grn wide" style="grid-column:1/-1" onclick="sendFiche()">📤 Envoyer la fiche à Hawa</button><button class="btn gold" style="grid-column:1/-1" onclick="present()">🎯 Revoir la présentation</button>`:`<button class="btn grn" onclick="sendClient()">📤 Envoyer au client</button><button class="btn pri" onclick="sendCopy()">📩 Copie à Hawa</button><button class="btn gold" onclick="present()">🎯 Présenter</button><button class="btn" onclick="dlPdf()">⬇️ Télécharger le PDF</button>`}
+   <div class="actions">${TERRAIN?`<button class="btn grn" style="grid-column:1/-1" onclick="sendClient()">📤 Envoyer le devis au client</button><button class="btn" onclick="dlPdf()">⬇️ Télécharger le PDF</button><button class="btn gold" onclick="present()">🎯 Présentation</button><button class="btn pri" style="grid-column:1/-1;${o.envoye&&!o.copie?"box-shadow:0 0 0 3px #F5B700;":""}" onclick="sendTerrainCopy()">📩 ${o.copie?"Copie envoyée à Hawa ✓ (renvoyer)":"Envoyer la copie à Hawa (obligatoire)"}</button>`:`<button class="btn grn" onclick="sendClient()">📤 Envoyer au client</button><button class="btn pri" onclick="sendCopy()">📩 Copie à Hawa</button><button class="btn gold" onclick="present()">🎯 Présenter</button><button class="btn" onclick="dlPdf()">⬇️ Télécharger le PDF</button>`}
    ${TERRAIN?"":`<button class="btn" onclick="doXls()">Excel</button>`}<button class="btn" onclick="save(false)">Enregistrer</button><button class="btn" onclick="newForm()">Nouvel entretien</button></div>`}
   v.innerHTML=h;bind();price();
-  $("#bPrev").style.visibility=step?"visible":"hidden";$("#bNext").textContent=step===STEPS.length-1?(TERRAIN?"📤 Envoyer à Hawa":"📤 Envoyer"):"Suivant ›";
+  $("#bPrev").style.visibility=step?"visible":"hidden";$("#bNext").textContent=step===STEPS.length-1?(TERRAIN?"📤 Envoyer au client":"📤 Envoyer"):"Suivant ›";
 }
 function bind(){
   $$("[data-k]").forEach(i=>{i.oninput=i.onchange=()=>{o[i.dataset.k]=i.value.trim();touch(i.dataset.k)}});
@@ -478,11 +478,11 @@ function price(){
 
 /* =================== ENREGISTREMENT =================== */
 function genCode(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let c="";crypto.getRandomValues(new Uint8Array(8)).forEach(x=>c+=A[x%A.length]);return c}
-function nextNum(){const y=new Date().getFullYear();const n=lj(NKEY,{});n[y]=(n[y]||0)+1;sj(NKEY,n);const ini=String(prof().ini||"").toUpperCase().replace(/[^A-Z]/g,"").slice(0,3);return `DEV-${y}-${ini?ini+"-":""}${String(n[y]).padStart(3,"0")}`}
+function nextNum(){const y=new Date().getFullYear();const n=lj(NKEY,{});n[y]=(n[y]||0)+1;sj(NKEY,n);const ini=String(prof().ini||(TERRAIN&&o.par?"T"+o.par.split(/\s+/).map(w=>w[0]||"").join(""):"")).toUpperCase().replace(/[^A-Z]/g,"").slice(0,3);return `DEV-${y}-${ini?ini+"-":""}${String(n[y]).padStart(3,"0")}`}
 function save(auto){
   if(!o.societe){if(!auto){toast("Indiquez d'abord la raison sociale du client");go(0)}return false}
   if(!cur)cur="d"+Date.now().toString(36);
-  const prev=store[cur]||{};o.id=cur;o.num=prev.num||o.num||nextNum();o.code=prev.code||o.code||genCode();o.cree=prev.cree||new Date().toISOString();o.par=prev.par||prof().nom||OWNER;o.par_tel=prev.par_tel||prof().tel||"";o.maj=new Date().toISOString();
+  const prev=store[cur]||{};o.id=cur;o.num=prev.num||o.num||nextNum();o.code=prev.code||o.code||genCode();o.cree=prev.cree||new Date().toISOString();o.par=(TERRAIN?o.par||prev.par:prev.par||o.par)||prof().nom||OWNER;o.par_tel=(TERRAIN?o.par_tel||prev.par_tel:prev.par_tel||o.par_tel)||prof().tel||"";o.maj=new Date().toISOString();
   const q=quoteFor(o.formule||recoPack());o.total=q.total;o.normal=q.normal;
   store[cur]=JSON.parse(JSON.stringify(o));sj(KEY,store);dirty=false;counts();if(!auto)toast(`Devis ${o.num} enregistré`);return true;
 }
@@ -507,7 +507,7 @@ function bindProf(){$$("[data-p]").forEach(i=>i.oninput=()=>{const P=prof();P[i.
 function renderSet(){
   const of=offre();
   $("#vSet").innerHTML=`<h1>Réglages</h1><p class="lead">Enregistrés sur cet appareil. Le client ne voit jamais cette page.</p>${profHtml()}
-  <div class="set"><h3>Lien pour mon collaborateur</h3><p style="font-size:12.5px;color:var(--muted);margin:0 0 8px">Donnez ce lien à un collaborateur qui fait les entretiens sur le terrain. Il remplit la fiche et vous l'envoie : <b>il ne peut pas créer de devis ni voir vos prix planchers</b>. Vous recevez la fiche sur WhatsApp et créez le devis vous-même.</p>
+  <div class="set"><h3>Lien pour mon collaborateur</h3><p style="font-size:12.5px;color:var(--muted);margin:0 0 8px">Donnez ce lien à un collaborateur qui fait les entretiens sur le terrain. Il fait l'entretien, génère le devis PDF et l'envoie au client, puis vous envoie une copie avec la fiche complète. <b>Il ne voit pas vos prix planchers</b> et ne peut pas envoyer un devis sous votre plancher.</p>
    <div class="top" style="margin:0"><button class="btn sm pri" id="linkCopy">🔗 Copier le lien collaborateur</button><button class="btn sm" id="linkWa">Envoyer sur WhatsApp</button></div>
    <div style="font-size:12px;color:var(--muted);margin-top:8px;word-break:break-all" id="linkTxt"></div></div>
   <div class="set"><h3>Offre promotionnelle</h3>
@@ -542,7 +542,7 @@ function renderSet(){
   initSig();bindProf();
   const tlink=baseLink()+"?r=terrain";$("#linkTxt").textContent=tlink;
   $("#linkCopy").onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(tlink);toast("Lien collaborateur copié")};
-  $("#linkWa").onclick=()=>open("https://wa.me/?text="+encodeURIComponent("Voici le lien pour faire les entretiens SécuriPro sur le terrain :\n"+tlink+"\n\nRemplis la fiche avec le client, puis envoie-la-moi avec le bouton « Envoyer la fiche à Hawa »."),"_blank");
+  $("#linkWa").onclick=()=>open("https://wa.me/?text="+encodeURIComponent("Voici le lien pour faire les entretiens SécuriPro sur le terrain :\n"+tlink+"\n\nFais l'entretien, génère le devis, envoie-le au client, puis envoie-moi la copie avec le bouton « Envoyer la copie à Hawa »."),"_blank");
 }
 function initSig(){const c=$("#sig"),x=c.getContext("2d");x.lineWidth=5;x.lineCap="round";x.lineJoin="round";x.strokeStyle="#0F2A6B";let dn=false,last=null;
   const pt=e=>{const r=c.getBoundingClientRect();return [(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
@@ -581,8 +581,10 @@ async function registre(q){const url=window.SACKO_REGISTRE_URL,pin=lj("sacko_pin
   try{const r=await fetch(url+"?"+new URLSearchParams({action:"enregistrer",pin,n:o.num,code:o.code,client:o.societe,total:String(q.total),date:fd(o.maj.slice(0,10)),formule:PACKS[q.pk].nom,validite:fd(o.validite)}));return !!(await r.json()).ok}catch(e){return false}}
 let stampPng="";(()=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas");c.width=c.height=600;c.getContext("2d").drawImage(im,0,0,600,600);stampPng=c.toDataURL("image/png")};im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(STAMP.replace('href="#cp"','href="#cp" xlink:href="#cp"').replace('<svg ','<svg xmlns:xlink="http://www.w3.org/1999/xlink" '))})();
 async function prepare(){
+  if(TERRAIN&&!o.par){toast("Indiquez votre nom (vendeur)");go(0);return null}
   if(!save(true)){toast("Indiquez d'abord la raison sociale du client");go(0);return null}
   const pk=o.formule||recoPack();const q=quoteFor(pk);
+  if(TERRAIN&&q.below){toast("Prix trop bas : appelez Hawa avant d'envoyer ce devis");return null}
   registre(q).then(rr=>{if(rr===true)toast("Devis inscrit au registre ✓")});
   return q;
 }
@@ -639,7 +641,11 @@ async function sendFiche(){
 }
 async function sendClient(){const q=await prepare();if(!q)return;toast("Création du devis PDF…");const f=await pdfFile(q);
   const ok=await share(f,msgClient(q),(o.dir_tel||"").replace(/[^\d]/g,""));
+  if(ok&&TERRAIN){o.envoye=new Date().toISOString();save(true);if(step===7)render();setTimeout(()=>toast("Dernière étape : envoyez la copie à Hawa 📩"),1500)}
   if(ok&&o.statut==="Intéressé"){o.statut="Devis envoyé";const d=new Date();d.setDate(d.getDate()+2);o.relance=o.relance||d.toISOString().slice(0,10);save(true);if(step===7)render()}}
+async function sendTerrainCopy(){const q=await prepare();if(!q)return;toast("Création du devis PDF…");const f=await pdfFile(q);
+  const ok=await share(f,msgCopy(q)+(o.envoye?"\nDevis envoyé au client ✓":"\nDevis pas encore envoyé au client")+"\n\n👉 Fiche complète : "+ficheLink(),OWNER_WA);
+  if(ok){o.copie=new Date().toISOString();save(true);if(step===7)render()}}
 async function sendCopy(){const q=await prepare();if(!q)return;toast("Création du devis PDF…");const f=await pdfFile(q);await share(f,msgCopy(q),OWNER_WA)}
 function flat(x){const pk=x.formule||"";const q=PACKS[pk]?quoteFor(pk,x):null;return {"N° devis":x.num,"Date":fd((x.maj||"").slice(0,10)),"Client":x.societe,"Décideur":x.dir_nom,"Fonction":x.dir_fct,"Téléphone":x.dir_tel,"E-mail":x.dir_email,"Ville":x.ville,"Pays":x.pays,"Agents":AG[x.ag]?AG[x.ag][0]:"","Agents (exact)":x.nb_agents,"Sites":x.sites,"Villes":x.villes,"Problèmes":(x.problemes||[]).map(id=>(PROBS.find(p=>p.id===id)||{}).l).join(", "),"Formule":PACKS[pk]?PACKS[pk].nom:"","Options":(x.options||[]).map(id=>(OPTS.find(p=>p.id===id)||{}).nom).concat((x.custom||[]).map(c=>c.l)).filter(Boolean).join(", "),"Prix normal":q?q.normal:"","Total":q?q.total:"","Remise %":x.remise,"Acompte %":x.acompte,"Paiement du solde":x.solde,"Présenté par":x.par,"Statut":x.statut,"Relance":fd(x.relance),"Notes":x.notes}}
 function xls(list,name){if(!window.XLSX){toast("Connexion internet nécessaire pour l'export Excel");return}const wb=XLSX.utils.book_new();const ws=XLSX.utils.json_to_sheet(list.map(flat));ws["!cols"]=Object.keys(flat(list[0])).map(()=>({wch:20}));XLSX.utils.book_append_sheet(wb,ws,"Devis");XLSX.writeFile(wb,name)}
