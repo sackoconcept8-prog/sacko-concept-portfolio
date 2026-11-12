@@ -91,6 +91,10 @@ input,select,textarea{width:100%;margin-top:4px;border:1px solid var(--line);bor
 .sw:after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
 .sw.on{background:var(--ok)}.sw.on:after{left:21px}
 .foot{margin-top:30px;color:var(--mut);font-size:12px;text-align:center}.foot a{color:var(--acc);font-weight:600}
+.qr{display:grid;grid-template-columns:repeat(11,8px);border:6px solid #fff;outline:1px solid var(--line);border-radius:6px;flex:none}.qr i{width:8px;height:8px}
+.badge{display:flex;gap:14px;align-items:center}
+.punch{border:0;border-radius:99px;background:var(--ok);color:#fff;font:700 18px Sora,sans-serif;padding:22px 34px;box-shadow:0 12px 28px rgba(21,128,61,.3)}
+.punch.out{background:var(--acc);box-shadow:0 12px 28px rgba(232,115,12,.3)}
 @media(max-width:860px){
  .side{position:sticky;top:0;width:auto;bottom:auto;flex-direction:row;align-items:center;gap:8px;padding:10px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto;z-index:20}
  .co,.me small{display:none}.brand{margin:0;font-size:16px}.nav{display:flex;gap:4px}.nav button{white-space:nowrap;padding:8px 10px}
@@ -150,7 +154,7 @@ const D={
   {n:'Granulats 0/14 (carrière)',u:'m³',q:8400,min:3000,max:15000,j:620},{n:'Grave concassée 0/31,5',u:'m³',q:12600,min:5000,max:20000,j:940},
   {n:'Gasoil',u:'L',q:38500,min:30000,max:120000,j:6800},{n:'Ciment CPJ 42,5',u:'t',q:320,min:150,max:800,j:28}
  ],
- equipe:['Adama Koné|Conducteur d\'engin|9000','Séverin Tossou|Conducteur d\'engin|9000','Fatou Bah|Topographe|12000','Jean Akpovi|Régleur finisseur|8000','Oumar Sidibé|Manœuvre|4500','Pascal Zinsou|Manœuvre|4500','Awa Cissé|Laborantine|10000','Kodjo Amavi|Chauffeur benne|7000','Bio Sabi|Manœuvre|4500','Mariam Touré|Signaleuse|4500'].map((s,i)=>{const a=s.split('|');return{n:a[0],p:a[1],t:+a[2],ok:i!==4}}),
+ equipe:['Adama Koné|Conducteur d\'engin|9000','Séverin Tossou|Conducteur d\'engin|9000','Fatou Bah|Topographe|12000','Jean Akpovi|Régleur finisseur|8000','Oumar Sidibé|Manœuvre|4500','Pascal Zinsou|Manœuvre|4500','Awa Cissé|Laborantine|10000','Kodjo Amavi|Chauffeur benne|7000','Bio Sabi|Manœuvre|4500','Mariam Touré|Signaleuse|4500'].map((s,i)=>{const a=s.split('|');return{n:a[0],p:a[1],t:+a[2],ok:i!==4,h:['06:52','06:55','07:01','06:48','','06:58','07:10','06:45','06:59','07:03'][i],j:[11,12,12,10,9,11,12,11,8,12][i]}}),
  journal:[
   {d:'11 nov.',ch:1,meteo:'Ensoleillé',couche:5,de:27.4,a:28,q:'1 180 t',eff:212,obs:'Cadence normale. Température enrobé 152 °C à la pose.'},
   {d:'11 nov.',ch:3,meteo:'Pluie 2 h',couche:1,de:20.2,a:21,q:'2 400 m³',eff:151,obs:'Arrêt de 2 h pour pluie. Reprise à 14 h.'},
@@ -158,6 +162,8 @@ const D={
  ],
  essais:[['11 nov.',1,pkf(27.6),'Compacité enrobé','97,8 %','≥ 97 %',1],['11 nov.',1,pkf(27.9),'Teneur en bitume','5,4 %','5,2 – 5,6 %',1],['10 nov.',3,pkf(14.2),'Portance (CBR) fondation','72','≥ 80',0],['10 nov.',2,pkf(9.9),'Épaisseur enrobé','5,1 cm','≥ 5 cm',1],['9 nov.',4,pkf(3.1),'Proctor couche de forme','96 %','≥ 95 %',1]],
  hse:{jours:147,list:[['8 nov.',3,'Presque-accident','Recul de camion sans signaleur','Clôturé'],['2 nov.',1,'Soin léger','Brûlure légère à la répandeuse','Clôturé'],['28 oct.',4,'Riverains','Poussière : plainte du quartier, arrosage renforcé','En cours']]},
+ sal:[['Koffi Mensah','Directeur général','CDI','—','À jour'],['Aminata Traoré','Conductrice de travaux','CDI','—','À jour'],['Ibrahim Sanou','Chef de chantier','CDD','30 juin 2027','À jour'],['Fatou Bah','Topographe','CDD','15 déc. 2026','À refaire'],['Adama Koné','Conducteur d\'engin','CDD','31 déc. 2026','À jour'],['Awa Cissé','Laborantine','CDD','28 févr. 2027','À jour'],['Oumar Sidibé','Manœuvre','Journalier','—','À faire'],['Mariam Touré','Signaleuse','Journalier','—','À jour']],
+ dem:[{n:'Jean Akpovi',t:'Congé annuel',d:'18 – 29 nov.',st:'En attente'},{n:'Awa Cissé',t:'Permission exceptionnelle',d:'14 – 16 nov.',st:'En attente'},{n:'Kodjo Amavi',t:'Avance sur salaire',d:'30 000 F',st:'En attente'}],
  dec:[
   {n:'N° 11',ch:1,p:'Octobre 2026',m:1.42e9,st:'En attente',j:18},{n:'N° 10',ch:1,p:'Septembre 2026',m:1.61e9,st:'En retard',j:64},
   {n:'N° 9',ch:2,p:'Octobre 2026',m:0.58e9,st:'En attente',j:12},{n:'N° 8',ch:2,p:'Septembre 2026',m:0.66e9,st:'Payé',j:0},
@@ -166,16 +172,21 @@ const D={
 };
 const ch=id=>D.chantiers.find(c=>c.id===id);
 const ROLES={
- dg:{ic:'🏢',l:'Direction générale',u:'Koffi Mensah',d:'Vue d\'ensemble : chantiers, argent, matériel, alertes',nav:['dash','chantiers','finances','engins','materiaux','personnel','qhse']},
+ dg:{ic:'🏢',l:'Direction générale',u:'Koffi Mensah',d:'Vue d\'ensemble : chantiers, argent, matériel, alertes',nav:['dash','chantiers','finances','engins','materiaux','rh','personnel','qhse']},
+ rh:{ic:'🪪',l:'Ressources humaines',u:'Rachelle Ahouansou',d:'Dossiers, contrats, congés, badges et paie',nav:['rh','personnel']},
  ct:{ic:'📐',l:'Conducteur de travaux',u:'Aminata Traoré',d:'Avancement par PK, rapports, qualité, moyens',nav:['chantiers','journal','engins','materiaux','qhse']},
  chef:{ic:'🦺',l:'Chef de chantier',u:'Ibrahim Sanou',d:'Rapport du jour, pointage des équipes, pannes',nav:['journal','personnel','engins','qhse']},
+ ouv:{ic:'👷',l:'Ouvrier',u:'Oumar Sidibé',d:'Pointer, voir ses jours et sa paie, faire une demande',nav:['moi']},
  parc:{ic:'🚜',l:'Parc & logistique',u:'Serge Dossou',d:'Engins, entretien, bitume, granulats, gasoil',nav:['engins','materiaux']},
  mo:{ic:'🏛️',l:'Maître d\'ouvrage / Mission de contrôle',u:'Bureau de contrôle',d:'Suivi en ligne du chantier et des décomptes',nav:['client']}
 };
-const NAV={dash:['📊','Tableau de bord'],chantiers:['🛣️','Chantiers'],journal:['📝','Rapports journaliers'],engins:['🚜','Parc engins'],materiaux:['🛢️','Matériaux & centrale'],personnel:['👷','Personnel & pointage'],qhse:['✅','Qualité & sécurité'],finances:['💰','Décomptes & finances'],client:['🛣️','Suivi du chantier']};
-let role=null,view=null,sel=1;
+const NAV={dash:['📊','Tableau de bord'],chantiers:['🛣️','Chantiers'],journal:['📝','Rapports journaliers'],engins:['🚜','Parc engins'],materiaux:['🛢️','Matériaux & centrale'],personnel:['👷','Personnel & pointage'],qhse:['✅','Qualité & sécurité'],finances:['💰','Décomptes & finances'],client:['🛣️','Suivi du chantier'],rh:['🪪','Ressources humaines'],moi:['⏱️','Mon pointage']};
+let role=null,view=null,sel=1,badgeSel=null;
+const now=()=>new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+const qr=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;let o='';for(let i=0;i<121;i++){const x=i%11,y=(i/11)|0,cor=(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7);h=(h*1103515245+12345)>>>0;o+=`<i style="background:${cor||((h>>16)&1)?'#1F2A37':'#fff'}"></i>`}return `<div class="qr">${o}</div>`};
+const badge=(n,p,mat)=>`<div class="badge">${qr(n)}<div><b>${n}</b><div class="sm mut">${p}</div><div class="sm">Matricule ${mat}</div><div class="sm" style="color:var(--acc);font-weight:600">Atlas Routes &amp; Travaux</div></div></div>`;
 
-const stChip=s=>{const m={'En service':'c-ok','Disponible':'c-blue','En panne':'c-bad','Maintenance':'c-warn','Payé':'c-ok','En attente':'c-warn','En retard':'c-bad','Brouillon':'c-g','Clôturé':'c-g','En cours':'c-warn'};return `<span class="chip ${m[s]||'c-g'}">${s}</span>`};
+const stChip=s=>{const m={'En service':'c-ok','Disponible':'c-blue','En panne':'c-bad','Maintenance':'c-warn','Payé':'c-ok','En attente':'c-warn','En retard':'c-bad','Brouillon':'c-g','Clôturé':'c-g','En cours':'c-warn','Approuvé':'c-ok','Refusé':'c-bad','À jour':'c-ok','À refaire':'c-warn','À faire':'c-bad','CDI':'c-blue','CDD':'c-g','Journalier':'c-warn'};return `<span class="chip ${m[s]||'c-g'}">${s}</span>`};
 const head=(t,p,b='')=>`<div class="head"><div><h2>${t}</h2><p>${p}</p></div>${b}</div>`;
 const kpi=(l,v,e,c='')=>`<div class="card kpi"><small>${l}</small><b>${v}</b><em class="${c}">${e}</em></div>`;
 
@@ -246,8 +257,8 @@ personnel(){
  const p=D.equipe.filter(e=>e.ok),tot=p.reduce((s,e)=>s+e.t,0);
  return head('Personnel & pointage','Pointage des équipes sur le chantier et paie des journaliers calculée toute seule')+
  `<div class="grid k4">${kpi('Présents aujourd\'hui',p.length+' / '+D.equipe.length,'Équipe enrobés — '+ch(1).lieu)}${kpi('Paie du jour (équipe)',F(tot),'calculée d\'après le pointage')}${kpi('Effectif total',fr(D.chantiers.reduce((s,c)=>s+c.eff,0)),'4 chantiers')}${kpi('Contrats à renouveler','14','dans les 30 jours','wn')}</div>
- <div class="card" style="margin-top:14px"><h3>Pointage du 12 novembre — équipe enrobés</h3><div class="tw"><table><tr><th>Nom</th><th>Poste</th><th>Taux journalier</th><th>Présent</th></tr>
- ${D.equipe.map((e,i)=>`<tr><td><b>${e.n}</b></td><td>${e.p}</td><td>${F(e.t)}</td><td><button class="sw ${e.ok?'on':''}" data-act="pt" data-id="${i}" aria-label="Présence de ${e.n}"></button></td></tr>`).join('')}</table></div></div>`;
+ <div class="card" style="margin-top:14px"><div class="row" style="flex-wrap:wrap;margin-bottom:6px"><h3 style="margin:0">Pointage du 12 novembre — équipe enrobés</h3><button class="btn sm" data-act="scan">📷 Scanner un badge</button></div><p class="sm mut" style="margin:0 0 10px">Trois façons de pointer : l'ouvrier pointe sur son téléphone, le chef scanne son badge, ou la pointeuse du chantier. Tout fonctionne sans connexion.</p><div class="tw"><table><tr><th>Nom</th><th>Poste</th><th>Taux journalier</th><th>Arrivée</th><th>Présent</th></tr>
+ ${D.equipe.map((e,i)=>`<tr><td><b>${e.n}</b></td><td>${e.p}</td><td>${F(e.t)}</td><td>${e.ok?e.h||now():'—'}</td><td><button class="sw ${e.ok?'on':''}" data-act="pt" data-id="${i}" aria-label="Présence de ${e.n}"></button></td></tr>`).join('')}</table></div></div>`;
 },
 qhse(){
  return head('Qualité & sécurité','Essais de laboratoire, incidents et plaintes : tout est tracé pour la mission de contrôle')+
@@ -263,6 +274,28 @@ finances(){
  <div class="card" style="margin-top:14px"><div class="tw"><table><tr><th>Décompte</th><th>Chantier</th><th>Période</th><th>Montant</th><th>Statut</th><th>Délai</th><th></th></tr>
  ${D.dec.map((d,i)=>`<tr><td><b>${d.n}</b></td><td>${ch(d.ch).lieu}<div class="sm mut">${ch(d.ch).mo}</div></td><td>${d.p}</td><td><b>${F(d.m)}</b></td><td>${stChip(d.st)}</td><td>${d.st==='Payé'||d.st==='Brouillon'?'—':d.j+' jours'}</td><td>${d.st==='Payé'?'':d.st==='Brouillon'?`<button class="btn sm" data-act="send" data-id="${i}">Transmettre</button>`:`<button class="btn sm ghost" data-act="pay" data-id="${i}">Marquer payé</button>`}</td></tr>`).join('')}</table></div>
  <p class="sm mut" style="margin:12px 0 0">Le décompte est calculé à partir des quantités saisies dans les rapports journaliers : plus de ressaisie, plus d'oubli.</p></div>`;
+},
+rh(){
+ const tot=D.chantiers.reduce((s,c)=>s+c.eff,0),pay=D.equipe.reduce((s,e)=>s+e.j*e.t,0);
+ return head('Ressources humaines','Dossiers du personnel, contrats, congés et paie — du siège jusqu\'au chantier')+
+ `<div class="grid k4">${kpi('Effectif total',fr(tot),'212 salariés · 343 journaliers')}${kpi('Contrats à renouveler','14','dans les 30 jours','wn')}${kpi('Visites médicales à refaire','9','obligatoires sur chantier','wn')}${kpi('Demandes à traiter',D.dem.filter(d=>d.st==='En attente').length,'congés, permissions, avances')}</div>
+ <div class="grid c2" style="margin-top:14px"><div class="card"><h3>Dossiers du personnel</h3><div class="tw"><table><tr><th>Nom</th><th>Poste</th><th>Contrat</th><th>Fin de contrat</th><th>Visite médicale</th><th></th></tr>
+ ${D.sal.map((s,i)=>`<tr><td><b>${s[0]}</b></td><td>${s[1]}</td><td>${stChip(s[2])}</td><td>${s[3]}</td><td>${stChip(s[4])}</td><td><button class="btn sm ghost" data-act="badge" data-id="${i}">Badge</button></td></tr>`).join('')}</table></div>
+ ${badgeSel!==null?`<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)"><p class="sm mut" style="margin:0 0 8px">Badge prêt à imprimer — il sert aussi au pointage</p>${badge(D.sal[badgeSel][0],D.sal[badgeSel][1],'ART-0'+(412+badgeSel))}</div>`:''}</div>
+ <div class="card"><h3>Demandes à traiter</h3>${D.dem.map((d,i)=>`<div class="alert"><div style="flex:1"><b>${d.n}</b><div class="sm mut">${d.t} · ${d.d}</div></div>${d.st==='En attente'?`<span><button class="btn sm" data-act="dem" data-id="${i}" data-v="Approuvé">Approuver</button> <button class="btn sm ghost" data-act="dem" data-id="${i}" data-v="Refusé">Refuser</button></span>`:stChip(d.st)}</div>`).join('')}</div></div>
+ <div class="card" style="margin-top:14px"><div class="row" style="flex-wrap:wrap;margin-bottom:10px"><h3 style="margin:0">Paie des journaliers — quinzaine du 1er au 15 novembre</h3><button class="btn sm" data-act="bull">Générer les bulletins de paie</button></div><div class="tw"><table><tr><th>Nom</th><th>Poste</th><th>Jours pointés</th><th>Taux journalier</th><th>À payer</th></tr>
+ ${D.equipe.map(e=>`<tr><td><b>${e.n}</b></td><td>${e.p}</td><td>${e.j}</td><td>${F(e.t)}</td><td><b>${F(e.j*e.t)}</b></td></tr>`).join('')}<tr><td colspan="4"><b>Total de l'équipe</b></td><td><b>${F(pay)}</b></td></tr></table></div>
+ <p class="sm mut" style="margin:12px 0 0">Les jours viennent directement du pointage : plus de cahier à recopier, plus de journaliers « fantômes ».</p></div>`;
+},
+moi(){
+ const m=D.equipe[4];
+ return head('Bonjour '+m.n,m.p+' · '+ch(1).nom)+
+ `<div class="card" style="text-align:center"><p class="mut" style="margin:0 0 12px">Jeudi 12 novembre 2026</p>
+ ${m.out?'<span class="chip c-g">Journée terminée</span>':`<button class="punch ${m.ok?'out':''}" data-act="punch">${m.ok?'Pointer mon départ':'Pointer mon arrivée'}</button>`}
+ <p style="margin:14px 0 0">${m.ok?`✅ Arrivée pointée à <b>${m.h}</b>${m.out?` · Départ à <b>${m.out}</b>`:''}<br><span class="sm mut">Position vérifiée : sur le chantier, ${pkf(28)}</span>`:'<span class="mut">Vous n\'avez pas encore pointé aujourd\'hui</span>'}</p></div>
+ <div class="grid k4" style="margin-top:14px">${kpi('Jours travaillés (quinzaine)',m.j,'du 1er au 15 novembre')}${kpi('À percevoir',F(m.j*m.t),'paiement le 15 novembre','up')}${kpi('Taux journalier',F(m.t),'')}${kpi('Retards ce mois','1','')}</div>
+ <div class="grid c2" style="margin-top:14px"><div class="card"><h3>Faire une demande</h3><form class="f" id="fd"><label>Type<select name="t"><option>Permission exceptionnelle</option><option>Congé</option><option>Avance sur salaire</option><option>Attestation de travail</option></select></label><label>Dates ou montant<input name="d" required placeholder="Ex. : 20 – 21 nov."></label><div class="full"><button class="btn">Envoyer aux RH</button> <button type="button" class="btn ghost" data-act="danger">⚠️ Signaler un danger</button></div></form></div>
+ <div class="card"><h3>Mon badge</h3>${badge(m.n,m.p,'ART-0418')}<p class="sm mut" style="margin:12px 0 0">Pas de téléphone ? Le chef de chantier scanne ce badge et le pointage est fait.</p></div></div>`;
 },
 client(){
  const c=ch(1),dd=D.dec.filter(d=>d.ch===1);
@@ -280,6 +313,7 @@ function render(){
  const f=$('#fj');if(f)f.addEventListener('submit',e=>{e.preventDefault();const d=Object.fromEntries(new FormData(f));
   const c=ch(+d.ch),k=+d.couche,a=Math.min(+d.a,c.km);if(a>c.c[k])c.c[k]=Math.round(a*10)/10;
   D.journal.unshift({d:'12 nov.',ch:+d.ch,meteo:d.meteo,couche:k,de:+d.de,a:+d.a,q:d.q,eff:+d.eff,obs:d.obs});render();toast('Rapport enregistré — l\'avancement du chantier est mis à jour')});
+ const g=$('#fd');if(g)g.addEventListener('submit',e=>{e.preventDefault();const d=Object.fromEntries(new FormData(g));D.dem.unshift({n:D.equipe[4].n,t:d.t,d:d.d,st:'En attente'});render();toast('Demande envoyée aux ressources humaines')});
 }
 function enter(r){role=r;view=ROLES[r].nav[0];$('#uname').textContent=ROLES[r].u;$('#urole').textContent=ROLES[r].l;$('#login').style.display='none';$('#app').style.display='block';render();scrollTo(0,0)}
 $('#roles').innerHTML=Object.entries(ROLES).map(([k,r])=>`<button class="role" data-act="role" data-id="${k}"><div class="ic">${r.ic}</div><b>${r.l}</b><small>${r.d}</small></button>`).join('');
@@ -294,6 +328,12 @@ document.addEventListener('click',e=>{
  if(a==='pt'){D.equipe[id].ok=!D.equipe[id].ok;render();return}
  if(a==='pay'){D.dec[id].st='Payé';render();toast('Paiement enregistré');return}
  if(a==='send'){D.dec[id].st='En attente';D.dec[id].j=0;render();toast('Décompte transmis au maître d\'ouvrage');return}
+ if(a==='punch'){const m=D.equipe[4];if(!m.ok){m.ok=true;m.h=now();toast('Arrivée pointée à '+m.h)}else{m.out=now();toast('Départ pointé à '+m.out)}render();return}
+ if(a==='scan'){const m=D.equipe.find(e=>!e.ok);if(!m)return toast('Toute l\'équipe est déjà pointée');m.ok=true;m.h=now();render();toast('Badge scanné : '+m.n+' — '+m.h);return}
+ if(a==='dem'){D.dem[id].st=b.dataset.v;render();toast('Demande : '+b.dataset.v.toLowerCase());return}
+ if(a==='badge'){badgeSel=+id;render();return}
+ if(a==='bull'){toast('10 bulletins de paie générés');return}
+ if(a==='danger'){D.hse.list.unshift(['12 nov.',1,'Danger signalé','Signalement envoyé par '+D.equipe[4].n,'En cours']);toast('Signalement envoyé au chef de chantier et au responsable sécurité');return}
  if(a==='newdec'){if(D.dec.some(d=>d.st==='Brouillon'))return toast('Le décompte de novembre existe déjà');D.dec.unshift({n:'N° 12',ch:1,p:'Novembre 2026',m:1.37e9,st:'Brouillon',j:0});render();toast('Décompte N° 12 calculé à partir des rapports journaliers')}
 });
 setTimeout(()=>$('#splash').classList.add('hide'),1900);
