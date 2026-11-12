@@ -12,6 +12,7 @@
 <meta name="theme-color" content="#F7F5F0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23E8730C'/%3E%3Cpath d='M24 12 16 52M40 12l8 40M32 14v7M32 28v8M32 43v8' stroke='%23fff' stroke-width='5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
 :root{--bg:#F7F5F0;--card:#fff;--ink:#1F2A37;--mut:#6B7280;--line:#E8E4DB;--acc:#E8730C;--acc2:#FFF1E3;--ok:#15803D;--okb:#E7F6EC;--warn:#B45309;--warnb:#FEF3C7;--bad:#B91C1C;--badb:#FDE8E8;--blue:#1D4ED8;--blueb:#E6EEFF}
 *{box-sizing:border-box}
@@ -91,11 +92,25 @@ input,select,textarea{width:100%;margin-top:4px;border:1px solid var(--line);bor
 .sw:after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
 .sw.on{background:var(--ok)}.sw.on:after{left:21px}
 .foot{margin-top:30px;color:var(--mut);font-size:12px;text-align:center}.foot a{color:var(--acc);font-weight:600}
+body{background:linear-gradient(180deg,#FCFBF8 0,#F5F2EB 100%) fixed}
+.card{border-color:#EFEBE2;border-radius:18px;box-shadow:0 1px 2px rgba(31,42,55,.04),0 10px 28px rgba(31,42,55,.05)}
+.kpi{display:flex;gap:12px;align-items:flex-start}.kpi .ki{width:40px;height:40px;border-radius:12px;background:var(--acc2);display:grid;place-items:center;font-size:19px;flex:none}
+.kpi b{font-size:24px}
+.hero{background:linear-gradient(120deg,#FFF4E8 0,#FFFFFF 70%);border:1px solid #F6E3CC;border-radius:22px;padding:26px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.hero h2{font-size:26px}.hero p{margin:6px 0 0;color:var(--mut)}.hero .q{display:flex;gap:8px;flex-wrap:wrap}
+.nav button{transition:.12s}.side{box-shadow:1px 0 0 #EFEBE2}
+.role{border-radius:18px;padding:20px}.loginbox .top h1{font-size:34px}.hello{font-family:Sora;font-size:20px;margin:14px 0 4px}
+#map{height:460px;border-radius:14px;z-index:1}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin-top:10px}.leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.pos{color:var(--ok);font-weight:600}.neg{color:var(--bad);font-weight:600}
 .qr{display:grid;grid-template-columns:repeat(11,8px);border:6px solid #fff;outline:1px solid var(--line);border-radius:6px;flex:none}.qr i{width:8px;height:8px}
 .badge{display:flex;gap:14px;align-items:center}
 .punch{border:0;border-radius:99px;background:var(--ok);color:#fff;font:700 18px Sora,sans-serif;padding:22px 34px;box-shadow:0 12px 28px rgba(21,128,61,.3)}
 .punch.out{background:var(--acc);box-shadow:0 12px 28px rgba(232,115,12,.3)}
+@media(min-width:861px){.k6{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:860px){
+ .side>div:first-child,.brand i{flex:none}.k4{grid-template-columns:1fr 1fr}.kpi{gap:8px;padding:14px;flex-direction:column}.kpi b{font-size:19px}.kpi .ki{width:32px;height:32px;font-size:15px}
+ #map{height:340px}.hero{padding:20px}.hero h2{font-size:21px}
  .side{position:sticky;top:0;width:auto;bottom:auto;flex-direction:row;align-items:center;gap:8px;padding:10px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto;z-index:20}
  .co,.me small{display:none}.brand{margin:0;font-size:16px}.nav{display:flex;gap:4px}.nav button{white-space:nowrap;padding:8px 10px}
  .me{margin:0;border:0;padding:0}.me b{display:none}.me button{margin:0;white-space:nowrap}
@@ -112,7 +127,7 @@ input,select,textarea{width:100%;margin-top:4px;border:1px solid var(--line);bor
 </div>
 
 <div id="login"><div class="loginbox">
- <div class="top"><h1>BTP <span>Pro</span></h1><p class="mut">Démo — Atlas Routes &amp; Travaux (entreprise fictive). Choisissez un espace pour entrer.</p></div>
+ <div class="top"><h1>BTP <span>Pro</span></h1><p class="hello">Bienvenue 👋</p><p class="mut">Vous êtes sur la démo de BTP Pro, avec une entreprise fictive : Atlas Routes &amp; Travaux.<br>Choisissez un espace pour entrer, comme le ferait chaque membre de votre équipe.</p></div>
  <div class="roles" id="roles"></div>
  <p class="foot">Une application <a href="https://www.sackoconcept.com">SACKO CONCEPT</a> · personnalisée au nom et aux couleurs de votre entreprise</p>
 </div></div>
@@ -121,12 +136,13 @@ input,select,textarea{width:100%;margin-top:4px;border:1px solid var(--line);bor
  <aside class="side">
   <div><div class="brand"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M8 3 4 21M16 3l4 18M12 4v3M12 11v3M12 18v3"/></svg></i>BTP <span>Pro</span></div><p class="co">Atlas Routes &amp; Travaux</p></div>
   <nav class="nav" id="nav"></nav>
-  <div class="me"><b id="uname"></b><small id="urole"></small><button data-act="logout">Changer d'espace</button></div>
+  <div class="me"><b id="uname"></b><small id="urole"></small><button data-act="logout">Changer d'espace</button><button data-act="reset">Remettre la démo à zéro</button></div>
  </aside>
  <main id="main"></main>
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 const $=s=>document.querySelector(s);
 const fr=n=>Number(n).toLocaleString('fr-FR');
@@ -136,10 +152,10 @@ const pkf=k=>{const a=Math.floor(k),m=Math.round((k-a)*1000);return 'PK '+a+'+'+
 const COUCHES=[['Dégagement & terrassement','#8B5E34'],['Couche de forme','#B7791F'],['Couche de fondation','#D69E2E'],['Couche de base','#E8730C'],['Imprégnation','#6B7280'],['Enrobé (béton bitumineux)','#1F2A37'],['Assainissement & dalots','#1D4ED8'],['Signalisation & sécurité','#15803D']];
 const D={
  chantiers:[
-  {id:1,nom:'Bitumage de la route Savalou – Djougou, lot 2',mo:'Ministère des Infrastructures',lieu:'Bénin',km:48,montant:38.5e9,phys:62,fin:54,delai:'24 mois · fin prévue août 2027',chef:'Ibrahim Sanou',eff:214,c:[48,44,39,34,31,28,36,12],ouv:[[6.2,'Dalot 2×2'],[19.4,'Pont 35 m'],[33,'Dalot 3×2'],[44.5,'Péage']]},
-  {id:2,nom:'Voiries urbaines et assainissement — phase B',mo:'Agence des grands travaux urbains',lieu:'Cotonou',km:12.4,montant:9.2e9,phys:81,fin:70,delai:'14 mois · fin prévue février 2027',chef:'Clarisse Hounsa',eff:96,c:[12.4,12.4,12,11.2,10.6,10.1,11.8,6.5],ouv:[[2.1,'Collecteur'],[7.8,'Carrefour giratoire']]},
-  {id:3,nom:'Réhabilitation de la route Lomé – Kpalimé, section 3',mo:'Direction générale des travaux publics',lieu:'Togo',km:35,montant:27e9,phys:34,fin:30,delai:'30 mois · fin prévue mars 2028',chef:'Yao Agbeko',eff:158,c:[29,21,15,11,8,6.5,13,0],ouv:[[9,'Dalot 2×1'],[22.6,'Pont 60 m']]},
-  {id:4,nom:'Contournement nord — 2×2 voies',mo:'Agence de gestion des routes',lieu:'Bamako',km:18,montant:21e9,phys:12,fin:15,delai:'28 mois · fin prévue décembre 2028',chef:'Moussa Diarra',eff:87,c:[9.5,3.2,0,0,0,0,2,0],ouv:[[4.4,'Échangeur'],[13,'Pont 45 m']]}
+  {id:1,nom:'Bitumage de la route Savalou – Djougou, lot 2',mo:'Ministère des Infrastructures',lieu:'Bénin',km:48,montant:38.5e9,phys:62,fin:54,delai:'24 mois · fin prévue août 2027',chef:'Ibrahim Sanou',eff:214,c:[48,44,39,34,31,28,36,12],ouv:[[6.2,'Dalot 2×2'],[19.4,'Pont 35 m'],[33,'Dalot 3×2'],[44.5,'Péage']],cb:[9100,5200,3300,1900,800],cr:[9650,5480,3250,1840,790]},
+  {id:2,nom:'Voiries urbaines et assainissement — phase B',mo:'Agence des grands travaux urbains',lieu:'Cotonou',km:12.4,montant:9.2e9,phys:81,fin:70,delai:'14 mois · fin prévue février 2027',chef:'Clarisse Hounsa',eff:96,c:[12.4,12.4,12,11.2,10.6,10.1,11.8,6.5],ouv:[[2.1,'Collecteur'],[7.8,'Carrefour giratoire']],cb:[2900,1500,1100,600,250],cr:[2850,1470,1120,610,240]},
+  {id:3,nom:'Réhabilitation de la route Lomé – Kpalimé, section 3',mo:'Direction générale des travaux publics',lieu:'Togo',km:35,montant:27e9,phys:34,fin:30,delai:'30 mois · fin prévue mars 2028',chef:'Yao Agbeko',eff:158,c:[29,21,15,11,8,6.5,13,0],ouv:[[9,'Dalot 2×1'],[22.6,'Pont 60 m']],cb:[3500,2100,1300,700,300],cr:[3600,2650,1350,720,310]},
+  {id:4,nom:'Contournement nord — 2×2 voies',mo:'Agence de gestion des routes',lieu:'Bamako',km:18,montant:21e9,phys:12,fin:15,delai:'28 mois · fin prévue décembre 2028',chef:'Moussa Diarra',eff:87,c:[9.5,3.2,0,0,0,0,2,0],ouv:[[4.4,'Échangeur'],[13,'Pont 45 m']],cb:[700,650,400,250,150],cr:[690,640,410,260,150]}
  ],
  engins:[
   ['FIN-01','Finisseur Vögele S1800',1,'En service',4210,'12 déc.'],['FIN-02','Finisseur Cat AP655',3,'En service',2890,'28 nov.'],
@@ -164,31 +180,49 @@ const D={
  hse:{jours:147,list:[['8 nov.',3,'Presque-accident','Recul de camion sans signaleur','Clôturé'],['2 nov.',1,'Soin léger','Brûlure légère à la répandeuse','Clôturé'],['28 oct.',4,'Riverains','Poussière : plainte du quartier, arrosage renforcé','En cours']]},
  sal:[['Koffi Mensah','Directeur général','CDI','—','À jour'],['Aminata Traoré','Conductrice de travaux','CDI','—','À jour'],['Ibrahim Sanou','Chef de chantier','CDD','30 juin 2027','À jour'],['Fatou Bah','Topographe','CDD','15 déc. 2026','À refaire'],['Adama Koné','Conducteur d\'engin','CDD','31 déc. 2026','À jour'],['Awa Cissé','Laborantine','CDD','28 févr. 2027','À jour'],['Oumar Sidibé','Manœuvre','Journalier','—','À faire'],['Mariam Touré','Signaleuse','Journalier','—','À jour']],
  dem:[{n:'Jean Akpovi',t:'Congé annuel',d:'18 – 29 nov.',st:'En attente'},{n:'Awa Cissé',t:'Permission exceptionnelle',d:'14 – 16 nov.',st:'En attente'},{n:'Kodjo Amavi',t:'Avance sur salaire',d:'30 000 F',st:'En attente'}],
+ caut:[
+  {t:"Caution de soumission",ch:0,o:"Appel d'offres — route Kandi – Banikoara",b:"Banque du Golfe",m:0.35e9,e:"24 nov. 2026",st:"Expire bientôt"},
+  {t:"Caution d'avance de démarrage",ch:1,b:"Banque du Golfe",m:7.7e9,e:"30 juin 2027",st:"Active"},
+  {t:"Caution de bonne exécution",ch:1,b:"Sahel Bank",m:1.93e9,e:"Réception provisoire",st:"Active"},
+  {t:"Retenue de garantie (10 %)",ch:2,b:"Retenue par le maître d'ouvrage",m:0.64e9,e:"Réception définitive — févr. 2028",st:"Active"},
+  {t:"Caution de bonne exécution",ch:3,b:"Sahel Bank",m:1.35e9,e:"Réception provisoire",st:"Active"},
+  {t:"Retenue de garantie (10 %)",ch:5,o:"Route Bohicon – Dassa (chantier terminé)",b:"Retenue par le maître d'ouvrage",m:1.12e9,e:"Garantie terminée depuis le 3 oct.",st:"À libérer"}
+ ],
  dec:[
   {n:'N° 11',ch:1,p:'Octobre 2026',m:1.42e9,st:'En attente',j:18},{n:'N° 10',ch:1,p:'Septembre 2026',m:1.61e9,st:'En retard',j:64},
   {n:'N° 9',ch:2,p:'Octobre 2026',m:0.58e9,st:'En attente',j:12},{n:'N° 8',ch:2,p:'Septembre 2026',m:0.66e9,st:'Payé',j:0},
   {n:'N° 6',ch:3,p:'Octobre 2026',m:0.94e9,st:'En retard',j:47},{n:'N° 2',ch:4,p:'Octobre 2026',m:0.71e9,st:'Payé',j:0}
  ]
 };
+const D0=JSON.stringify(D);const SK='btppro_v2';
+try{const s=JSON.parse(localStorage.getItem(SK)||'null');if(s&&s.chantiers&&s.caut)Object.assign(D,s)}catch(e){}
 const ch=id=>D.chantiers.find(c=>c.id===id);
+const POSTES=['Matériaux (bitume, granulats, ciment)','Engins et carburant','Main-d\'œuvre','Sous-traitants','Frais de chantier'];
+const GEO={1:[[7.928,1.975],[9.708,1.666]],2:[[6.365,2.40],[6.40,2.33]],3:[[6.17,1.21],[6.90,0.63]],4:[[12.70,-8.06],[12.73,-7.90]]};
+const sum=a=>a.reduce((s,x)=>s+x,0);
+const earned=c=>c.montant*c.phys/100/1e6;           // travaux réalisés, en millions
+const marge=(c,k)=>(earned(c)-sum(c[k]))/earned(c)*100;
+const pc=x=>x.toFixed(1).replace('.',',')+' %';
+let map=null;
 const ROLES={
- dg:{ic:'🏢',l:'Direction générale',u:'Koffi Mensah',d:'Vue d\'ensemble : chantiers, argent, matériel, alertes',nav:['dash','chantiers','finances','engins','materiaux','rh','personnel','qhse']},
+ dg:{ic:'🏢',l:'Direction générale',u:'Koffi Mensah',d:'Vue d\'ensemble : chantiers, argent, matériel, alertes',nav:['dash','chantiers','carte','couts','finances','engins','materiaux','rh','personnel','qhse']},
  rh:{ic:'🪪',l:'Ressources humaines',u:'Rachelle Ahouansou',d:'Dossiers, contrats, congés, badges et paie',nav:['rh','personnel']},
- ct:{ic:'📐',l:'Conducteur de travaux',u:'Aminata Traoré',d:'Avancement par PK, rapports, qualité, moyens',nav:['chantiers','journal','engins','materiaux','qhse']},
+ ct:{ic:'📐',l:'Conducteur de travaux',u:'Aminata Traoré',d:'Avancement par PK, rapports, qualité, moyens',nav:['chantiers','carte','journal','engins','materiaux','qhse']},
  chef:{ic:'🦺',l:'Chef de chantier',u:'Ibrahim Sanou',d:'Rapport du jour, pointage des équipes, pannes',nav:['journal','personnel','engins','qhse']},
  ouv:{ic:'👷',l:'Ouvrier',u:'Oumar Sidibé',d:'Pointer, voir ses jours et sa paie, faire une demande',nav:['moi']},
- parc:{ic:'🚜',l:'Parc & logistique',u:'Serge Dossou',d:'Engins, entretien, bitume, granulats, gasoil',nav:['engins','materiaux']},
+ parc:{ic:'🚜',l:'Parc & logistique',u:'Serge Dossou',d:'Engins, entretien, bitume, granulats, gasoil',nav:['engins','carte','materiaux']},
  mo:{ic:'🏛️',l:'Maître d\'ouvrage / Mission de contrôle',u:'Bureau de contrôle',d:'Suivi en ligne du chantier et des décomptes',nav:['client']}
 };
-const NAV={dash:['📊','Tableau de bord'],chantiers:['🛣️','Chantiers'],journal:['📝','Rapports journaliers'],engins:['🚜','Parc engins'],materiaux:['🛢️','Matériaux & centrale'],personnel:['👷','Personnel & pointage'],qhse:['✅','Qualité & sécurité'],finances:['💰','Décomptes & finances'],client:['🛣️','Suivi du chantier'],rh:['🪪','Ressources humaines'],moi:['⏱️','Mon pointage']};
+const NAV={dash:['📊','Tableau de bord'],chantiers:['🛣️','Chantiers'],journal:['📝','Rapports journaliers'],engins:['🚜','Parc engins'],materiaux:['🛢️','Matériaux & centrale'],personnel:['👷','Personnel & pointage'],qhse:['✅','Qualité & sécurité'],finances:['💰','Décomptes & finances'],client:['🛣️','Suivi du chantier'],rh:['🪪','Ressources humaines'],moi:['⏱️','Mon pointage'],couts:['📈','Rentabilité'],carte:['🗺️','Carte']};
 let role=null,view=null,sel=1,badgeSel=null;
 const now=()=>new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 const qr=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;let o='';for(let i=0;i<121;i++){const x=i%11,y=(i/11)|0,cor=(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7);h=(h*1103515245+12345)>>>0;o+=`<i style="background:${cor||((h>>16)&1)?'#1F2A37':'#fff'}"></i>`}return `<div class="qr">${o}</div>`};
 const badge=(n,p,mat)=>`<div class="badge">${qr(n)}<div><b>${n}</b><div class="sm mut">${p}</div><div class="sm">Matricule ${mat}</div><div class="sm" style="color:var(--acc);font-weight:600">Atlas Routes &amp; Travaux</div></div></div>`;
 
-const stChip=s=>{const m={'En service':'c-ok','Disponible':'c-blue','En panne':'c-bad','Maintenance':'c-warn','Payé':'c-ok','En attente':'c-warn','En retard':'c-bad','Brouillon':'c-g','Clôturé':'c-g','En cours':'c-warn','Approuvé':'c-ok','Refusé':'c-bad','À jour':'c-ok','À refaire':'c-warn','À faire':'c-bad','CDI':'c-blue','CDD':'c-g','Journalier':'c-warn'};return `<span class="chip ${m[s]||'c-g'}">${s}</span>`};
+const stChip=s=>{const m={'En service':'c-ok','Disponible':'c-blue','En panne':'c-bad','Maintenance':'c-warn','Payé':'c-ok','En attente':'c-warn','En retard':'c-bad','Brouillon':'c-g','Clôturé':'c-g','En cours':'c-warn','Approuvé':'c-ok','Refusé':'c-bad','À jour':'c-ok','À refaire':'c-warn','À faire':'c-bad','CDI':'c-blue','CDD':'c-g','Journalier':'c-warn','Active':'c-ok','Expire bientôt':'c-bad','À libérer':'c-warn'};return `<span class="chip ${m[s]||'c-g'}">${s}</span>`};
 const head=(t,p,b='')=>`<div class="head"><div><h2>${t}</h2><p>${p}</p></div>${b}</div>`;
-const kpi=(l,v,e,c='')=>`<div class="card kpi"><small>${l}</small><b>${v}</b><em class="${c}">${e}</em></div>`;
+const KI=[[/effectif|présent|contrat|demande|jours trav|retard/i,'👷'],[/chantier|enrobé|avancement|carnet|travaux/i,'🛣️'],[/engin|panne|maintenance|gasoil|production|camion/i,'🚜'],[/décompte|paiement|encaiss|paie|percevoir|marge|dépens|argent|caution|retenue|taux|masse/i,'💰'],[/effectif|présent|contrat|demande|jours trav|retard/i,'👷'],[/accident|essai|sécurité|causerie|équipement|visite|température|écart/i,'🦺']];
+const kpi=(l,v,e,c='')=>`<div class="card kpi"><span class="ki">${(KI.find(k=>k[0].test(l))||[0,'📌'])[1]}</span><div><small>${l}</small><b>${v}</b><em class="${c}">${e}</em></div></div>`;
 
 function lineaire(c){
  return `<div class="lin"><div class="pk"><span></span><div><span>PK 0</span><span>${pkf(c.km/2)}</span><span>${pkf(c.km)}</span></div><span></span></div>
@@ -203,8 +237,10 @@ dash(){
   ...D.engins.filter(e=>e.st==='En panne').map(e=>['var(--bad)',`Engin en panne : ${e.nom}`,`${e.code} · ${ch(e.ch).lieu} — le compactage est ralenti`]),
   ...D.dec.filter(d=>d.st==='En retard').map(d=>['var(--warn)',`Décompte ${d.n} impayé depuis ${d.j} jours`,`${F(d.m)} · ${ch(d.ch).mo}`]),
   ...D.essais.filter(e=>!e[6]).map(e=>['var(--warn)',`Essai non conforme : ${e[3]}`,`${ch(e[1]).lieu} · ${e[2]} — résultat ${e[4]} (exigé ${e[5]})`])];
- return head(`Bonjour ${ROLES[role].u}`,'Situation de l\'entreprise au 12 novembre 2026')+
- `<div class="grid k4">${kpi('Chantiers en cours',D.chantiers.length,F(D.chantiers.reduce((s,c)=>s+c.montant,0))+' de marchés')}
+ D.caut.filter(k=>k.st!=='Active').forEach(k=>al.push([k.st==='À libérer'?'var(--warn)':'var(--bad)',k.st==='À libérer'?`Retenue de garantie à réclamer : ${F(k.m)}`:`${k.t} : expire le ${k.e}`,k.o||ch(k.ch).nom]));
+ D.chantiers.filter(c=>marge(c,'cb')-marge(c,'cr')>5).forEach(c=>al.push(['var(--bad)',`Marge en baisse : ${c.lieu}`,`${pc(marge(c,'cr'))} au lieu de ${pc(marge(c,'cb'))} prévus — voir Rentabilité`]));
+ return `<div class="hero"><div><h2>Bonjour ${ROLES[role].u} 👋</h2><p>Voici la situation de vos chantiers au jeudi 12 novembre 2026.</p></div><div class="q"><button class="btn" data-act="nav" data-id="chantiers">Voir les chantiers</button><button class="btn ghost" data-act="nav" data-id="carte">Ouvrir la carte</button><button class="btn ghost" data-act="nav" data-id="couts">Rentabilité</button></div></div>`+
+ `<div class="grid k4 k6">${kpi('Chantiers en cours',D.chantiers.length,F(D.chantiers.reduce((s,c)=>s+c.montant,0))+' de marchés')}
  ${kpi('Enrobé posé (cumul)',String(km.toFixed(1)).replace('.',',')+' km','+ 2,9 km cette semaine','up')}
  ${kpi('Engins opérationnels',dispo+' / '+D.engins.length,D.engins.length-dispo+' à l\'arrêt',dispo<D.engins.length?'wn':'up')}
  ${kpi('Décomptes à encaisser',F(att),D.dec.filter(d=>d.st==='En retard').length+' en retard de paiement','dn')}
@@ -273,7 +309,27 @@ finances(){
  `<div class="grid k4">${kpi('Carnet de commandes',F(D.chantiers.reduce((a,c)=>a+c.montant,0)),'4 marchés en cours')}${kpi('En attente de paiement',F(s('En attente')),'dans les délais','wn')}${kpi('En retard de paiement',F(s('En retard')),'relances à faire','dn')}${kpi('Encaissé (2 derniers mois)',F(s('Payé')),'','up')}</div>
  <div class="card" style="margin-top:14px"><div class="tw"><table><tr><th>Décompte</th><th>Chantier</th><th>Période</th><th>Montant</th><th>Statut</th><th>Délai</th><th></th></tr>
  ${D.dec.map((d,i)=>`<tr><td><b>${d.n}</b></td><td>${ch(d.ch).lieu}<div class="sm mut">${ch(d.ch).mo}</div></td><td>${d.p}</td><td><b>${F(d.m)}</b></td><td>${stChip(d.st)}</td><td>${d.st==='Payé'||d.st==='Brouillon'?'—':d.j+' jours'}</td><td>${d.st==='Payé'?'':d.st==='Brouillon'?`<button class="btn sm" data-act="send" data-id="${i}">Transmettre</button>`:`<button class="btn sm ghost" data-act="pay" data-id="${i}">Marquer payé</button>`}</td></tr>`).join('')}</table></div>
- <p class="sm mut" style="margin:12px 0 0">Le décompte est calculé à partir des quantités saisies dans les rapports journaliers : plus de ressaisie, plus d'oubli.</p></div>`;
+ <p class="sm mut" style="margin:12px 0 0">Le décompte est calculé à partir des quantités saisies dans les rapports journaliers : plus de ressaisie, plus d'oubli.</p></div>
+ <div class="card" style="margin-top:14px"><div class="row" style="flex-wrap:wrap;margin-bottom:10px"><h3 style="margin:0">Cautions, avances et retenues de garantie</h3><span class="chip c-blue">${F(sum(D.caut.map(k=>k.m)))} immobilisés</span></div><div class="tw"><table><tr><th>Type</th><th>Marché</th><th>Banque</th><th>Montant</th><th>Échéance</th><th>État</th><th></th></tr>
+ ${D.caut.map((k,i)=>`<tr><td><b>${k.t}</b></td><td>${k.o||ch(k.ch).lieu+' — '+ch(k.ch).nom.slice(0,30)+'…'}</td><td>${k.b}</td><td><b>${F(k.m)}</b></td><td>${k.e}</td><td>${stChip(k.st)}</td><td>${k.st==='À libérer'?`<button class="btn sm" data-act="lib" data-id="${i}">Demander la mainlevée</button>`:k.st==='Expire bientôt'?`<button class="btn sm ghost" data-act="prol" data-id="${i}">Prolonger</button>`:''}</td></tr>`).join('')}</table></div>
+ <p class="sm mut" style="margin:12px 0 0">BTP Pro vous prévient avant chaque échéance : plus de caution qui expire en plein appel d'offres, plus de retenue de garantie oubliée chez le maître d'ouvrage.</p></div>`;
+},
+couts(){
+ const c=ch(sel),T=D.chantiers,e=sum(T.map(earned)),d=sum(T.map(x=>sum(x.cr))),w=T.slice().sort((a,b)=>(marge(a,'cr')-marge(a,'cb'))-(marge(b,'cr')-marge(b,'cb')))[0];
+ return head('Rentabilité','Est-ce que chaque chantier gagne de l\'argent ? La réponse, poste par poste')+
+ `<div class="grid k4">${kpi('Travaux réalisés (valeur)',F(e*1e6),'tous chantiers')}${kpi('Dépenses engagées',F(d*1e6),'matériaux, engins, salaires…')}${kpi('Marge réelle',pc((e-d)/e*100),'objectif : 15 %',(e-d)/e>0.13?'up':'wn')}${kpi('Chantier à surveiller',w.lieu,pc(marge(w,'cr'))+' de marge','dn')}</div>
+ <div class="grid k4" style="margin-top:14px">${T.map(x=>{const m=marge(x,'cr'),p=marge(x,'cb');return `<div class="card proj" data-act="sel" data-id="${x.id}" style="${x.id===sel?'border-color:var(--acc);box-shadow:0 0 0 2px var(--acc2)':''}"><span class="chip c-g">${x.lieu}</span><b style="display:block;margin:8px 0 6px;font-family:Sora;font-size:22px" class="${p-m>5?'neg':'pos'}">${pc(m)}</b><span class="sm mut">marge réelle · prévue ${pc(p)}</span></div>`}).join('')}</div>
+ <div class="card" style="margin-top:14px"><h3>${c.nom}</h3><div class="tw"><table><tr><th>Poste de dépense</th><th>Prévu</th><th>Dépensé</th><th style="width:26%">Consommation du budget</th><th>Écart</th></tr>
+ ${POSTES.map((n,i)=>{const b=c.cb[i],r=c.cr[i],x=(r-b)/b*100;return `<tr><td><b>${n}</b></td><td>${F(b*1e6)}</td><td>${F(r*1e6)}</td><td><div class="bar ${x>5?'r':'g'}"><i style="width:${Math.min(100,r/b*83)}%"></i></div></td><td class="${x>5?'neg':x>0?'wn':'pos'}">${x>0?'+':''}${pc(x)}</td></tr>`}).join('')}
+ <tr><td><b>Total</b></td><td><b>${F(sum(c.cb)*1e6)}</b></td><td><b>${F(sum(c.cr)*1e6)}</b></td><td></td><td class="${sum(c.cr)>sum(c.cb)*1.05?'neg':'pos'}">${sum(c.cr)>sum(c.cb)?'+':''}${pc((sum(c.cr)-sum(c.cb))/sum(c.cb)*100)}</td></tr></table></div>
+ <p class="sm mut" style="margin:12px 0 0">Les dépenses viennent des bons de livraison, du carburant, du pointage et des factures des sous-traitants déjà saisis dans BTP Pro. Travaux réalisés sur ce chantier : <b>${F(earned(c)*1e6)}</b>.</p></div>`;
+},
+carte(){
+ return head('Carte des chantiers et des engins','Où sont vos chantiers, où en est le bitume, où se trouve chaque machine')+
+ `<div class="card"><div class="chips" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn sm" data-act="zoom" data-id="0">Tous les chantiers</button>${D.chantiers.map(c=>`<button class="btn sm ghost" data-act="zoom" data-id="${c.id}">${c.lieu}</button>`).join('')}</div>
+ <div id="map"></div>
+ <div class="leg"><span><i style="background:#1F2A37"></i>Route bitumée</span><span><i style="background:#E8730C"></i>Reste à faire</span><span><i style="background:#15803D"></i>Engin en service</span><span><i style="background:#B91C1C"></i>Engin en panne</span><span><i style="background:#B45309"></i>En maintenance</span></div></div>
+ <div class="grid k4" style="margin-top:14px">${D.chantiers.map(c=>{const g=D.engins.filter(e=>e.ch===c.id);return `<div class="card"><span class="chip c-g">${c.lieu}</span><b style="display:block;margin:8px 0">${g.length} engin${g.length>1?'s':''} sur place</b>${g.map(e=>`<div class="row sm" style="margin:4px 0"><span>${e.code}</span>${stChip(e.st)}</div>`).join('')}</div>`}).join('')}</div>`;
 },
 rh(){
  const tot=D.chantiers.reduce((s,c)=>s+c.eff,0),pay=D.equipe.reduce((s,e)=>s+e.j*e.t,0);
@@ -310,12 +366,28 @@ function toast(t){const e=$('#toast');e.textContent='✓ '+t;e.classList.add('on
 function render(){
  $('#nav').innerHTML=ROLES[role].nav.map(n=>`<button class="${n===view?'on':''}" data-act="nav" data-id="${n}"><span>${NAV[n][0]}</span>${NAV[n][1]}</button>`).join('');
  $('#main').innerHTML=V[view]()+`<p class="foot">Démo BTP Pro — données fictives · Application conçue par <a href="https://www.sackoconcept.com">SACKO CONCEPT</a></p>`;
+ try{localStorage.setItem(SK,JSON.stringify(D))}catch(e){}
+ map=null;if(view==='carte')initMap();
  const f=$('#fj');if(f)f.addEventListener('submit',e=>{e.preventDefault();const d=Object.fromEntries(new FormData(f));
   const c=ch(+d.ch),k=+d.couche,a=Math.min(+d.a,c.km);if(a>c.c[k])c.c[k]=Math.round(a*10)/10;
   D.journal.unshift({d:'12 nov.',ch:+d.ch,meteo:d.meteo,couche:k,de:+d.de,a:+d.a,q:d.q,eff:+d.eff,obs:d.obs});render();toast('Rapport enregistré — l\'avancement du chantier est mis à jour')});
  const g=$('#fd');if(g)g.addEventListener('submit',e=>{e.preventDefault();const d=Object.fromEntries(new FormData(g));D.dem.unshift({n:D.equipe[4].n,t:d.t,d:d.d,st:'En attente'});render();toast('Demande envoyée aux ressources humaines')});
 }
-function enter(r){role=r;view=ROLES[r].nav[0];$('#uname').textContent=ROLES[r].u;$('#urole').textContent=ROLES[r].l;$('#login').style.display='none';$('#app').style.display='block';render();scrollTo(0,0)}
+const lerp=(g,f)=>[g[0][0]+(g[1][0]-g[0][0])*f,g[0][1]+(g[1][1]-g[0][1])*f];
+function initMap(){
+ const el=$('#map');if(!el)return;
+ if(!window.L){el.innerHTML='<p class="mut" style="padding:24px">La carte s\'affiche dès que vous êtes connecté à Internet.</p>';return}
+ map=L.map(el,{scrollWheelZoom:false});map.fitBounds(Object.values(GEO).flat(),{padding:[40,40]});
+ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:17}).addTo(map);
+ D.chantiers.forEach(c=>{const g=GEO[c.id],f=c.c[5]/c.km;
+  L.polyline(g,{color:'#E8730C',weight:6,opacity:.9}).addTo(map);
+  if(f>0)L.polyline([g[0],lerp(g,f)],{color:'#1F2A37',weight:6}).addTo(map);
+  L.circleMarker(g[0],{radius:9,color:'#fff',weight:3,fillColor:'#E8730C',fillOpacity:1}).addTo(map).bindPopup('<b>'+c.nom+'</b><br>'+c.lieu+' · '+String(c.km).replace('.',',')+' km<br>Avancement : '+c.phys+' % · bitumé : '+String(c.c[5]).replace('.',',')+' km');
+  const g2=D.engins.filter(e=>e.ch===c.id);
+  g2.forEach((e,i)=>{const col=e.st==='En panne'?'#B91C1C':e.st==='Maintenance'?'#B45309':'#15803D';
+   L.circleMarker(lerp(g,Math.min(.98,Math.max(.04,f+(i-g2.length/2)*.035))),{radius:6,color:'#fff',weight:2,fillColor:col,fillOpacity:1}).addTo(map).bindPopup('<b>'+e.code+'</b> — '+e.nom+'<br>'+e.st+' · '+fr(e.h)+' h moteur')})});
+}
+function enter(r){role=r;view=ROLES[r].nav[0];$('#uname').textContent=ROLES[r].u;$('#urole').textContent=ROLES[r].l;$('#login').style.display='none';$('#app').style.display='block';render();scrollTo(0,0);const sd=$('.side');if(sd)sd.scrollLeft=0}
 $('#roles').innerHTML=Object.entries(ROLES).map(([k,r])=>`<button class="role" data-act="role" data-id="${k}"><div class="ic">${r.ic}</div><b>${r.l}</b><small>${r.d}</small></button>`).join('');
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.id;
@@ -328,6 +400,10 @@ document.addEventListener('click',e=>{
  if(a==='pt'){D.equipe[id].ok=!D.equipe[id].ok;render();return}
  if(a==='pay'){D.dec[id].st='Payé';render();toast('Paiement enregistré');return}
  if(a==='send'){D.dec[id].st='En attente';D.dec[id].j=0;render();toast('Décompte transmis au maître d\'ouvrage');return}
+ if(a==='reset'){try{localStorage.removeItem(SK)}catch(e){}Object.assign(D,JSON.parse(D0));badgeSel=null;sel=1;render();toast('La démo est revenue à son état de départ');return}
+ if(a==='zoom'){if(map){if(+id)map.fitBounds(GEO[id],{padding:[70,70],maxZoom:12});else map.fitBounds(Object.values(GEO).flat(),{padding:[40,40]})}return}
+ if(a==='lib'){D.caut[id].st='Active';D.caut[id].e='Mainlevée demandée le 12 nov.';render();toast('Demande de mainlevée générée, prête à envoyer au maître d\'ouvrage');return}
+ if(a==='prol'){D.caut[id].st='Active';D.caut[id].e='24 févr. 2027';render();toast('Demande de prolongation envoyée à la banque');return}
  if(a==='punch'){const m=D.equipe[4];if(!m.ok){m.ok=true;m.h=now();toast('Arrivée pointée à '+m.h)}else{m.out=now();toast('Départ pointé à '+m.out)}render();return}
  if(a==='scan'){const m=D.equipe.find(e=>!e.ok);if(!m)return toast('Toute l\'équipe est déjà pointée');m.ok=true;m.h=now();render();toast('Badge scanné : '+m.n+' — '+m.h);return}
  if(a==='dem'){D.dem[id].st=b.dataset.v;render();toast('Demande : '+b.dataset.v.toLowerCase());return}
