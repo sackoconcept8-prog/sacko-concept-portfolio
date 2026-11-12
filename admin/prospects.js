@@ -10,17 +10,45 @@ const P_VISIT = ["Togo","Bénin","Mali"]; // représentants sur place (Lomé, Co
 const P_TPL = {
   premier:{n:"Premier contact",d:"Agences moyennes et petites",t:"Bonjour,\nJ'aimerais m'entretenir avec vous au sujet de la gestion de vos agents.\nNous avons conçu SécuriPro, un logiciel pour les sociétés de gardiennage : planning, pointage, rondes et alerte SOS.\nJe peux vous le présenter en 15 minutes.\nHawa Sacko · SACKO CONCEPT"},
   grandes:{n:"Grandes agences",d:"Direction, plusieurs sites",t:"Bonjour,\nJ'aimerais m'entretenir avec la direction de {agence} au sujet du suivi de vos agents.\nNous avons conçu SécuriPro, un logiciel de gestion pour les sociétés de gardiennage, installé à vos couleurs.\nJe peux vous le présenter en 15 minutes.\nHawa Sacko · SACKO CONCEPT"},
-  relance:{n:"Relance unique",d:"7 jours après, une seule fois",t:"Bonjour,\nJe reviens vers vous au sujet de SécuriPro, notre logiciel pour les sociétés de gardiennage.\nJe peux vous le présenter en 15 minutes, quand vous voulez.\nHawa Sacko · SACKO CONCEPT"},
+  relance:{n:"Relance 1",d:"Quelques jours après le premier message",t:"Bonjour,\nJe reviens vers vous au sujet de SécuriPro, notre logiciel pour les sociétés de gardiennage.\nJe peux vous le présenter en 15 minutes, quand vous voulez.\nHawa Sacko · SACKO CONCEPT"},
   appel:{n:"Après un appel",d:"Quand vous avez eu quelqu'un au téléphone",t:"Bonjour,\nMerci pour notre échange. Comme convenu, voici SécuriPro, notre logiciel pour les sociétés de gardiennage.\nJe vous propose une présentation de 15 minutes, quand vous voulez.\nHawa Sacko · SACKO CONCEPT"},
   en:{n:"Anglais",d:"Zone anglophone (Buea, Bamenda)",t:"Hello,\nI would like to speak with you about managing your guards.\nWe built SécuriPro, a software for security companies: scheduling, check-in, patrols and SOS alerts.\nI can show it to you in 15 minutes.\nHawa Sacko · SACKO CONCEPT"}
 };
-let pFilter="À faire", pCountry="", pSize="", pMob=false;
+P_TPL.relance2={n:"Relance 2",d:"Avec le lien de la démo",t:"Bonjour,\nJe me permets de vous relancer au sujet de SécuriPro.\nVous pouvez tester la démo vous-même, gratuitement : https://www.sackoconcept.com/securipro/\nDites-moi ce que vous en pensez.\nHawa Sacko · SACKO CONCEPT"};
+P_TPL.relance3={n:"Dernière relance",d:"Dernier message, sans insister",t:"Bonjour,\nJe ne veux pas vous déranger davantage. Si la gestion de vos agents redevient un sujet, la démo de SécuriPro reste ouverte : https://www.sackoconcept.com/securipro/\nBelle continuation à {agence}.\nHawa Sacko · SACKO CONCEPT"};
+/* ---------- Une liste de prospects par application (colonne « Application » de la feuille) ---------- */
+const P_REL_KEY = "sc_pros_rel";
+const P_APPS = {
+  securipro:{n:"SécuriPro",url:"https://www.sackoconcept.com/securipro/",subj:"SécuriPro – logiciel de gestion pour sociétés de gardiennage",en:"SécuriPro – management software for security companies"},
+  btppro:{n:"BTP Pro",url:"https://www.sackoconcept.com/btppro/",subj:"BTP Pro – logiciel de gestion pour entreprises de routes et travaux publics",en:"BTP Pro – management software for road and public works companies"},
+  nettopro:{n:"NettoPro",url:"https://www.sackoconcept.com/nettopro/",subj:"NettoPro – logiciel de gestion pour sociétés de nettoyage",en:"NettoPro – management software for cleaning companies"}
+};
+function pMk(app,sujet,quoi,points,enQuoi,enPoints){const n=P_APPS[app].n,u=P_APPS[app].url,s="\nHawa Sacko · SACKO CONCEPT";return{
+  premier:"Bonjour,\nJ'aimerais m'entretenir avec vous au sujet de "+sujet+".\nNous avons conçu "+n+", un logiciel pour "+quoi+" : "+points+".\nJe peux vous le présenter en 15 minutes."+s,
+  grandes:"Bonjour,\nJ'aimerais m'entretenir avec la direction de {agence} au sujet de "+sujet+".\nNous avons conçu "+n+", un logiciel de gestion pour "+quoi+", installé à vos couleurs.\nJe peux vous le présenter en 15 minutes."+s,
+  relance:"Bonjour,\nJe reviens vers vous au sujet de "+n+", notre logiciel pour "+quoi+".\nJe peux vous le présenter en 15 minutes, quand vous voulez."+s,
+  appel:"Bonjour,\nMerci pour notre échange. Comme convenu, voici "+n+", notre logiciel pour "+quoi+".\nVous pouvez tester la démo ici : "+u+"\nJe vous propose une présentation de 15 minutes, quand vous voulez."+s,
+  en:"Hello,\nI would like to speak with you about "+enQuoi+".\nWe built "+n+": "+enPoints+".\nI can show it to you in 15 minutes."+s,
+  relance2:"Bonjour,\nJe me permets de vous relancer au sujet de "+n+".\nVous pouvez tester la démo vous-même, gratuitement : "+u+"\nDites-moi ce que vous en pensez."+s,
+  relance3:"Bonjour,\nJe ne veux pas vous déranger davantage. Si le sujet redevient d'actualité, la démo de "+n+" reste ouverte : "+u+"\nBelle continuation à {agence}."+s}}
+const P_TPLX = {
+  btppro:pMk("btppro","le suivi de vos chantiers","les entreprises de routes et de travaux publics","avancement par kilomètre, engins, matériaux, pointage des ouvriers et décomptes","managing your road works","a software for road and public works companies, with site progress, equipment, materials, attendance and payment claims"),
+  nettopro:pMk("nettopro","la gestion de vos agents et de vos sites","les sociétés de nettoyage","planning des agents, pointage, contrôles qualité, devis et factures","managing your cleaning teams","a software for cleaning companies, with staff scheduling, check-in, quality checks, quotes and invoices")
+};
+function pApp(r){const a=String(r.Application||"").toLowerCase();return a.includes("btp")?"btppro":a.includes("nett")?"nettopro":"securipro"}
+function pTplBase(k,app){return app&&app!=="securipro"?P_TPLX[app][k]:P_TPL[k].t}
+function pTplKey(k,app){return app&&app!=="securipro"?app+":"+k:k}
+function pSubj(r,tk){const a=P_APPS[pApp(r)];return tk==="en"?a.en:a.subj}
+function pWaiting(r){return ["Contacté","Relancé"].includes(r.Statut)}
+function pRel(r){const n=pJSON(P_REL_KEY)[pKey(r)]||0;return n||(r.Statut==="Relancé"?1:0)}
+function pRelTk(r){return ["relance","relance2","relance3"][Math.min(pRel(r),2)]}
+let pFilter="À faire", pCountry="", pSize="", pMob=false, pAppF="";
 function pJSON(k){try{return JSON.parse(store.get(k)||"{}")}catch(e){return{}}}
-function pTpl(k){const o=pJSON(P_TPL_KEY);return o[k]||P_TPL[k].t}
+function pTpl(k,app){const o=pJSON(P_TPL_KEY);return o[pTplKey(k,app)]||pTplBase(k,app)}
 function pContactAt(r){return pJSON(P_DONE_KEY)[pKey(r)]}
 function pKey(r){return digits(r["Téléphone"])||r.Agence}
-function pDue(r){const st=r.Statut||"À contacter";const t=pContactAt(r);return st==="Contacté"&&t&&(Date.now()-t)>=7*864e5}
-function pAuto(r){if(pDue(r))return"relance";if(/Buea|Bamenda/i.test(r.Ville||""))return"en";return r.Taille==="Grande"?"grandes":"premier"}
+function pDue(r){const t=pContactAt(r);return pWaiting(r)&&!!t&&(Date.now()-t)>=7*864e5&&pRel(r)<3}
+function pAuto(r){if(pWaiting(r))return pRelTk(r);if(/Buea|Bamenda/i.test(r.Ville||""))return"en";return r.Taille==="Grande"?"grandes":"premier"}
 function pWa(r){if(r.Statut==="Pas sur WhatsApp")return"";return digits(r.WhatsApp)||(r.Type==="Mobile"?digits(r["Téléphone"]):"")}
 function pMobile(r){return r.Type==="Mobile"?digits(r["Téléphone"]):digits(r.WhatsApp)}
 function pFb(r){const v=String(r.Facebook||"").trim();if(!v)return"";return /^https?:/.test(v)?v:"https://www.facebook.com/"+v.replace(/^@/,"")}
@@ -34,7 +62,7 @@ const PI = {
 };
 function pLinks(r,tk){
   const msg=pMsg(r,tk),wa=pWa(r),mob=pMobile(r),tel=digits(r["Téléphone"]),mail=String(r["E-mail"]||"").trim(),fb=pFb(r);
-  const subj=tk==="en"?"SécuriPro – management software for security companies":"SécuriPro – logiciel de gestion pour sociétés de gardiennage";
+  const subj=pSubj(r,tk);
   return {msg,wa,mob,tel,mail,fb,
     waH:wa?"https://wa.me/"+wa+"?text="+encodeURIComponent(msg):"",
     smsH:mob?"sms:+"+mob+"?&body="+encodeURIComponent(msg):"",
@@ -48,7 +76,12 @@ function pMarkSent(r,tk,how){
   const o=pJSON(P_DONE_KEY);o[pKey(r)]=Date.now();store.set(P_DONE_KEY,JSON.stringify(o));
   const cur=r.Statut||"À contacter";
   if(cur==="À contacter"||cur==="Pas sur WhatsApp")return pSet(r,"Contacté",true).then(renderAll);
-  if(tk==="relance"&&cur==="Contacté")return pSet(r,"Relancé",true).then(renderAll);
+  if(/^relance/.test(tk)&&pWaiting(r)){
+    const n=pRel(r)+1;const c=pJSON(P_REL_KEY);c[pKey(r)]=n;store.set(P_REL_KEY,JSON.stringify(c));
+    const d=new Date().toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});const via={wa:"WhatsApp",sms:"SMS",mail:"e-mail",fb:"Facebook"}[how]||how;
+    toast("Relance n°"+n+" enregistrée");
+    return pSave(r,{"Notes":d+" : relance n°"+n+" ("+via+")"+(r.Notes?"\n"+r.Notes:"")}).then(()=>cur==="Contacté"?pSet(r,"Relancé",true):null).then(renderAll);
+  }
 }
 function pClient(r){return r.Statut==="Client"||r.Statut==="Gagné"}
 function pTask(r){return String(r["Prochaine action"]||"").trim()}
@@ -62,25 +95,27 @@ async function pSave(r,ch){
   if(!saved){const ed=pJSON(P_EDIT_KEY);ed[r._row]=Object.assign(ed[r._row]||{},ch,{Agence:r.Agence});store.set(P_EDIT_KEY,JSON.stringify(ed))}
   return saved;
 }
-function pMsg(r,k){return pTpl(k).split("{agence}").join(r.Agence||"votre agence")}
+function pMsg(r,k){const a=pApp(r);return pTpl(k,a).split("{agence}").join(r.Agence||(a==="securipro"?"votre agence":"votre entreprise"))}
 const P_SAMPLE = [
   ["2026-11-05","Sénégal","DIS – Dakar Intérim Sécurité","Dakar","+221 33 825 58 34","Fixe","Grande","Plus de 1 000 agents, convoyage de fonds.","","À contacter","","","contact@exemple-dis.sn",""],
   ["2026-11-05","Guinée","G4S Guinée","Conakry, Kipé","+224 669 40 00 02","Mobile","Grande","Filiale du groupe mondial G4S.","","Contacté",""],
   ["2026-11-05","Togo","GIPS","Lomé, Agoè","+228 92 20 83 63","Mobile","Moyenne","Sécurité aéroportuaire et portuaire.","","Intéressé","","+228 92 20 83 63","","https://www.facebook.com/exemple.gips"],
   ["2026-11-05","Cameroun","Shepherd Security and Consultancy","Buea","+237 676 03 75 26","Mobile","À qualifier","Zone anglophone.","","À contacter",""],
-  ["2026-11-05","Bénin","MSA Sécurité","Cotonou, Cadjèhoun","+229 01 21 31 28 80","Fixe","Moyenne","Certifiée ISO 9001.","","À contacter",""]
+  ["2026-11-05","Bénin","MSA Sécurité","Cotonou, Cadjèhoun","+229 01 21 31 28 80","Fixe","Moyenne","Certifiée ISO 9001.","","À contacter",""],
+  ["2026-11-12","Mali","Exemple Routes SARL","Bamako","+223 76 00 00 00","Mobile","À qualifier","Routes, ponts, bitume.","","Contacté","","","","","BTP Pro"],
+  ["2026-11-12","Bénin","Exemple Propreté","Cotonou","+229 01 90 00 00 00","Mobile","À qualifier","Nettoyage de bureaux.","","À contacter","","","","","NettoPro"]
 ];
 function pRows(){
   let rs=null;
   if(data&&data.prospects)rs=rowsOf("prospects").sort((a,b)=>a._row-b._row);
-  else if(demo){const h=["Date","Pays","Agence","Ville","Téléphone","Type","Taille","Infos","Autres numéros","Statut","Notes","WhatsApp","E-mail","Facebook"];rs=P_SAMPLE.map((v,i)=>{const o={_row:i+2,_k:"prospects"};h.forEach((x,j)=>o[x]=v[j]||"");return o})}
+  else if(demo){const h=["Date","Pays","Agence","Ville","Téléphone","Type","Taille","Infos","Autres numéros","Statut","Notes","WhatsApp","E-mail","Facebook","Application"];rs=P_SAMPLE.map((v,i)=>{const o={_row:i+2,_k:"prospects"};h.forEach((x,j)=>o[x]=v[j]||"");return o})}
   if(!rs)return null;
   const ed=pJSON(P_EDIT_KEY);rs.forEach(r=>{const e=ed[r._row];if(e&&e.Agence===r.Agence)P_EDITABLE.forEach(f=>{if(e[f]!==undefined)r[f]=e[f]})});
   return rs;
 }
 function pBadge(){const rs=pRows()||[];return rs.filter(r=>pDue(r)||pTaskDue(r)).length}
 function renderPros(){
-  const all=pRows();const el=$("v-pros");
+  const allApps=pRows();const all=allApps&&allApps.filter(r=>!pAppF||pApp(r)===pAppF);const el=$("v-pros");
   if(!all){el.innerHTML='<div class="toolbar"><h1>Prospects</h1></div><div class="empty" style="text-align:left;line-height:1.6"><b style="color:var(--fg)">Encore une petite étape pour voir tes 235 agences ici.</b><br>Tes prospects sont déjà dans ta feuille Google, onglet <b>Prospects</b>. Pour que l\'application les lise :<br>1. Ouvre ta feuille « SACKO CONCEPT – Demandes de devis », puis <b>Extensions › Apps Script</b>.<br>2. Trouve la ligne qui commence par <code>const FEUILLES = {</code> et ajoute juste après l\'accolade : <code>prospects: "Prospects", </code><br>3. Clique <b>Déployer › Gérer les déploiements</b>, le crayon, <b>Version : Nouvelle version</b>, puis <b>Déployer</b>.<br>4. Reviens ici et touche la flèche ronde.</div>';return}
   const q=(($("prosq")||{}).value||"").trim().toLowerCase();
   const countries=[...new Set(all.map(r=>r.Pays))].sort((a,b)=>a.localeCompare(b,"fr"));
@@ -90,25 +125,27 @@ function renderPros(){
   const rs=all.filter(r=>F[pFilter](r)&&(!pCountry||r.Pays===pCountry)&&(!pSize||r.Taille===pSize)&&(!pMob||!!pWa(r))&&(!q||[r.Agence,r.Ville,r.Pays,r.Infos].join(" ").toLowerCase().includes(q))).sort((a,b)=>(pTaskDue(b)-pTaskDue(a))||(pDue(b)-pDue(a))||((rank[a.Taille]??3)-(rank[b.Taille]??3)));
   const done=all.filter(r=>(r.Statut||"À contacter")!=="À contacter").length;
   el.innerHTML='<div class="toolbar"><h1>Prospects</h1><button class="btn sm dark" id="pAddBtn">+ Ajouter</button><button class="btn sm" id="pTplBtn">Mes messages</button><input class="search" id="prosq" type="search" placeholder="Agence, ville, pays…" value="'+esc(q)+'"></div>'+
-    '<div class="pros-sum"><div><b>'+all.length+'</b><span>agences</span></div><div><b>'+done+'</b><span>contactées</span></div><div><b>'+cnt("À relancer")+'</b><span>à relancer</span></div><div><b>'+cnt("Clients")+'</b><span>clients</span></div></div>'+
+    '<div class="chips">'+[["","Toutes"]].concat(Object.keys(P_APPS).map(k=>[k,P_APPS[k].n])).map(x=>'<button class="chip" data-pa="'+x[0]+'" aria-pressed="'+(x[0]===pAppF)+'">'+esc(x[1])+' · '+(x[0]?allApps.filter(r=>pApp(r)===x[0]).length:allApps.length)+'</button>').join("")+'</div>'+
+    '<div class="pros-sum"><div><b>'+all.length+'</b><span>prospects</span></div><div><b>'+done+'</b><span>contactées</span></div><div><b>'+cnt("À relancer")+'</b><span>à relancer</span></div><div><b>'+cnt("Clients")+'</b><span>clients</span></div></div>'+
     '<div class="chips">'+Object.keys(F).map(k=>'<button class="chip" data-pf="'+esc(k)+'" aria-pressed="'+(k===pFilter)+'">'+esc(k)+' · '+cnt(k)+'</button>').join("")+'</div>'+
     '<div class="pros-filters"><select id="pCountry" aria-label="Pays"><option value="">Tous les pays</option>'+countries.map(c=>'<option'+(c===pCountry?' selected':'')+'>'+esc(c)+'</option>').join("")+'</select><select id="pSize" aria-label="Taille"><option value="">Toutes tailles</option>'+["Grande","Moyenne","À qualifier"].map(s=>'<option'+(s===pSize?' selected':'')+'>'+s+'</option>').join("")+'</select><label class="small muted"><input type="checkbox" id="pMob"'+(pMob?' checked':'')+'> Avec WhatsApp</label></div>'+
     '<div class="pgrid">'+(rs.length?rs.map(r=>{const st=r.Statut||"À contacter";const due=pDue(r),td=pTaskDue(r);const tk=pAuto(r);const L=pLinks(r,tk);
       return '<article class="pcard'+(due||td?' due':'')+'">'+
         '<button class="pc-open" data-pr="'+r._row+'"><span class="avatar" style="background:'+avColor(r.Agence)+'">'+esc(initials(r.Agence))+'</span><span class="mid"><span class="t">'+esc(r.Agence)+'</span><span class="s">'+esc([r.Pays,r.Ville].filter(Boolean).join(" · "))+'</span></span><span class="pill '+(due?"p-red":(PILL[st]||"p-off"))+'">'+(due?"À relancer":esc(st))+'</span></button>'+
-        '<div class="pc-meta"><code>'+esc(r["Téléphone"]||"")+'</code>'+(r.Taille?'<span class="tg tg-'+(r.Taille==="Grande"?"a":r.Taille==="Moyenne"?"b":"c")+'">'+esc(r.Taille)+'</span>':'')+(pTask(r)?'<span class="ptask'+(td?' due':'')+'">'+esc(pTask(r))+(pTaskDay(r)?' · '+esc(pShortDate(pTaskDay(r))):'')+'</span>':'')+'</div>'+
+        '<div class="pc-meta"><code>'+esc(r["Téléphone"]||"")+'</code>'+(r.Taille?'<span class="tg tg-'+(r.Taille==="Grande"?"a":r.Taille==="Moyenne"?"b":"c")+'">'+esc(r.Taille)+'</span>':'')+(pTask(r)?'<span class="ptask'+(td?' due':'')+'">'+esc(pTask(r))+(pTaskDay(r)?' · '+esc(pShortDate(pTaskDay(r))):'')+'</span>':'')+(!pAppF?'<span class="tg tg-c">'+esc(P_APPS[pApp(r)].n)+'</span>':'')+(pWaiting(r)?'<span class="ptask">'+(pRel(r)?pRel(r)+' relance'+(pRel(r)>1?'s':''):'Contacté')+(pContactAt(r)?' · '+esc(pShortDate(dayKey(new Date(pContactAt(r))))):'')+'</span>':'')+'</div>'+
         '<div class="pc-acts">'+
-          (L.wa?'<a class="qa wa" data-q="wa" data-row="'+r._row+'" href="'+L.waH+'" target="_blank" rel="noopener">'+PI.wa+'WhatsApp</a>':(L.mob?'<a class="qa" data-q="sms" data-row="'+r._row+'" href="'+L.smsH+'">'+PI.sms+'SMS</a>':''))+
+          (L.wa?'<a class="qa wa" data-q="wa" data-row="'+r._row+'" href="'+L.waH+'" target="_blank" rel="noopener">'+PI.wa+(pWaiting(r)?'Relancer':'WhatsApp')+'</a>':(L.mob?'<a class="qa" data-q="sms" data-row="'+r._row+'" href="'+L.smsH+'">'+PI.sms+'SMS</a>':''))+
           (L.telH?'<a class="qa" data-q="tel" data-row="'+r._row+'" href="'+L.telH+'">'+PI.tel+'Appeler</a>':'')+
           (L.mail?'<a class="qa" data-q="mail" data-row="'+r._row+'" href="'+L.mailH+'">'+PI.mail+'E-mail</a>':'')+
           '<a class="qa fb" data-q="fb" data-row="'+r._row+'" href="'+esc(L.fbH)+'" target="_blank" rel="noopener">'+PI.fb+'Facebook</a>'+
-        '</div></article>'}).join(""):'<div class="empty">Aucune agence dans ce filtre.</div>')+'</div>';
+        '</div></article>'}).join(""):'<div class="empty">Aucun prospect dans ce filtre.</div>')+'</div>';
+  el.querySelectorAll("[data-pa]").forEach(b=>b.onclick=()=>{pAppF=b.dataset.pa;pCountry="";renderPros()});
   el.querySelectorAll("[data-pf]").forEach(b=>b.onclick=()=>{pFilter=b.dataset.pf;renderPros()});
   $("pCountry").onchange=e=>{pCountry=e.target.value;renderPros()};
   $("pSize").onchange=e=>{pSize=e.target.value;renderPros()};
   $("pMob").onchange=e=>{pMob=e.target.checked;renderPros()};
   $("prosq").oninput=()=>keepFocus("prosq",renderPros);
-  $("pTplBtn").onclick=editTpl;
+  $("pTplBtn").onclick=()=>editTpl(pAppF||"securipro");
   $("pAddBtn").onclick=()=>addPros(countries);
   el.querySelectorAll("[data-pr]").forEach(b=>b.onclick=()=>openPros(all.find(r=>r._row===+b.dataset.pr)));
   el.querySelectorAll("[data-q]").forEach(a=>a.addEventListener("click",()=>{const r=all.find(x=>x._row===+a.dataset.row);if(!r)return;if(a.dataset.q==="fb"&&!pFb(r))return;pMarkSent(r,pAuto(r),a.dataset.q)}));
@@ -128,12 +165,13 @@ function openPros(r,tk){
   const city=String(r.Ville||"").split(/[,(]/)[0].trim();
   const fbSearch="https://www.facebook.com/search/pages/?q="+encodeURIComponent(r.Agence+" "+(r.Pays||""));
   const mailSearch="https://www.google.com/search?q="+encodeURIComponent('"'+r.Agence+'" '+city+" e-mail contact");
-  const subj=tk==="en"?"SécuriPro – management software for security companies":"SécuriPro – logiciel de gestion pour sociétés de gardiennage";
+  const subj=pSubj(r,tk);
   const line=(lab,val,btn)=>'<div class="pc-row"><span class="pc-lab">'+lab+'</span><span class="pc-val'+(val?'':' muted')+'">'+(val?esc(val):'Pas encore trouvé')+'</span>'+btn+'</div>';
   $("sheetTitle").textContent=r.Agence;
   $("sheetBody").innerHTML=
     (/PROSPECT DÉJÀ EN COURS/.test(r.Infos||"")?'<div class="demo-bar" style="margin:0">Prospect déjà en discussion : ne lui envoie pas le message standard.</div>':'')+
-    (pDue(r)?'<div class="demo-bar" style="margin:0">Contactée il y a plus de 7 jours sans réponse : c\'est le moment de la relance unique.</div>':'')+
+    (pDue(r)?'<div class="demo-bar" style="margin:0">Pas de réponse depuis plus de 7 jours : c\'est le moment de relancer.</div>':'')+
+    (pWaiting(r)&&wa&&/^relance/.test(tk)?'<div class="acts"><a class="btn dark" data-send="wa" href="https://wa.me/'+wa+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener">Relancer sur WhatsApp</a></div>':'')+
     '<div class="pros-tel"><code>'+esc(r["Téléphone"]||"")+'</code><span class="pill '+(r.Type==="Mobile"?"p-ok":"p-off")+'">'+esc(r.Type||"")+'</span>'+(r.Taille?'<span class="pill p-gold">'+esc(r.Taille)+'</span>':'')+(P_VISIT.includes(r.Pays)?'<span class="pill p-vio">Visite possible</span>':'')+'</div>'+
     '<div class="pc"><div class="eyebrow">Contacts</div>'+
       line("WhatsApp",wa?("+"+wa):"",wa?'<a class="qa wa" data-send="wa" href="https://wa.me/'+wa+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener">'+PI.wa+'Envoyer</a>':'')+
@@ -145,7 +183,7 @@ function openPros(r,tk){
     '<div><div class="eyebrow" style="margin-bottom:8px">Message</div><div class="status-row">'+Object.keys(P_TPL).map(k=>'<button type="button" data-tk="'+k+'" aria-pressed="'+(k===tk)+'">'+esc(P_TPL[k].n)+'</button>').join("")+'</div></div>'+
     '<p class="pros-msg">'+esc(msg)+'</p>'+
     '<div class="acts"><button class="btn" id="pCopy">Copier le message</button><button class="btn" id="pCopyN">Copier le numéro</button></div>'+
-    (t?'<p class="muted small" style="margin:0">Message envoyé le '+new Date(t).toLocaleDateString("fr-FR",{day:"numeric",month:"long"})+'.</p>':'')+
+    (t?'<p class="muted small" style="margin:0">Dernier message envoyé le '+new Date(t).toLocaleDateString("fr-FR",{day:"numeric",month:"long"})+(pRel(r)?' · '+pRel(r)+' relance'+(pRel(r)>1?'s':''):'')+'.</p>':'')+
     '<div><div class="eyebrow" style="margin-bottom:8px">Statut</div><div class="status-row">'+P_ST.map(s=>'<button type="button" data-ps="'+esc(s)+'" aria-pressed="'+(s===(st==="Gagné"?"Client":st))+'">'+esc(s)+'</button>').join("")+'</div></div>'+
     '<div class="pc"><div class="eyebrow">Suivi</div>'+
       (pTask(r)?'<div class="pc-row task'+(pTaskDue(r)?' due':'')+'"><span class="pc-val"><b>'+esc(pTask(r))+'</b>'+(pTaskDay(r)?' · '+esc(pShortDate(pTaskDay(r))):'')+'</span><button class="btn sm dark" id="pTaskDone">Tâche terminée</button></div>':'')+
@@ -187,14 +225,16 @@ function editContacts(r,tk){
   };
   openSheet();
 }
-function editTpl(){
-  const o=pJSON(P_TPL_KEY);
-  $("sheetTitle").textContent="Mes messages";
-  $("sheetBody").innerHTML='<p class="muted small" style="margin:0">{agence} est remplacé par le nom de l\'agence. L\'application choisit seule le bon message : grandes agences, anglais pour Buea et Bamenda, relance après 7 jours. Tes changements restent sur cet appareil.</p>'+
-    Object.keys(P_TPL).map(k=>'<label class="pros-tpl"><span><b>'+esc(P_TPL[k].n)+'</b> · <span class="muted">'+esc(P_TPL[k].d)+'</span></span><textarea id="tpl_'+k+'" rows="6">'+esc(o[k]||P_TPL[k].t)+'</textarea></label>').join("")+
+function editTpl(app){
+  app=app||"securipro";const o=pJSON(P_TPL_KEY);
+  $("sheetTitle").textContent="Mes messages · "+P_APPS[app].n;
+  $("sheetBody").innerHTML='<div class="status-row">'+Object.keys(P_APPS).map(k=>'<button type="button" data-ta="'+k+'" aria-pressed="'+(k===app)+'">'+esc(P_APPS[k].n)+'</button>').join("")+'</div>'+
+    '<p class="muted small" style="margin:0">{agence} est remplacé par le nom du prospect. L\'application choisit seule le bon message : premier contact, puis relance 1, 2 et dernière relance. Tes changements restent sur cet appareil.</p>'+
+    Object.keys(P_TPL).map(k=>'<label class="pros-tpl"><span><b>'+esc(P_TPL[k].n)+'</b> · <span class="muted">'+esc(P_TPL[k].d)+'</span></span><textarea id="tpl_'+k+'" rows="6">'+esc(o[pTplKey(k,app)]||pTplBase(k,app))+'</textarea></label>').join("")+
     '<div class="acts"><button class="btn gold" id="tplSave">Enregistrer</button><button class="btn" id="tplReset">Revenir aux messages d\'origine</button></div>';
-  $("tplSave").onclick=()=>{const n={};Object.keys(P_TPL).forEach(k=>{const v=$("tpl_"+k).value.trim();if(v&&v!==P_TPL[k].t)n[k]=v});store.set(P_TPL_KEY,JSON.stringify(n));toast("Messages enregistrés");closeSheet()};
-  $("tplReset").onclick=()=>{store.del(P_TPL_KEY);toast("Messages d'origine remis");editTpl()};
+  $("sheetBody").querySelectorAll("[data-ta]").forEach(b=>b.onclick=()=>editTpl(b.dataset.ta));
+  $("tplSave").onclick=()=>{const n=pJSON(P_TPL_KEY);Object.keys(P_TPL).forEach(k=>{const v=$("tpl_"+k).value.trim();const key=pTplKey(k,app);if(v&&v!==pTplBase(k,app))n[key]=v;else delete n[key]});store.set(P_TPL_KEY,JSON.stringify(n));toast("Messages enregistrés");closeSheet()};
+  $("tplReset").onclick=()=>{const n=pJSON(P_TPL_KEY);Object.keys(P_TPL).forEach(k=>delete n[pTplKey(k,app)]);store.set(P_TPL_KEY,JSON.stringify(n));toast("Messages d'origine remis");editTpl(app)};
   openSheet();
 }
 
@@ -202,7 +242,8 @@ function addPros(countries){
   $("sheetTitle").textContent="Nouveau prospect";
   const f=(id,lab,type,ph,extra)=>'<label class="pros-tpl"><b>'+lab+'</b><input id="pa_'+id+'" type="'+type+'" placeholder="'+esc(ph||"")+'"'+(extra||"")+'></label>';
   $("sheetBody").innerHTML='<p class="muted small" style="margin:0">Le prospect est ajouté à ta feuille Google et apparaît tout de suite dans ta liste.</p>'+
-    f("ag","Nom de l\'agence *","text","Ex. Alpha Sécurité")+
+    '<label class="pros-tpl"><b>Application</b><select id="pa_app">'+Object.keys(P_APPS).map(k=>'<option value="'+k+'"'+(k===(pAppF||"securipro")?' selected':'')+'>'+P_APPS[k].n+'</option>').join("")+'</select></label>'+
+    f("ag","Nom de l\'entreprise *","text","Ex. Alpha Sécurité")+
     f("pays","Pays *","text","Ex. Bénin",' list="pa_pl"')+'<datalist id="pa_pl">'+countries.map(c=>'<option value="'+esc(c)+'">').join("")+'</datalist>'+
     f("ville","Ville / quartier","text","Ex. Cotonou, Fidjrossè")+
     f("tel","Téléphone *","tel","+229 01 97 00 00 00")+
@@ -215,8 +256,8 @@ function addPros(countries){
     const v=id=>$("pa_"+id).value.trim();
     if(!v("ag")||!v("pays")||!v("tel")){$("pa_err").textContent="Remplis au moins le nom, le pays et le téléphone.";return}
     let tel=v("tel");if(!tel.startsWith("+"))tel="+"+tel.replace(/^00/,"");
-    const d={"Date":dayKey(new Date()),"Pays":v("pays"),"Agence":v("ag"),"Ville":v("ville"),"Téléphone":"'"+tel,"Type":$("pa_type").value,"Taille":$("pa_taille").value,"Infos":v("infos"),"Statut":"À contacter","WhatsApp":$("pa_type").value==="Mobile"?"'"+tel:"","E-mail":v("mail"),"Facebook":v("fb")};
-    if(demo){P_SAMPLE.push(["Date","Pays","Agence","Ville","Téléphone","Type","Taille","Infos","Autres numéros","Statut","Notes","WhatsApp","E-mail","Facebook"].map(h=>String(d[h]||"").replace(/^'/,"")));toast("Prospect ajouté");closeSheet();renderAll();return}
+    const d={"Date":dayKey(new Date()),"Pays":v("pays"),"Agence":v("ag"),"Ville":v("ville"),"Téléphone":"'"+tel,"Type":$("pa_type").value,"Taille":$("pa_taille").value,"Infos":v("infos"),"Statut":"À contacter","WhatsApp":$("pa_type").value==="Mobile"?"'"+tel:"","E-mail":v("mail"),"Facebook":v("fb"),"Application":P_APPS[$("pa_app").value].n};
+    if(demo){P_SAMPLE.push(["Date","Pays","Agence","Ville","Téléphone","Type","Taille","Infos","Autres numéros","Statut","Notes","WhatsApp","E-mail","Facebook","Application"].map(h=>String(d[h]||"").replace(/^'/,"")));toast("Prospect ajouté");closeSheet();renderAll();return}
     $("pa_save").disabled=true;
     try{const j=await api({action:"contact",row:"nouveau",valeur:JSON.stringify(d)});if(!j.ok)throw 0;toast("Prospect ajouté");closeSheet();await load()}
     catch(e){$("pa_save").disabled=false;$("pa_err").textContent="Le prospect n'a pas été ajouté. Vérifie que l'étape Apps Script est faite, puis réessaie."}
