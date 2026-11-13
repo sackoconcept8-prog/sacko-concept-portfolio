@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Configuration de votre logiciel SécuriPro · SACKO CONCEPT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Fiche de configuration SécuriPro : vos informations pour adapter le logiciel à votre agence.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="sacko-apps.css">
+<link rel="icon" href="assets/sacko-logo-96.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<meta name="robots" content="noindex">
+<style>.lab{display:block;font-weight:500;font-size:14px;margin-bottom:8px}.hint{font-size:12.5px;color:var(--muted);margin-top:6px}.colors{display:flex;gap:16px;flex-wrap:wrap;align-items:center}.colors label{display:flex;align-items:center;gap:10px;font-size:14px}.colors input[type=color]{width:52px;height:40px;padding:2px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer}.drop.small{padding:16px}.drop.done{border-style:solid;border-color:#2F7D52;background:#F1F8F3}.drop.done b{color:#1F5A3A}.dl{display:inline-flex;gap:8px;align-items:center;font-weight:600}</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="logo" href="index.html"><img src="assets/sacko-logo-96.png" alt="" width="38" height="38"><b>SACKO CONCEPT</b></a>
+    <div class="navlinks">
+      <a href="index.html">Accueil</a>
+      <a href="applications.html">Applications</a>
+      <a href="offres.html">Offres</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="navcta"><a class="navlink-client hide-sm" href="espace-client.html">Espace client</a><a class="btn btn-ghost hide-sm" href="devis.html">Demander un devis</a><a class="btn btn-gold" href="commencer.html"><span class="lg-label">Commencer gratuitement</span><span class="sm-label">Essai gratuit</span></a></div>
+  </div>
+</nav>
+<header class="pagehead"><div class="wrap"><div class="eyebrow">SécuriPro · Mise en place</div><h1>Configuration de votre logiciel</h1><p>Remplissez cette fiche pour que nous adaptions SécuriPro à votre agence : votre nom, votre logo, vos couleurs, vos dirigeants et votre organisation. Comptez environ 10 minutes.</p></div></header>
+<section style="padding-top:24px"><div class="wrap"><div class="form-wrap">
+<form class="qform" id="cfg" novalidate>
+  <fieldset>
+    <legend>1. Votre entreprise</legend>
+    <div class="f"><label for="entreprise">Nom commercial <i>*</i></label><input id="entreprise" name="entreprise" type="text" required placeholder="Ex. : Sentinelle Sécurité" autocomplete="organization"></div>
+    <div class="f"><label for="raison">Raison sociale complète</label><input id="raison" name="raison" type="text" placeholder="Ex. : Société de Gardiennage et de Sécurité"></div>
+    <div class="f full"><span class="lab">Forme juridique <i>*</i></span><div class="opts"><label><input type="radio" name="forme" value="SARL" required> SARL</label><label><input type="radio" name="forme" value="SA"> SA</label><label><input type="radio" name="forme" value="SAS / SASU"> SAS / SASU</label><label><input type="radio" name="forme" value="Entreprise individuelle"> Entreprise individuelle</label><label><input type="radio" name="forme" value="Autre"> Autre</label></div></div>
+    <div class="f"><label for="pays">Pays et ville <i>*</i></label><input id="pays" name="pays" type="text" required placeholder="Ex. : Bénin, Cotonou"></div>
+    <div class="f"><label for="adresse">Adresse du siège</label><input id="adresse" name="adresse" type="text"></div>
+    <div class="f"><label for="tel">Téléphone de l'entreprise <i>*</i></label><input id="tel" name="tel" type="tel" required placeholder="+229 …"></div>
+    <div class="f"><label for="email">E-mail de l'entreprise <i>*</i></label><input id="email" name="email" type="email" required autocomplete="email"></div>
+    <div class="f"><label for="ifu">N° IFU</label><input id="ifu" name="ifu" type="text"></div>
+    <div class="f"><label for="rccm">N° RCCM</label><input id="rccm" name="rccm" type="text"></div>
+    <div class="f"><label for="cnss">N° CNSS employeur</label><input id="cnss" name="cnss" type="text"></div>
+    <div class="f"><label for="web">Site web ou page Facebook</label><input id="web" name="web" type="text" placeholder="Facultatif"></div>
+  </fieldset>
+  <fieldset>
+    <legend>2. Taille de votre agence</legend>
+    <div class="f full"><span class="lab">Nombre d'agents <i>*</i></span><div class="opts"><label><input type="radio" name="taille" value="1 à 50" required> 1 à 50</label><label><input type="radio" name="taille" value="51 à 100"> 51 à 100</label><label><input type="radio" name="taille" value="101 à 200"> 101 à 200</label><label><input type="radio" name="taille" value="201 à 500"> 201 à 500</label><label><input type="radio" name="taille" value="Plus de 500"> Plus de 500</label></div></div>
+    <div class="f full"><span class="lab">Nombre de sites gardés <i>*</i></span><div class="opts"><label><input type="radio" name="sites" value="1 à 5" required> 1 à 5</label><label><input type="radio" name="sites" value="6 à 20"> 6 à 20</label><label><input type="radio" name="sites" value="21 à 50"> 21 à 50</label><label><input type="radio" name="sites" value="Plus de 50"> Plus de 50</label></div></div>
+    <div class="f full"><span class="lab">Nombre de superviseurs</span><div class="opts"><label><input type="radio" name="superviseurs" value="1 à 2"> 1 à 2</label><label><input type="radio" name="superviseurs" value="3 à 5"> 3 à 5</label><label><input type="radio" name="superviseurs" value="6 à 10"> 6 à 10</label><label><input type="radio" name="superviseurs" value="Plus de 10"> Plus de 10</label></div></div>
+    <div class="f full"><span class="lab">Vos agents ont-ils un smartphone ?</span><div class="opts"><label><input type="radio" name="smartphone" value="Presque tous"> Presque tous</label><label><input type="radio" name="smartphone" value="Environ la moitié"> Environ la moitié</label><label><input type="radio" name="smartphone" value="Peu"> Peu</label><label><input type="radio" name="smartphone" value="Aucun"> Aucun</label></div></div>
+  </fieldset>
+  <fieldset>
+    <legend>3. Votre image</legend>
+    <div class="f full"><span class="lab">Logo de l'entreprise <i>*</i></span><div class="drop small" data-up="logo" data-label="Logo de l'entreprise" tabindex="0" role="button" aria-label="Logo de l'entreprise"><b>Choisir un fichier</b> ou le glisser ici<br><small>PNG ou JPG, de la meilleure qualité possible</small></div><input type="file" data-for="logo" accept="image/*" hidden><ul class="filelist" data-list="logo"></ul></div>
+    <div class="f full"><span class="lab">Couleurs de votre entreprise</span><div class="colors"><label><input type="color" name="couleur1" value="#1D5FD1"> Couleur principale</label><label><input type="color" name="couleur2" value="#F5B700"> Couleur secondaire</label></div><div class="hint">Touchez un carré pour choisir la couleur. Pas sûr ? Laissez tel quel, nous reprendrons les couleurs de votre logo.</div></div>
+    <div class="f full"><span class="lab">Cachet de l'entreprise (facultatif)</span><div class="drop small" data-up="cachet" data-label="Cachet de l'entreprise (facultatif)" tabindex="0" role="button" aria-label="Cachet de l'entreprise (facultatif)"><b>Choisir un fichier</b> ou le glisser ici<br><small>Photo ou scan, pour vos documents officiels</small></div><input type="file" data-for="cachet" accept="image/*,.pdf" hidden><ul class="filelist" data-list="cachet"></ul></div>
+    <div class="f full"><span class="lab">Signature du directeur (facultatif)</span><div class="drop small" data-up="signature" data-label="Signature du directeur (facultatif)" tabindex="0" role="button" aria-label="Signature du directeur (facultatif)"><b>Choisir un fichier</b> ou le glisser ici<br><small>Sur fond blanc, pour signer les documents</small></div><input type="file" data-for="signature" accept="image/*,.pdf" hidden><ul class="filelist" data-list="signature"></ul></div>
+  </fieldset>
+  <fieldset>
+    <legend>4. Dirigeants et responsables</legend>
+    <div class="f"><label for="dg">Nom du directeur général <i>*</i></label><input id="dg" name="dg" type="text" required placeholder="Prénom et nom"></div>
+    <div class="f"><label for="dg_tel">Téléphone (WhatsApp) du directeur</label><input id="dg_tel" name="dg_tel" type="tel"></div>
+    <div class="f"><label for="dg_email">E-mail du directeur</label><input id="dg_email" name="dg_email" type="email"></div>
+    <div class="f"><label for="dga">Directeur adjoint / associé (facultatif)</label><input id="dga" name="dga" type="text"></div>
+    <div class="f"><label for="rh">Responsable RH</label><input id="rh" name="rh" type="text" placeholder="Prénom et nom"></div>
+    <div class="f"><label for="rh_contact">Téléphone ou e-mail du responsable RH</label><input id="rh_contact" name="rh_contact" type="text"></div>
+    <div class="f"><label for="compta">Responsable comptabilité / finances</label><input id="compta" name="compta" type="text"></div>
+    <div class="f"><label for="compta_contact">Téléphone ou e-mail de la comptabilité</label><input id="compta_contact" name="compta_contact" type="text"></div>
+  </fieldset>
+  <fieldset>
+    <legend>5. Organisation et paie</legend>
+    <div class="f"><label for="jour">Horaires du poste de jour</label><input id="jour" name="jour" type="text" placeholder="Ex. : 07h00 – 19h00"></div>
+    <div class="f"><label for="nuit">Horaires du poste de nuit</label><input id="nuit" name="nuit" type="text" placeholder="Ex. : 19h00 – 07h00"></div>
+    <div class="f full"><span class="lab">Grades utilisés dans votre agence</span><div class="opts"><label><input type="checkbox" name="grades" value="Agent de sécurité"> Agent de sécurité</label><label><input type="checkbox" name="grades" value="Chef de poste"> Chef de poste</label><label><input type="checkbox" name="grades" value="Superviseur"> Superviseur</label><label><input type="checkbox" name="grades" value="Maître-chien"> Maître-chien</label><label><input type="checkbox" name="grades" value="Agent volant"> Agent volant</label><label><input type="checkbox" name="grades" value="Autre"> Autre</label></div></div>
+    <div class="f full"><span class="lab">Pointage souhaité</span><div class="opts"><label><input type="checkbox" name="pointage" value="Application sur le téléphone de l'agent"> Application sur le téléphone de l'agent</label><label><input type="checkbox" name="pointage" value="Téléphone borne au poste"> Téléphone borne au poste</label><label><input type="checkbox" name="pointage" value="Scan de la carte pro par le chef de poste"> Scan de la carte pro par le chef de poste</label><label><input type="checkbox" name="pointage" value="SMS"> SMS</label><label><input type="checkbox" name="pointage" value="À discuter"> À discuter</label></div></div>
+    <div class="f full"><span class="lab">Paiement des salaires</span><div class="opts"><label><input type="checkbox" name="paie" value="Espèces"> Espèces</label><label><input type="checkbox" name="paie" value="Virement bancaire"> Virement bancaire</label><label><input type="checkbox" name="paie" value="Mobile Money"> Mobile Money</label></div></div>
+    <div class="f full"><span class="lab">Facture normalisée e-MECeF (DGI)</span><div class="opts"><label><input type="radio" name="mecef" value="Oui, nous l'utilisons"> Oui, nous l'utilisons</label><label><input type="radio" name="mecef" value="Pas encore"> Pas encore</label><label><input type="radio" name="mecef" value="Je ne sais pas"> Je ne sais pas</label></div></div>
+  </fieldset>
+  <fieldset>
+    <legend>6. Vos documents</legend>
+    <div class="f full"><span class="lab">Statuts de l'entreprise (facultatif)</span><div class="drop small" data-up="statuts" data-label="Statuts de l'entreprise (facultatif)" tabindex="0" role="button" aria-label="Statuts de l'entreprise (facultatif)"><b>Choisir un fichier</b> ou le glisser ici<br><small>PDF ou photos</small></div><input type="file" data-for="statuts" accept="image/*,.pdf,.doc,.docx" multiple hidden><ul class="filelist" data-list="statuts"></ul></div>
+    <div class="f full"><span class="lab">Liste des agents et des sites (recommandé)</span><p class="hint" style="margin:0 0 10px">Téléchargez notre modèle Excel, remplissez-le, puis déposez-le ci-dessous. Vous pourrez aussi l'envoyer plus tard.</p><a class="btn btn-ghost dl" href="assets/SecuriPro-Donnees-a-remplir.xlsx" download>⬇ Télécharger le modèle Excel</a></div>
+    <div class="f full"><span class="lab">Fichier Excel rempli</span><div class="drop small" data-up="excel" data-label="Fichier Excel rempli" tabindex="0" role="button" aria-label="Fichier Excel rempli"><b>Choisir un fichier</b> ou le glisser ici<br><small>Agents, sites, utilisateurs, matériel</small></div><input type="file" data-for="excel" accept=".xlsx,.xls,.csv" multiple hidden><ul class="filelist" data-list="excel"></ul></div>
+    <div class="f full"><span class="lab">Autres documents utiles (facultatif)</span><div class="drop small" data-up="autres" data-label="Autres documents utiles (facultatif)" tabindex="0" role="button" aria-label="Autres documents utiles (facultatif)"><b>Choisir un fichier</b> ou le glisser ici<br><small>Bulletin de paie type, contrat type, liste de matériel…</small></div><input type="file" data-for="autres" accept=".pdf,.doc,.docx,.xlsx,.xls,image/*" multiple hidden><ul class="filelist" data-list="autres"></ul></div>
+  </fieldset>
+  <fieldset>
+    <legend>7. Pour finir</legend>
+    <div class="f full"><label for="besoins">Vos besoins ou exigences particulières</label><textarea id="besoins" name="besoins_txt" placeholder="Ex. : rapport hebdomadaire au directeur, alerte SMS en cas d'absence…"></textarea></div>
+    <div class="f"><label for="demarrage">Date souhaitée de démarrage</label><input id="demarrage" name="demarrage" type="date"></div>
+    <div class="f"><label for="nom">Votre nom (personne qui remplit) <i>*</i></label><input id="nom" name="nom" type="text" required autocomplete="name"></div>
+    <div class="f"><label for="fonction">Votre fonction</label><input id="fonction" name="fonction" type="text"></div>
+    <div class="f"><label for="whatsapp">Votre WhatsApp <i>*</i></label><input id="whatsapp" name="whatsapp" type="tel" required placeholder="+229 …" autocomplete="tel"></div>
+  </fieldset>
+  <label class="consent"><input type="checkbox" id="consent" name="consent" required> <span>J'autorise SACKO CONCEPT à utiliser ces informations pour configurer notre logiciel. Elles restent confidentielles. <i style="color:#C2410C;font-style:normal">*</i></span></label>
+  <div class="submit-row"><button class="btn btn-gold" type="submit" id="send">Envoyer ma fiche</button><span class="msg" id="msg" aria-live="polite"></span></div>
+</form>
+<aside class="side-card">
+  <h3>Comment ça se passe</h3>
+  <ol><li><b>Vous remplissez</b> cette fiche avec votre logo et vos informations.</li><li><b>Nous configurons</b> SécuriPro à votre image : nom, logo, couleurs, agents et sites.</li><li><b>Nous vous contactons</b> sur WhatsApp pour vous remettre vos accès et former votre équipe.</li></ol>
+  <p style="color:var(--muted);font-size:14px">Une question ? Écrivez-nous à contact@sackoconcept.com.</p>
+</aside>
+</div></div></section>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div><a class="logo" href="index.html"><img src="assets/sacko-logo-96.png" alt="" width="38" height="38"><b>SACKO CONCEPT</b></a><p>Applications de gestion et identité de marque pour les PME, en français et en anglais.</p></div>
+      <div><h4>Applications</h4><ul><li><a href="applications.html#nettopro">NettoPro</a></li><li><a href="applications.html#rhpro">RH Pro</a></li><li><a href="applications.html#stockpro">StockPro</a></li><li><a href="applications.html#phonepro">PhonePro</a></li></ul></div>
+      <div><h4>Studio</h4><ul><li><a href="index.html#methode">Méthode</a></li><li><a href="offres.html">Offres</a></li><li><a href="contact.html#faq">FAQ</a></li><li><a href="espace-client.html">Espace client</a></li><li><a href="client.html">Demande de mise à jour</a></li><li><a href="studio.html">Boutique et packs</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li><a href="https://calendly.com/sackoconcept8" target="_blank" rel="noopener">Réserver un appel</a></li><li><a href="contact.html">contact@sackoconcept.com</a></li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 SACKO CONCEPT LLC · Albuquerque, NM</span><span><a href="cgv.html">Conditions de vente</a> · <a href="confidentialite.html">Confidentialité</a></span></div>
+  </div>
+</footer>
+<script data-goatcounter="https://sackoconcept.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="sacko-config.js"></script>
+<script src="sacko-track.js" defer></script>
+<script>
+const SCRIPT_URL=window.SACKO_SCRIPT_URL||"COLLER";const MAX=15*1024*1024;
+const f=document.getElementById("cfg"),msg=document.getElementById("msg"),send=document.getElementById("send");
+const UP={};
+function size(n){return n>1048576?(n/1048576).toFixed(1)+" Mo":Math.max(1,Math.round(n/1024))+" Ko"}
+function total(){return Object.values(UP).flat().reduce((a,b)=>a+b.size,0)}
+document.querySelectorAll("[data-up]").forEach(d=>{const k=d.dataset.up,inp=document.querySelector('input[data-for="'+k+'"]'),ul=document.querySelector('[data-list="'+k+'"]');UP[k]=[];
+ const draw=()=>{ul.innerHTML="";UP[k].forEach((x,i)=>{const li=document.createElement("li");li.innerHTML="<span></span><button type='button'>Retirer</button>";li.firstChild.textContent=x.name+" · "+size(x.size);li.lastChild.onclick=()=>{UP[k].splice(i,1);draw()};ul.appendChild(li)});d.classList.toggle("done",UP[k].length>0)};
+ const add=fl=>{const arr=[...fl];if(!inp.multiple){UP[k]=arr.slice(0,1)}else{UP[k].push(...arr)}if(total()>MAX){msg.className="msg err";msg.textContent="Les fichiers dépassent 15 Mo au total. Retirez-en un ou envoyez-le par WhatsApp."}else msg.textContent="";draw()};
+ d.onclick=()=>inp.click();d.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();inp.click()}};inp.onchange=()=>{add(inp.files);inp.value=""};
+ ["dragover","dragenter"].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.add("over")}));["dragleave","drop"].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.remove("over")}));d.addEventListener("drop",e=>add(e.dataTransfer.files));
+});
+function b64(file){return new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=ko;r.readAsDataURL(file)})}
+const LABELS={raison:"Raison sociale",forme:"Forme juridique",pays:"Pays et ville",adresse:"Adresse",tel:"Téléphone entreprise",email:"E-mail entreprise",ifu:"IFU",rccm:"RCCM",cnss:"CNSS employeur",web:"Site web",taille:"Nombre d'agents",sites:"Nombre de sites",superviseurs:"Superviseurs",smartphone:"Agents avec smartphone",couleur1:"Couleur principale",couleur2:"Couleur secondaire",dg:"Directeur général",dg_tel:"Tél. DG",dg_email:"E-mail DG",dga:"Directeur adjoint / associé",rh:"Responsable RH",rh_contact:"Contact RH",compta:"Comptabilité",compta_contact:"Contact comptabilité",jour:"Poste de jour",nuit:"Poste de nuit",grades:"Grades",pointage:"Pointage souhaité",paie:"Paiement des salaires",mecef:"e-MECeF",besoins_txt:"Besoins particuliers",demarrage:"Démarrage souhaité",fonction:"Fonction du déclarant"};
+f.addEventListener("submit",async e=>{
+ e.preventDefault();msg.className="msg";
+ if(!f.checkValidity()){const bad=f.querySelector(":invalid");msg.className="msg err";msg.textContent="Remplissez les champs marqués d'une étoile.";bad&&bad.focus();return}
+ if(!UP.logo.length){msg.className="msg err";msg.textContent="Ajoutez le logo de votre entreprise.";document.querySelector('[data-up="logo"]').focus();return}
+ if(total()>MAX){msg.className="msg err";msg.textContent="Les fichiers dépassent 15 Mo au total.";return}
+ const fd=new FormData(f),vals={};for(const [k,v] of fd.entries()){if(k==="consent")continue;vals[k]=vals[k]?vals[k]+", "+v:v}
+ const lines=Object.keys(LABELS).filter(k=>vals[k]&&String(vals[k]).trim()).map(k=>"• "+LABELS[k]+" : "+vals[k]);
+ const data={type:"client",entreprise:vals.entreprise,nom:vals.nom,email:vals.email,whatsapp:vals.whatsapp,application:"SécuriPro",demande:"Configuration du logiciel (fiche de démarrage)",urgence:"Normale (sous 48 h)",besoins:"FICHE DE CONFIGURATION SÉCURIPRO\n"+lines.join("\n")};
+ send.disabled=true;send.textContent="Envoi en cours…";
+ try{
+  const PFX={logo:"LOGO",cachet:"CACHET",signature:"SIGNATURE",statuts:"STATUTS",excel:"DONNEES",autres:"DOC"};
+  const all=[];for(const k in UP)UP[k].forEach(x=>all.push([PFX[k]+" - "+x.name,x]));
+  data.fichiers=await Promise.all(all.map(async([n,x])=>({name:n,type:x.type||"application/octet-stream",data:await b64(x)})));
+  if(SCRIPT_URL.startsWith("COLLER"))throw new Error("config");
+  await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)});
+  f.innerHTML='<div class="done"><div class="ok">✓</div><h2 style="font-size:28px">Fiche bien reçue</h2><p style="color:var(--muted);max-width:46ch">Merci ! Nous configurons votre logiciel SécuriPro et nous vous contactons sur WhatsApp sous 48 heures pour la suite.</p></div>';
+  window.scrollTo({top:0,behavior:"smooth"});
+ }catch(err){send.disabled=false;send.textContent="Envoyer ma fiche";msg.className="msg err";msg.textContent=err.message==="config"?"Le formulaire n'est pas encore relié. Écrivez-nous à contact@sackoconcept.com.":"L'envoi n'a pas abouti. Vérifiez votre connexion et réessayez, ou écrivez-nous à contact@sackoconcept.com."}
+});
+</script>
+</body>
+</html>
