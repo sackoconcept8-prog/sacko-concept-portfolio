@@ -313,7 +313,7 @@ tbody tr:last-child td{border-bottom:0}
     <button class="space" data-go="sup"><div class="si" style="background:var(--red-soft);color:var(--red)" data-i="shield"></div><h3>Superviseur</h3><p>Sur le téléphone du superviseur : tournée de nuit, visites de contrôle, alertes SOS, rapport de nuit.</p><span class="go">Ouvrir l'application →</span></button>
     <button class="space" data-go="client"><div class="si" style="background:var(--amber-soft);color:var(--amber)" data-i="building"></div><h3>Espace client</h3><p>Pour vos clients : commandes, plaintes, suggestions, rapports et factures.</p><span class="go">Ouvrir l'espace →</span></button>
   </div>
-  <div class="byline">Logiciel préparé pour Agence Spéciale · Données d'exemple · Conçu par <a href="../" target="_blank" rel="noopener">SACKO CONCEPT</a></div>
+  <div class="byline">Logiciel préparé pour Agence Spéciale · Conçu par <a href="../" target="_blank" rel="noopener">SACKO CONCEPT</a></div>
 </section>
 
 <!-- ===== Logiciel bureau (Direction / RH / Client) ===== -->
@@ -350,7 +350,7 @@ tbody tr:last-child td{border-bottom:0}
 <script>
 /* ============================================================
    Agence Spéciale · Logiciel de gestion (copie client · SACKO CONCEPT)
-   Données d'exemple stockées dans le navigateur, régénérées chaque jour.
+   Aucune donnée d'exemple : les données saisies ou importées par le client sont conservées dans le navigateur.
    ============================================================ */
 const KEY="agence-speciale-v1";
 const ICONS={home:"M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z",map:"M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14",building:"M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M2 21h20M8 7h4M8 11h4M8 15h4",users:"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",calendar:"M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM16 2v4M8 2v4M3 10h18",clock:"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",book:"M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5M8 7h8M8 11h6",route:"M6 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM6 15V9a4 4 0 0 1 4-4h4M18 9v6a4 4 0 0 1-4 4h-4",leave:"M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM16 2v4M8 2v4M3 10h18M9 16l2 2 4-4",wallet:"M20 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4M18 12a2 2 0 0 0 0 4h4v-4z",file:"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h5",settings:"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",bell:"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0",search:"M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35",menu:"M3 12h18M3 6h18M3 18h18",x:"M18 6 6 18M6 6l12 12",check:"M20 6 9 17l-5-5",alert:"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",shield:"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4",phone:"M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM11 18h2",call:"M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z",pin:"M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",plus:"M12 5v14M5 12h14",print:"M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z",logout:"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9",camera:"M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",moon:"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z",sun:"M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42",user:"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",chev:"M9 18l6-6-6-6",scan:"M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10",chart:"M3 3v18h18M7 16V10M12 16V6M17 16v-4",cart:"M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM20 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6",msg:"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",star:"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z",send:"M22 2 11 13M22 2l-7 20-4-9-9-4z",dog:"M10 5.17C10 3.7 11.3 2.5 12.9 2.5c1.1 0 2 .6 2.5 1.5l.6 1H19a2 2 0 0 1 2 2v1a3 3 0 0 1-3 3h-1v8a2 2 0 0 1-2 2h-1v-5H8v5H7a2 2 0 0 1-2-2v-6l-2-3 3-2z",box:"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12",pen:"M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z",dl:"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",refresh:"M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"};
@@ -386,147 +386,11 @@ const curShift=()=>{const m=nowMin();return m>=420&&m<1140?"J":"N"};
 /* la nuit en cours appartient à la date de 19 h */
 const curShiftDate=()=>{const m=nowMin();return m<420?addDays(today(),-1):today()};
 
-/* ---------- données d'exemple ---------- */
-function seed(){
-  rs=20261104;
-  const T=today();
-  const sites=[
-    ["s1","Banque Ouest Finance","Agence de Ganhi","Banque",6.3530,2.4330,2,2,1850000,"Mme Adjovi Kpadé","Directrice d'agence"],
-    ["s2","Résidence Les Cocotiers","Villa diplomatique","Résidence",6.3560,2.3990,1,2,650000,"M. Laurent Mercier","Résident"],
-    ["s3","Entrepôt Logistique Akpakpa","Zone portuaire","Entrepôt",6.3700,2.4600,1,2,900000,"M. Sylvain Dossa","Responsable logistique"],
-    ["s4","Hôtel Lagune","Fidjrossè plage","Hôtel",6.3530,2.3630,2,2,1200000,"Mme Nadia Hounsou","Directrice générale"],
-    ["s5","Clinique Saint-Luc","Cadjèhou","Santé",6.3630,2.3960,1,1,480000,"Dr Gérard Ahouansou","Directeur médical"],
-    ["s6","Résidence Haie Vive","Quartier des ambassades","Résidence",6.3590,2.3925,2,2,1600000,"M. Thomas Keller","Chargé de sécurité"],
-    ["s7","Station Énergie Plus","Godomey carrefour","Station-service",6.4020,2.3410,1,1,420000,"M. Rachidi Bello","Gérant"],
-    ["s8","Supermarché Étoile","Sikècodji","Commerce",6.3720,2.4180,2,1,750000,"Mme Victoire Agbo","Gérante"],
-    ["s9","Chantier Les Palmiers","Abomey-Calavi","Chantier",6.4480,2.3550,1,2,560000,"Ing. Fiacre Zannou","Chef de chantier"],
-    ["s10","École Internationale","Les Cocotiers","Éducation",6.3575,2.4015,2,1,700000,"Mme Carole Dubois","Proviseure"]
-  ].map(([id,name,loc,type,lat,lng,needJ,needN,contract,contact,crole])=>({id,name,loc,type,lat,lng,needJ,needN,contract,contact,crole,since:addDays(T,-Math.floor(200+rnd()*1200)),
-    checkpoints:type==="Banque"?["Entrée principale","Salle des coffres (extérieur)","Distributeurs","Parking clients","Issue de secours"]:type==="Entrepôt"?["Portail principal","Quai de chargement","Clôture arrière","Groupe électrogène","Bureau logistique"]:type==="Hôtel"?["Réception","Parking","Piscine","Accès plage","Cuisines (arrière)"]:["Portail principal","Parking","Clôture arrière","Local technique","Bâtiment principal"],
-    consignes:type==="Banque"?"Contrôle des accès clients, aucune personne en salle après fermeture, ronde toutes les 2 heures la nuit.":type==="Résidence"?"Registre des visiteurs obligatoire, aucune entrée sans accord du résident, ronde toutes les heures la nuit.":"Contrôle des entrées et sorties, registre des véhicules, ronde toutes les 2 heures la nuit."}));
-  const FN=["Romaric","Fiacre","Gildas","Brice","Hermann","Prudence","Armel","Serge","Josué","Rodrigue","Ulrich","Cyriaque","Aristide","Florent","Mathias","Évariste","Landry","Wilfried","Rachidi","Ibrahim","Issa","Bernadette","Victoire","Narcisse","Sylvain","Pacôme","Habib","Romain","Félicien","Dieudonné","Elvis","Jacques","Christian","Euloge","Modeste","Thierry","Basile","Achille","Hortense","Patrice","Noël","Firmin"];
-  const LN=["Hounkpatin","Dossou","Agossou","Ahouandjinou","Sossou","Adjovi","Gbaguidi","Houngbédji","Zinsou","Kpadonou","Akakpo","Tossou","Dansou","Assogba","Lokossou","Avocè","Hounsou","Fagla","Adéchian","Yarou","Orou","Saka","Chabi","Idrissou","Alassane","Kiki","Ahoyo","Gnonlonfoun","Houessou","Quenum","Sènou","Vodounon","Amoussou","Bossou","Djossou","Fanou","Glèlè","Hessou","Koudogbo","Médji","Noudéhou","Tchobo"];
-  let k=0;const agents=[];
-  const mk=(grade,site,shift,repos)=>{const first=FN[k%FN.length],last=LN[(k*7+3)%LN.length];k++;const name=first+" "+last;
-    const hired=addDays(T,-Math.floor(120+rnd()*2600));
-    const base={"Agent de sécurité":72000,"Chef de poste":95000,"Superviseur":140000,"Maître-chien":88000,"Agent volant":75000}[grade];
-    const a={id:"a"+k,mat:"AS-"+String(100+k).padStart(4,"0"),name,first,grade,site,shift,repos,hired,base,
-      phone:"+229 01 "+pick(["90","91","94","95","96","97","61","62","66","67"])+" "+pad(Math.floor(rnd()*100))+" "+pad(Math.floor(rnd()*100))+" "+pad(Math.floor(rnd()*100)),
-      carte:addDays(T,Math.floor(40+rnd()*600)),birth:(1972+Math.floor(rnd()*30))+"-"+pad(1+Math.floor(rnd()*12))+"-"+pad(1+Math.floor(rnd()*27)),
-      quartier:pick(["Akpakpa","Fidjrossè","Cadjèhou","Godomey","Calavi","Agla","Menontin","Vèdoko","Sainte-Rita","Zogbo","Houéyiho","Cocotomey"]),
-      formations:pick([["Secourisme (SST)","Sécurité incendie"],["Secourisme (SST)"],["Sécurité incendie","Palpation et filtrage"],["Secourisme (SST)","Sécurité incendie","Gestion des conflits"]]),
-      sanctions:[],cnss:"CNSS "+Math.floor(1e8+rnd()*9e8),status:"Actif"};
-    agents.push(a);return a};
-  let rep=0;
-  sites.forEach(s=>{["J","N"].forEach(sh=>{const n=sh==="J"?s.needJ:s.needN;for(let i=0;i<n;i++){mk(i===0&&sh==="J"?"Chef de poste":(s.type==="Entrepôt"&&sh==="N"&&i===1?"Maître-chien":"Agent de sécurité"),s.id,sh,rep%7);rep++}})});
-  for(let i=0;i<6;i++)mk("Agent volant",null,null,i);
-  for(let i=0;i<3;i++)mk("Superviseur",null,i<2?"N":"J",(i*3+1)%7);
-  /* agent de démo de l'application : Banque, poste de nuit */
-  const demo=agents.find(a=>a.site==="s1"&&a.shift==="N");demo.name="Constant Hounkpatin";demo.first="Constant";demo.repos=(new Date(T+"T12:00:00").getDay()+3)%7;demo.demo=true;
-  /* cartes pro qui expirent bientôt */
-  agents[4].carte=addDays(T,12);agents[17].carte=addDays(T,23);agents[26].carte=addDays(T,-3);
-  agents[8].sanctions=[{date:addDays(T,-40),type:"Avertissement",motif:"Retard de 45 minutes à la relève de nuit sans prévenir."}];
-  agents[21].sanctions=[{date:addDays(T,-75),type:"Mise à pied (2 jours)",motif:"Abandon de poste pendant 1 heure (contrôle superviseur)."}];
-
-  /* absences du jour : une maladie (couverte par un volant) et une absence injustifiée à l'entrepôt de nuit */
-  const working=a=>a.site&&a.repos!==new Date(T+"T12:00:00").getDay();
-  const sick=agents.find(a=>a.site==="s4"&&a.shift==="J"&&working(a));
-  const absN=agents.find(a=>a.site==="s3"&&a.shift==="N"&&working(a)&&!a.grade.includes("Maître"))||agents.find(a=>a.site==="s3"&&a.shift==="N"&&working(a));
-  const absences={};absences[T]={};
-  if(sick)absences[T][sick.id]={type:"Maladie",note:"Certificat médical reçu"};
-  if(absN)absences[T][absN.id]={type:"Absence non justifiée",note:"Injoignable depuis 15 h"};
-
-  const leaves=[
-    {id:uid(),agent:agents[6].id,type:"Congé annuel",from:addDays(T,9),to:addDays(T,22),status:"En attente",reason:"Voyage au village pour les fêtes",date:addDays(T,-1)},
-    {id:uid(),agent:agents[19].id,type:"Événement familial",from:addDays(T,3),to:addDays(T,4),status:"En attente",reason:"Mariage de ma sœur à Porto-Novo",date:T},
-    {id:uid(),agent:sick?sick.id:agents[2].id,type:"Maladie",from:T,to:addDays(T,2),status:"Validée",reason:"Paludisme, certificat médical",date:T},
-    {id:uid(),agent:agents[12].id,type:"Congé annuel",from:addDays(T,-30),to:addDays(T,-16),status:"Validée",reason:"Congés",date:addDays(T,-45)},
-    {id:uid(),agent:agents[29].id,type:"Permission",from:addDays(T,-8),to:addDays(T,-8),status:"Refusée",reason:"Démarches administratives",date:addDays(T,-10),answer:"Effectif insuffisant ce jour-là, à reprogrammer."}
-  ];
-  const incTypes=[["Tentative d'intrusion","Élevée"],["Visiteur suspect","Moyenne"],["Panne électrique","Moyenne"],["Véhicule suspect","Moyenne"],["Altercation avec un visiteur","Moyenne"],["Porte forcée constatée","Élevée"],["Alarme déclenchée","Faible"],["Objet abandonné","Faible"]];
-  const incTxt={"Tentative d'intrusion":"Deux individus ont tenté d'escalader la clôture arrière vers 02 h 40. Sifflet et lampe, fuite immédiate. Police alertée, ronde renforcée jusqu'au matin.","Visiteur suspect":"Individu non identifié a demandé à plusieurs reprises les horaires de fermeture. Refus de décliner son identité. Description consignée.","Panne électrique":"Coupure générale de 21 h 10 à 22 h 05. Groupe électrogène démarré manuellement, éclairage extérieur rétabli.","Véhicule suspect":"Véhicule sans plaque stationné 40 minutes devant l'entrée. Photo prise, parti à l'approche de l'agent.","Altercation avec un visiteur":"Visiteur refusant le contrôle du sac. Situation calmée sans violence, responsable du site informé.","Porte forcée constatée":"Serrure du local technique endommagée constatée à la ronde de 04 h. Rien de volé selon premier contrôle. Client informé.","Alarme déclenchée":"Alarme du bâtiment B déclenchée à 23 h 15. Vérification faite : fausse alerte (chat).","Objet abandonné":"Sac abandonné près du portail. Périmètre sécurisé, propriétaire retrouvé 20 minutes après."};
-  const work=agents.filter(a=>a.site);
-  const incidents=[];
-  [[0,"s3",0],[1,"s1",-1],[2,"s4",-1],[3,"s9",-2],[4,"s8",-3],[5,"s6",-4],[6,"s2",-5],[7,"s7",-6],[2,"s10",-8]].forEach(([ti,sid,d],i)=>{const [type,grav]=incTypes[ti];const ag=work.find(a=>a.site===sid)||work[0];
-    incidents.push({id:uid(),date:addDays(T,d),time:hm(d===0?Math.max(nowMin()-160,60):60+Math.floor(rnd()*1300)),site:sid,agent:ag.id,type,grav,txt:incTxt[type],status:d>=-1&&grav!=="Faible"?"En cours":"Clôturé",fresh:d===0})});
-  const rounds=[];
-  for(let d=-6;d<=0;d++){sites.forEach(s=>{const nb=s.type==="Banque"||s.type==="Résidence"?4:3;for(let r=0;r<nb;r++){if(d===0)continue;const ag=work.find(a=>a.site===s.id&&a.shift==="N")||work[0];const miss=rnd()<.09?1:0;
-    rounds.push({id:uid(),date:addDays(T,d),site:s.id,agent:ag.id,time:hm(1260+r*150),done:s.checkpoints.length-miss,total:s.checkpoints.length,missed:miss?[s.checkpoints[Math.floor(rnd()*s.checkpoints.length)]]:[]})}})}
-  /* factures : 3 derniers mois */
-  const invoices=[];const dt=new Date(T+"T12:00:00");
-  for(let m=2;m>=0;m--){const d=new Date(dt.getFullYear(),dt.getMonth()-m,1);const per=MOIS[d.getMonth()]+" "+d.getFullYear();
-    sites.forEach((s,i)=>{let st="Payée";if(m===0)st=i%3===0?"Payée":"En attente";if(m===1&&(i===2||i===8))st="En retard";
-      invoices.push({id:uid(),num:"FAC-"+d.getFullYear()+pad(d.getMonth()+1)+"-"+pad(i+1),site:s.id,period:per,date:iso(new Date(d.getFullYear(),d.getMonth(),5)),due:iso(new Date(d.getFullYear(),d.getMonth(),20)),amount:s.contract,status:st})})}
-  const requests=[
-    {id:uid(),site:"s4",kind:"Commande",subject:"4 agents pour un mariage le samedi",txt:"Nous organisons un mariage de 300 invités au bord de la piscine. Besoin de 4 agents supplémentaires de 16 h à 2 h, tenue de cérémonie souhaitée.",date:addDays(T,0),status:"Nouvelle",answer:""},
-    {id:uid(),site:"s1",kind:"Plainte",subject:"Agent au téléphone pendant le service",txt:"Mardi vers 11 h, l'agent à l'entrée était au téléphone et n'a pas contrôlé deux visiteurs. Merci de rappeler les consignes.",date:addDays(T,-1),status:"En traitement",answer:"Merci de votre signalement. Le chef de poste a été reçu et un rappel des consignes a été fait à toute l'équipe."},
-    {id:uid(),site:"s8",kind:"Suggestion",subject:"Ronde du parking à la fermeture",txt:"Ce serait bien qu'un agent accompagne le personnel de caisse jusqu'au parking à la fermeture (22 h).",date:addDays(T,-3),status:"Nouvelle",answer:""},
-    {id:uid(),site:"s9",kind:"Commande",subject:"Un agent de plus la nuit",txt:"Livraison de matériaux importante la semaine prochaine. Pouvez-vous ajouter un agent de nuit pendant 10 jours ?",date:addDays(T,-4),status:"Acceptée",answer:"Accepté : 1 agent supplémentaire de nuit du lundi au mercredi suivant. Devis envoyé : 145 000 F CFA."},
-    {id:uid(),site:"s6",kind:"Plainte",subject:"Retard à la relève du matin",txt:"La relève de 7 h est arrivée à 7 h 40 jeudi. L'agent de nuit a dû rester.",date:addDays(T,-9),status:"Clôturée",answer:"Retard confirmé par le pointage (7 h 38). Sanction appliquée et agent remplaçant prévu en cas d'empêchement."}
-  ];
-  const S={day:T,settings:{name:"Agence Spéciale",full:"Sécurité · Gardiennage · Protection",addr:"Siège de votre agence",phone:"+000 00 00 00 00",email:"contact@votre-agence.com",ifu:"RCCM / IFU de l'agence",city:"Cotonou",nightBonus:15000,meal:10000},
-    sites,agents,absences,overrides:{},leaves,incidents,rounds,invoices,requests,punches:[],advances:[{id:uid(),agent:agents[9].id,amount:20000,date:addDays(T,-12),reason:"Frais de scolarité"},{id:uid(),agent:agents[15].id,amount:15000,date:addDays(T,-6),reason:"Réparation moto"}],
-    payValidated:false,log:[],seen:{},msgs:seedMsgs(agents,demo,sites,T),...seedStock(agents,T),docs:seedDocs(agents,demo,T),reportSched:{week:true,month:true,dir:true,rh:true,day:1},...seedSup(agents,sites,T)};
-  /* pointages : nuit d'hier, jour d'aujourd'hui, et nuit de ce soir si elle a commencé */
-  for(let d=13;d>=2;d--){const dd=addDays(T,-d);const pool=S.agents.filter(a=>a.site&&!a.demo);S.absences[dd]={};const na=1+Math.floor(rnd()*2);for(let k=0;k<na;k++){const a=pool[Math.floor(rnd()*pool.length)];S.absences[dd][a.id]={type:rnd()<.5?"Maladie":rnd()<.5?"Absence signalée":"Absence non justifiée",note:"Historique"}}genPunches(S,dd,"J",true,true);genPunches(S,dd,"N",true,true)}
-  genPunches(S,addDays(T,-1),"N",true);
-  if(nowMin()>=430)genPunches(S,T,"J",nowMin()>=1150);
-  if(nowMin()>=1150)genPunches(S,T,"N",false);
-  if(nowMin()<420){genPunches(S,addDays(T,-1),"J",true)}
-  return S;
-}
-function seedSup(agents,sites,T){
-  const sups=agents.filter(a=>a.grade==="Superviseur"&&a.shift==="N");const visits=[],nightReports=[];
-  const comments=["RAS, agents vigilants, registre à jour.","Agent sans béret, rappel fait sur place.","Éclairage du parking défaillant, signalé au client.","Agent somnolent à mon arrivée, réveillé et averti.","Très bon accueil, consignes parfaitement connues.","Registre des visiteurs incomplet pour la soirée."];
-  for(let d=6;d>=1;d--){const dd=addDays(T,-d);sups.forEach((sp,si)=>{const ss=sites.filter((_,i)=>i%2===si%2).slice(0,4);let issues=0;
-    ss.forEach((st,k)=>{const ok=rnd()>.18;if(!ok)issues++;const team=agents.filter(a=>a.site===st.id&&a.shift==="N").map(a=>a.id);
-      visits.push({id:uid(),date:dd,time:hm(1350+k*55+Math.floor(rnd()*20)),sup:sp.id,site:st.id,agents:team,checks:{present:true,eveille:ok||rnd()>.5,tenue:ok||rnd()>.5,registre:rnd()>.15,consignes:true,propre:rnd()>.1},note:ok?4+Math.round(rnd()):2+Math.round(rnd()),comment:ok?comments[pick([0,4])]:comments[pick([1,2,3,5])]})});
-    nightReports.push({id:uid(),date:dd,sup:sp.id,visits:ss.length,issues,txt:issues?"Tournée réalisée sur "+ss.length+" sites. "+issues+" point(s) à corriger signalé(s) aux chefs de poste. Aucun incident grave.":"Tournée réalisée sur "+ss.length+" sites. Tous les postes tenus, agents vigilants. Nuit calme.",sent:"06:"+pad(10+Math.floor(rnd()*40))})})}
-  const s3=sites.find(x=>x.id==="s3");const ag=agents.find(a=>a.site==="s3"&&a.shift==="N");
-  const sos=[{id:uid(),agent:ag.id,site:"s3",date:addDays(T,-3),time:"02:41",lat:s3.lat,lng:s3.lng,status:"Clôturée",handledBy:sups[0]?sups[0].name:"Superviseur",note:"Tentative de vol de câbles. Superviseur sur place à 02:52, police arrivée à 02:58. Aucun blessé."}];
-  return {visits,nightReports,sos,pchecks:[]};
-}
-function seedDocs(agents,demo,T){
-  return [
-    {id:uid(),type:"Demande d'explication",num:"DEX-2026-014",agent:demo.id,date:T,time:hm(Math.max(nowMin()-50,60)),faits:"Lors du contrôle du superviseur dans la nuit du "+fd(addDays(T,-2))+" à 02 h 15, vous n'étiez pas à votre poste (entrée principale de la banque) pendant environ 20 minutes, sans avoir prévenu le chef de poste.",delay:48,status:"En attente de réponse",reply:"",replyAt:""},
-    {id:uid(),type:"Demande d'explication",num:"DEX-2026-013",agent:agents[8].id,date:addDays(T,-6),time:"10:20",faits:"Retard de 45 minutes à la relève de nuit du "+fd(addDays(T,-7))+" sans prévenir, obligeant l'agent de jour à rester.",delay:48,status:"Clôturé",reply:"Ma moto est tombée en panne au carrefour de Godomey et mon téléphone n'avait plus de batterie. Je m'en excuse et je préviendrai désormais par l'application.",replyAt:fd(addDays(T,-5))+" à 21:04"},
-    {id:uid(),type:"Avertissement",num:"AVT-2026-006",agent:agents[8].id,date:addDays(T,-4),time:"09:00",faits:"Suite à votre retard non signalé du "+fd(addDays(T,-7))+" et à votre réponse à la demande d'explication DEX-2026-013, un avertissement vous est notifié. Tout nouveau manquement pourra entraîner une sanction plus lourde.",status:"Remis",readAt:fd(addDays(T,-4))+" à 12:30"},
-    {id:uid(),type:"Attestation de travail",num:"ATT-2026-021",agent:agents[3].id,date:addDays(T,-10),time:"11:00",faits:"Attestation demandée pour un dossier de location de logement.",status:"Délivrée"},
-    {id:uid(),type:"Note de service",num:"NS-2026-009",agent:"all",date:addDays(T,-3),time:"08:30",faits:"À compter du 1er décembre, chaque relève doit être signalée dans l'application par le pointage d'arrivée et de départ. Les agents qui ne pointent pas seront considérés comme absents.",status:"Diffusée"}
-  ];
-}
-function seedStock(agents,T){
-  const items=[["Uniforme complet (chemise + pantalon)","Tenue",46,20,18000],["Chaussures de sécurité","Tenue",22,15,15000],["Béret / casquette","Tenue",60,20,2500],["Ceinture de service","Tenue",31,15,4000],["Imperméable","Tenue",8,20,7000],["Gilet réfléchissant","Tenue",40,20,3000],["Torche rechargeable","Équipement",11,15,6500],["Talkie-walkie","Équipement",18,10,35000],["Batterie de talkie-walkie","Équipement",6,10,9000],["Sifflet","Équipement",85,30,500],["Détecteur de métaux portatif","Équipement",5,3,45000],["Cadenas haute sécurité","Équipement",14,10,5000],["Cahier de main courante","Fournitures",24,20,1500],["Badge professionnel","Fournitures",52,20,1000]].map(([name,cat,qty,min,price],i)=>({id:"m"+(i+1),name,cat,qty,min,price}));
-  const dot=[];const give=(a,mid,q,d,state)=>dot.push({id:uid(),agent:a.id,item:mid,qty:q,date:d,state:state||"Bon"});
-  agents.forEach((a,i)=>{const d=addDays(a.hired>addDays(T,-200)?a.hired:addDays(T,-200+(i%9)*15),0);give(a,"m1",2,d,i%11===3?"Usé":"Bon");give(a,"m2",1,d);give(a,"m3",1,d);give(a,"m4",1,d);give(a,"m10",1,d);give(a,"m14",1,d);
-    if(a.shift==="N"){give(a,"m7",1,d,i%13===5?"Abîmé":"Bon");give(a,"m6",1,d)}
-    if(a.grade==="Chef de poste"||a.grade==="Superviseur")give(a,"m8",1,d);
-    if(i%4===0)give(a,"m5",1,d)});
-  const mvts=[{id:uid(),date:addDays(T,-20),item:"m1",type:"Entrée",qty:30,who:"Fournisseur Tex'Bénin",note:"Commande annuelle de tenues"},{id:uid(),date:addDays(T,-12),item:"m7",type:"Entrée",qty:10,who:"Marché Dantokpa",note:"Réassort torches"},{id:uid(),date:addDays(T,-9),item:"m8",type:"Sortie",qty:1,who:agents[3].name,note:"Remplacement talkie en panne"},{id:uid(),date:addDays(T,-4),item:"m5",type:"Sortie",qty:3,who:"Équipe Entrepôt Akpakpa",note:"Saison des pluies"}];
-  const matReq=[{id:uid(),agent:agents[7].id,item:"m5",kind:"Demande",txt:"Mon imperméable est déchiré, il pleut beaucoup la nuit au poste.",date:T,status:"En attente"},{id:uid(),agent:agents[24].id,item:"m7",kind:"Perte",txt:"J'ai perdu ma torche pendant la ronde de 3 h, sans doute près de la clôture.",date:addDays(T,-1),status:"En attente"},{id:uid(),agent:agents[14].id,item:"m2",kind:"Abîmé",txt:"Semelle décollée, chaussures plus utilisables.",date:addDays(T,-6),status:"Validée",answer:"Nouvelle paire remise le "+fd(addDays(T,-5))}];
-  return {stock:items,dotations:dot,mvts,matReq,matDeduct:[]};
-}
-function seedMsgs(agents,demo,sites,T){
-  const t=m=>hm(Math.max(nowMin()-m,30));const lagune=sites.find(s=>s.id==="s4");
-  const lateAg=agents.find(a=>a.site==="s6"&&a.shift==="N"&&!a.demo)||agents[30];
-  return [
-    {id:uid(),from:"rh",to:demo.id,kind:"Changement de planning",txt:"Bonjour Constant, samedi prochain vous êtes affecté à l'Hôtel Lagune (nuit, 19 h – 7 h) en renfort pour un mariage. Tenue de cérémonie obligatoire. Votre poste à la banque sera couvert par un volant.",date:T,time:t(95),read:{},ack:{}},
-    {id:uid(),from:"rh",to:"all",kind:"Information",txt:"Rappel : réunion sécurité obligatoire lundi à 9 h au siège (Lot 5185). Présence de tous les chefs de poste et superviseurs.",date:addDays(T,-1),time:"16:20",read:Object.fromEntries(agents.slice(0,23).map(a=>[a.id,"17:05"])),ack:Object.fromEntries(agents.slice(0,15).map(a=>[a.id,"17:10"]))},
-    {id:uid(),from:"rh",to:"site:s1",kind:"Consigne",txt:"À partir de ce soir, contrôle d'identité obligatoire pour tout livreur à la banque, même connu. Noter le nom et la plaque dans la main courante.",date:addDays(T,-2),time:"10:05",read:Object.fromEntries(agents.filter(a=>a.site==="s1"&&!a.demo).map(a=>[a.id,"11:00"])),ack:{}},
-    {id:uid(),from:lateAg.id,to:"rh",kind:"Retard",mins:20,motif:"Panne de moto",txt:"Ma moto est tombée en panne à Godomey, je prends un zémidjan. J'arrive vers 19 h 20.",date:T,time:t(25),handled:false},
-    {id:uid(),from:agents[11].id,to:"rh",kind:"Absence",motif:"Raison familiale",txt:"Décès de mon oncle à Abomey, je dois me rendre aux obsèques demain. Je ramène l'avis de décès.",date:addDays(T,-1),time:"08:40",handled:true,reply:"Toutes nos condoléances. Absence acceptée, un volant vous remplace."}
-  ];
-}
-function genPunches(S,date,sh,closed,hist){
-  const p=planFor(date,S);const st=toMin(SHIFTS[sh].start);let i=0;
-  S.sites.forEach(s=>{(p[s.id][sh]||[]).forEach(aid=>{const a=S.agents.find(x=>x.id===aid);if(a.demo&&date===S.day)return;i++;
-    let late=-Math.floor(rnd()*14),m=8+Math.floor(rnd()*70);
-    if(hist){if(rnd()<.07)late=11+Math.floor(rnd()*35);if(rnd()<.015)m=400+Math.floor(rnd()*2500)}
-    else{if(i===5)late=22;if(i===13)late=38;if(i===19)late=14;if(i===9&&sh==="J")m=1350}
-    const [lat,lng]=offset(s.lat,s.lng,m,rnd()*6.28);
-    const pu={id:uid(),agent:aid,site:s.id,date,shift:sh,in:hm(st+late),lat,lng,d:m};
-    if(closed){const [la2,ln2]=offset(s.lat,s.lng,10+Math.floor(rnd()*50),rnd()*6.28);pu.out=hm(st+720+Math.floor(rnd()*12));pu.d2=dist(s.lat,s.lng,la2,ln2)}
-    S.punches.push(pu)})});
+/* ---------- base vide : le client saisit ou importe ses propres données ---------- */
+function seed(keep){
+  return {day:today(),settings:keep||{name:"Agence Spéciale",full:"Sécurité · Gardiennage · Protection",addr:"",phone:"",email:"",ifu:"",city:"",nightBonus:0,meal:0},
+    sites:[],agents:[],absences:{},overrides:{},leaves:[],incidents:[],rounds:[],invoices:[],requests:[],punches:[],advances:[],payValidated:false,log:[],seen:{},msgs:[],
+    stock:[],dotations:[],mvts:[],matReq:[],matDeduct:[],docs:[],reportSched:{week:true,month:true,dir:true,rh:true,day:1},visits:[],nightReports:[],sos:[],pchecks:[],dgTasks:[],ui:{}};
 }
 /* Planning : équipe titulaire hors jour de repos, complétée par les volants */
 function planFor(date,St=S){
@@ -540,15 +404,13 @@ function planFor(date,St=S){
   St.sites.forEach(s=>["J","N"].forEach(sh=>{const need=sh==="J"?s.needJ:s.needN;
     const ov=(St.overrides[date]||{})[s.id+"|"+sh]||[];ov.forEach(id=>{if(!res[s.id][sh].includes(id)){res[s.id][sh].push(id);used.add(id)}});
     while(res[s.id][sh].length<need){
-      /* la nuit à l'entrepôt reste découverte le jour même : c'est l'alerte à traiter */
-      if(date===St.day&&s.id==="s3"&&sh==="N"&&Object.keys(abs).length&&!ov.length)break;
       const v=vol.find(x=>!used.has(x.id));if(!v)break;res[s.id][sh].push(v.id);used.add(v.id)}
     if(res[s.id][sh].length<need)holes.push({site:s.id,shift:sh,missing:need-res[s.id][sh].length})}));
   res._holes=holes;res._used=used;return res;
 }
 
 let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
-if(!S||S.day!==today())S=seed();
+if(!S||!Array.isArray(S.agents))S=seed();S.day=today();S.ui=S.ui||{};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 save();
 
@@ -586,11 +448,11 @@ function modal(title,body,foot="",wide=false){const m=$("#modal");m.innerHTML=`<
 
 /* ---------- navigation ---------- */
 const NAV={
-  dir:[["Pilotage",[["dash","home","Tableau de bord"],["taches","check","Mes tâches"],["rapports","chart","Rapports"],["live","map","Carte 3D en direct"]]],["Suivi de l'entreprise",[["factures","wallet","Chiffre d'affaires"],["requests","msg","Demandes clients"]]]],
-  rh:[["Ressources humaines",[["dash","home","Tableau de bord RH"],["agents","users","Agents"],["planning","calendar","Planning"],["pointage","clock","Pointage"],["conges","leave","Congés et absences"],["docs","pen","Documents RH"],["messages","send","Messagerie agents"],["paie","wallet","Paie"],["stock","box","Matériel et stock"],["rapports","chart","Rapports"]]],["Terrain",[["courante","book","Main courante"],["rondes","route","Rondes"],["supervision","shield","Supervision"],["live","map","Carte en direct"]]]],
+  dir:[["Pilotage",[["dash","home","Tableau de bord"],["taches","check","Mes tâches"],["rapports","chart","Rapports"],["live","map","Carte 3D en direct"]]],["Suivi de l'entreprise",[["factures","wallet","Chiffre d'affaires"],["requests","msg","Demandes clients"]]],["Configuration",[["reglages","settings","Paramètres et import"]]]],
+  rh:[["Ressources humaines",[["dash","home","Tableau de bord RH"],["sites","building","Sites clients"],["agents","users","Agents"],["planning","calendar","Planning"],["pointage","clock","Pointage"],["conges","leave","Congés et absences"],["docs","pen","Documents RH"],["messages","send","Messagerie agents"],["paie","wallet","Paie"],["stock","box","Matériel et stock"],["rapports","chart","Rapports"]]],["Terrain",[["courante","book","Main courante"],["rondes","route","Rondes"],["supervision","shield","Supervision"],["live","map","Carte en direct"]]],["Configuration",[["reglages","settings","Paramètres et import"]]]],
   client:[["Mon espace",[["cdash","home","Accueil"],["corder","cart","Commander un service"],["cmsg","msg","Plaintes et suggestions"],["creport","chart","Rapports de sécurité"],["cinv","file","Mes factures"]]]]
 };
-const CLIENT_SITE="s1";
+const CS=()=>{const id=(S.ui||{}).site;return S.sites.some(s=>s.id===id)?id:(S.sites[0]||{}).id};
 function badges(){
   const p=planFor(S.day);
   return {taches:(S.dgTasks||[]).filter(t=>!t.done&&t.due<=S.day).length,supervision:S.sos.filter(x=>x.status!=="Clôturée").length,docs:S.docs.filter(d=>d.reply&&d.status==="Répondu").length,stock:S.stock.filter(m=>m.qty<m.min).length+S.matReq.filter(r=>r.status==="En attente").length,messages:S.msgs.filter(m=>m.to==="rh"&&!m.handled).length,requests:S.requests.filter(r=>r.status==="Nouvelle").length,planning:p._holes.length,conges:S.leaves.filter(l=>l.status==="En attente").length,courante:S.incidents.filter(i=>i.status==="En cours").length,factures:S.invoices.filter(i=>i.status==="En retard").length};
@@ -604,14 +466,14 @@ function renderSide(){
   $("#switch").onclick=()=>{location.hash="";showLogin()};
 }
 function renderTop(){
-  const names={dir:[DG_NAME,"Directeur général"],rh:["Service RH","Responsable RH"],client:[SI(CLIENT_SITE).contact,SI(CLIENT_SITE).name]};
+  const names={dir:[DG_NAME,"Directeur général"],rh:["Service RH","Responsable RH"],client:[SI(CS()).contact,SI(CS()).name]};
   const [n,r]=names[role];$("#meName").textContent=n;$("#meRole").textContent=r;$("#meAv").outerHTML=`<div id="meAv">${av(n,32)}</div>`;
   const notes=notifs();const nb=notes.filter(x=>!S.seen[x.k]).length;const bn=$("#bellN");bn.hidden=!nb;bn.textContent=nb;
   const d=new Date();$("#clock").textContent=fdl(today())+" · "+pad(d.getHours())+":"+pad(d.getMinutes())+" · Relève de "+SHIFTS[curShift()].l.toLowerCase();
 }
 function notifs(){
   const out=[];const p=planFor(S.day);
-  if(role==="client"){S.requests.filter(r=>r.site===CLIENT_SITE&&r.answer).forEach(r=>out.push({k:"ra"+r.id,i:"msg",c:"var(--blue)",t:"Réponse de l'Agence Spéciale : "+r.subject,s:fd(r.date),go:"cmsg"}));return out}
+  if(role==="client"){S.requests.filter(r=>r.site===CS()&&r.answer).forEach(r=>out.push({k:"ra"+r.id,i:"msg",c:"var(--blue)",t:"Réponse de l'Agence Spéciale : "+r.subject,s:fd(r.date),go:"cmsg"}));return out}
   if(role==="dir"){
     S.sos.filter(x=>x.status!=="Clôturée").forEach(x=>out.push({k:"sos"+x.id+x.status,i:"alert",c:"var(--red)",t:"🚨 SOS : "+A(x.agent).name,s:SI(x.site).name+" · "+x.time+" · "+x.status,go:"live"}));
     dgTasks().filter(t=>!t.done&&t.due<=S.day).forEach(t=>out.push({k:"t"+t.id,i:"check",c:"var(--blue)",t:"Tâche : "+t.title,s:t.due<S.day?"En retard · prévue le "+fd(t.due):"À faire aujourd'hui",go:"taches"}));
@@ -646,7 +508,9 @@ function render(keepSearch){
   renderSide();renderTop();
   if(!keepSearch){filt.q="";$("#q").value=""}
   const V={dash:role==="rh"?vDashRH:role==="dir"?vDashDG:vDash,taches:vTaches,live:vLive,requests:vRequests,sites:vSites,agents:vAgents,planning:vPlanning,pointage:vPointage,courante:vCourante,rondes:vRondes,conges:vConges,paie:vPaie,factures:vFactures,reglages:vReglages,messages:vMessages,stock:vStock,docs:vDocs,rapports:vRapports,supervision:vSup,cdash:vCDash,corder:vCOrder,cmsg:vCMsg,creport:vCReport,cinv:vCInv}[view]||vDash;
-  $("#view").innerHTML=(role!=="client"?sosBanner():"")+V();hydrateIcons($("#view"));bindSos();
+  const welcome=role!=="client"&&view==="dash"&&!S.sites.length&&!S.agents.length?`<div class="card pad" style="margin-bottom:18px;border:1.5px solid var(--blue)"><h3 style="margin-bottom:6px">Bienvenue dans votre logiciel</h3><p class="sm muted" style="margin:0 0 12px">Le logiciel est vide et prêt à recevoir vos données. 1. Renseignez les informations de votre entreprise. 2. Ajoutez vos sites clients. 3. Ajoutez vos agents, un par un ou en important votre fichier Excel.</p><button class="btn pri" id="wlGo">${ic("settings")} Ouvrir Paramètres et import</button></div>`:"";
+  $("#view").innerHTML=(role!=="client"?sosBanner():"")+welcome+V();hydrateIcons($("#view"));bindSos();
+  const wl=$("#wlGo");if(wl)wl.onclick=()=>{view="reglages";render()};
   (afterRender[view]||(()=>{}))();
   window.scrollTo(0,0);
 }
@@ -807,19 +671,7 @@ function buildMap3D(el,opts={}){
 /* ---------- Direction générale ---------- */
 const DG_NAME="Directeur";
 function dgTasks(){
-  if(!S.dgTasks){const T=S.day;const late=S.invoices.find(i=>i.status==="En retard");const oldest=[...S.sites].sort((a,b)=>a.since.localeCompare(b.since))[0];
-    const mass=S.agents.filter(a=>a.status==="Actif").reduce((x,a)=>x+payOf(a).brut,0);
-    S.dgTasks=[
-      {id:uid(),title:"Valider la paie du mois avant virement",cat:"Finance",prio:"Haute",due:T,from:"Service RH",note:"Masse salariale brute : "+fcfa(mass)+". Les bulletins sont prêts dans l'espace RH.",done:false},
-      {id:uid(),title:"Signer le renouvellement du contrat · "+oldest.name,cat:"Commercial",prio:"Haute",due:addDays(T,2),from:"Personnel",note:"Client depuis le "+fd(oldest.since)+" · "+fcfa(oldest.contract)+" par mois. Proposer une révision tarifaire.",done:false},
-      late?{id:uid(),title:"Appeler le client pour l'impayé · "+SI(late.site).name,cat:"Finance",prio:"Haute",due:T,from:"Comptabilité",note:"Facture "+late.num+" · "+fcfa(late.amount)+" en retard.",done:false}:null,
-      {id:uid(),title:"Décider du recrutement de 4 agents proposé par les RH",cat:"Décision",prio:"Normale",due:addDays(T,1),from:"Service RH",note:"Besoin lié aux nouveaux sites et aux congés de fin d'année.",done:false},
-      {id:uid(),title:"Rendez-vous prospect · Groupe scolaire Les Lauriers",cat:"Commercial",prio:"Normale",due:addDays(T,3),from:"Personnel",note:"Présentation de l'offre de gardiennage jour et nuit (2 agents).",done:false},
-      {id:uid(),title:"Approuver le budget matériel du trimestre",cat:"Finance",prio:"Normale",due:addDays(T,4),from:"Service RH",note:"Tenues, torches, talkies-walkies : voir les demandes de stock.",done:false},
-      {id:uid(),title:"Réunion mensuelle avec les superviseurs",cat:"Pilotage",prio:"Normale",due:addDays(T,5),from:"Personnel",note:"Ordre du jour : ponctualité, incidents du mois, rondes de nuit.",done:false},
-      {id:uid(),title:"Renouveler l'agrément de société de sécurité",cat:"Conformité",prio:"Normale",due:addDays(T,20),from:"Personnel",note:"Dossier à déposer auprès du ministère de l'Intérieur.",done:false},
-      {id:uid(),title:"Lire le rapport mensuel et le valider",cat:"Pilotage",prio:"Normale",due:addDays(T,-1),from:"Personnel",note:"",done:true}
-    ].filter(Boolean);save()}
+  if(!S.dgTasks){S.dgTasks=[];save()}
   return S.dgTasks;
 }
 const CATC={Finance:"var(--green)",Commercial:"var(--blue)",Décision:"var(--violet)",Pilotage:"var(--steel)",Conformité:"var(--amber)"};
@@ -850,14 +702,14 @@ function vDashDG(){
   const act=S.agents.filter(a=>a.status==="Actif").length;
   const mass=S.agents.filter(a=>a.status==="Actif").reduce((x,a)=>x+payOf(a).brut,0);
   const tasks=dgTasks().filter(t=>!t.done).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,5);
-  const top=[...S.sites].sort((a,b)=>b.contract-a.contract);const mx=top[0].contract;
+  const top=[...S.sites].sort((a,b)=>b.contract-a.contract);const mx=(top[0]||{}).contract||1;
   const reps=["fac","paie","inc","ron","abs","ret"].map(k=>REPORTS.find(r=>r[0]===k)).filter(Boolean);
   return `<div class="dg-hero"><div class="grow"><div class="xs muted b" style="letter-spacing:.08em;text-transform:uppercase">Direction générale · Agence Spéciale</div><h2>Bonjour ${DG_NAME} 👋</h2><div class="muted sm">${fdl(S.day)} · ${tasks.length} tâche(s) à traiter · relève de ${SHIFTS[sh].l.toLowerCase()} en cours</div></div><div class="row wrapf"><button class="btn" data-goto="taches">${ic("check")} Mes tâches</button><button class="btn pri" data-goto="rapports">${ic("chart")} Voir les rapports</button></div></div>
   <div class="kpis">
     ${kpi("Chiffre d'affaires mensuel",fcfa(ca).replace(" F CFA",""),"F CFA · "+S.sites.length+" contrats","wallet","var(--green)")}
     ${kpi("Impayés",fcfa(unpaid).replace(" F CFA",""),`F CFA · ${lateInv.length} facture(s) en retard`,"file",lateInv.length?"var(--red)":"var(--green)")}
-    ${kpi("Couverture des sites",Math.round(100*covered/S.sites.length)+" %",`${covered} / ${S.sites.length} sites couverts`,"building",covered<S.sites.length?"var(--amber)":"var(--green)")}
-    ${kpi("Ponctualité · 14 jours",ponct+" %",pp.length+" pointages analysés","clock")}
+    ${kpi("Couverture des sites",S.sites.length?Math.round(100*covered/S.sites.length)+" %":"—",`${covered} / ${S.sites.length} sites couverts`,"building",covered<S.sites.length?"var(--amber)":"var(--green)")}
+    ${kpi("Ponctualité · 14 jours",pp.length?ponct+" %":"—",pp.length+" pointages analysés","clock")}
     ${kpi("Incidents · 7 jours",inc7.length,compl.length+" plainte(s) client ouverte(s)","book","var(--violet)")}
   </div>
   <div class="grid2">
@@ -916,7 +768,7 @@ function siteDrawer(id){
 }
 function newSite(){
   modal("Nouveau site client",`<div class="field"><label>Nom du client ou du site</label><input class="input" id="ns-n" placeholder="Ex. Pharmacie du Port"></div><div class="field"><label>Quartier</label><input class="input" id="ns-l" placeholder="Ex. Ganhi"></div><div class="row"><div class="field grow"><label>Agents de jour</label><input class="input" id="ns-j" type="number" value="1" min="0"></div><div class="field grow"><label>Agents de nuit</label><input class="input" id="ns-nn" type="number" value="1" min="0"></div></div><div class="field"><label>Contrat mensuel (F CFA)</label><input class="input" id="ns-c" type="number" value="450000"></div>`,`<button class="btn" data-close2>Annuler</button><button class="btn pri" id="ns-ok">Créer le site</button>`);
-  $("[data-close2]").onclick=closeAll;$("#ns-ok").onclick=()=>{const n=$("#ns-n").value.trim();if(!n)return $("#ns-n").focus();S.sites.push({id:"s"+(S.sites.length+1)+uid(),name:n,loc:$("#ns-l").value||"Cotonou",type:"Entreprise",lat:6.37+rnd()*.03,lng:2.37+rnd()*.07,needJ:+$("#ns-j").value,needN:+$("#ns-nn").value,contract:+$("#ns-c").value,contact:"À renseigner",crole:"",since:S.day,checkpoints:["Portail principal","Parking","Clôture arrière"],consignes:"À définir avec le client."});save();closeAll();toast("Site créé : pensez à affecter une équipe");render()};
+  $("[data-close2]").onclick=closeAll;$("#ns-ok").onclick=()=>{const n=$("#ns-n").value.trim();if(!n)return $("#ns-n").focus();S.sites.push({id:"s"+(S.sites.length+1)+uid(),name:n,loc:$("#ns-l").value.trim(),type:"Entreprise",lat:6.37+rnd()*.03,lng:2.37+rnd()*.07,needJ:+$("#ns-j").value,needN:+$("#ns-nn").value,contract:+$("#ns-c").value,contact:"À renseigner",crole:"",since:S.day,checkpoints:["Portail principal","Parking","Clôture arrière"],consignes:"À définir avec le client."});save();closeAll();toast("Site créé : pensez à affecter une équipe");render()};
 }
 
 /* ---------- Agents ---------- */
@@ -1110,7 +962,7 @@ function vPaie(){
   <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Agent</th><th>Base</th><th>Ancienneté</th><th>Prime de nuit</th><th>Panier</th><th>Resp.</th><th>Retenue absences</th><th>CNSS</th><th>Avance</th><th>Net</th><th></th></tr></thead><tbody>${rows.map(({a,p})=>`<tr><td><div class="row">${av(a.name)}<div><div class="b">${esc(a.name)}</div><div class="xs muted">${a.grade}</div></div></div></td><td>${fcfa(p.base)}</td><td>${p.anc?fcfa(p.anc):"—"}</td><td>${p.night?fcfa(p.night):"—"}</td><td>${fcfa(p.meal)}</td><td>${p.resp?fcfa(p.resp):"—"}</td><td style="color:${p.ret?"var(--red)":"inherit"}">${p.ret?"− "+fcfa(p.ret):"—"}</td><td>− ${fcfa(p.cnss)}</td><td>${p.adv?"− "+fcfa(p.adv):"—"}</td><td class="b">${fcfa(p.net)}</td><td><button class="btn sm" data-bul="${a.id}">${ic("file")} Bulletin</button></td></tr>`).join("")}</tbody></table></div></div>`;
 }
 afterRender.paie=()=>{$$("[data-bul]").forEach(b=>b.onclick=()=>bulletin(b.dataset.bul));$("#pVal").onclick=()=>{S.payValidated=true;save();toast("Paie validée · bulletins disponibles dans l'application des agents");render()};$("#pExp").onclick=()=>{const rows=[["Matricule","Nom","Base","Ancienneté","Prime nuit","Panier","Responsabilité","Retenue","CNSS","Avance","Net"]].concat(S.agents.map(a=>{const p=payOf(a);return [a.mat,a.name,p.base,p.anc,p.night,p.meal,p.resp,p.ret,p.cnss,p.adv,p.net]}));const csv="﻿"+rows.map(r=>r.join(";")).join("\n");const u=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));const l=document.createElement("a");l.href=u;l.download="paie-agence-speciale.csv";l.click();toast("Paie exportée")}};
-function docHead(title,date){return `<div class="doc"><div class="dhd"><div class="row"><img src="logo-as-96.png" alt=""><div><b style="font-size:15px">${esc(S.settings.name)}</b><div class="xs">${esc(S.settings.full)}</div><div class="xs">${esc(S.settings.addr)} · ${esc(S.settings.phone)}</div><div class="xs">${esc(S.settings.ifu)}</div></div></div><div style="text-align:right"><b style="font-size:16px;color:var(--blue)">${title}</b><div class="xs">${esc(S.settings.city||"Cotonou")}, le ${fd(date)} ${date.slice(0,4)}</div></div></div>`}
+function docHead(title,date){return `<div class="doc"><div class="dhd"><div class="row"><img src="logo-as-96.png" alt=""><div><b style="font-size:15px">${esc(S.settings.name)}</b><div class="xs">${esc(S.settings.full)}</div><div class="xs">${esc([S.settings.addr,S.settings.phone,S.settings.email].filter(Boolean).join(" · "))}</div><div class="xs">${esc(S.settings.ifu)}</div></div></div><div style="text-align:right"><b style="font-size:16px;color:var(--blue)">${title}</b><div class="xs">${S.settings.city?esc(S.settings.city)+", le":"Le"} ${fd(date)} ${date.slice(0,4)}</div></div></div>`}
 function bulletin(id,mo=0){
   const a=A(id),p=payOf(a);const d=new Date(S.day+"T12:00:00");d.setMonth(d.getMonth()-mo);const per=MOIS[d.getMonth()]+" "+d.getFullYear();
   const L=(l,v,neg)=>v?`<tr><td>${l}</td><td style="text-align:right">${neg?"− ":""}${fcfa(v)}</td></tr>`:"";
@@ -1127,10 +979,10 @@ function vFactures(){
   `<div class="kpis k4">${kpi("Facturé (3 mois)",fcfa(sum()).replace(" F CFA",""),"F CFA","file")}${kpi("Encaissé",fcfa(sum("Payée")).replace(" F CFA",""),"F CFA","check","var(--green)")}${kpi("En attente",fcfa(sum("En attente")).replace(" F CFA",""),"F CFA","clock","var(--amber)")}${kpi("En retard",fcfa(sum("En retard")).replace(" F CFA",""),S.invoices.filter(i=>i.status==="En retard").length+" facture(s) à relancer","alert","var(--red)")}</div>
   <div class="card"><div class="tbl-wrap"><table><thead><tr><th>N°</th><th>Client</th><th>Période</th><th>Échéance</th><th>Montant</th><th>Statut</th><th></th></tr></thead><tbody>${list.map(i=>`<tr><td class="b sm">${i.num}</td><td>${esc(SI(i.site).name)}<div class="xs muted">${esc(SI(i.site).contact)}</div></td><td class="sm">${i.period}</td><td class="sm">${fd(i.due)}</td><td class="b">${fcfa(i.amount)}</td><td><span class="pill ${i.status==="Payée"?"p-green":i.status==="En retard"?"p-red":"p-amber"}">${i.status}</span></td><td><div class="row"><button class="btn sm" data-inv="${i.id}">${ic("file")} Voir</button>${i.status!=="Payée"?`<button class="btn sm" data-paid="${i.id}">${ic("check")} Payée</button>`:""}${i.status==="En retard"?`<button class="btn sm red" data-rel="${i.id}">Relancer</button>`:""}</div></td></tr>`).join("")}</tbody></table></div></div>`;
 }
-afterRender.factures=()=>{$$("[data-fst]").forEach(b=>b.onclick=()=>{filt.fst=b.dataset.fst;render(true)});$$("[data-inv]").forEach(b=>b.onclick=()=>invoiceDoc(b.dataset.inv));$$("[data-paid]").forEach(b=>b.onclick=()=>{S.invoices.find(i=>i.id===b.dataset.paid).status="Payée";save();toast("Paiement enregistré");render(true)});$$("[data-rel]").forEach(b=>b.onclick=()=>toast("Relance envoyée au client par e-mail et WhatsApp","send"));$("#genInv").onclick=()=>toast("Les factures du mois sont déjà générées")};
+afterRender.factures=()=>{$$("[data-fst]").forEach(b=>b.onclick=()=>{filt.fst=b.dataset.fst;render(true)});$$("[data-inv]").forEach(b=>b.onclick=()=>invoiceDoc(b.dataset.inv));$$("[data-paid]").forEach(b=>b.onclick=()=>{S.invoices.find(i=>i.id===b.dataset.paid).status="Payée";save();toast("Paiement enregistré");render(true)});$$("[data-rel]").forEach(b=>b.onclick=()=>toast("Relance envoyée au client par e-mail et WhatsApp","send"));$("#genInv").onclick=()=>{const d=new Date(S.day+"T12:00:00"),per=MOIS[d.getMonth()]+" "+d.getFullYear();let n=0;S.sites.forEach(s=>{if(!s.contract||S.invoices.some(i=>i.site===s.id&&i.period===per))return;n++;const k=S.invoices.filter(i=>i.period===per).length+1;S.invoices.push({id:uid(),num:"FAC-"+d.getFullYear()+pad(d.getMonth()+1)+"-"+pad(k),site:s.id,period:per,date:S.day,due:addDays(S.day,15),amount:s.contract,status:"En attente"})});save();toast(n?n+" facture(s) générée(s) pour "+per:S.sites.length?"Les factures du mois sont déjà générées":"Ajoutez d'abord vos sites clients");render(true)}};
 function invoiceDoc(id){
   const i=S.invoices.find(x=>x.id===id),s=SI(i.site);const ht=i.amount;
-  modal("Facture "+i.num,docHead("FACTURE N° "+i.num,i.date)+`<div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:14px"><div><div class="xs muted">FACTURÉ À</div><b>${esc(s.name)}</b><div class="sm">${esc(s.contact)} · ${esc(s.crole)}</div><div class="sm">${esc(s.loc)}, ${esc(S.settings.city||"Cotonou")}</div></div><div style="text-align:right"><div class="xs muted">ÉCHÉANCE</div><b>${fd(i.due)} ${i.due.slice(0,4)}</b></div></div>
+  modal("Facture "+i.num,docHead("FACTURE N° "+i.num,i.date)+`<div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:14px"><div><div class="xs muted">FACTURÉ À</div><b>${esc(s.name)}</b><div class="sm">${esc(s.contact)} · ${esc(s.crole)}</div><div class="sm">${esc([s.loc,s.city&&s.city!==s.loc?s.city:""].filter(Boolean).join(", "))}</div></div><div style="text-align:right"><div class="xs muted">ÉCHÉANCE</div><b>${fd(i.due)} ${i.due.slice(0,4)}</b></div></div>
   <table><thead><tr><th>Désignation</th><th>Qté</th><th style="text-align:right">Montant</th></tr></thead><tbody><tr><td>Prestation de gardiennage · ${i.period}<div class="xs muted">${s.needJ} agent(s) de jour + ${s.needN} agent(s) de nuit, 7j/7, rondes et main courante</div></td><td>1</td><td style="text-align:right">${fcfa(ht)}</td></tr></tbody></table>
   <div class="tot"><span>TOTAL À PAYER</span><span>${fcfa(ht)}</span></div><p class="xs muted" style="margin-top:14px">Paiement par virement, chèque ou Mobile Money. Merci de rappeler le numéro de facture.</p></div>`,`<button class="btn pri" onclick="window.print()">${ic("print")} Imprimer / PDF</button>`,true);
 }
@@ -1297,11 +1149,10 @@ function bindSos(){
   $$("[data-sosend]").forEach(b=>b.onclick=()=>{const x=S.sos.find(y=>y.id===b.dataset.sosend);modal("Clôturer l'alerte SOS",`<div class="field"><label>Ce qui s'est passé</label><textarea class="input" id="se-x" placeholder="Ex. Tentative d'intrusion, superviseur sur place à 02:52, police prévenue…"></textarea></div>`,`<button class="btn pri" id="se-ok">Clôturer et enregistrer</button>`);$("#se-ok").onclick=()=>{x.status="Clôturée";x.note=$("#se-x").value||"Situation maîtrisée.";const inc=S.incidents.find(i=>i.sos===x.id);if(inc){inc.status="Clôturé";inc.txt+=" · Clôture : "+x.note}save();closeAll();toast("Alerte clôturée et archivée dans la main courante");render(true)}});
 }
 function triggerSos(a,s,lat,lng){const id=uid();S.sos.unshift({id,agent:a.id,site:s.id,date:today(),time:hm(nowMin()),lat,lng,status:"En cours"});S.incidents.unshift({id:uid(),sos:id,date:today(),time:hm(nowMin()),site:s.id,agent:a.id,type:"Alerte SOS",grav:"Élevée",txt:"Alerte SOS déclenchée par l'agent depuis l'application. Position GPS transmise.",status:"En cours",fresh:true});save()}
-const supUser=()=>S.agents.find(a=>a.grade==="Superviseur"&&a.shift==="N")||S.agents[0];
+const supUser=()=>S.agents.find(a=>a.id===(S.ui||{}).sup&&a.grade==="Superviseur")||S.agents.find(a=>a.grade==="Superviseur");
 function launchPresence(){
   const sd=curShiftDate(),p=planFor(sd);const ids=[];S.sites.forEach(s=>p[s.id].N.forEach(id=>ids.push(id)));
   const c={id:uid(),date:S.day,time:hm(nowMin()),res:ids.map(id=>({agent:id,ok:false,at:""}))};
-  c.res.forEach((r,i)=>{if(!A(r.agent).demo&&i%9!==4){r.ok=true;r.at=hm(nowMin()+1+(i%4))}});
   S.pchecks.unshift(c);save();toast("Contrôle de présence envoyé à "+ids.length+" agents de nuit","send");
 }
 /* ---------- Supervision (bureau) ---------- */
@@ -1320,12 +1171,77 @@ afterRender.supervision=()=>{bindCommon();$("#pc-go").onclick=()=>{launchPresenc
     modal("Rapport de nuit",docHead("RAPPORT DE NUIT · SUPERVISION",r.date)+`<dl class="kv"><dt>Superviseur</dt><dd>${esc(A(r.sup).name)}</dd><dt>Nuit du</dt><dd>${fdl(r.date)}</dd><dt>Envoyé à</dt><dd>${r.sent} · Direction générale, Service RH</dd></dl><p>${esc(r.txt)}</p><table><thead><tr><th>Heure</th><th>Site</th><th>Note</th><th>Observation</th></tr></thead><tbody>${vs.map(v=>`<tr><td>${v.time}</td><td>${esc(SI(v.site).name)}</td><td>${v.note}/5</td><td>${esc(v.comment)}</td></tr>`).join("")}</tbody></table></div>`,`<button class="btn pri" onclick="window.print()">${ic("dl")} Télécharger (PDF)</button>`,true)})};
 
 /* ---------- Paramètres ---------- */
-function vReglages(){const s=S.settings;return ph("Paramètres","Informations de l'entreprise utilisées sur les bulletins, factures et rapports")+`<div class="card pad" style="max-width:720px"><div class="field"><label>Nom commercial</label><input class="input" id="st-n" value="${esc(s.name)}"></div><div class="field"><label>Raison sociale</label><input class="input" id="st-f" value="${esc(s.full)}"></div><div class="field"><label>Adresse</label><input class="input" id="st-a" value="${esc(s.addr)}"></div><div class="row"><div class="field grow"><label>Téléphone</label><input class="input" id="st-p" value="${esc(s.phone)}"></div><div class="field grow"><label>IFU</label><input class="input" id="st-i" value="${esc(s.ifu)}"></div></div><div class="row"><div class="field grow"><label>Prime de nuit (F CFA)</label><input class="input" type="number" id="st-nb" value="${s.nightBonus}"></div><div class="field grow"><label>Prime de panier (F CFA)</label><input class="input" type="number" id="st-m" value="${s.meal}"></div></div><div class="row"><button class="btn pri" id="st-ok">Enregistrer</button><button class="btn" id="st-reset">${ic("refresh")} Réinitialiser la démonstration</button></div></div>`}
-afterRender.reglages=()=>{$("#st-ok").onclick=()=>{Object.assign(S.settings,{name:$("#st-n").value,full:$("#st-f").value,addr:$("#st-a").value,phone:$("#st-p").value,ifu:$("#st-i").value,nightBonus:+$("#st-nb").value,meal:+$("#st-m").value});save();toast("Paramètres enregistrés")};$("#st-reset").onclick=()=>{S=seed();save();toast("Démonstration réinitialisée");render()}};
+function vReglages(){const s=S.settings;return ph("Paramètres et import","Informations de l'entreprise reprises sur les bulletins, factures, cartes et rapports · import de vos données")+
+`<div class="card pad" style="max-width:720px;margin-bottom:18px"><h3 style="margin-bottom:12px">Votre entreprise</h3><div class="field"><label>Nom commercial</label><input class="input" id="st-n" value="${esc(s.name)}"></div><div class="field"><label>Raison sociale ou devise</label><input class="input" id="st-f" value="${esc(s.full)}"></div><div class="row"><div class="field grow"><label>Adresse du siège</label><input class="input" id="st-a" value="${esc(s.addr)}"></div><div class="field grow"><label>Ville</label><input class="input" id="st-c" value="${esc(s.city||"")}"></div></div><div class="row"><div class="field grow"><label>Téléphone</label><input class="input" id="st-p" value="${esc(s.phone)}"></div><div class="field grow"><label>E-mail</label><input class="input" id="st-e" value="${esc(s.email||"")}"></div></div><div class="field"><label>N° d'identification (IFU, RCCM…)</label><input class="input" id="st-i" value="${esc(s.ifu)}"></div><div class="row"><div class="field grow"><label>Prime de nuit (F CFA)</label><input class="input" type="number" id="st-nb" value="${s.nightBonus}"></div><div class="field grow"><label>Prime de panier (F CFA)</label><input class="input" type="number" id="st-m" value="${s.meal}"></div></div><button class="btn pri" id="st-ok">Enregistrer</button></div>
+<div class="card pad" style="max-width:720px;margin-bottom:18px"><h3 style="margin-bottom:6px">Importer vos données (Excel)</h3><p class="sm muted" style="margin:0 0 12px">Téléchargez le modèle, remplissez les feuilles Sites, Agents et Matériel, puis importez le fichier. Vous pouvez le réimporter après correction : les agents sont reconnus par leur matricule, les sites et les articles par leur nom.</p><div class="row wrapf"><a class="btn" href="../assets/SecuriPro-Donnees-a-remplir.xlsx" download="Donnees-a-remplir.xlsx">${ic("dl")} Télécharger le modèle Excel</a><label class="btn pri" style="cursor:pointer">${ic("plus")} Importer mon fichier Excel<input type="file" id="st-imp" accept=".xlsx,.xls" hidden></label></div><div class="sm" id="st-impres" style="margin-top:10px">${filt.impres||""}</div><div class="xs muted" style="margin-top:8px">Actuellement dans le logiciel : ${S.sites.length} site(s) · ${S.agents.length} agent(s) · ${S.stock.length} article(s) de matériel. Vous pouvez aussi tout saisir à la main dans les menus Sites clients, Agents et Matériel.</div></div>
+<div class="card pad" style="max-width:720px"><h3 style="margin-bottom:6px">Sauvegarde</h3><p class="sm muted" style="margin:0 0 12px">Les données sont enregistrées dans le navigateur de cet appareil. Téléchargez régulièrement une sauvegarde et gardez-la en lieu sûr.</p><div class="row wrapf"><button class="btn" id="st-bk">${ic("dl")} Télécharger une sauvegarde</button><label class="btn" style="cursor:pointer">${ic("refresh")} Restaurer une sauvegarde<input type="file" id="st-rs" accept=".json,application/json" hidden></label><button class="btn" id="st-reset" style="color:var(--red)">Effacer toutes les données</button></div></div>`}
+const XLSX_SRC="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+const nrm=x=>String(x??"").trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/\s+/g," ");
+function xDate(v){
+  if(v instanceof Date&&!isNaN(v))return iso(new Date(v.getTime()+6*3600e3));
+  if(typeof v==="number"&&v>10000&&v<80000){const d=new Date(Math.round((v-25569)*864e5));return d.getUTCFullYear()+"-"+pad(d.getUTCMonth()+1)+"-"+pad(d.getUTCDate())}
+  const t=String(v??"").trim();let m=t.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/);
+  if(m){const y=+m[3]<100?(+m[3]>40?1900:2000)+ +m[3]:+m[3];if(+m[2]>=1&&+m[2]<=12&&+m[1]>=1&&+m[1]<=31)return y+"-"+pad(+m[2])+"-"+pad(+m[1])}
+  m=t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return m[1]+"-"+pad(+m[2])+"-"+pad(+m[3]);
+  return "";
+}
+const xNum=v=>{if(typeof v==="number")return v;const n=parseFloat(String(v??"").replace(/[^\d,.\-]/g,"").replace(",","."));return isNaN(n)?0:n};
+function xSheet(wb,key,first,cols){
+  const name=wb.SheetNames.find(n=>nrm(n).includes(key));if(!name)return null;
+  const rows=XLSX.utils.sheet_to_json(wb.Sheets[name],{header:1,defval:"",raw:true});
+  const hi=rows.findIndex(r=>r.some(c=>nrm(c).startsWith(first)));if(hi<0)return null;
+  const H=rows[hi].map(nrm),ix={};Object.entries(cols).forEach(([k,test])=>{ix[k]=H.findIndex(test)});
+  return rows.slice(hi+1).filter(r=>r.some(c=>String(c??"").trim()!=="")).map(r=>{const o={};Object.keys(cols).forEach(k=>{const v=ix[k]<0?"":r[ix[k]];o[k]=typeof v==="string"?v.trim():v});return o});
+}
+function importWorkbook(wb){
+  const out={sites:0,agents:0,stock:0,warn:[]};
+  const sites=xSheet(wb,"site","nom du site",{name:h=>h.startsWith("nom du site"),type:h=>h.startsWith("type"),addr:h=>h.startsWith("adresse"),city:h=>h==="ville",needJ:h=>h.includes("de jour"),needN:h=>h.includes("de nuit"),contract:h=>h.includes("contrat"),contact:h=>h.startsWith("responsable"),cphone:h=>h.startsWith("telephone"),cemail:h=>h.startsWith("email")||h.startsWith("e-mail"),cps:h=>h.includes("ronde"),consignes:h=>h.startsWith("consignes")})||[];
+  sites.forEach(r=>{const name=String(r.name||"").trim();if(!name||nrm(name).startsWith("banque x "))return;
+    const cps=String(r.cps||"").split(/[,;\n]/).map(x=>x.trim()).filter(Boolean);
+    const d={name,type:String(r.type||"")||"Entreprise",loc:String(r.addr||r.city||""),city:String(r.city||""),needJ:Math.max(0,Math.round(xNum(r.needJ))),needN:Math.max(0,Math.round(xNum(r.needN))),contract:Math.round(xNum(r.contract)),contact:String(r.contact||"")||"À renseigner",cphone:String(r.cphone||""),cemail:String(r.cemail||""),consignes:String(r.consignes||"")||"À définir avec le client."};
+    if(cps.length)d.checkpoints=cps;
+    const ex=S.sites.find(x=>nrm(x.name)===nrm(name));
+    if(ex)Object.assign(ex,d);else S.sites.push(Object.assign({id:"s"+uid(),crole:"",lat:6.37+rnd()*.03,lng:2.37+rnd()*.07,since:S.day,checkpoints:["Portail principal","Parking","Clôture arrière"]},d));
+    out.sites++});
+  const GR=["Agent de sécurité","Chef de poste","Superviseur","Maître-chien","Agent volant"];
+  const agents=xSheet(wb,"agent","matricule",{mat:h=>h.startsWith("matricule"),last:h=>h==="nom",first:h=>h.startsWith("prenom"),grade:h=>h.startsWith("grade"),phone:h=>h.startsWith("telephone"),hired:h=>h.includes("embauche"),birth:h=>h.includes("naissance"),site:h=>h.startsWith("site"),poste:h=>h.startsWith("poste"),repos:h=>h.includes("repos"),base:h=>h.includes("salaire"),cnss:h=>h.includes("securite sociale")||h.includes("cnss"),carte:h=>h.includes("carte"),emergency:h=>h.includes("urgence"),blood:h=>h.includes("sanguin")})||[];
+  agents.forEach(r=>{const last=String(r.last||"").trim(),first=String(r.first||"").trim();if(!last&&!first)return;
+    if(nrm(r.mat)==="ag-0001"&&nrm(last)==="kouassi"&&nrm(first)==="jean")return;
+    const name=(first+" "+last).trim();let grade=GR.find(g=>nrm(g)===nrm(r.grade))||String(r.grade||"").trim()||"Agent de sécurité";
+    const po=nrm(r.poste);let site=null,shift=null;
+    if(grade==="Superviseur"){shift=po.startsWith("j")?"J":"N"}
+    else if(po.startsWith("v")||grade==="Agent volant"){grade="Agent volant"}
+    else{const sn=String(r.site||"").trim();const st=sn?S.sites.find(x=>nrm(x.name)===nrm(sn)):null;
+      if(st){site=st.id;shift=po.startsWith("n")?"N":"J"}
+      else{if(sn)out.warn.push(name+" : site « "+sn+" » introuvable dans la feuille Sites, agent laissé sans affectation");grade=grade==="Agent de sécurité"?"Agent volant":grade}}
+    const ri=JOURS.findIndex(j=>nrm(j)===nrm(r.repos));
+    const d={name,first:first||last,grade,site,shift,repos:ri<0?0:ri,hired:xDate(r.hired)||S.day,base:Math.round(xNum(r.base)),phone:String(r.phone||"")||"—",carte:xDate(r.carte)||addDays(S.day,365),birth:xDate(r.birth),cnss:String(r.cnss||"")||"À déclarer",emergency:String(r.emergency||""),blood:String(r.blood||"")};
+    const mat=String(r.mat||"").trim();const ex=mat?S.agents.find(x=>nrm(x.mat)===nrm(mat)):S.agents.find(x=>nrm(x.name)===nrm(name));
+    if(ex)Object.assign(ex,d);else S.agents.push(Object.assign({id:"a"+uid(),mat:mat||"AS-"+String(101+S.agents.length).padStart(4,"0"),quartier:"—",formations:[],sanctions:[],status:"Actif",photo:null},d));
+    out.agents++});
+  const mats=xSheet(wb,"materiel","article",{name:h=>h.startsWith("article"),cat:h=>h.startsWith("categorie"),qty:h=>h.includes("quantite"),min:h=>h.includes("seuil"),price:h=>h.includes("prix")})||[];
+  mats.forEach(r=>{const name=String(r.name||"").trim();if(!name)return;
+    if(nrm(name)==="talkie-walkie"&&xNum(r.qty)===18&&xNum(r.min)===10&&xNum(r.price)===35000)return;
+    const d={name,cat:String(r.cat||"")||"Équipement",qty:Math.round(xNum(r.qty)),min:Math.round(xNum(r.min)),price:Math.round(xNum(r.price))};
+    const ex=S.stock.find(x=>nrm(x.name)===nrm(name));if(ex)Object.assign(ex,d);else S.stock.push(Object.assign({id:"m"+uid()},d));out.stock++});
+  return out;
+}
+afterRender.reglages=()=>{
+  $("#st-ok").onclick=()=>{Object.assign(S.settings,{name:$("#st-n").value.trim(),full:$("#st-f").value.trim(),addr:$("#st-a").value.trim(),city:$("#st-c").value.trim(),phone:$("#st-p").value.trim(),email:$("#st-e").value.trim(),ifu:$("#st-i").value.trim(),nightBonus:+$("#st-nb").value,meal:+$("#st-m").value});save();toast("Paramètres enregistrés");render(true)};
+  $("#st-imp").onchange=async e=>{const f=e.target.files[0];if(!f)return;const box=$("#st-impres");box.textContent="Lecture du fichier…";
+    try{await cpLoad(XLSX_SRC);const wb=XLSX.read(new Uint8Array(await f.arrayBuffer()),{type:"array",cellDates:true});const o=importWorkbook(wb);save();
+      if(!o.sites&&!o.agents&&!o.stock)filt.impres=`<b style="color:var(--red)">Aucune ligne trouvée.</b> Vérifiez que le fichier est bien le modèle rempli (feuilles Sites, Agents, Matériel).`;
+      else filt.impres=`<b style="color:var(--green)">Import terminé :</b> ${o.sites} site(s), ${o.agents} agent(s), ${o.stock} article(s).`+(o.warn.length?`<div class="xs" style="color:var(--amber);margin-top:6px">${o.warn.slice(0,12).map(esc).join("<br>")}${o.warn.length>12?"<br>… et "+(o.warn.length-12)+" autre(s)":""}</div>`:"");
+      render(true)}
+    catch(err){box.innerHTML=`<b style="color:var(--red)">Le fichier n'a pas pu être lu.</b> Vérifiez qu'il s'agit d'un fichier Excel (.xlsx) et que vous êtes connecté à Internet.`}};
+  $("#st-bk").onclick=()=>{const u=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:"application/json"}));const l=document.createElement("a");l.href=u;l.download="sauvegarde-agence-speciale-"+S.day+".json";l.click();toast("Sauvegarde téléchargée")};
+  $("#st-rs").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!d||!Array.isArray(d.agents)||!Array.isArray(d.sites)||!d.settings)throw 0;if(!confirm("Remplacer toutes les données actuelles par cette sauvegarde ?"))return;S=Object.assign(seed(),d);S.day=today();S.ui=S.ui||{};save();toast("Sauvegarde restaurée");render()}catch(err){toast("Ce fichier n'est pas une sauvegarde valide","alert")}};
+  $("#st-reset").onclick=()=>{if(!confirm("Effacer définitivement tous les sites, agents, pointages, documents et factures ? Les informations de l'entreprise sont conservées."))return;S=seed(S.settings);save();filt.impres="";toast("Toutes les données ont été effacées");render()};
+};
 
 /* ============ ESPACE CLIENT ============ */
 function vCDash(){
-  const s=SI(CLIENT_SITE);const h=siteHealth(s);const inc=S.incidents.filter(i=>i.site===s.id);const rd=S.rounds.filter(r=>r.site===s.id&&r.date===addDays(S.day,-1));
+  const s=SI(CS());const h=siteHealth(s);const inc=S.incidents.filter(i=>i.site===s.id);const rd=S.rounds.filter(r=>r.site===s.id&&r.date===addDays(S.day,-1));
   const inv=S.invoices.filter(i=>i.site===s.id);const due=inv.filter(i=>i.status!=="Payée");
   return `<div class="cl-hero"><img src="logo-as-96.png" alt="" style="width:54px"><div class="grow"><div class="xs muted b" style="letter-spacing:.06em;text-transform:uppercase">Espace client Agence Spéciale</div><h2 style="font-size:23px">Bonjour ${esc(s.contact)}</h2><div class="muted sm">${esc(s.name)} · ${esc(s.loc)} · client depuis ${MOIS[new Date(s.since).getMonth()]} ${s.since.slice(0,4)}</div></div><div class="row wrapf"><button class="btn" data-goto="cmsg">${ic("msg")} Écrire à l'agence</button><button class="btn pri" data-goto="corder">${ic("cart")} Commander un service</button></div></div>
   <div class="kpis k4">${kpi("Agents sur votre site",`${h.team.length}<span class="muted" style="font-size:16px"> / ${h.need}</span>`,"Relève de "+SHIFTS[curShift()].l.toLowerCase()+" en cours","shield","var(--green)")}${kpi("Rondes cette nuit",rd.length,rd.reduce((a,r)=>a+r.done,0)+" points contrôlés","route")}${kpi("Incidents (30 jours)",inc.length,inc.filter(i=>i.status==="En cours").length+" en cours","book","var(--amber)")}${kpi("Factures à régler",due.length,due.length?fcfa(due.reduce((a,i)=>a+i.amount,0)):"Vous êtes à jour","file",due.length?"var(--red)":"var(--green)")}</div>
@@ -1340,16 +1256,16 @@ function vCOrder(){
   <div class="card pad" style="max-width:760px"><h3 style="font-size:17px;margin-bottom:12px">Votre demande</h3><div class="field"><label>Service</label><input class="input" id="co-s" value="Agents supplémentaires"></div><div class="row"><div class="field grow"><label>Date de début</label><input class="input" type="date" id="co-d" value="${addDays(S.day,3)}"></div><div class="field grow"><label>Nombre d'agents</label><input class="input" type="number" id="co-n" value="2" min="1"></div></div><div class="field"><label>Précisions</label><textarea class="input" id="co-x" placeholder="Horaires, lieu, tenue souhaitée, nombre d'invités…"></textarea></div><button class="btn pri" id="co-ok">${ic("send")} Envoyer ma commande</button></div>`;
 }
 afterRender.corder=()=>{$$("[data-svc]").forEach(b=>b.onclick=()=>{$$("[data-svc]").forEach(x=>x.style.borderColor="");b.style.borderColor="var(--blue)";$("#co-s").value=b.dataset.svc;$("#co-x").focus()});
-  $("#co-ok").onclick=()=>{S.requests.unshift({id:uid(),site:CLIENT_SITE,kind:"Commande",subject:$("#co-s").value+" · "+$("#co-n").value+" agent(s) à partir du "+fd($("#co-d").value),txt:$("#co-x").value||"Merci de me recontacter pour les détails.",date:S.day,status:"Nouvelle",answer:""});save();toast("Commande envoyée · l'Agence Spéciale vous répond sous 24 h");view="cmsg";render()}};
+  $("#co-ok").onclick=()=>{S.requests.unshift({id:uid(),site:CS(),kind:"Commande",subject:$("#co-s").value+" · "+$("#co-n").value+" agent(s) à partir du "+fd($("#co-d").value),txt:$("#co-x").value||"Merci de me recontacter pour les détails.",date:S.day,status:"Nouvelle",answer:""});save();toast("Commande envoyée · l'Agence Spéciale vous répond sous 24 h");view="cmsg";render()}};
 function vCMsg(){
-  const mine=S.requests.filter(r=>r.site===CLIENT_SITE);
+  const mine=S.requests.filter(r=>r.site===CS());
   return ph("Plaintes et suggestions","Un problème avec un agent ? Une idée pour améliorer la sécurité ? Écrivez-nous, chaque message est suivi par la direction.")+
   `<div class="grid2e"><div class="card pad"><div class="tabs" style="margin-bottom:14px"><button class="on" data-k="Plainte">${ic("alert")} Plainte</button><button data-k="Suggestion">${ic("star")} Suggestion</button></div><div class="field"><label>Objet</label><input class="input" id="cm-s" placeholder="Ex. Agent absent de l'entrée à 14 h"></div><div class="field"><label>Votre message</label><textarea class="input" id="cm-x" placeholder="Date, heure, ce qui s'est passé…"></textarea></div><button class="btn pri" id="cm-ok">${ic("send")} Envoyer</button></div>
   <div class="card"><div class="ch"><h3>Mes demandes</h3></div><div class="list">${mine.map(r=>`<div class="li" style="align-items:flex-start"><span style="color:${r.kind==="Plainte"?"var(--red)":r.kind==="Commande"?"var(--green)":"var(--blue)"}">${ic(r.kind==="Commande"?"cart":r.kind==="Plainte"?"alert":"star")}</span><div class="grow"><div class="row wrapf"><b class="sm">${esc(r.subject)}</b>${reqPill(r.status)}</div><div class="xs muted">${r.kind} · ${fd(r.date)}</div>${r.answer?`<div class="sm" style="margin-top:6px;padding:8px 12px;border-radius:10px;background:var(--blue-soft)"><b>Réponse Agence Spéciale :</b> ${esc(r.answer)}</div>`:`<div class="xs muted" style="margin-top:4px">En attente de réponse</div>`}</div></div>`).join("")}</div></div></div>`;
 }
-afterRender.cmsg=()=>{let k="Plainte";$$("[data-k]").forEach(b=>b.onclick=()=>{$$("[data-k]").forEach(x=>x.classList.remove("on"));b.classList.add("on");k=b.dataset.k});$("#cm-ok").onclick=()=>{const s=$("#cm-s").value.trim(),x=$("#cm-x").value.trim();if(!s)return $("#cm-s").focus();S.requests.unshift({id:uid(),site:CLIENT_SITE,kind:k,subject:s,txt:x||"—",date:S.day,status:"Nouvelle",answer:""});save();toast(k==="Plainte"?"Plainte transmise à la direction":"Merci pour votre suggestion !");render()}};
+afterRender.cmsg=()=>{let k="Plainte";$$("[data-k]").forEach(b=>b.onclick=()=>{$$("[data-k]").forEach(x=>x.classList.remove("on"));b.classList.add("on");k=b.dataset.k});$("#cm-ok").onclick=()=>{const s=$("#cm-s").value.trim(),x=$("#cm-x").value.trim();if(!s)return $("#cm-s").focus();S.requests.unshift({id:uid(),site:CS(),kind:k,subject:s,txt:x||"—",date:S.day,status:"Nouvelle",answer:""});save();toast(k==="Plainte"?"Plainte transmise à la direction":"Merci pour votre suggestion !");render()}};
 function vCReport(){
-  const s=SI(CLIENT_SITE);const rd=S.rounds.filter(r=>r.site===s.id);const pct=rd.length?Math.round(100*rd.reduce((a,r)=>a+r.done,0)/rd.reduce((a,r)=>a+r.total,0)):100;
+  const s=SI(CS());const rd=S.rounds.filter(r=>r.site===s.id);const pct=rd.length?Math.round(100*rd.reduce((a,r)=>a+r.done,0)/rd.reduce((a,r)=>a+r.total,0)):100;
   const pu=S.punches.filter(x=>x.site===s.id);const ok=pu.filter(x=>punchStatus(x).c==="p-green").length;
   return ph("Rapports de sécurité","Ce que nos agents ont fait sur votre site, en toute transparence",`<button class="btn" onclick="printPage()">${ic("print")} Imprimer</button>`)+
   `<div class="kpis k3">${kpi("Rondes effectuées (7 nuits)",rd.length,pct+" % des points contrôlés","route")}${kpi("Relèves à l'heure",pu.length?Math.round(100*ok/pu.length)+" %":"—","Sur les 2 derniers jours","clock","var(--green)")}${kpi("Événements signalés",S.incidents.filter(i=>i.site===s.id).length,"Depuis 30 jours","book","var(--amber)")}</div>
@@ -1357,14 +1273,14 @@ function vCReport(){
   <div class="card"><div class="ch"><h3>Main courante de votre site</h3></div><div class="list">${S.incidents.filter(i=>i.site===s.id).map(i=>`<div class="li" style="align-items:flex-start">${ic("book")}<div class="grow"><div class="sm b">${esc(i.type)} · ${fd(i.date)} ${i.time}</div><div class="xs muted">${esc(i.txt)}</div></div></div>`).join("")||`<div class="pad sm muted">Aucun événement.</div>`}</div></div></div>`;
 }
 function vCInv(){
-  const inv=S.invoices.filter(i=>i.site===CLIENT_SITE);
+  const inv=S.invoices.filter(i=>i.site===CS());
   return ph("Mes factures","Téléchargez vos factures et réglez par virement ou Mobile Money")+`<div class="card"><div class="tbl-wrap"><table><thead><tr><th>N°</th><th>Période</th><th>Échéance</th><th>Montant</th><th>Statut</th><th></th></tr></thead><tbody>${inv.map(i=>`<tr><td class="b sm">${i.num}</td><td>${i.period}</td><td>${fd(i.due)}</td><td class="b">${fcfa(i.amount)}</td><td><span class="pill ${i.status==="Payée"?"p-green":i.status==="En retard"?"p-red":"p-amber"}">${i.status}</span></td><td><div class="row"><button class="btn sm" data-inv="${i.id}">${ic("file")} Facture</button>${i.status!=="Payée"?`<button class="btn sm pri" data-pay="${i.id}">Payer</button>`:""}</div></td></tr>`).join("")}</tbody></table></div></div>`;
 }
 afterRender.cinv=()=>{$$("[data-inv]").forEach(b=>b.onclick=()=>invoiceDoc(b.dataset.inv));$$("[data-pay]").forEach(b=>b.onclick=()=>{modal("Régler la facture",`<p class="sm">Choisissez votre moyen de paiement :</p>${["MTN Mobile Money","Moov Money","Virement bancaire","Chèque"].map(m=>`<div class="li click" data-pm>${ic("wallet")}<b class="sm grow">${m}</b>${ic("chev")}</div>`).join("")}`);$$("[data-pm]").forEach(x=>x.onclick=()=>{const i=S.invoices.find(v=>v.id===b.dataset.pay);i.status="Payée";save();closeAll();toast("Paiement enregistré · merci !");render()})})};
 
 /* ============ APPLICATION AGENT (téléphone) ============ */
 let ptab="home",roundState=null;
-const demoAgent=()=>S.agents.find(a=>a.demo);
+const demoAgent=()=>S.agents.find(a=>a.id===(S.ui||{}).agent);
 function phoneRender(){
   const a=demoAgent(),s=SI(a.site);const sd=today();
   const pu=S.punches.find(x=>x.agent===a.id&&x.date===sd&&x.shift===a.shift);
@@ -1395,7 +1311,7 @@ function bindSosFab(a,s){
 function pHome(a,s,pu){
   const sh=SHIFTS[a.shift];const st=pu?punchStatus(pu):null;
   return `<div class="ph-hero"><div class="k">Bonjour ${esc(a.first)} · ${fdl(today())}</div><h2>${esc(s.name)}</h2><div style="opacity:.9">${esc(s.loc)} · relève de ${sh.l.toLowerCase()} ${sh.start} – ${sh.end}</div>
-  ${!pu?`<button class="punch" id="doPunch">${ic("pin")} Pointer mon arrivée</button><label class="demo-sw"><input type="checkbox" id="simu" checked> Démonstration : simuler ma présence sur le site</label>`:pu.out?`<div class="punch" style="cursor:default">${ic("check")} Service terminé à ${pu.out}</div>`:`<div style="margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.16)"><b>${ic("check")} Arrivée pointée à ${pu.in}</b><div class="xs" style="opacity:.9">Position vérifiée : ${metres(pu.d)} du site · ${st.l}</div></div><button class="punch out" id="doOut">${ic("logout")} Pointer mon départ</button>`}
+  ${!pu?`<button class="punch" id="doPunch">${ic("pin")} Pointer mon arrivée</button><label class="demo-sw"><input type="checkbox" id="simu" checked> Mode essai : simuler ma présence sur le site</label>`:pu.out?`<div class="punch" style="cursor:default">${ic("check")} Service terminé à ${pu.out}</div>`:`<div style="margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.16)"><b>${ic("check")} Arrivée pointée à ${pu.in}</b><div class="xs" style="opacity:.9">Position vérifiée : ${metres(pu.d)} du site · ${st.l}</div></div><button class="punch out" id="doOut">${ic("logout")} Pointer mon départ</button>`}
   </div>
   ${S.docs.some(d=>d.agent===a.id&&d.status==="En attente de réponse")?`<div class="ph-sec"><button class="ck" data-pgo="docs" style="width:100%;border-color:#F3B9B2;background:var(--red-soft);text-align:left"><span style="color:var(--red)">${ic("alert")}</span><div class="grow"><b class="sm">Demande d'explication à traiter</b><div class="xs muted">Répondez directement dans l'application</div></div>${ic("chev")}</button></div>`:""}
   <div class="ph-sec"><div class="tile-g">
@@ -1491,7 +1407,7 @@ pAfter.docs=a=>{$$("[data-pgo]").forEach(b=>b.onclick=()=>{ptab=b.dataset.pgo;ph
 function pPay(a){
   const d=new Date(today()+"T12:00:00");const p=payOf(a);
   return `<div class="ph-sec" style="padding-top:12px"><h2 style="font-size:21px">Mes fiches de paie</h2><p class="sm muted" style="margin:4px 0 14px">Téléchargez vos bulletins à tout moment.</p>
-  ${[0,1,2,3].map(m=>{const x=new Date(d);x.setMonth(x.getMonth()-m);return `<div class="ck" style="cursor:default"><div class="ti" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--green-soft);color:var(--green)">${ic("wallet")}</div><div class="grow"><b class="sm">${MOIS[x.getMonth()][0].toUpperCase()+MOIS[x.getMonth()].slice(1)} ${x.getFullYear()}</b><div class="xs muted">Net payé : ${fcfa(p.net)} · Mobile Money</div></div><button class="btn sm" data-bm="${m}">${ic("dl")} PDF</button></div>`}).join("")}</div>`;
+  ${!S.payValidated?`<p class="sm muted">Aucun bulletin disponible pour le moment. Votre bulletin apparaît ici dès que la paie du mois est validée.</p>`:""}${(S.payValidated?[0]:[]).map(m=>{const x=new Date(d);x.setMonth(x.getMonth()-m);return `<div class="ck" style="cursor:default"><div class="ti" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--green-soft);color:var(--green)">${ic("wallet")}</div><div class="grow"><b class="sm">${MOIS[x.getMonth()][0].toUpperCase()+MOIS[x.getMonth()].slice(1)} ${x.getFullYear()}</b><div class="xs muted">Net à payer : ${fcfa(p.net)}</div></div><button class="btn sm" data-bm="${m}">${ic("dl")} PDF</button></div>`}).join("")}</div>`;
 }
 pAfter.pay=a=>{$$("[data-bm]").forEach(b=>b.onclick=()=>bulletin(a.id,+b.dataset.bm))};
 let lateMode="Retard";
@@ -1581,8 +1497,28 @@ function sTeam(sp,p,sd,sh){
 sAfter.team=()=>{$("#st-pc").onclick=()=>{launchPresence();supRender()}};
 /* ============ démarrage ============ */
 function showLogin(){const sf=document.getElementById("sosFab");if(sf)sf.style.display="none";$("#login").style.display="flex";$("#app").style.display="none";$("#phone").style.display="none";closeAll();document.title="Agence Spéciale · Logiciel de gestion"}
-function enter(r){
-  role=r;closeAll();$("#login").style.display="none";
+function phoneGate(title,msg,opts,cur,cb){
+  $("#login").style.display="none";$("#app").style.display="none";$("#phone").style.display="block";$("#tabbar").innerHTML="";
+  const sf=document.getElementById("sosFab");if(sf)sf.style.display="none";
+  $("#pw").innerHTML=`<div class="ph-head"><img src="logo-as-96.png" alt=""><div class="grow"><b style="font-family:var(--display)">Agence Spéciale</b><div class="xs muted">${esc(title)}</div></div><button class="iconbtn" id="gBack" title="Changer d'espace">${ic("logout")}</button></div><div class="ph-sec" style="padding-top:18px"><h2 style="font-size:21px">${esc(title)}</h2><p class="sm muted" style="margin:6px 0 16px">${esc(msg)}</p>${opts.length?`<div class="field"><select class="input" id="gSel">${opts.map(([id,l])=>`<option value="${id}" ${id===cur?"selected":""}>${esc(l)}</option>`).join("")}</select></div><button class="btn pri" id="gOk" style="width:100%;padding:12px">Continuer</button>`:""}</div>`;
+  $("#gBack").onclick=()=>{role=null;history.replaceState(null,"",location.pathname);showLogin()};
+  if(opts.length)$("#gOk").onclick=()=>cb($("#gSel").value);
+}
+function enter(r,picked){
+  closeAll();
+  if(!picked){
+    const EMPTY="Ajoutez d'abord vos sites et vos agents dans l'espace RH (menu Paramètres et import), ou importez votre fichier Excel.";
+    if(r==="agent"){const c=S.agents.filter(a=>a.status==="Actif"&&a.shift&&S.sites.some(x=>x.id===a.site));
+      if(!c.length){role=r;return phoneGate("Application agent","Aucun agent n'est encore affecté à un site. "+EMPTY,[])}
+      if(c.length===1){S.ui.agent=c[0].id;save()}else{role=r;return phoneGate("Application agent","Choisissez votre nom pour ouvrir votre application.",c.map(a=>[a.id,a.name+" · "+a.mat]),S.ui.agent,id=>{S.ui.agent=id;save();enter("agent",true)})}}
+    if(r==="sup"){const c=S.agents.filter(a=>a.status==="Actif"&&a.grade==="Superviseur");
+      if(!c.length||!S.sites.length){role=r;return phoneGate("Application superviseur",(S.sites.length?"Aucun superviseur n'est encore enregistré. ":"Aucun site n'est encore enregistré. ")+EMPTY,[])}
+      if(c.length===1){S.ui.sup=c[0].id;save()}else{role=r;return phoneGate("Application superviseur","Choisissez votre nom pour ouvrir votre application.",c.map(a=>[a.id,a.name+" · "+a.mat]),S.ui.sup,id=>{S.ui.sup=id;save();enter("sup",true)})}}
+    if(r==="client"){
+      if(!S.sites.length){role=r;return phoneGate("Espace client","Aucun site client n'est encore enregistré. "+EMPTY,[])}
+      if(S.sites.length===1){S.ui.site=S.sites[0].id;save()}else{role=r;return phoneGate("Espace client","Choisissez le site client à ouvrir.",S.sites.map(x=>[x.id,x.name]),S.ui.site,id=>{S.ui.site=id;save();enter("client",true)})}}
+  }
+  role=r;$("#login").style.display="none";
   if(r==="agent"){$("#app").style.display="none";$("#phone").style.display="block";ptab="home";document.title="Agence Spéciale · Agent";phoneRender();return}
   const sf=document.getElementById("sosFab");if(sf)sf.style.display="none";
   if(r==="sup"){$("#app").style.display="none";$("#phone").style.display="block";stab="home";document.title="Agence Spéciale · Superviseur";supRender();return}
