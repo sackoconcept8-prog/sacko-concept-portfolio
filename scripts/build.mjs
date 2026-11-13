@@ -42,6 +42,8 @@ await cp(join(root,'pins'),join(out,'pins'), {recursive:true});
 await cp(join(root,'securipro'),join(out,'securipro'), {recursive:true});
 await cp(join(root,'btppro'),join(out,'btppro'), {recursive:true});
 await cp(join(root,'cgsp'),join(out,'cgsp'), {recursive:true});
+await cp(join(root,'agence-speciale'),join(out,'agence-speciale'), {recursive:true});
+for (const file of ['agence-speciale/index.html','agence-speciale/logo-as-96.png','agence-speciale/logo-as-256.png','agence-speciale/icon-192.png']) await readFile(join(out,file));
 await cp(join(root,'fiche-client'),join(out,'fiche-client'), {recursive:true});
 await cp(join(root,'verification'),join(out,'verification'), {recursive:true});
 await readFile(join(out,'fiche-client/index.html'));
