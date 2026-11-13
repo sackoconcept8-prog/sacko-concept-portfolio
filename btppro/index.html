@@ -103,13 +103,25 @@ body{background:linear-gradient(180deg,#FCFBF8 0,#F5F2EB 100%) fixed}
 #map{height:460px;border-radius:14px;z-index:1}
 .leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin-top:10px}.leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
 .pos{color:var(--ok);font-weight:600}.neg{color:var(--bad);font-weight:600}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 14px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px}
+.tabs button{border:0;background:none;padding:9px 14px;border-radius:10px;font-weight:600;color:var(--mut);font-size:14px}.tabs button.on{background:var(--acc2);color:#9A4A04}
+.ng{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#A8A29A;margin:14px 12px 4px}
+#modal{position:fixed;inset:0;background:rgba(31,42,55,.45);display:none;z-index:45;overflow:auto;padding:20px}#modal.on{display:block}
+.mact{max-width:720px;margin:0 auto 12px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.paper{background:#fff;max-width:720px;margin:0 auto;padding:44px 48px;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.25);line-height:1.65}
+.paper .lh{display:flex;justify-content:space-between;gap:12px;border-bottom:3px solid var(--acc);padding-bottom:12px;margin-bottom:22px}
+.paper h3{text-align:center;text-transform:uppercase;letter-spacing:.04em;margin:20px 0;font-size:16px}
+.paper td,.paper th{border:1px solid var(--line);padding:8px 10px}.paper .sg{display:flex;justify-content:space-between;margin-top:40px}
+.rep{background:var(--bg);border-left:4px solid var(--acc);padding:12px 14px;border-radius:8px;margin-top:20px}
+.gt{position:relative;height:18px;background:#F3F0E9;border-radius:5px}.gt .pl{position:absolute;top:0;bottom:0;background:#FBD9B5;border-radius:5px;overflow:hidden}.gt .pl i{display:block;height:100%;background:var(--acc)}.gt .now{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--bad)}
+@media print{body *{visibility:hidden}#modal{position:static;background:none;padding:0;display:block}.paper,.paper *{visibility:visible}.paper{position:absolute;left:0;top:0;max-width:none;width:100%;box-shadow:none;padding:20px}.mact{display:none}}
 .qr{display:grid;grid-template-columns:repeat(11,8px);border:6px solid #fff;outline:1px solid var(--line);border-radius:6px;flex:none}.qr i{width:8px;height:8px}
 .badge{display:flex;gap:14px;align-items:center}
 .punch{border:0;border-radius:99px;background:var(--ok);color:#fff;font:700 18px Sora,sans-serif;padding:22px 34px;box-shadow:0 12px 28px rgba(21,128,61,.3)}
 .punch.out{background:var(--acc);box-shadow:0 12px 28px rgba(232,115,12,.3)}
 @media(min-width:861px){.k6{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:860px){
- .side>div:first-child,.brand i{flex:none}.k4{grid-template-columns:1fr 1fr}.kpi{gap:8px;padding:14px;flex-direction:column}.kpi b{font-size:19px}.kpi .ki{width:32px;height:32px;font-size:15px}
+ .side>div:first-child,.brand i{flex:none}.ng{display:none}.paper{padding:24px 20px}.k4{grid-template-columns:1fr 1fr}.kpi{gap:8px;padding:14px;flex-direction:column}.kpi b{font-size:19px}.kpi .ki{width:32px;height:32px;font-size:15px}
  #map{height:340px}.hero{padding:20px}.hero h2{font-size:21px}
  .side{position:sticky;top:0;width:auto;bottom:auto;flex-direction:row;align-items:center;gap:8px;padding:10px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto;z-index:20}
  .co,.me small{display:none}.brand{margin:0;font-size:16px}.nav{display:flex;gap:4px}.nav button{white-space:nowrap;padding:8px 10px}
@@ -122,7 +134,7 @@ body{background:linear-gradient(180deg,#FCFBF8 0,#F5F2EB 100%) fixed}
 <body>
 <div id="splash">
  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M8 3 4 21M16 3l4 18M12 4v3M12 11v3M12 18v3"/></svg></div>
- <h1>BTP <span>Pro</span></h1><p>Le logiciel des entreprises de routes et travaux publics</p>
+ <h1>Atlas <span>Routes &amp; Travaux</span></h1><p>Espace de gestion des chantiers · propulsé par BTP Pro</p>
  <div class="road"></div>
 </div>
 
@@ -140,6 +152,7 @@ body{background:linear-gradient(180deg,#FCFBF8 0,#F5F2EB 100%) fixed}
  </aside>
  <main id="main"></main>
 </div>
+<div id="modal"><div class="mact" id="mact"></div><div class="paper" id="paper"></div></div>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -152,10 +165,10 @@ const pkf=k=>{const a=Math.floor(k),m=Math.round((k-a)*1000);return 'PK '+a+'+'+
 const COUCHES=[['Dégagement & terrassement','#8B5E34'],['Couche de forme','#B7791F'],['Couche de fondation','#D69E2E'],['Couche de base','#E8730C'],['Imprégnation','#6B7280'],['Enrobé (béton bitumineux)','#1F2A37'],['Assainissement & dalots','#1D4ED8'],['Signalisation & sécurité','#15803D']];
 const D={
  chantiers:[
-  {id:1,nom:'Bitumage de la route Savalou – Djougou, lot 2',mo:'Ministère des Infrastructures',lieu:'Bénin',km:48,montant:38.5e9,phys:62,fin:54,delai:'24 mois · fin prévue août 2027',chef:'Ibrahim Sanou',eff:214,c:[48,44,39,34,31,28,36,12],ouv:[[6.2,'Dalot 2×2'],[19.4,'Pont 35 m'],[33,'Dalot 3×2'],[44.5,'Péage']],cb:[9100,5200,3300,1900,800],cr:[9650,5480,3250,1840,790]},
-  {id:2,nom:'Voiries urbaines et assainissement — phase B',mo:'Agence des grands travaux urbains',lieu:'Cotonou',km:12.4,montant:9.2e9,phys:81,fin:70,delai:'14 mois · fin prévue février 2027',chef:'Clarisse Hounsa',eff:96,c:[12.4,12.4,12,11.2,10.6,10.1,11.8,6.5],ouv:[[2.1,'Collecteur'],[7.8,'Carrefour giratoire']],cb:[2900,1500,1100,600,250],cr:[2850,1470,1120,610,240]},
-  {id:3,nom:'Réhabilitation de la route Lomé – Kpalimé, section 3',mo:'Direction générale des travaux publics',lieu:'Togo',km:35,montant:27e9,phys:34,fin:30,delai:'30 mois · fin prévue mars 2028',chef:'Yao Agbeko',eff:158,c:[29,21,15,11,8,6.5,13,0],ouv:[[9,'Dalot 2×1'],[22.6,'Pont 60 m']],cb:[3500,2100,1300,700,300],cr:[3600,2650,1350,720,310]},
-  {id:4,nom:'Contournement nord — 2×2 voies',mo:'Agence de gestion des routes',lieu:'Bamako',km:18,montant:21e9,phys:12,fin:15,delai:'28 mois · fin prévue décembre 2028',chef:'Moussa Diarra',eff:87,c:[9.5,3.2,0,0,0,0,2,0],ouv:[[4.4,'Échangeur'],[13,'Pont 45 m']],cb:[700,650,400,250,150],cr:[690,640,410,260,150]}
+  {id:1,nom:'Bitumage de la route Savalou – Djougou, lot 2',mo:'Ministère des Infrastructures',lieu:'Bénin',km:48,montant:38.5e9,phys:62,fin:54,delai:'24 mois · fin prévue août 2027',chef:'Ibrahim Sanou',eff:214,c:[48,44,39,34,31,28,36,12],ouv:[[6.2,'Dalot 2×2'],[19.4,'Pont 35 m'],[33,'Dalot 3×2'],[44.5,'Péage']],tc:58,mois:24,cb:[9100,5200,3300,1900,800],cr:[9650,5480,3250,1840,790]},
+  {id:2,nom:'Voiries urbaines et assainissement — phase B',mo:'Agence des grands travaux urbains',lieu:'Cotonou',km:12.4,montant:9.2e9,phys:81,fin:70,delai:'14 mois · fin prévue février 2027',chef:'Clarisse Hounsa',eff:96,c:[12.4,12.4,12,11.2,10.6,10.1,11.8,6.5],ouv:[[2.1,'Collecteur'],[7.8,'Carrefour giratoire']],tc:79,mois:14,cb:[2900,1500,1100,600,250],cr:[2850,1470,1120,610,240]},
+  {id:3,nom:'Réhabilitation de la route Lomé – Kpalimé, section 3',mo:'Direction générale des travaux publics',lieu:'Togo',km:35,montant:27e9,phys:34,fin:30,delai:'30 mois · fin prévue mars 2028',chef:'Yao Agbeko',eff:158,c:[29,21,15,11,8,6.5,13,0],ouv:[[9,'Dalot 2×1'],[22.6,'Pont 60 m']],tc:40,mois:30,cb:[3500,2100,1300,700,300],cr:[3600,2650,1350,720,310]},
+  {id:4,nom:'Contournement nord — 2×2 voies',mo:'Agence de gestion des routes',lieu:'Bamako',km:18,montant:21e9,phys:12,fin:15,delai:'28 mois · fin prévue décembre 2028',chef:'Moussa Diarra',eff:87,c:[9.5,3.2,0,0,0,0,2,0],ouv:[[4.4,'Échangeur'],[13,'Pont 45 m']],tc:11,mois:28,cb:[700,650,400,250,150],cr:[690,640,410,260,150]}
  ],
  engins:[
   ['FIN-01','Finisseur Vögele S1800',1,'En service',4210,'12 déc.'],['FIN-02','Finisseur Cat AP655',3,'En service',2890,'28 nov.'],
@@ -180,6 +193,8 @@ const D={
  hse:{jours:147,list:[['8 nov.',3,'Presque-accident','Recul de camion sans signaleur','Clôturé'],['2 nov.',1,'Soin léger','Brûlure légère à la répandeuse','Clôturé'],['28 oct.',4,'Riverains','Poussière : plainte du quartier, arrosage renforcé','En cours']]},
  sal:[['Koffi Mensah','Directeur général','CDI','—','À jour'],['Aminata Traoré','Conductrice de travaux','CDI','—','À jour'],['Ibrahim Sanou','Chef de chantier','CDD','30 juin 2027','À jour'],['Fatou Bah','Topographe','CDD','15 déc. 2026','À refaire'],['Adama Koné','Conducteur d\'engin','CDD','31 déc. 2026','À jour'],['Awa Cissé','Laborantine','CDD','28 févr. 2027','À jour'],['Oumar Sidibé','Manœuvre','Journalier','—','À faire'],['Mariam Touré','Signaleuse','Journalier','—','À jour']],
  dem:[{n:'Jean Akpovi',t:'Congé annuel',d:'18 – 29 nov.',st:'En attente'},{n:'Awa Cissé',t:'Permission exceptionnelle',d:'14 – 16 nov.',st:'En attente'},{n:'Kodjo Amavi',t:'Avance sur salaire',d:'30 000 F',st:'En attente'}],
+ st:[{n:'Ouvrages du Sahel',s:'Pont de 35 m et dalots',ch:1,m:2400e6,av:70,p:1500e6,as:'À jour'},{n:'Bitumex Signalisation',s:'Marquage et signalisation',ch:1,m:620e6,av:35,p:150e6,as:'À jour'},{n:'Hydro-Assain',s:'Caniveaux et collecteurs',ch:2,m:880e6,av:90,p:700e6,as:'Expirée'},{n:'Carrières du Mono',s:'Fourniture de granulats',ch:3,m:1300e6,av:40,p:560e6,as:'À jour'},{n:'Terrass\'Afrique',s:'Terrassement',ch:4,m:950e6,av:25,p:200e6,as:'À jour'}],
+ cour:[{ref:'DE-2026-013',t:'Demande d\'explication',n:'Oumar Sidibé',p:'Manœuvre',d:'10 nov. 2026',motif:'Retards répétés à la prise de poste les 3, 5 et 9 novembre 2026.',st:'Envoyé',rep:''},{ref:'AV-2026-004',t:'Avertissement',n:'Kodjo Amavi',p:'Chauffeur benne',d:'4 nov. 2026',motif:'Excès de vitesse sur la base-vie, constaté le 2 novembre 2026.',st:'Classé',rep:''},{ref:'AT-2026-031',t:'Attestation de travail',n:'Fatou Bah',p:'Topographe',d:'6 nov. 2026',motif:'',st:'Classé',rep:''}],
  caut:[
   {t:"Caution de soumission",ch:0,o:"Appel d'offres — route Kandi – Banikoara",b:"Banque du Golfe",m:0.35e9,e:"24 nov. 2026",st:"Expire bientôt"},
   {t:"Caution d'avance de démarrage",ch:1,b:"Banque du Golfe",m:7.7e9,e:"30 juin 2027",st:"Active"},
@@ -194,8 +209,8 @@ const D={
   {n:'N° 6',ch:3,p:'Octobre 2026',m:0.94e9,st:'En retard',j:47},{n:'N° 2',ch:4,p:'Octobre 2026',m:0.71e9,st:'Payé',j:0}
  ]
 };
-const D0=JSON.stringify(D);const SK='btppro_v2';
-try{const s=JSON.parse(localStorage.getItem(SK)||'null');if(s&&s.chantiers&&s.caut)Object.assign(D,s)}catch(e){}
+const D0=JSON.stringify(D);const SK='btppro_v3';
+try{const s=JSON.parse(localStorage.getItem(SK)||'null');if(s&&s.chantiers&&s.caut&&s.cour&&s.st)Object.assign(D,s)}catch(e){}
 const ch=id=>D.chantiers.find(c=>c.id===id);
 const POSTES=['Matériaux (bitume, granulats, ciment)','Engins et carburant','Main-d\'œuvre','Sous-traitants','Frais de chantier'];
 const GEO={1:[[7.928,1.975],[9.708,1.666]],2:[[6.365,2.40],[6.40,2.33]],3:[[6.17,1.21],[6.90,0.63]],4:[[12.70,-8.06],[12.73,-7.90]]};
@@ -203,25 +218,51 @@ const sum=a=>a.reduce((s,x)=>s+x,0);
 const earned=c=>c.montant*c.phys/100/1e6;           // travaux réalisés, en millions
 const marge=(c,k)=>(earned(c)-sum(c[k]))/earned(c)*100;
 const pc=x=>x.toFixed(1).replace('.',',')+' %';
-let map=null;
+let map=null,rhTab='pers',courF='',pend=null;
+const CT={"Demande d'explication":['DE','Discipline'],"Avertissement":['AV','Discipline'],"Mise à pied":['MP','Discipline'],"Convocation à un entretien":['CV','Discipline'],"Attestation de travail":['AT','Attestations'],"Certificat de travail":['CE','Attestations'],"Fin de contrat":['FC','Contrats'],"Note de service":['NS','Notes']};
+const PS=[[0,.35],[.06,.45],[.14,.56],[.22,.66],[.3,.74],[.34,.86],[.1,.8],[.78,1]];
+const ret=c=>Math.round((c.tc-c.phys)/100*c.mois*30);                       // jours de retard (négatif = avance)
+const pen=c=>ret(c)>0?Math.min(c.montant*.1,c.montant/2000*ret(c)):0;      // pénalités à risque
+const du=s=>Math.max(0,s.m*s.av/100-s.p);
+const paper=(titre,ref,date,dest,corps)=>`<div class="lh"><div><b style="font-family:Sora;font-size:17px">Atlas Routes &amp; Travaux</b><div class="sm mut">Entreprise de routes et travaux publics<br>Siège social : Cotonou (entreprise fictive de démonstration)</div></div><div style="text-align:right" class="sm"><b>Réf. ${ref}</b><br>Cotonou, le ${date}</div></div>${dest?`<p style="margin-left:52%">${dest}</p>`:''}<h3>${titre}</h3>${corps}`;
+function letter(c){
+ const who=c.n==='Tout le personnel'?'':`À l'attention de<br><b>${c.n}</b><br>${c.p}`,m=c.motif||'';
+ const B={
+  "Demande d'explication":`<p>Madame, Monsieur,</p><p>Il a été constaté les faits suivants : <b>${m}</b></p><p>Nous vous demandons de bien vouloir nous fournir, par écrit, vos explications sur ces faits dans un délai de <b>quarante-huit (48) heures</b> à compter de la réception de la présente.</p><p>Passé ce délai, la Direction se réserve le droit de tirer toutes les conséquences qui s'imposent.</p>`,
+  "Avertissement":`<p>Madame, Monsieur,</p><p>Nous avons constaté les faits suivants : <b>${m}</b></p><p>Ces faits constituent un manquement à vos obligations professionnelles. En conséquence, nous vous adressons par la présente un <b>avertissement</b>, qui sera versé à votre dossier.</p><p>Nous comptons sur vous pour que de tels faits ne se reproduisent plus.</p>`,
+  "Mise à pied":`<p>Madame, Monsieur,</p><p>À la suite des faits suivants : <b>${m}</b>, et après examen de vos explications, la Direction a décidé de vous notifier une <b>mise à pied disciplinaire de trois (3) jours</b>, sans salaire, à compter du lendemain de la réception de la présente.</p>`,
+  "Convocation à un entretien":`<p>Madame, Monsieur,</p><p>Nous vous prions de bien vouloir vous présenter au bureau des ressources humaines pour un entretien portant sur : <b>${m}</b></p><p>Vous pouvez vous faire assister par un délégué du personnel.</p>`,
+  "Attestation de travail":`<p>Nous soussignés, Atlas Routes &amp; Travaux, attestons que <b>${c.n}</b> est employé(e) dans notre société en qualité de <b>${c.p}</b>.</p><p>La présente attestation lui est délivrée pour servir et valoir ce que de droit.</p>`,
+  "Certificat de travail":`<p>Nous soussignés, Atlas Routes &amp; Travaux, certifions que <b>${c.n}</b> a été employé(e) dans notre société en qualité de <b>${c.p}</b>.</p><p>L'intéressé(e) nous quitte libre de tout engagement.</p>`,
+  "Fin de contrat":`<p>Madame, Monsieur,</p><p>Nous vous informons que votre contrat arrive à son terme et ne sera pas renouvelé. ${m}</p><p>Nous vous remercions pour votre collaboration et vous souhaitons une bonne continuation.</p>`,
+  "Note de service":`<p>Il est porté à la connaissance de l'ensemble du personnel ce qui suit : <b>${m}</b></p><p>La Direction compte sur le strict respect de la présente note.</p>`};
+ return paper(c.t,c.ref,c.d,who,B[c.t]+`<p style="margin:34px 0 0 52%">La Direction des ressources humaines<br><br><b>Rachelle Ahouansou</b></p>`+(c.rep?`<div class="rep"><b>Réponse de l'employé</b><br>${c.rep}</div>`:''));
+}
+const tr=(a,b)=>`<tr><th style="text-align:left;width:38%;background:var(--bg)">${a}</th><td>${b}</td></tr>`;
+const docJ=j=>paper('Rapport journalier de chantier','RJ-'+j.d.replace(/\D/g,'')+'-'+j.ch,j.d+' 2026','',`<table>${tr('Chantier',ch(j.ch).nom)}${tr('Météo',j.meteo)}${tr('Travaux réalisés',COUCHES[j.couche][0])}${tr('Section',pkf(j.de)+' → '+pkf(j.a))}${tr('Quantité',j.q)}${tr('Effectif présent',j.eff+' personnes')}${tr('Observations',j.obs||'Néant')}</table><div class="sg"><span>Le chef de chantier<br><br><b>${ch(j.ch).chef}</b></span><span>Visa de la mission de contrôle<br><br>………………………</span></div>`);
+const docD=d=>paper('Décompte provisoire '+d.n,'DC-2026-'+d.n.replace(/\D/g,'')+'-'+d.ch,'12 nov. 2026','',`<table>${tr('Marché',ch(d.ch).nom)}${tr('Maître d\'ouvrage',ch(d.ch).mo)}${tr('Période',d.p)}${tr('Travaux exécutés sur la période',F(d.m/.9))}${tr('Retenue de garantie (10 %)','− '+F(d.m/.9*.1))}${tr('<b>Net à payer</b>','<b>'+F(d.m)+'</b>')}</table><p class="sm mut">Quantités issues des rapports journaliers validés par la mission de contrôle.</p><div class="sg"><span>L'entreprise<br><br><b>Koffi Mensah</b></span><span>Le maître d'ouvrage<br><br>………………………</span></div>`);
+const docB=e=>paper('Bulletin de paie','BP-1115-'+e.n.split(' ')[1].slice(0,3).toUpperCase(),'15 nov. 2026',`<b>${e.n}</b><br>${e.p}`,`<table>${tr('Période','1er au 15 novembre 2026')}${tr('Jours pointés',e.j)}${tr('Taux journalier',F(e.t))}${tr('Salaire brut',F(e.j*e.t))}${tr('Cotisation sociale (3,6 %)','− '+F(Math.round(e.j*e.t*.036)))}${tr('<b>Net à payer</b>','<b>'+F(Math.round(e.j*e.t*.964))+'</b>')}</table><p class="sm mut">Jours issus du pointage du chantier.</p>`);
+function openDoc(html,acts){$('#paper').innerHTML=html;$('#mact').innerHTML=(acts||'')+'<button class="btn ghost" data-act="print">🖨️ Imprimer / PDF</button><button class="btn ghost" data-act="closedoc">Fermer</button>';$('#modal').classList.add('on');$('#modal').scrollTop=0}
+function closeDoc(){$('#modal').classList.remove('on');pend=null}
 const ROLES={
- dg:{ic:'🏢',l:'Direction générale',u:'Koffi Mensah',d:'Vue d\'ensemble : chantiers, argent, matériel, alertes',nav:['dash','chantiers','carte','couts','finances','engins','materiaux','rh','personnel','qhse']},
+ dg:{ic:'🏢',l:'Direction générale',u:'Koffi Mensah',d:'Vue d\'ensemble : chantiers, argent, matériel, alertes',nav:['dash','chantiers','carte','plan','couts','finances','st','engins','materiaux','rh','personnel','qhse']},
  rh:{ic:'🪪',l:'Ressources humaines',u:'Rachelle Ahouansou',d:'Dossiers, contrats, congés, badges et paie',nav:['rh','personnel']},
- ct:{ic:'📐',l:'Conducteur de travaux',u:'Aminata Traoré',d:'Avancement par PK, rapports, qualité, moyens',nav:['chantiers','carte','journal','engins','materiaux','qhse']},
+ ct:{ic:'📐',l:'Conducteur de travaux',u:'Aminata Traoré',d:'Avancement par PK, rapports, qualité, moyens',nav:['chantiers','carte','plan','journal','st','engins','materiaux','qhse']},
  chef:{ic:'🦺',l:'Chef de chantier',u:'Ibrahim Sanou',d:'Rapport du jour, pointage des équipes, pannes',nav:['journal','personnel','engins','qhse']},
  ouv:{ic:'👷',l:'Ouvrier',u:'Oumar Sidibé',d:'Pointer, voir ses jours et sa paie, faire une demande',nav:['moi']},
  parc:{ic:'🚜',l:'Parc & logistique',u:'Serge Dossou',d:'Engins, entretien, bitume, granulats, gasoil',nav:['engins','carte','materiaux']},
  mo:{ic:'🏛️',l:'Maître d\'ouvrage / Mission de contrôle',u:'Bureau de contrôle',d:'Suivi en ligne du chantier et des décomptes',nav:['client']}
 };
-const NAV={dash:['📊','Tableau de bord'],chantiers:['🛣️','Chantiers'],journal:['📝','Rapports journaliers'],engins:['🚜','Parc engins'],materiaux:['🛢️','Matériaux & centrale'],personnel:['👷','Personnel & pointage'],qhse:['✅','Qualité & sécurité'],finances:['💰','Décomptes & finances'],client:['🛣️','Suivi du chantier'],rh:['🪪','Ressources humaines'],moi:['⏱️','Mon pointage'],couts:['📈','Rentabilité'],carte:['🗺️','Carte']};
+const NAV={dash:['📊','Tableau de bord'],chantiers:['🛣️','Chantiers'],journal:['📝','Rapports journaliers'],engins:['🚜','Parc engins'],materiaux:['🛢️','Matériaux & centrale'],personnel:['👷','Personnel & pointage'],qhse:['✅','Qualité & sécurité'],finances:['💰','Décomptes & finances'],client:['🛣️','Suivi du chantier'],rh:['🪪','Ressources humaines'],moi:['⏱️','Mon pointage'],couts:['📈','Rentabilité'],carte:['🗺️','Carte'],plan:['📅','Planning'],st:['🤝','Sous-traitants']};
+const NG={dash:'Pilotage',chantiers:'Pilotage',carte:'Pilotage',plan:'Pilotage',journal:'Pilotage',couts:'Argent',finances:'Argent',st:'Argent',engins:'Moyens',materiaux:'Moyens',rh:'Équipes',personnel:'Équipes',qhse:'Équipes'};
 let role=null,view=null,sel=1,badgeSel=null;
 const now=()=>new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 const qr=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;let o='';for(let i=0;i<121;i++){const x=i%11,y=(i/11)|0,cor=(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7);h=(h*1103515245+12345)>>>0;o+=`<i style="background:${cor||((h>>16)&1)?'#1F2A37':'#fff'}"></i>`}return `<div class="qr">${o}</div>`};
 const badge=(n,p,mat)=>`<div class="badge">${qr(n)}<div><b>${n}</b><div class="sm mut">${p}</div><div class="sm">Matricule ${mat}</div><div class="sm" style="color:var(--acc);font-weight:600">Atlas Routes &amp; Travaux</div></div></div>`;
 
-const stChip=s=>{const m={'En service':'c-ok','Disponible':'c-blue','En panne':'c-bad','Maintenance':'c-warn','Payé':'c-ok','En attente':'c-warn','En retard':'c-bad','Brouillon':'c-g','Clôturé':'c-g','En cours':'c-warn','Approuvé':'c-ok','Refusé':'c-bad','À jour':'c-ok','À refaire':'c-warn','À faire':'c-bad','CDI':'c-blue','CDD':'c-g','Journalier':'c-warn','Active':'c-ok','Expire bientôt':'c-bad','À libérer':'c-warn'};return `<span class="chip ${m[s]||'c-g'}">${s}</span>`};
+const stChip=s=>{const m={'En service':'c-ok','Disponible':'c-blue','En panne':'c-bad','Maintenance':'c-warn','Payé':'c-ok','En attente':'c-warn','En retard':'c-bad','Brouillon':'c-g','Clôturé':'c-g','En cours':'c-warn','Approuvé':'c-ok','Refusé':'c-bad','À jour':'c-ok','À refaire':'c-warn','À faire':'c-bad','CDI':'c-blue','CDD':'c-g','Journalier':'c-warn','Active':'c-ok','Expire bientôt':'c-bad','À libérer':'c-warn','Envoyé':'c-blue','Réponse reçue':'c-warn','Classé':'c-g','Expirée':'c-bad','Dans les temps':'c-ok','En avance':'c-ok'};return `<span class="chip ${m[s]||'c-g'}">${s}</span>`};
 const head=(t,p,b='')=>`<div class="head"><div><h2>${t}</h2><p>${p}</p></div>${b}</div>`;
-const KI=[[/effectif|présent|contrat|demande|jours trav|retard/i,'👷'],[/chantier|enrobé|avancement|carnet|travaux/i,'🛣️'],[/engin|panne|maintenance|gasoil|production|camion/i,'🚜'],[/décompte|paiement|encaiss|paie|percevoir|marge|dépens|argent|caution|retenue|taux|masse/i,'💰'],[/effectif|présent|contrat|demande|jours trav|retard/i,'👷'],[/accident|essai|sécurité|causerie|équipement|visite|température|écart/i,'🦺']];
+const KI=[[/courrier/i,'✉️'],[/pénalit|retard|délai|fin de chantier/i,'📅'],[/sous-trait|assurance/i,'🤝'],[/effectif|présent|contrat|demande|jours trav/i,'👷'],[/chantier|enrobé|avancement|carnet|travaux/i,'🛣️'],[/engin|panne|maintenance|gasoil|production|camion/i,'🚜'],[/décompte|paiement|encaiss|paie|percevoir|marge|dépens|argent|caution|retenue|taux|masse/i,'💰'],[/effectif|présent|contrat|demande|jours trav|retard/i,'👷'],[/accident|essai|sécurité|causerie|équipement|visite|température|écart/i,'🦺']];
 const kpi=(l,v,e,c='')=>`<div class="card kpi"><span class="ki">${(KI.find(k=>k[0].test(l))||[0,'📌'])[1]}</span><div><small>${l}</small><b>${v}</b><em class="${c}">${e}</em></div></div>`;
 
 function lineaire(c){
@@ -237,6 +278,9 @@ dash(){
   ...D.engins.filter(e=>e.st==='En panne').map(e=>['var(--bad)',`Engin en panne : ${e.nom}`,`${e.code} · ${ch(e.ch).lieu} — le compactage est ralenti`]),
   ...D.dec.filter(d=>d.st==='En retard').map(d=>['var(--warn)',`Décompte ${d.n} impayé depuis ${d.j} jours`,`${F(d.m)} · ${ch(d.ch).mo}`]),
   ...D.essais.filter(e=>!e[6]).map(e=>['var(--warn)',`Essai non conforme : ${e[3]}`,`${ch(e[1]).lieu} · ${e[2]} — résultat ${e[4]} (exigé ${e[5]})`])];
+ D.chantiers.filter(c=>ret(c)>10).forEach(c=>al.push(['var(--bad)',`Retard de ${ret(c)} jours : ${c.lieu}`,`Pénalités à risque : ${F(pen(c))} — voir Planning`]));
+ D.st.filter(s=>s.as==='Expirée').forEach(s=>al.push(['var(--warn)',`Assurance expirée : ${s.n}`,`Sous-traitant sur ${ch(s.ch).lieu} — à régulariser avant tout paiement`]));
+ const nr=D.cour.filter(c=>c.st==='Réponse reçue').length;if(nr)al.push(['var(--blue)',`${nr} réponse${nr>1?'s':''} à une demande d'explication`,'À lire dans Ressources humaines › Courriers officiels']);
  D.caut.filter(k=>k.st!=='Active').forEach(k=>al.push([k.st==='À libérer'?'var(--warn)':'var(--bad)',k.st==='À libérer'?`Retenue de garantie à réclamer : ${F(k.m)}`:`${k.t} : expire le ${k.e}`,k.o||ch(k.ch).nom]));
  D.chantiers.filter(c=>marge(c,'cb')-marge(c,'cr')>5).forEach(c=>al.push(['var(--bad)',`Marge en baisse : ${c.lieu}`,`${pc(marge(c,'cr'))} au lieu de ${pc(marge(c,'cb'))} prévus — voir Rentabilité`]));
  return `<div class="hero"><div><h2>Bonjour ${ROLES[role].u} 👋</h2><p>Voici la situation de vos chantiers au jeudi 12 novembre 2026.</p></div><div class="q"><button class="btn" data-act="nav" data-id="chantiers">Voir les chantiers</button><button class="btn ghost" data-act="nav" data-id="carte">Ouvrir la carte</button><button class="btn ghost" data-act="nav" data-id="couts">Rentabilité</button></div></div>`+
@@ -273,8 +317,8 @@ journal(){
  <label>Effectif présent<input name="eff" type="number" value="210" required></label>
  <label class="full">Observations (pannes, incidents, visites)<textarea name="obs" rows="2" placeholder="Ex. : visite de la mission de contrôle à 10 h, rien à signaler"></textarea></label>
  <div class="full"><button class="btn">Enregistrer le rapport</button></div></form></div>
- <div class="card" style="margin-top:14px"><h3>Derniers rapports</h3><div class="tw"><table><tr><th>Date</th><th>Chantier</th><th>Travaux du jour</th><th>Quantité</th><th>Effectif</th><th>Météo</th><th>Observations</th></tr>
- ${D.journal.map(j=>`<tr><td>${j.d}</td><td>${ch(j.ch).lieu}</td><td><b>${COUCHES[j.couche][0]}</b><div class="sm mut">${pkf(j.de)} → ${pkf(j.a)}</div></td><td>${j.q}</td><td>${j.eff}</td><td>${j.meteo}</td><td class="sm">${j.obs||'—'}</td></tr>`).join('')}</table></div></div>`;
+ <div class="card" style="margin-top:14px"><h3>Derniers rapports</h3><div class="tw"><table><tr><th>Date</th><th>Chantier</th><th>Travaux du jour</th><th>Quantité</th><th>Effectif</th><th>Météo</th><th>Observations</th><th></th></tr>
+ ${D.journal.map((j,i)=>`<tr><td>${j.d}</td><td>${ch(j.ch).lieu}</td><td><b>${COUCHES[j.couche][0]}</b><div class="sm mut">${pkf(j.de)} → ${pkf(j.a)}</div></td><td>${j.q}</td><td>${j.eff}</td><td>${j.meteo}</td><td class="sm">${j.obs||'—'}</td><td><button class="btn sm ghost" data-act="pdfj" data-id="${i}">PDF</button></td></tr>`).join('')}</table></div></div>`;
 },
 engins(){
  const n=s=>D.engins.filter(e=>e.st===s).length;
@@ -308,7 +352,7 @@ finances(){
  return head('Décomptes & finances','Savoir à tout moment ce que chaque maître d\'ouvrage vous doit',`<button class="btn" data-act="newdec">+ Générer le décompte de novembre</button>`)+
  `<div class="grid k4">${kpi('Carnet de commandes',F(D.chantiers.reduce((a,c)=>a+c.montant,0)),'4 marchés en cours')}${kpi('En attente de paiement',F(s('En attente')),'dans les délais','wn')}${kpi('En retard de paiement',F(s('En retard')),'relances à faire','dn')}${kpi('Encaissé (2 derniers mois)',F(s('Payé')),'','up')}</div>
  <div class="card" style="margin-top:14px"><div class="tw"><table><tr><th>Décompte</th><th>Chantier</th><th>Période</th><th>Montant</th><th>Statut</th><th>Délai</th><th></th></tr>
- ${D.dec.map((d,i)=>`<tr><td><b>${d.n}</b></td><td>${ch(d.ch).lieu}<div class="sm mut">${ch(d.ch).mo}</div></td><td>${d.p}</td><td><b>${F(d.m)}</b></td><td>${stChip(d.st)}</td><td>${d.st==='Payé'||d.st==='Brouillon'?'—':d.j+' jours'}</td><td>${d.st==='Payé'?'':d.st==='Brouillon'?`<button class="btn sm" data-act="send" data-id="${i}">Transmettre</button>`:`<button class="btn sm ghost" data-act="pay" data-id="${i}">Marquer payé</button>`}</td></tr>`).join('')}</table></div>
+ ${D.dec.map((d,i)=>`<tr><td><b>${d.n}</b></td><td>${ch(d.ch).lieu}<div class="sm mut">${ch(d.ch).mo}</div></td><td>${d.p}</td><td><b>${F(d.m)}</b></td><td>${stChip(d.st)}</td><td>${d.st==='Payé'||d.st==='Brouillon'?'—':d.j+' jours'}</td><td>${d.st==='Payé'?'':d.st==='Brouillon'?`<button class="btn sm" data-act="send" data-id="${i}">Transmettre</button>`:`<button class="btn sm ghost" data-act="pay" data-id="${i}">Marquer payé</button>`} <button class="btn sm ghost" data-act="pdfd" data-id="${i}">PDF</button></td></tr>`).join('')}</table></div>
  <p class="sm mut" style="margin:12px 0 0">Le décompte est calculé à partir des quantités saisies dans les rapports journaliers : plus de ressaisie, plus d'oubli.</p></div>
  <div class="card" style="margin-top:14px"><div class="row" style="flex-wrap:wrap;margin-bottom:10px"><h3 style="margin:0">Cautions, avances et retenues de garantie</h3><span class="chip c-blue">${F(sum(D.caut.map(k=>k.m)))} immobilisés</span></div><div class="tw"><table><tr><th>Type</th><th>Marché</th><th>Banque</th><th>Montant</th><th>Échéance</th><th>État</th><th></th></tr>
  ${D.caut.map((k,i)=>`<tr><td><b>${k.t}</b></td><td>${k.o||ch(k.ch).lieu+' — '+ch(k.ch).nom.slice(0,30)+'…'}</td><td>${k.b}</td><td><b>${F(k.m)}</b></td><td>${k.e}</td><td>${stChip(k.st)}</td><td>${k.st==='À libérer'?`<button class="btn sm" data-act="lib" data-id="${i}">Demander la mainlevée</button>`:k.st==='Expire bientôt'?`<button class="btn sm ghost" data-act="prol" data-id="${i}">Prolonger</button>`:''}</td></tr>`).join('')}</table></div>
@@ -331,17 +375,44 @@ carte(){
  <div class="leg"><span><i style="background:#1F2A37"></i>Route bitumée</span><span><i style="background:#E8730C"></i>Reste à faire</span><span><i style="background:#15803D"></i>Engin en service</span><span><i style="background:#B91C1C"></i>Engin en panne</span><span><i style="background:#B45309"></i>En maintenance</span></div></div>
  <div class="grid k4" style="margin-top:14px">${D.chantiers.map(c=>{const g=D.engins.filter(e=>e.ch===c.id);return `<div class="card"><span class="chip c-g">${c.lieu}</span><b style="display:block;margin:8px 0">${g.length} engin${g.length>1?'s':''} sur place</b>${g.map(e=>`<div class="row sm" style="margin:4px 0"><span>${e.code}</span>${stChip(e.st)}</div>`).join('')}</div>`}).join('')}</div>`;
 },
+plan(){
+ const c=ch(sel),T=D.chantiers,w=T.slice().sort((a,b)=>ret(b)-ret(a))[0],etat=x=>ret(x)>10?'En retard':ret(x)<-5?'En avance':'Dans les temps';
+ return head('Planning','Chaque chantier est-il dans les délais du marché ? Et que risque-t-on si ce n\'est pas le cas')+
+ `<div class="grid k4">${kpi('Chantiers dans les délais',T.filter(x=>ret(x)<=10).length+' / '+T.length,'')}${kpi('Retard le plus important',ret(w)>0?ret(w)+' jours':'Aucun',w.lieu,ret(w)>10?'dn':'up')}${kpi('Pénalités de retard à risque',F(sum(T.map(pen))),'calculées selon le marché',sum(T.map(pen))?'dn':'up')}${kpi('Prochaine fin de chantier','Févr. 2027','Cotonou — voiries urbaines')}</div>
+ <div class="grid k4" style="margin-top:14px">${T.map(x=>`<div class="card proj" data-act="sel" data-id="${x.id}" style="${x.id===sel?'border-color:var(--acc);box-shadow:0 0 0 2px var(--acc2)':''}"><div class="row"><span class="chip c-g">${x.lieu}</span>${stChip(etat(x))}</div><div class="row sm" style="margin-top:12px"><span style="width:64px">Délai</span><div class="bar b" style="flex:1"><i style="width:${x.tc}%"></i></div><b style="width:36px;text-align:right">${x.tc}%</b></div><div class="row sm" style="margin-top:4px"><span style="width:64px">Travaux</span><div class="bar" style="flex:1"><i style="width:${x.phys}%"></i></div><b style="width:36px;text-align:right">${x.phys}%</b></div><p class="sm mut" style="margin:8px 0 0">${ret(x)>0?ret(x)+' jours de retard':ret(x)<0?-ret(x)+' jours d\'avance':'À l\'heure'}</p></div>`).join('')}</div>
+ <div class="card" style="margin-top:14px"><h3>${c.nom}</h3><p class="sm mut" style="margin:-6px 0 12px">${c.delai} · en clair : la période prévue · en orange : ce qui est fait · trait rouge : aujourd'hui</p>
+ ${COUCHES.map((k,i)=>{const s=PS[i],pr=Math.min(1,c.c[i]/c.km),ex=Math.max(0,Math.min(1,(c.tc/100-s[0])/(s[1]-s[0]))),late=pr<ex-.1;return `<div class="l" style="display:grid;grid-template-columns:150px 1fr 96px;gap:10px;align-items:center;margin:10px 0"><span class="sm">${k[0]}</span><div class="gt"><div class="pl" style="left:${s[0]*100}%;width:${(s[1]-s[0])*100}%"><i style="width:${pr*100}%"></i></div><div class="now" style="left:${c.tc}%"></div></div><span class="sm ${late?'neg':pr>=1?'pos':''}">${pr>=1?'Terminé':late?'En retard':Math.round(pr*100)+' %'}</span></div>`}).join('')}</div>`;
+},
+st(){
+ const S=D.st;
+ return head('Sous-traitants','Qui fait quoi, où en est son travail, et combien vous lui devez')+
+ `<div class="grid k4">${kpi('Sous-traitants actifs',S.length,'sur 4 chantiers')}${kpi('Montant sous-traité',F(sum(S.map(s=>s.m))),'')}${kpi('Reste à leur payer',F(sum(S.map(du))),'pour les travaux déjà faits','wn')}${kpi('Assurances à régulariser',S.filter(s=>s.as==='Expirée').length,'aucun paiement sans assurance valide',S.some(s=>s.as==='Expirée')?'dn':'up')}</div>
+ <div class="card" style="margin-top:14px"><div class="tw"><table><tr><th>Sous-traitant</th><th>Chantier</th><th>Marché</th><th style="width:18%">Avancement</th><th>Déjà payé</th><th>Dû à ce jour</th><th>Assurance</th><th></th></tr>
+ ${S.map((s,i)=>`<tr><td><b>${s.n}</b><div class="sm mut">${s.s}</div></td><td>${ch(s.ch).lieu}</td><td>${F(s.m)}</td><td><div class="row sm"><div class="bar" style="flex:1"><i style="width:${s.av}%"></i></div><b>${s.av}%</b></div></td><td>${F(s.p)}</td><td><b>${F(du(s))}</b></td><td>${stChip(s.as)}</td><td>${du(s)>0&&s.as==='À jour'?`<button class="btn sm" data-act="payst" data-id="${i}">Payer</button>`:s.as==='Expirée'?`<button class="btn sm ghost" data-act="relst" data-id="${i}">Réclamer l'attestation</button>`:''}</td></tr>`).join('')}</table></div>
+ <p class="sm mut" style="margin:12px 0 0">BTP Pro bloque le paiement d'un sous-traitant dont l'assurance a expiré : en cas d'accident, c'est votre entreprise qui serait responsable.</p></div>`;
+},
 rh(){
- const tot=D.chantiers.reduce((s,c)=>s+c.eff,0),pay=D.equipe.reduce((s,e)=>s+e.j*e.t,0);
- return head('Ressources humaines','Dossiers du personnel, contrats, congés et paie — du siège jusqu\'au chantier')+
- `<div class="grid k4">${kpi('Effectif total',fr(tot),'212 salariés · 343 journaliers')}${kpi('Contrats à renouveler','14','dans les 30 jours','wn')}${kpi('Visites médicales à refaire','9','obligatoires sur chantier','wn')}${kpi('Demandes à traiter',D.dem.filter(d=>d.st==='En attente').length,'congés, permissions, avances')}</div>
- <div class="grid c2" style="margin-top:14px"><div class="card"><h3>Dossiers du personnel</h3><div class="tw"><table><tr><th>Nom</th><th>Poste</th><th>Contrat</th><th>Fin de contrat</th><th>Visite médicale</th><th></th></tr>
+ const tot=sum(D.chantiers.map(c=>c.eff)),pay=sum(D.equipe.map(e=>e.j*e.t)),att=D.dem.filter(d=>d.st==='En attente').length,nr=D.cour.filter(c=>c.st==='Réponse reçue').length;
+ const tabs=[['pers','👥 Personnel'],['dem','📥 Demandes'+(att?' ('+att+')':'')],['cour','✉️ Courriers officiels'+(nr?' ('+nr+')':'')],['paie','💵 Paie']];
+ let body='';
+ if(rhTab==='pers')body=`<div class="card"><h3>Dossiers du personnel</h3><div class="tw"><table><tr><th>Nom</th><th>Poste</th><th>Contrat</th><th>Fin de contrat</th><th>Visite médicale</th><th></th></tr>
  ${D.sal.map((s,i)=>`<tr><td><b>${s[0]}</b></td><td>${s[1]}</td><td>${stChip(s[2])}</td><td>${s[3]}</td><td>${stChip(s[4])}</td><td><button class="btn sm ghost" data-act="badge" data-id="${i}">Badge</button></td></tr>`).join('')}</table></div>
- ${badgeSel!==null?`<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)"><p class="sm mut" style="margin:0 0 8px">Badge prêt à imprimer — il sert aussi au pointage</p>${badge(D.sal[badgeSel][0],D.sal[badgeSel][1],'ART-0'+(412+badgeSel))}</div>`:''}</div>
- <div class="card"><h3>Demandes à traiter</h3>${D.dem.map((d,i)=>`<div class="alert"><div style="flex:1"><b>${d.n}</b><div class="sm mut">${d.t} · ${d.d}</div></div>${d.st==='En attente'?`<span><button class="btn sm" data-act="dem" data-id="${i}" data-v="Approuvé">Approuver</button> <button class="btn sm ghost" data-act="dem" data-id="${i}" data-v="Refusé">Refuser</button></span>`:stChip(d.st)}</div>`).join('')}</div></div>
- <div class="card" style="margin-top:14px"><div class="row" style="flex-wrap:wrap;margin-bottom:10px"><h3 style="margin:0">Paie des journaliers — quinzaine du 1er au 15 novembre</h3><button class="btn sm" data-act="bull">Générer les bulletins de paie</button></div><div class="tw"><table><tr><th>Nom</th><th>Poste</th><th>Jours pointés</th><th>Taux journalier</th><th>À payer</th></tr>
- ${D.equipe.map(e=>`<tr><td><b>${e.n}</b></td><td>${e.p}</td><td>${e.j}</td><td>${F(e.t)}</td><td><b>${F(e.j*e.t)}</b></td></tr>`).join('')}<tr><td colspan="4"><b>Total de l'équipe</b></td><td><b>${F(pay)}</b></td></tr></table></div>
+ ${badgeSel!==null?`<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)"><p class="sm mut" style="margin:0 0 8px">Badge prêt à imprimer — il sert aussi au pointage</p>${badge(D.sal[badgeSel][0],D.sal[badgeSel][1],'ART-0'+(412+badgeSel))}</div>`:''}</div>`;
+ if(rhTab==='dem')body=`<div class="card"><h3>Demandes des employés</h3><p class="sm mut" style="margin:-6px 0 8px">Congés, permissions, avances et attestations demandés depuis l'espace de chaque employé.</p>${D.dem.map((d,i)=>`<div class="alert"><div style="flex:1"><b>${d.n}</b><div class="sm mut">${d.t} · ${d.d}</div></div>${d.st==='En attente'?`<span><button class="btn sm" data-act="dem" data-id="${i}" data-v="Approuvé">Approuver</button> <button class="btn sm ghost" data-act="dem" data-id="${i}" data-v="Refusé">Refuser</button></span>`:stChip(d.st)}</div>`).join('')}</div>`;
+ if(rhTab==='cour'){const cats=['','Discipline','Attestations','Contrats','Notes'],L=D.cour.map((c,i)=>[c,i]).filter(x=>!courF||CT[x[0].t][1]===courF);
+  body=`<div class="grid c2"><div class="card"><h3>Nouveau courrier</h3><form class="f" id="fc"><label>Type de courrier<select name="t">${cats.slice(1).map(g=>`<optgroup label="${g}">${Object.keys(CT).filter(k=>CT[k][1]===g).map(k=>`<option>${k}</option>`).join('')}</optgroup>`).join('')}</select></label>
+  <label>Destinataire<select name="n">${D.sal.map(s=>`<option value="${s[0]}|${s[1]}">${s[0]} — ${s[1]}</option>`).join('')}${D.equipe.filter(e=>!D.sal.some(s=>s[0]===e.n)).map(e=>`<option value="${e.n}|${e.p}">${e.n} — ${e.p}</option>`).join('')}<option value="Tout le personnel|">Tout le personnel (note de service)</option></select></label>
+  <label class="full">Faits ou objet<textarea name="motif" rows="3" placeholder="Ex. : absence non justifiée le 10 novembre 2026"></textarea></label>
+  <div class="full"><button class="btn">Préparer le courrier</button></div></form><p class="sm mut" style="margin:12px 0 0">Le courrier est rédigé tout seul, numéroté et à l'en-tête de l'entreprise. Vous le relisez avant de l'envoyer.</p></div>
+  <div class="card"><h3>Comment ça se passe</h3><div class="alert"><span>1️⃣</span><div>Vous choisissez le type et l'employé.</div></div><div class="alert"><span>2️⃣</span><div>L'employé le reçoit dans son espace et sur son téléphone.</div></div><div class="alert"><span>3️⃣</span><div>Pour une demande d'explication, il répond par écrit ; sa réponse revient ici, datée.</div></div><div class="alert"><span>4️⃣</span><div>Tout est classé dans son dossier, prêt en cas de litige.</div></div></div></div>
+  <div class="card" style="margin-top:14px"><div class="row" style="flex-wrap:wrap;margin-bottom:10px"><h3 style="margin:0">Registre des courriers</h3><span>${cats.map(g=>`<button class="btn sm ${g===courF?'':'ghost'}" data-act="courf" data-id="${g}">${g||'Tous'}</button>`).join(' ')}</span></div><div class="tw"><table><tr><th>Référence</th><th>Type</th><th>Employé</th><th>Date</th><th>État</th><th></th></tr>
+  ${L.map(([c,i])=>`<tr><td><b>${c.ref}</b></td><td>${c.t}<div class="sm mut">${CT[c.t][1]}</div></td><td>${c.n}</td><td>${c.d}</td><td>${stChip(c.st)}</td><td><button class="btn sm ghost" data-act="seec" data-id="${i}">Ouvrir</button></td></tr>`).join('')||'<tr><td colspan="6" class="mut">Aucun courrier dans cette catégorie.</td></tr>'}</table></div></div>`}
+ if(rhTab==='paie')body=`<div class="card"><div class="row" style="flex-wrap:wrap;margin-bottom:10px"><h3 style="margin:0">Paie des journaliers — quinzaine du 1er au 15 novembre</h3><button class="btn sm" data-act="bull">Générer tous les bulletins</button></div><div class="tw"><table><tr><th>Nom</th><th>Poste</th><th>Jours pointés</th><th>Taux journalier</th><th>À payer</th><th></th></tr>
+ ${D.equipe.map((e,i)=>`<tr><td><b>${e.n}</b></td><td>${e.p}</td><td>${e.j}</td><td>${F(e.t)}</td><td><b>${F(e.j*e.t)}</b></td><td><button class="btn sm ghost" data-act="bulle" data-id="${i}">Bulletin</button></td></tr>`).join('')}<tr><td colspan="4"><b>Total de l'équipe</b></td><td><b>${F(pay)}</b></td><td></td></tr></table></div>
  <p class="sm mut" style="margin:12px 0 0">Les jours viennent directement du pointage : plus de cahier à recopier, plus de journaliers « fantômes ».</p></div>`;
+ return head('Ressources humaines','Chaque chose à sa place : le personnel, les demandes, les courriers officiels, la paie')+
+ `<div class="grid k4">${kpi('Effectif total',fr(tot),'212 salariés · 343 journaliers')}${kpi('Contrats à renouveler','14','dans les 30 jours','wn')}${kpi('Demandes à traiter',att,'congés, permissions, avances')}${kpi('Courriers en attente de réponse',D.cour.filter(c=>c.st==='Envoyé'&&c.t==="Demande d'explication").length,'demandes d\'explication')}</div>
+ <div class="tabs">${tabs.map(t=>`<button class="${t[0]===rhTab?'on':''}" data-act="rhtab" data-id="${t[0]}">${t[1]}</button>`).join('')}</div>${body}`;
 },
 moi(){
  const m=D.equipe[4];
@@ -351,7 +422,9 @@ moi(){
  <p style="margin:14px 0 0">${m.ok?`✅ Arrivée pointée à <b>${m.h}</b>${m.out?` · Départ à <b>${m.out}</b>`:''}<br><span class="sm mut">Position vérifiée : sur le chantier, ${pkf(28)}</span>`:'<span class="mut">Vous n\'avez pas encore pointé aujourd\'hui</span>'}</p></div>
  <div class="grid k4" style="margin-top:14px">${kpi('Jours travaillés (quinzaine)',m.j,'du 1er au 15 novembre')}${kpi('À percevoir',F(m.j*m.t),'paiement le 15 novembre','up')}${kpi('Taux journalier',F(m.t),'')}${kpi('Retards ce mois','1','')}</div>
  <div class="grid c2" style="margin-top:14px"><div class="card"><h3>Faire une demande</h3><form class="f" id="fd"><label>Type<select name="t"><option>Permission exceptionnelle</option><option>Congé</option><option>Avance sur salaire</option><option>Attestation de travail</option></select></label><label>Dates ou montant<input name="d" required placeholder="Ex. : 20 – 21 nov."></label><div class="full"><button class="btn">Envoyer aux RH</button> <button type="button" class="btn ghost" data-act="danger">⚠️ Signaler un danger</button></div></form></div>
- <div class="card"><h3>Mon badge</h3>${badge(m.n,m.p,'ART-0418')}<p class="sm mut" style="margin:12px 0 0">Pas de téléphone ? Le chef de chantier scanne ce badge et le pointage est fait.</p></div></div>`;
+ <div class="card"><h3>Mon badge</h3>${badge(m.n,m.p,'ART-0418')}<p class="sm mut" style="margin:12px 0 0">Pas de téléphone ? Le chef de chantier scanne ce badge et le pointage est fait.</p></div></div>
+ <div class="card" style="margin-top:14px"><h3>Mes courriers</h3>${D.cour.map((c,i)=>[c,i]).filter(x=>x[0].n===m.n).map(([c,i])=>`<div class="alert"><span>✉️</span><div style="flex:1"><b>${c.t}</b> ${c.st==='Envoyé'&&c.t==="Demande d'explication"?'<span class="chip c-bad">Réponse attendue sous 48 h</span>':''}<div class="sm mut">${c.ref} · reçu le ${c.d}</div></div><button class="btn sm ghost" data-act="seec" data-id="${i}">Lire</button></div>`).join('')||'<p class="mut">Aucun courrier.</p>'}
+ ${(x=>x?`<form class="f" id="fr" data-i="${D.cour.indexOf(x)}" style="margin-top:10px"><label class="full">Ma réponse à la demande d'explication ${x.ref}<textarea name="r" rows="3" required placeholder="Écrivez ici vos explications"></textarea></label><div class="full"><button class="btn">Envoyer ma réponse</button></div></form>`:'')(D.cour.find(c=>c.n===m.n&&c.t==="Demande d'explication"&&c.st==='Envoyé'))}</div>`;
 },
 client(){
  const c=ch(1),dd=D.dec.filter(d=>d.ch===1);
@@ -364,13 +437,18 @@ client(){
 
 function toast(t){const e=$('#toast');e.textContent='✓ '+t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2600)}
 function render(){
- $('#nav').innerHTML=ROLES[role].nav.map(n=>`<button class="${n===view?'on':''}" data-act="nav" data-id="${n}"><span>${NAV[n][0]}</span>${NAV[n][1]}</button>`).join('');
+ {const nv=ROLES[role].nav;let g='';$('#nav').innerHTML=nv.map(n=>{const lab=nv.length>5&&NG[n]&&NG[n]!==g?`<div class="ng">${NG[n]}</div>`:'';g=NG[n]||g;return lab+`<button class="${n===view?'on':''}" data-act="nav" data-id="${n}"><span>${NAV[n][0]}</span>${NAV[n][1]}</button>`}).join('')}
  $('#main').innerHTML=V[view]()+`<p class="foot">Démo BTP Pro — données fictives · Application conçue par <a href="https://www.sackoconcept.com">SACKO CONCEPT</a></p>`;
  try{localStorage.setItem(SK,JSON.stringify(D))}catch(e){}
  map=null;if(view==='carte')initMap();
  const f=$('#fj');if(f)f.addEventListener('submit',e=>{e.preventDefault();const d=Object.fromEntries(new FormData(f));
   const c=ch(+d.ch),k=+d.couche,a=Math.min(+d.a,c.km);if(a>c.c[k])c.c[k]=Math.round(a*10)/10;
   D.journal.unshift({d:'12 nov.',ch:+d.ch,meteo:d.meteo,couche:k,de:+d.de,a:+d.a,q:d.q,eff:+d.eff,obs:d.obs});render();toast('Rapport enregistré — l\'avancement du chantier est mis à jour')});
+ const fc=$('#fc');if(fc)fc.addEventListener('submit',e=>{e.preventDefault();const d=Object.fromEntries(new FormData(fc)),w=d.n.split('|'),px=CT[d.t][0];
+  if(!d.motif.trim()&&CT[d.t][1]!=='Attestations')return toast('Indiquez les faits ou l\'objet du courrier');
+  pend={ref:px+'-2026-0'+(14+D.cour.filter(c=>c.ref.startsWith(px)).length),t:d.t,n:w[0],p:w[1]||'',d:'12 nov. 2026',motif:d.motif.trim(),st:'Envoyé',rep:''};
+  openDoc(letter(pend),'<button class="btn" data-act="sendc">Envoyer à '+(w[0]==='Tout le personnel'?'tout le personnel':w[0])+'</button>')});
+ const fq=$('#fr');if(fq)fq.addEventListener('submit',e=>{e.preventDefault();const c=D.cour[+fq.dataset.i];c.rep=new FormData(fq).get('r')+' — répondu le 12 nov. 2026 à '+now();c.st='Réponse reçue';render();toast('Réponse envoyée aux ressources humaines')});
  const g=$('#fd');if(g)g.addEventListener('submit',e=>{e.preventDefault();const d=Object.fromEntries(new FormData(g));D.dem.unshift({n:D.equipe[4].n,t:d.t,d:d.d,st:'En attente'});render();toast('Demande envoyée aux ressources humaines')});
 }
 const lerp=(g,f)=>[g[0][0]+(g[1][0]-g[0][0])*f,g[0][1]+(g[1][1]-g[0][1])*f];
@@ -400,7 +478,19 @@ document.addEventListener('click',e=>{
  if(a==='pt'){D.equipe[id].ok=!D.equipe[id].ok;render();return}
  if(a==='pay'){D.dec[id].st='Payé';render();toast('Paiement enregistré');return}
  if(a==='send'){D.dec[id].st='En attente';D.dec[id].j=0;render();toast('Décompte transmis au maître d\'ouvrage');return}
- if(a==='reset'){try{localStorage.removeItem(SK)}catch(e){}Object.assign(D,JSON.parse(D0));badgeSel=null;sel=1;render();toast('La démo est revenue à son état de départ');return}
+ if(a==='rhtab'){rhTab=id;render();return}
+ if(a==='courf'){courF=id;render();return}
+ if(a==='seec'){const c=D.cour[id];openDoc(letter(c),role!=='ouv'&&c.st!=='Classé'?'<button class="btn" data-act="classc" data-id="'+id+'">Classer dans le dossier</button>':'');return}
+ if(a==='sendc'){if(!pend)return;const n=pend.n;D.cour.unshift(pend);closeDoc();render();toast('Courrier envoyé à '+n+' et classé dans le registre');return}
+ if(a==='classc'){D.cour[id].st='Classé';closeDoc();render();toast('Courrier classé dans le dossier de l\'employé');return}
+ if(a==='pdfj'){openDoc(docJ(D.journal[id]));return}
+ if(a==='pdfd'){openDoc(docD(D.dec[id]));return}
+ if(a==='bulle'){openDoc(docB(D.equipe[id]));return}
+ if(a==='print'){window.print();return}
+ if(a==='closedoc'){closeDoc();return}
+ if(a==='payst'){const s=D.st[id],v=du(s);s.p+=v;render();toast('Paiement de '+F(v)+' enregistré pour '+s.n);return}
+ if(a==='relst'){toast('Relance envoyée à '+D.st[id].n+' pour son attestation d\'assurance');return}
+ if(a==='reset'){try{localStorage.removeItem(SK)}catch(e){}Object.assign(D,JSON.parse(D0));badgeSel=null;sel=1;rhTab='pers';courF='';render();toast('La démo est revenue à son état de départ');return}
  if(a==='zoom'){if(map){if(+id)map.fitBounds(GEO[id],{padding:[70,70],maxZoom:12});else map.fitBounds(Object.values(GEO).flat(),{padding:[40,40]})}return}
  if(a==='lib'){D.caut[id].st='Active';D.caut[id].e='Mainlevée demandée le 12 nov.';render();toast('Demande de mainlevée générée, prête à envoyer au maître d\'ouvrage');return}
  if(a==='prol'){D.caut[id].st='Active';D.caut[id].e='24 févr. 2027';render();toast('Demande de prolongation envoyée à la banque');return}
