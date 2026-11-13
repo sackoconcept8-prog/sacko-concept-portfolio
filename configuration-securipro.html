@@ -36,13 +36,13 @@
     <div class="f"><label for="entreprise">Nom commercial <i>*</i></label><input id="entreprise" name="entreprise" type="text" required placeholder="Ex. : Sentinelle Sécurité" autocomplete="organization"></div>
     <div class="f"><label for="raison">Raison sociale complète</label><input id="raison" name="raison" type="text" placeholder="Ex. : Société de Gardiennage et de Sécurité"></div>
     <div class="f full"><span class="lab">Forme juridique <i>*</i></span><div class="opts"><label><input type="radio" name="forme" value="SARL" required> SARL</label><label><input type="radio" name="forme" value="SA"> SA</label><label><input type="radio" name="forme" value="SAS / SASU"> SAS / SASU</label><label><input type="radio" name="forme" value="Entreprise individuelle"> Entreprise individuelle</label><label><input type="radio" name="forme" value="Autre"> Autre</label></div></div>
-    <div class="f"><label for="pays">Pays et ville <i>*</i></label><input id="pays" name="pays" type="text" required placeholder="Ex. : Bénin, Cotonou"></div>
+    <div class="f"><label for="pays">Pays et ville <i>*</i></label><input id="pays" name="pays" type="text" required placeholder="Ex. : Côte d'Ivoire, Abidjan"></div>
     <div class="f"><label for="adresse">Adresse du siège</label><input id="adresse" name="adresse" type="text"></div>
-    <div class="f"><label for="tel">Téléphone de l'entreprise <i>*</i></label><input id="tel" name="tel" type="tel" required placeholder="+229 …"></div>
+    <div class="f"><label for="tel">Téléphone de l'entreprise <i>*</i></label><input id="tel" name="tel" type="tel" required placeholder="Avec l'indicatif du pays, ex. +225 …"></div>
     <div class="f"><label for="email">E-mail de l'entreprise <i>*</i></label><input id="email" name="email" type="email" required autocomplete="email"></div>
-    <div class="f"><label for="ifu">N° IFU</label><input id="ifu" name="ifu" type="text"></div>
-    <div class="f"><label for="rccm">N° RCCM</label><input id="rccm" name="rccm" type="text"></div>
-    <div class="f"><label for="cnss">N° CNSS employeur</label><input id="cnss" name="cnss" type="text"></div>
+    <div class="f"><label for="ifu">N° d'identification fiscale (IFU, NIF, NINEA…)</label><input id="ifu" name="ifu" type="text"></div>
+    <div class="f"><label for="rccm">N° d'immatriculation (RCCM ou équivalent)</label><input id="rccm" name="rccm" type="text"></div>
+    <div class="f"><label for="cnss">N° de sécurité sociale employeur (CNSS ou équivalent)</label><input id="cnss" name="cnss" type="text"></div>
     <div class="f"><label for="web">Site web ou page Facebook</label><input id="web" name="web" type="text" placeholder="Facultatif"></div>
   </fieldset>
   <fieldset>
@@ -77,7 +77,7 @@
     <div class="f full"><span class="lab">Grades utilisés dans votre agence</span><div class="opts"><label><input type="checkbox" name="grades" value="Agent de sécurité"> Agent de sécurité</label><label><input type="checkbox" name="grades" value="Chef de poste"> Chef de poste</label><label><input type="checkbox" name="grades" value="Superviseur"> Superviseur</label><label><input type="checkbox" name="grades" value="Maître-chien"> Maître-chien</label><label><input type="checkbox" name="grades" value="Agent volant"> Agent volant</label><label><input type="checkbox" name="grades" value="Autre"> Autre</label></div></div>
     <div class="f full"><span class="lab">Pointage souhaité</span><div class="opts"><label><input type="checkbox" name="pointage" value="Application sur le téléphone de l'agent"> Application sur le téléphone de l'agent</label><label><input type="checkbox" name="pointage" value="Téléphone borne au poste"> Téléphone borne au poste</label><label><input type="checkbox" name="pointage" value="Scan de la carte pro par le chef de poste"> Scan de la carte pro par le chef de poste</label><label><input type="checkbox" name="pointage" value="SMS"> SMS</label><label><input type="checkbox" name="pointage" value="À discuter"> À discuter</label></div></div>
     <div class="f full"><span class="lab">Paiement des salaires</span><div class="opts"><label><input type="checkbox" name="paie" value="Espèces"> Espèces</label><label><input type="checkbox" name="paie" value="Virement bancaire"> Virement bancaire</label><label><input type="checkbox" name="paie" value="Mobile Money"> Mobile Money</label></div></div>
-    <div class="f full"><span class="lab">Facture normalisée e-MECeF (DGI)</span><div class="opts"><label><input type="radio" name="mecef" value="Oui, nous l'utilisons"> Oui, nous l'utilisons</label><label><input type="radio" name="mecef" value="Pas encore"> Pas encore</label><label><input type="radio" name="mecef" value="Je ne sais pas"> Je ne sais pas</label></div></div>
+    <div class="f full"><span class="lab">Facture normalisée ou électronique exigée par les impôts de votre pays</span><div class="opts"><label><input type="radio" name="mecef" value="Oui, nous l'utilisons"> Oui, nous l'utilisons</label><label><input type="radio" name="mecef" value="Pas encore"> Pas encore</label><label><input type="radio" name="mecef" value="Je ne sais pas"> Je ne sais pas</label></div></div>
   </fieldset>
   <fieldset>
     <legend>6. Vos documents</legend>
@@ -92,7 +92,7 @@
     <div class="f"><label for="demarrage">Date souhaitée de démarrage</label><input id="demarrage" name="demarrage" type="date"></div>
     <div class="f"><label for="nom">Votre nom (personne qui remplit) <i>*</i></label><input id="nom" name="nom" type="text" required autocomplete="name"></div>
     <div class="f"><label for="fonction">Votre fonction</label><input id="fonction" name="fonction" type="text"></div>
-    <div class="f"><label for="whatsapp">Votre WhatsApp <i>*</i></label><input id="whatsapp" name="whatsapp" type="tel" required placeholder="+229 …" autocomplete="tel"></div>
+    <div class="f"><label for="whatsapp">Votre WhatsApp <i>*</i></label><input id="whatsapp" name="whatsapp" type="tel" required placeholder="Avec l'indicatif du pays, ex. +225 …" autocomplete="tel"></div>
   </fieldset>
   <label class="consent"><input type="checkbox" id="consent" name="consent" required> <span>J'autorise SACKO CONCEPT à utiliser ces informations pour configurer notre logiciel. Elles restent confidentielles. <i style="color:#C2410C;font-style:normal">*</i></span></label>
   <div class="submit-row"><button class="btn btn-gold" type="submit" id="send">Envoyer ma fiche</button><span class="msg" id="msg" aria-live="polite"></span></div>
@@ -130,7 +130,7 @@ document.querySelectorAll("[data-up]").forEach(d=>{const k=d.dataset.up,inp=docu
  ["dragover","dragenter"].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.add("over")}));["dragleave","drop"].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.remove("over")}));d.addEventListener("drop",e=>add(e.dataTransfer.files));
 });
 function b64(file){return new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=ko;r.readAsDataURL(file)})}
-const LABELS={raison:"Raison sociale",forme:"Forme juridique",pays:"Pays et ville",adresse:"Adresse",tel:"Téléphone entreprise",email:"E-mail entreprise",ifu:"IFU",rccm:"RCCM",cnss:"CNSS employeur",web:"Site web",taille:"Nombre d'agents",sites:"Nombre de sites",superviseurs:"Superviseurs",smartphone:"Agents avec smartphone",couleur1:"Couleur principale",couleur2:"Couleur secondaire",dg:"Directeur général",dg_tel:"Tél. DG",dg_email:"E-mail DG",dga:"Directeur adjoint / associé",rh:"Responsable RH",rh_contact:"Contact RH",compta:"Comptabilité",compta_contact:"Contact comptabilité",jour:"Poste de jour",nuit:"Poste de nuit",grades:"Grades",pointage:"Pointage souhaité",paie:"Paiement des salaires",mecef:"e-MECeF",besoins_txt:"Besoins particuliers",demarrage:"Démarrage souhaité",fonction:"Fonction du déclarant"};
+const LABELS={raison:"Raison sociale",forme:"Forme juridique",pays:"Pays et ville",adresse:"Adresse",tel:"Téléphone entreprise",email:"E-mail entreprise",ifu:"Identifiant fiscal",rccm:"Immatriculation",cnss:"Sécurité sociale employeur",web:"Site web",taille:"Nombre d'agents",sites:"Nombre de sites",superviseurs:"Superviseurs",smartphone:"Agents avec smartphone",couleur1:"Couleur principale",couleur2:"Couleur secondaire",dg:"Directeur général",dg_tel:"Tél. DG",dg_email:"E-mail DG",dga:"Directeur adjoint / associé",rh:"Responsable RH",rh_contact:"Contact RH",compta:"Comptabilité",compta_contact:"Contact comptabilité",jour:"Poste de jour",nuit:"Poste de nuit",grades:"Grades",pointage:"Pointage souhaité",paie:"Paiement des salaires",mecef:"Facture normalisée",besoins_txt:"Besoins particuliers",demarrage:"Démarrage souhaité",fonction:"Fonction du déclarant"};
 f.addEventListener("submit",async e=>{
  e.preventDefault();msg.className="msg";
  if(!f.checkValidity()){const bad=f.querySelector(":invalid");msg.className="msg err";msg.textContent="Remplissez les champs marqués d'une étoile.";bad&&bad.focus();return}
