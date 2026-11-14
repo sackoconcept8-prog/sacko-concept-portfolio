@@ -115,6 +115,9 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 .seg button{border:0;background:none;padding:7px 14px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted);white-space:nowrap}.seg button.on{background:var(--p-l);color:var(--p)}
 .sos-btn{width:100%;border:0;border-radius:16px;background:var(--red);color:#fff;font-weight:700;font-size:18px;padding:16px;cursor:pointer;box-shadow:0 8px 20px -10px var(--red)}
 .terrain{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}.terrain .btn{padding:14px;font-size:15px}
+.eval{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}.eval h3{margin:0 0 8px;font-size:15px}
+.choix{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 8px}.choix label{border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer;background:#fff}.choix input{display:none}.choix input:checked+span{color:var(--p);font-weight:700}.choix label:has(input:checked){border-color:var(--p);background:var(--p-l)}
+.etoiles{display:flex;gap:2px}.etoiles button{border:0;background:none;font-size:26px;line-height:1;cursor:pointer;color:#d5dbe3;padding:0 2px}.etoiles button.on{color:#e0a106}
 .pt-r{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}.pt-r.ok{background:var(--green-l);border-color:transparent}
 .photo{max-width:100%;border-radius:10px;margin-top:8px}
 @media(min-width:901px){#menu-btn{display:none!important}}
@@ -310,10 +313,10 @@ async function entrer(){
   if(!ctx.acces_ouvert)return bloquer(ctx.motif_blocage);
   $("#hd-moi").textContent=moi.nom_complet+" · "+(moi.fonction||ROLES[moi.role]||moi.role);
   ecran("app");majAvatar();$("#hd-av").onclick=maPhoto;
-  const G=estDirection()?[["",[["accueil","Tableau de bord"]]],["Opérations",[["planning","Planning"],["pointage","Pointage"],["incidents","Main courante"],["rondes","Rondes"]]],
+  const G=estDirection()?[["",[["accueil","Tableau de bord"]]],["Opérations",[["planning","Planning"],["pointage","Pointage"],["incidents","Main courante"],["rondes","Rondes"],["supervision","Supervision"]]],
       ["Personnel",[["agents","Agents"],["conges","Congés"],["documents","Documents RH"],["messages","Messages"],["paie","Paie"],["materiel","Matériel"]]],
       ["Clients",[["sites","Sites"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["comptes","Comptes"],...(moi.role==="dg"?[["reglages","Réglages"]]:[]),["support","Support"]]]]:null;
-  const T=G?G.flatMap(g=>g[1]):moi.role==="superviseur"?[["pointage","Pointage"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"]]
+  const T=G?G.flatMap(g=>g[1]):moi.role==="superviseur"?[["pointage","Pointage"],["visites","Visites et notes"],["rapport","Mon rapport"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"]]
     :moi.role==="agent"?[["accueil","Accueil"],["monplanning","Planning"],["mesdemandes","Demandes"],["mesdocs","Documents"],["mesmsg","Messages"],["mapaie","Paie"]]
     :moi.role==="client"?[["client","Mon site"],["cl-incidents","Incidents"],["cl-factures","Factures"],["cl-demandes","Demandes"]]:[["accueil","Accueil"]];
   $("#layout").classList.toggle("avec",!!G);$("#side").classList.toggle("hide",!G);$("#tabs").classList.toggle("hide",!!G);$("#menu-btn").classList.toggle("hide",!G);
@@ -343,7 +346,7 @@ async function charger(){
 }
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button,#side button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));menu(false);window.scrollTo(0,0);
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
+  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
@@ -450,12 +453,16 @@ function ficheAgent(id){const a=agents.find(x=>x.id===id);if(!a)return closeModa
   <div class="sec">Accès à l'application</div>
   ${c?`<div class="idbox">Identifiant : <b>${esc(a.matricule)}</b> · ${c.est_actif?"accès ouvert":"<b>accès coupé</b>"}<br><span class="muted xs">Dernière connexion : ${fdt(c.derniere_connexion)}</span></div><div class="actions"><button class="btn sm" id="fa-mdp">Nouveau mot de passe</button></div>`
      :`<p class="muted sm" style="margin:0 0 8px">${estSup(a)?"Ce superviseur n'a pas encore d'accès. Créez-le : il se connectera avec son matricule et ouvrira l'espace superviseur (pointage de secours, planning, main courante, rondes).":"Cet agent n'a pas encore d'accès. Créez-le pour qu'il puisse se connecter avec son matricule."}</p><button class="btn sm pri" id="fa-acc" ${a.statut==="Actif"?"":"disabled"}>${estSup(a)?"Créer son accès superviseur":"Créer son accès"}</button>`}
+  <div class="sec">Notes de supervision</div><div id="fa-notes"><p class="muted sm" style="margin:0">Chargement…</p></div>
   <div class="sec">Documents RH</div><div class="actions"><button class="btn sm" id="fa-doc">Créer un document pour cet agent</button></div>
   <div class="sec">Effectif</div>
   <div class="actions">${a.statut==="Actif"?`<button class="btn sm" id="fa-lock">Retirer l'accès</button><button class="btn sm" id="fa-exit">Sortie de l'effectif</button>`:`<button class="btn sm" id="fa-unlock">Rétablir l'agent</button>`}<button class="btn sm danger" id="fa-del">Supprimer définitivement</button></div>`,
   `<button class="btn" id="fa-no">Fermer</button>`);
   $("#fa-no").onclick=closeModal;$("#fa-edit").onclick=()=>formAgent(a);$("#fa-doc").onclick=()=>nouveauDoc(id);$("#fa-carte").onclick=()=>voirCarte(a);
   photoAgent(a).then(u=>{const i=$("#fa-ph");if(u&&i){i.src=u;i.classList.remove("hide")}});
+  sb.from("visites_supervision").select("visite_le,site_id,constats").order("visite_le",{ascending:false}).limit(100).then(r=>{const z=$("#fa-notes");if(!z)return;
+    const l=(r.data||[]).flatMap(v=>((v.constats||{}).agents||[]).filter(x=>x.agent_id===id).map(x=>({...x,quand:v.visite_le,site:v.site_id}))).slice(0,6);
+    z.innerHTML=l.length?l.map(x=>`<div class="line" style="padding:6px 0"><span class="grow sm">${fd(x.quand)} · ${esc(siteNom(x.site))}${x.observation?` · <span class="muted">${esc(x.observation)}</span>`:""}</span><b class="sm">★ ${x.note}/5</b></div>`).join(""):'<p class="muted sm" style="margin:0">Pas encore noté.</p>'});
   const on=(s,f)=>{const e=$(s);if(e)e.onclick=f};
   const statut=async(v,msg)=>{must(await sb.from("agents").update({statut:v}).eq("id",id));if(c&&c.est_actif!==(v==="Actif"))await appel({action:"activer",user_id:c.id,est_actif:v==="Actif"});toast(msg);await ouvrir("agents");ficheAgent(id)};
   on("#fa-acc",()=>saisirMdp("Créer l'accès de "+esc(nomC),`Identifiant de connexion : <b>${esc(a.matricule)}</b>`,"Créer l'accès",async mdp=>{await appel({action:"creer",role:estSup(a)?"superviseur":"agent",fonction:a.fonction||null,agent_id:id,nom_complet:nomC,email:emailAgent(a.matricule),mot_de_passe:mdp});await charger();toast("Accès créé")},()=>{ouvrir("agents").then(()=>ficheAgent(id))},{nom:nomC,prenom:a.prenom,identifiant:a.matricule,telephone:a.telephone}));
@@ -1229,16 +1236,18 @@ async function vDemandesClients(){
 /* ---------- rapports ---------- */
 let moisR=null;
 async function donneesMois(ym){const m1=ym+"-01",m2=finMois(ym);
-  const [P,po,inc,ro,docs]=await Promise.all([chargerPlanning(m1,m2),sb.from("pointages").select("*").gte("date_service",m1).lte("date_service",m2).then(must),sb.from("incidents").select("*").gte("survenu_le",m1+"T00:00:00").lte("survenu_le",m2+"T23:59:59").then(must),sb.from("rondes").select("*").gte("date_service",m1).lte("date_service",m2).then(must),sb.from("documents_rh").select("type,agent_id,created_at").gte("created_at",m1+"T00:00:00").lte("created_at",m2+"T23:59:59").then(must)]);
+  const [P,po,inc,ro,docs,vi]=await Promise.all([chargerPlanning(m1,m2),sb.from("pointages").select("*").gte("date_service",m1).lte("date_service",m2).then(must),sb.from("incidents").select("*").gte("survenu_le",m1+"T00:00:00").lte("survenu_le",m2+"T23:59:59").then(must),sb.from("rondes").select("*").gte("date_service",m1).lte("date_service",m2).then(must),sb.from("documents_rh").select("type,agent_id,created_at").gte("created_at",m1+"T00:00:00").lte("created_at",m2+"T23:59:59").then(must),sb.from("visites_supervision").select("constats,visite_le").gte("visite_le",m1+"T00:00:00").lte("visite_le",m2+"T23:59:59").then(must)]);
+  const notes=vi.flatMap(v=>((v.constats||{}).agents||[]).filter(x=>x.note));
   const jours=[];for(let d=m1;d<=m2&&d<=auj();d=ajout(d,1))jours.push(d);
   const att=jours.flatMap(d=>affectations(d,P,agents).map(a=>({...a,ds:d})));
-  return {P,po,inc,ro,docs,att,jours}}
+  return {P,po,inc,ro,docs,att,jours,notes}}
 function classement(D){const sanc=["Avertissement","Blâme","Mise à pied"];
   return agents.filter(a=>a.statut==="Actif").map(a=>{const pts=D.po.filter(p=>p.agent_id===a.id),ret=pts.filter(p=>(new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste))/6e4>TOL()).length;
     const prevus=D.att.filter(x=>x.agent_id===a.id),manques=prevus.filter(x=>!D.po.some(p=>p.agent_id===a.id&&p.date_service===x.ds&&p.poste===x.poste)&&finPoste(x.ds,x.poste)<new Date()).length;
     const absNJ=D.P.abs.filter(x=>x.agent_id===a.id&&!x.justifiee).length,s=D.docs.filter(d=>d.agent_id===a.id&&sanc.includes(d.type)).length,r=D.ro.filter(x=>x.agent_id===a.id&&x.fin).length,i=D.inc.filter(x=>x.agent_id===a.id).length;
-    const score=Math.max(0,pts.length*3+r*2+i-ret*4-manques*8-absNJ*10-s*15);
-    return {a,services:pts.length,prevus:prevus.length,ret,manques,absNJ,s,r,i,score,ponct:pts.length?Math.round(100*(pts.length-ret)/pts.length):0}}).sort((x,y)=>y.score-x.score||y.ponct-x.ponct)}
+    const nt=(D.notes||[]).filter(x=>x.agent_id===a.id),moy=nt.length?Math.round(10*nt.reduce((t,x)=>t+(+x.note),0)/nt.length)/10:null;
+    const score=Math.max(0,pts.length*3+r*2+i-ret*4-manques*8-absNJ*10-s*15+nt.reduce((t,x)=>t+(+x.note-3)*3,0));
+    return {a,moy,nbNotes:nt.length,services:pts.length,prevus:prevus.length,ret,manques,absNJ,s,r,i,score,ponct:pts.length?Math.round(100*(pts.length-ret)/pts.length):0}}).sort((x,y)=>y.score-x.score||y.ponct-x.ponct)}
 async function vRapports(){moisR=moisR||auj().slice(0,7);const ym=moisR,D=await donneesMois(ym),C=classement(D),elig=C.filter(x=>x.services>=5&&!x.s&&!x.absNJ);
   const parSite=sites.map(s=>{const at=D.att.filter(x=>x.site_id===s.id&&finPoste(x.ds,x.poste)<new Date()),ok=at.filter(x=>D.po.some(p=>p.agent_id===x.agent_id&&p.date_service===x.ds&&p.poste===x.poste)).length;
     return {s,att:at.length,ok,taux:at.length?Math.round(100*ok/at.length):null,inc:D.inc.filter(x=>x.site_id===s.id).length,ro:D.ro.filter(x=>x.site_id===s.id).length}});
@@ -1246,9 +1255,9 @@ async function vRapports(){moisR=moisR||auj().slice(0,7);const ym=moisR,D=await 
   $("#main").innerHTML=`<div class="head"><div><h1>Rapport · ${esc(fmo(ym))}</h1><p class="muted sm" style="margin:2px 0 0">Calculé automatiquement à partir du planning, des pointages, des rondes, des incidents et des documents RH.</p></div><div class="actions"><input class="input" type="month" id="rp-m" value="${ym}" style="width:auto"><button class="btn" id="rp-csv">Exporter (Excel)</button></div></div>
   <div class="tiles"><div class="tile"><b>${totAtt?Math.round(100*totOk/totAtt)+" %":"—"}</b><span class="muted sm">Services assurés (${totOk}/${totAtt})</span></div><div class="tile"><b>${D.po.length}</b><span class="muted sm">Pointages</span></div><div class="tile"><b class="${ret?"wa-t":""}">${ret}</b><span class="muted sm">Retards</span></div><div class="tile"><b>${D.inc.length}</b><span class="muted sm">Incidents</span></div><div class="tile"><b>${D.ro.length}</b><span class="muted sm">Rondes</span></div></div>
   <div class="card"><h2>🏆 Meilleur agent du mois</h2>${elig.length?`<div class="line"><span class="av" style="width:52px;height:52px;font-size:18px">1</span><div class="grow"><b style="font-size:17px">${esc(nomAg(elig[0].a))}</b><div class="muted sm">${esc(elig[0].a.grade)} · ${esc(siteNom(elig[0].a.site_id))} · ${elig[0].services} services · ponctualité ${elig[0].ponct} % · ${elig[0].r} ronde(s)</div></div><button class="btn pri" id="rp-cert">Certificat</button></div>${elig.slice(1,3).map((x,i)=>`<div class="line"><span class="av">${i+2}</span><div class="grow"><b>${esc(nomAg(x.a))}</b><div class="muted xs">${x.services} services · ponctualité ${x.ponct} %</div></div></div>`).join("")}`:'<p class="muted sm" style="margin:0">Pas encore assez de pointages ce mois-ci (5 services minimum, sans absence injustifiée ni sanction).</p>'}
-  <p class="muted xs" style="margin:10px 0 0">Calcul : 3 points par service pointé, 2 par ronde terminée, 1 par incident signalé ; retrait de 4 points par retard, 8 par service manqué, 10 par absence injustifiée, 15 par sanction.</p></div>
+  <p class="muted xs" style="margin:10px 0 0">Calcul : 3 points par service pointé, 2 par ronde terminée, 1 par incident signalé, et les notes des superviseurs (3 points par étoile au-dessus de 3, retirés en dessous) ; retrait de 4 points par retard, 8 par service manqué, 10 par absence injustifiée, 15 par sanction.</p></div>
   <div class="card scroll"><h2>Par site</h2><table class="tbl"><thead><tr><th>Site</th><th class="r">Services assurés</th><th class="r">Incidents</th><th class="r">Rondes</th><th></th></tr></thead><tbody>${parSite.map(x=>`<tr><td><b>${esc(x.s.nom)}</b></td><td class="r ${x.taux!=null&&x.taux<90?"ko-t":""}">${x.taux==null?"—":x.taux+" % ("+x.ok+"/"+x.att+")"}</td><td class="r">${x.inc}</td><td class="r">${x.ro}</td><td class="r"><button class="btn sm" data-rs="${x.s.id}">Rapport client</button></td></tr>`).join("")}</tbody></table></div>
-  <div class="card scroll"><h2>Par agent</h2><table class="tbl"><thead><tr><th>Agent</th><th class="r">Services</th><th class="r">Retards</th><th class="r">Manqués</th><th class="r">Abs. injust.</th><th class="r">Rondes</th><th class="r">Score</th></tr></thead><tbody>${C.map(x=>`<tr><td><b>${esc(nomAg(x.a))}</b><div class="muted xs">${esc(x.a.matricule)}</div></td><td class="r">${x.services}/${x.prevus}</td><td class="r">${x.ret}</td><td class="r ${x.manques?"ko-t":""}">${x.manques}</td><td class="r">${x.absNJ}</td><td class="r">${x.r}</td><td class="r"><b>${x.score}</b></td></tr>`).join("")}</tbody></table></div>`;
+  <div class="card scroll"><h2>Par agent</h2><table class="tbl"><thead><tr><th>Agent</th><th class="r">Services</th><th class="r">Retards</th><th class="r">Manqués</th><th class="r">Abs. injust.</th><th class="r">Rondes</th><th class="r">Note sup.</th><th class="r">Score</th></tr></thead><tbody>${C.map(x=>`<tr><td><b>${esc(nomAg(x.a))}</b><div class="muted xs">${esc(x.a.matricule)}</div></td><td class="r">${x.services}/${x.prevus}</td><td class="r">${x.ret}</td><td class="r ${x.manques?"ko-t":""}">${x.manques}</td><td class="r">${x.absNJ}</td><td class="r">${x.r}</td><td class="r">${x.moy==null?"—":x.moy+" / 5"}</td><td class="r"><b>${x.score}</b></td></tr>`).join("")}</tbody></table></div>`;
   $("#rp-m").onchange=e=>{if(e.target.value){moisR=e.target.value;vRapports().catch(x=>toast(traduire(x.message),true))}};
   $("#rp-csv").onclick=()=>{const c=v=>'"'+String(v??"").replace(/"/g,'""')+'"',L=[["Matricule","Agent","Grade","Site","Services pointés","Services prévus","Retards","Manqués","Absences injustifiées","Sanctions","Rondes","Incidents signalés","Score"]].concat(C.map(x=>[x.a.matricule,nomAg(x.a),x.a.grade,siteNom(x.a.site_id),x.services,x.prevus,x.ret,x.manques,x.absNJ,x.s,x.r,x.i,x.score]));
     const u=URL.createObjectURL(new Blob(["﻿"+L.map(r=>r.map(c).join(";")).join("\r\n")],{type:"text/csv;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download="rapport-"+ag.slug+"-"+ym+".csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)};
@@ -1283,6 +1292,92 @@ async function vClientDemandes(){await chargerMonSite();const l=must(await sb.fr
   ${l.length?`<div class="card"><h2>Vos demandes</h2>${l.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><b>${esc(x.type)}</b>${x.objet?" · "+esc(x.objet):""}<div class="muted xs">${fdt(x.created_at)}</div><div class="sm" style="white-space:pre-wrap">${esc(x.message||"")}</div>${x.reponse?`<div class="idbox" style="margin:8px 0 0"><b>Réponse :</b> ${esc(x.reponse)}</div>`:""}</div><span class="pill ${x.statut==="Traitée"?"p-green":x.statut==="En cours"?"p-main":"p-amber"}">${esc(x.statut)}</span></div>`).join("")}</div>`:""}`;
   $("#cd-ok").onclick=()=>busy($("#cd-ok"),async()=>{const m=$("#cd-m").value.trim();if(m.length<3){$("#cd-m").focus();throw new Error("Écrivez votre message.")}
     must(await sb.from("demandes_clients").insert({site_id:monSite.id,type:$("#cd-t").value,objet:$("#cd-o").value.trim()||null,message:m,statut:"Nouvelle"}));toast("Demande envoyée");await vClientDemandes()})}
+
+/* ---------- supervision : visites, notes, rapports ---------- */
+const CRIT=[["presence","Présent au poste",["Oui","Non"]],["tenue","Tenue et carte",["Correcte","À revoir","Incorrecte"]],["vigilance","Vigilance",["Bonne","Moyenne","Insuffisante"]],["consignes","Connaît les consignes",["Oui","En partie","Non"]]];
+const serviceActuel=()=>{const n=new Date(),N=POSTE("N"),h=pad(n.getHours())+":"+pad(n.getMinutes()),nuitAvant=N.fin<=N.debut&&h<N.fin;return {ds:nuitAvant?ajout(auj(),-1):auj(),poste:nuitAvant||h>=N.debut?"N":"J"}};
+function etoiles(nom,val){return `<div class="etoiles" data-et="${nom}">${[1,2,3,4,5].map(k=>`<button type="button" data-v="${k}" class="${k<=val?"on":""}" aria-label="${k} sur 5">★</button>`).join("")}</div>`}
+function brancherEtoiles(z){z.querySelectorAll("[data-et]").forEach(e=>e.querySelectorAll("button").forEach(b=>b.onclick=()=>{e.dataset.val=b.dataset.v;e.querySelectorAll("button").forEach(x=>x.classList.toggle("on",+x.dataset.v<=+b.dataset.v))}))}
+function moiAgent(){if(!moi.agent_id)throw new Error("Votre compte superviseur n'est relié à aucune fiche agent. Demandez à la direction de créer votre accès depuis votre fiche agent.");return moi.agent_id}
+async function vVisites(){
+  const [vi]=await Promise.all([sb.from("visites_supervision").select("*").order("visite_le",{ascending:false}).limit(40).then(must)]);
+  const miens=estDirection()?vi:vi.filter(v=>v.superviseur_id===moi.agent_id);
+  $("#main").innerHTML=`<div class="head"><div><h1>Visites et notes</h1><p class="muted sm" style="margin:2px 0 0">À chaque passage sur un site, notez les agents présents. Les notes comptent pour le meilleur agent du mois.</p></div><button class="btn pri" id="vs-new" ${sites.length?"":"disabled"}>+ Nouvelle visite</button></div>
+  ${!sites.length||!agents.filter(a=>a.statut==="Actif"&&!estSup(a)).length?`<div class="idbox sm">La direction doit d'abord enregistrer les sites et les agents. Ils apparaîtront ici automatiquement.</div>`:""}
+  ${miens.length?`<div class="card">${miens.map(v=>{const c=v.constats||{},n=(c.agents||[]).filter(x=>x.note),m=n.length?(n.reduce((t,x)=>t+(+x.note),0)/n.length).toFixed(1):null;
+    return `<div class="line click" data-vi="${v.id}"><div class="grow"><b class="n">${esc(siteNom(v.site_id))}</b><div class="muted xs">${fdt(v.visite_le)} · ${(c.agents||[]).length} agent(s) contrôlé(s)${estDirection()?" · "+esc(nomAg(AG_(v.superviseur_id))):""}</div></div>${m?`<span class="pill p-main">★ ${m} / 5</span>`:""}</div>`}).join("")}</div>`:`<div class="empty">Aucune visite enregistrée pour le moment.</div>`}`;
+  const nb=$("#vs-new");if(nb)nb.onclick=()=>busy(nb,async()=>{moiAgent();await nouvelleVisite()});
+  $("#main").querySelectorAll("[data-vi]").forEach(x=>x.onclick=()=>voirVisite(vi.find(v=>v.id===x.dataset.vi)));
+}
+async function nouvelleVisite(siteId){const sv=serviceActuel(),P=await chargerPlanning(ajout(sv.ds,-1),sv.ds),po=must(await sb.from("pointages").select("*").gte("date_service",ajout(sv.ds,-1)));
+  siteId=siteId||(sites.find(s=>s.actif)||sites[0]).id;
+  const prevus=[...new Set([...affectations(sv.ds,P,agents).filter(x=>x.site_id===siteId).map(x=>x.agent_id),...po.filter(p=>p.site_id===siteId&&p.date_service===sv.ds).map(p=>p.agent_id)])].filter(id=>id!==moi.agent_id);
+  const bloc=a=>`<div class="eval" data-ev="${a.id}"><div class="actions" style="justify-content:space-between"><h3>${esc(nomAg(a))} <span class="muted xs" style="font-weight:500">${esc(a.matricule)} · ${esc(a.fonction||a.grade)}</span></h3><button type="button" class="btn sm" data-rm="${a.id}">Retirer</button></div>
+    ${CRIT.map(([k,l,o])=>`<div class="xs muted">${l}</div><div class="choix">${o.map((v,i)=>`<label><input type="radio" name="${k}-${a.id}" value="${esc(v)}" ${i===0?"checked":""}><span>${esc(v)}</span></label>`).join("")}</div>`).join("")}
+    <div class="xs muted">Note globale</div>${etoiles("note-"+a.id,0)}<input class="input" data-obs="${a.id}" placeholder="Observation (facultatif)" style="margin-top:8px"></div>`;
+  modal("Nouvelle visite",`<div class="field"><label class="f">Site visité</label><select class="input" id="nv-s">${sites.filter(s=>s.actif).map(s=>`<option value="${s.id}" ${s.id===siteId?"selected":""}>${esc(s.nom)}</option>`).join("")}</select></div>
+  <p class="muted sm" style="margin:0 0 10px">Agents prévus ou ayant pointé sur ce site pour le ${esc(POSTE(sv.poste).libelle.toLowerCase())} du ${fd(sv.ds)}. Vous pouvez en ajouter un autre.</p>
+  <div id="nv-ag">${prevus.map(id=>AG_(id)).filter(Boolean).map(bloc).join("")||'<p class="muted sm" id="nv-vide">Aucun agent prévu sur ce site en ce moment.</p>'}</div>
+  <div class="row"><div class="field"><select class="input" id="nv-plus"><option value="">+ Ajouter un agent…</option>${agents.filter(a=>a.statut==="Actif"&&a.id!==moi.agent_id).map(a=>`<option value="${a.id}">${esc(nomAg(a))} · ${esc(a.matricule)}</option>`).join("")}</select></div></div>
+  <div class="sec">État du poste</div>
+  <div class="xs muted">Main courante à jour</div><div class="choix">${["Oui","Non"].map((v,i)=>`<label><input type="radio" name="mc" value="${v}" ${i?"":"checked"}><span>${v}</span></label>`).join("")}</div>
+  <div class="xs muted">Matériel et éclairage</div><div class="choix">${["En état","Défaillant"].map((v,i)=>`<label><input type="radio" name="mat" value="${v}" ${i?"":"checked"}><span>${v}</span></label>`).join("")}</div>
+  <div class="field"><label class="f">Remarque du client <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" id="nv-cl"></div>
+  <div class="field"><label class="f">Observations générales</label><textarea class="input" id="nv-obs"></textarea></div>`,
+  `<button class="btn" id="nv-no">Annuler</button><button class="btn pri" id="nv-ok">Enregistrer la visite</button>`);
+  const z=$("#box");brancherEtoiles(z);
+  const rm=()=>z.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{z.querySelector(`[data-ev="${b.dataset.rm}"]`).remove()});rm();
+  $("#nv-s").onchange=e=>busy(null,()=>nouvelleVisite(e.target.value));
+  $("#nv-plus").onchange=e=>{const a=AG_(e.target.value);e.target.value="";if(!a||z.querySelector(`[data-ev="${a.id}"]`))return;const v=$("#nv-vide");if(v)v.remove();$("#nv-ag").insertAdjacentHTML("beforeend",bloc(a));brancherEtoiles(z);rm()};
+  $("#nv-no").onclick=closeModal;
+  $("#nv-ok").onclick=()=>busy($("#nv-ok"),async()=>{const ev=[...z.querySelectorAll("[data-ev]")];if(!ev.length)throw new Error("Ajoutez au moins un agent contrôlé.");
+    const sansNote=ev.filter(e=>!+(e.querySelector("[data-et]").dataset.val||0));if(sansNote.length)throw new Error("Donnez une note (étoiles) à chaque agent contrôlé.");
+    const pos=await positionRapide(),val=n=>(z.querySelector(`input[name="${n}"]:checked`)||{}).value;
+    const constats={agents:ev.map(e=>{const id=e.dataset.ev,o={agent_id:id,nom:nomAg(AG_(id)),note:+e.querySelector("[data-et]").dataset.val,observation:e.querySelector("[data-obs]").value.trim()||null};CRIT.forEach(([k])=>o[k]=val(k+"-"+id));return o}),
+      main_courante:val("mc"),materiel:val("mat"),remarque_client:$("#nv-cl").value.trim()||null,latitude:pos?pos.lat:null,longitude:pos?pos.lng:null};
+    must(await sb.from("visites_supervision").insert({superviseur_id:moiAgent(),site_id:$("#nv-s").value,constats,note:$("#nv-obs").value.trim()||null}));
+    closeModal();toast("Visite enregistrée");if(tab==="visites")await vVisites()});
+}
+function visiteHTML(v){const c=v.constats||{},s=sites.find(x=>x.id===v.site_id)||{},dist=distance(c.latitude,c.longitude,s.latitude,s.longitude);
+  return `<div class="doc">${enteteDoc()}<div class="doc-t">FICHE DE VISITE DE SUPERVISION</div><dl><dt>Site</dt><dd>${esc(s.nom||"")}</dd><dt>Superviseur</dt><dd>${esc(nomAg(AG_(v.superviseur_id))||"")}</dd><dt>Date</dt><dd>${fdl(v.visite_le)} à ${hm(v.visite_le)}</dd><dt>Position</dt><dd>${dist!=null?"à "+dist+" m du site":c.latitude!=null?"relevée":"non relevée"}</dd></dl>
+  <table class="tbl"><thead><tr><th>Agent</th>${CRIT.map(x=>`<th>${x[1]}</th>`).join("")}<th class="r">Note</th></tr></thead><tbody>${(c.agents||[]).map(a=>`<tr><td><b>${esc(a.nom||nomAg(AG_(a.agent_id)))}</b>${a.observation?`<div class="xs muted">${esc(a.observation)}</div>`:""}</td>${CRIT.map(([k])=>`<td>${esc(a[k]||"—")}</td>`).join("")}<td class="r">${a.note?"★ "+a.note+"/5":"—"}</td></tr>`).join("")}</tbody></table>
+  <h4>État du poste</h4><p>Main courante à jour : <b>${esc(c.main_courante||"—")}</b> · Matériel et éclairage : <b>${esc(c.materiel||"—")}</b></p>${c.remarque_client?`<p>Remarque du client : ${esc(c.remarque_client)}</p>`:""}${v.note?`<h4>Observations</h4><p style="white-space:pre-wrap">${esc(v.note)}</p>`:""}${piedLegal()}</div>`}
+function voirVisite(v){modal("Visite · "+esc(siteNom(v.site_id)),visiteHTML(v),`<button class="btn" id="vv-no">Fermer</button>${boutonsPDF()}`);$("#vv-no").onclick=closeModal;brancherPDF("Visite-"+siteNom(v.site_id)+"-"+iso(v.visite_le))}
+
+async function vMonRapport(){const mid=moiAgent(),sv=serviceActuel();
+  const [ra,vi,inc,po]=await Promise.all([sb.from("rapports_supervision").select("*").eq("superviseur_id",mid).order("date_service",{ascending:false}).limit(30).then(must),
+    sb.from("visites_supervision").select("*").eq("superviseur_id",mid).gte("visite_le",ajout(sv.ds,-1)+"T00:00:00").then(must),
+    sb.from("incidents").select("*").gte("survenu_le",ajout(sv.ds,-1)+"T00:00:00").then(must),sb.from("pointages").select("*").gte("date_service",ajout(sv.ds,-1)).then(must)]);
+  const deja=ra.find(r=>r.date_service===sv.ds&&r.poste===sv.poste);
+  $("#main").innerHTML=`<div class="head"><div><h1>Mon rapport de poste</h1><p class="muted sm" style="margin:2px 0 0">À rédiger en fin de poste. La direction le reçoit immédiatement.</p></div></div>
+  <div class="card"><h2>${esc(POSTE(sv.poste).libelle)} du ${esc(fjour(sv.ds))}</h2>
+  <div class="tiles" style="margin:8px 0 12px"><div class="tile"><b>${vi.length}</b><span class="muted sm">Visites faites</span></div><div class="tile"><b>${inc.length}</b><span class="muted sm">Incidents signalés</span></div><div class="tile"><b>${po.filter(p=>p.mode==="secours"&&p.date_service===sv.ds).length}</b><span class="muted sm">Pointages de secours</span></div></div>
+  ${deja?`<div class="idbox sm">Rapport déjà envoyé pour ce poste. Vous pouvez le compléter : il sera mis à jour.</div>`:""}
+  <div class="field"><label class="f">Déroulement du poste et faits marquants</label><textarea class="input" id="rp-f">${esc(deja?(JSON.parse(deja.contenu||"{}").faits||""):"")}</textarea></div>
+  <div class="field"><label class="f">Absences, retards et remplacements constatés</label><textarea class="input" id="rp-a">${esc(deja?(JSON.parse(deja.contenu||"{}").absences||""):"")}</textarea></div>
+  <div class="field"><label class="f">Besoins (matériel, renfort) et propositions</label><textarea class="input" id="rp-b">${esc(deja?(JSON.parse(deja.contenu||"{}").besoins||""):"")}</textarea></div>
+  <button class="btn pri" id="rp-ok">${deja?"Mettre à jour le rapport":"Envoyer le rapport"}</button></div>
+  ${ra.length?`<div class="card"><h2>Mes rapports</h2>${ra.map(r=>`<div class="line click" data-rp="${r.id}"><div class="grow"><b class="n">${esc(POSTE(r.poste||"J").libelle)} du ${fd(r.date_service)}</b></div><span class="muted sm">${fdt(r.created_at)}</span></div>`).join("")}</div>`:""}`;
+  $("#rp-ok").onclick=()=>busy($("#rp-ok"),async()=>{const f=$("#rp-f").value.trim();if(f.length<3){$("#rp-f").focus();throw new Error("Décrivez le déroulement du poste.")}
+    const contenu=JSON.stringify({faits:f,absences:$("#rp-a").value.trim(),besoins:$("#rp-b").value.trim(),resume:{visites:vi.map(v=>({site:siteNom(v.site_id),heure:v.visite_le,agents:((v.constats||{}).agents||[]).map(a=>({nom:a.nom,note:a.note}))})),incidents:inc.map(i=>({type:i.type,site:siteNom(i.site_id),gravite:i.gravite,heure:i.survenu_le})),secours:po.filter(p=>p.mode==="secours"&&p.date_service===sv.ds).length}});
+    must(deja?await sb.from("rapports_supervision").update({contenu}).eq("id",deja.id):await sb.from("rapports_supervision").insert({superviseur_id:mid,date_service:sv.ds,poste:sv.poste,contenu}));
+    toast(deja?"Rapport mis à jour":"Rapport envoyé à la direction");await vMonRapport()});
+  $("#main").querySelectorAll("[data-rp]").forEach(x=>x.onclick=()=>voirRapportSup(ra.find(r=>r.id===x.dataset.rp)));
+}
+function rapportSupHTML(r){let c={};try{c=JSON.parse(r.contenu||"{}")}catch(_){c={faits:r.contenu}}const R=c.resume||{};
+  return `<div class="doc">${enteteDoc()}<div class="doc-t">RAPPORT DE SUPERVISION</div><dl><dt>Superviseur</dt><dd>${esc(nomAg(AG_(r.superviseur_id))||(moi.role==="superviseur"?moi.nom_complet:""))}</dd><dt>Poste</dt><dd>${esc(POSTE(r.poste||"J").libelle)} du ${fdl(r.date_service)}</dd><dt>Envoyé le</dt><dd>${fdl(r.created_at)} à ${hm(r.created_at)}</dd></dl>
+  ${(R.visites||[]).length?`<h4>Visites effectuées</h4>${R.visites.map(v=>`<p class="sm"><b>${hm(v.heure)} · ${esc(v.site)}</b> : ${(v.agents||[]).map(a=>esc(a.nom)+(a.note?" ★"+a.note:"")).join(", ")||"aucun agent noté"}</p>`).join("")}`:""}
+  ${(R.incidents||[]).length?`<h4>Incidents</h4>${R.incidents.map(i=>`<p class="sm"><b>${hm(i.heure)} · ${esc(i.type)}</b> (${esc(i.gravite)}) · ${esc(i.site)}</p>`).join("")}`:""}
+  <h4>Déroulement et faits marquants</h4><p style="white-space:pre-wrap">${esc(c.faits||"—")}</p>${c.absences?`<h4>Absences, retards, remplacements</h4><p style="white-space:pre-wrap">${esc(c.absences)}</p>`:""}${c.besoins?`<h4>Besoins et propositions</h4><p style="white-space:pre-wrap">${esc(c.besoins)}</p>`:""}${piedLegal()}</div>`}
+function voirRapportSup(r){modal("Rapport du "+fd(r.date_service),rapportSupHTML(r),`<button class="btn" id="rs-no">Fermer</button>${boutonsPDF()}`);$("#rs-no").onclick=closeModal;brancherPDF("Rapport-supervision-"+r.date_service+"-"+(r.poste||""))}
+async function vSupervision(){
+  const [ra,vi]=await Promise.all([sb.from("rapports_supervision").select("*").order("date_service",{ascending:false}).limit(60).then(must),sb.from("visites_supervision").select("*").order("visite_le",{ascending:false}).limit(60).then(must)]);
+  $("#main").innerHTML=`<div class="head"><div><h1>Supervision</h1><p class="muted sm" style="margin:2px 0 0">Les rapports de poste et les visites de vos superviseurs, avec les notes données aux agents.</p></div></div>
+  <div class="card"><h2>Rapports de poste</h2>${ra.map(r=>`<div class="line click" data-rp="${r.id}"><div class="grow"><b class="n">${esc(nomAg(AG_(r.superviseur_id)))}</b><div class="muted xs">${esc(POSTE(r.poste||"J").libelle)} du ${fd(r.date_service)} · envoyé ${fdt(r.created_at)}</div></div></div>`).join("")||'<p class="muted sm" style="margin:0">Aucun rapport pour le moment.</p>'}</div>
+  <div class="card"><h2>Visites et notes</h2>${vi.map(v=>{const n=((v.constats||{}).agents||[]).filter(x=>x.note);return `<div class="line click" data-vi="${v.id}"><div class="grow"><b class="n">${esc(siteNom(v.site_id))}</b><div class="muted xs">${fdt(v.visite_le)} · ${esc(nomAg(AG_(v.superviseur_id)))} · ${n.map(x=>esc(x.nom)+" ★"+x.note).join(", ")}</div></div></div>`}).join("")||'<p class="muted sm" style="margin:0">Aucune visite pour le moment.</p>'}</div>`;
+  $("#main").querySelectorAll("[data-rp]").forEach(x=>x.onclick=()=>voirRapportSup(ra.find(r=>r.id===x.dataset.rp)));
+  $("#main").querySelectorAll("[data-vi]").forEach(x=>x.onclick=()=>voirVisite(vi.find(v=>v.id===x.dataset.vi)));
+}
 
 /* ---------- journal des erreurs + démarrage ---------- */
 let nbErr=0;
