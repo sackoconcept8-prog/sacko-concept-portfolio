@@ -34,6 +34,7 @@ label.f{display:block;font-size:13px;font-weight:600;margin:0 0 5px}
 .login-card .field{text-align:left}
 .biglogo{width:96px;height:96px;object-fit:contain;margin:0 auto 12px;display:block}
 .err{background:var(--red-l);color:var(--red);border-radius:10px;padding:9px 12px;font-size:13px;margin-bottom:12px;text-align:left}
+.lien{display:block;margin:12px auto 0;background:none;border:0;color:var(--p);font:inherit;font-size:14px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .by{margin-top:18px;font-size:12px;color:var(--muted)}
 header.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
 .top-in{max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -162,6 +163,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
     <div class="field"><label class="f" for="l-id">E-mail ou matricule</label><input class="input" id="l-id" autocomplete="username" autocapitalize="none" required></div>
     <div class="field"><label class="f" for="l-pass">Mot de passe</label><div style="display:flex;gap:8px"><input class="input" id="l-pass" type="password" autocomplete="current-password" required><button type="button" class="btn" id="l-voir" style="flex:none">Afficher</button></div></div>
     <button class="btn pri" id="l-btn" style="width:100%;padding:12px">Se connecter</button>
+    <button type="button" class="lien" id="l-oubli">Mot de passe oublié ?</button>
     <div class="by">Logiciel conçu par SACKO CONCEPT</div>
   </form>
 </section>
@@ -316,7 +318,7 @@ async function entrer(){
   const G=estDirection()?[["",[["accueil","Tableau de bord"]]],["Opérations",[["planning","Planning"],["pointage","Pointage"],["incidents","Main courante"],["rondes","Rondes"],["supervision","Supervision"]]],
       ["Personnel",[["agents","Agents"],["conges","Congés"],["documents","Documents RH"],["messages","Messages"],["paie","Paie"],["materiel","Matériel"]]],
       ["Clients",[["sites","Sites"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["comptes","Comptes"],...(moi.role==="dg"?[["reglages","Réglages"]]:[]),["support","Support"]]]]:null;
-  const T=G?G.flatMap(g=>g[1]):moi.role==="superviseur"?[["pointage","Pointage"],["visites","Visites et notes"],["rapport","Mon rapport"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"]]
+  const T=G?G.flatMap(g=>g[1]):moi.role==="superviseur"?[["pointage","Pointage"],["visites","Visites et notes"],["rapport","Mon rapport"],["equipe","Mes agents"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"]]
     :moi.role==="agent"?[["accueil","Accueil"],["monplanning","Planning"],["mesdemandes","Demandes"],["mesdocs","Documents"],["mesmsg","Messages"],["mapaie","Paie"]]
     :moi.role==="client"?[["client","Mon site"],["cl-incidents","Incidents"],["cl-factures","Factures"],["cl-demandes","Demandes"]]:[["accueil","Accueil"]];
   $("#layout").classList.toggle("avec",!!G);$("#side").classList.toggle("hide",!G);$("#tabs").classList.toggle("hide",!!G);$("#menu-btn").classList.toggle("hide",!G);
@@ -346,7 +348,7 @@ async function charger(){
 }
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button,#side button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));menu(false);window.scrollTo(0,0);
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
+  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
@@ -1293,6 +1295,27 @@ async function vClientDemandes(){await chargerMonSite();const l=must(await sb.fr
   ${l.length?`<div class="card"><h2>Vos demandes</h2>${l.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><b>${esc(x.type)}</b>${x.objet?" · "+esc(x.objet):""}<div class="muted xs">${fdt(x.created_at)}</div><div class="sm" style="white-space:pre-wrap">${esc(x.message||"")}</div>${x.reponse?`<div class="idbox" style="margin:8px 0 0"><b>Réponse :</b> ${esc(x.reponse)}</div>`:""}</div><span class="pill ${x.statut==="Traitée"?"p-green":x.statut==="En cours"?"p-main":"p-amber"}">${esc(x.statut)}</span></div>`).join("")}</div>`:""}`;
   $("#cd-ok").onclick=()=>busy($("#cd-ok"),async()=>{const m=$("#cd-m").value.trim();if(m.length<3){$("#cd-m").focus();throw new Error("Écrivez votre message.")}
     must(await sb.from("demandes_clients").insert({site_id:monSite.id,type:$("#cd-t").value,objet:$("#cd-o").value.trim()||null,message:m,statut:"Nouvelle"}));toast("Demande envoyée");await vClientDemandes()})}
+
+/* ---------- mot de passe oublié (écran de connexion) ---------- */
+$("#l-oubli").onclick=async()=>{const id=$("#l-id").value.trim(),mail=id.includes("@"),wa=await waSupport(),nA=$("#lg-nom").textContent||"votre agence";
+  const msg=encodeURIComponent(`Bonjour, j'ai oublié mon mot de passe pour l'espace ${nA}. Mon identifiant : ${id||"…"}`);
+  modal("Mot de passe oublié",`<p style="margin-top:0">Pour votre sécurité, un nouveau mot de passe ne peut être donné que par une personne de votre agence.</p>
+  <div class="idbox"><b>Agent :</b> demandez à votre superviseur ou à la direction. Ils vous donnent un nouveau mot de passe en une minute et vous l'envoient par WhatsApp.</div>
+  <div class="idbox"><b>Superviseur, RH :</b> demandez à la direction (menu Comptes, « Nouveau mot de passe »).</div>
+  <div class="idbox"><b>Direction :</b> demandez à un autre responsable de l'agence, ou contactez SACKO CONCEPT.</div>
+  <p class="muted sm" style="margin:0">Une fois connecté, changez ce mot de passe en touchant vos initiales, en haut de l'écran.</p>`,
+  `<button class="btn" id="ob-ok">Fermer</button>${wa&&(mail||!id)?`<a class="btn pri" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${msg}">Contacter SACKO CONCEPT</a>`:""}`);
+  $("#ob-ok").onclick=closeModal};
+
+/* ---------- superviseur : mes agents ---------- */
+function vEquipe(){const L=agents.filter(a=>a.statut==="Actif"&&a.id!==moi.agent_id).sort((x,y)=>siteNom(x.site_id).localeCompare(siteNom(y.site_id))||nomAg(x).localeCompare(nomAg(y)));
+  $("#main").innerHTML=`<div class="head"><div><h1>Mes agents</h1><p class="muted sm" style="margin:2px 0 0">Appelez un agent, ou donnez-lui un nouveau mot de passe s'il l'a oublié.</p></div></div>
+  ${L.length?`<div class="card">${L.map(a=>{const c=comptes.find(k=>k.agent_id===a.id),tel=String(a.telephone||"").replace(/[^\d+]/g,"");
+    return `<div class="line"><div class="grow"><b class="n">${esc(nomAg(a))}</b><div class="muted xs">${esc(a.matricule)} · ${esc(siteNom(a.site_id))}${a.poste?" · "+(a.poste==="N"?"nuit":"jour"):""}${c?(c.est_actif?"":" · accès coupé"):" · pas encore d'accès"}</div></div>
+    <div class="actions">${tel?`<a class="btn sm" href="tel:${esc(tel)}">Appeler</a>`:""}${c&&c.est_actif?`<button class="btn sm" data-mdp="${a.id}">Nouveau mot de passe</button>`:""}</div></div>`}).join("")}</div>`:`<div class="empty">La direction n'a pas encore enregistré d'agents.</div>`}`;
+  $("#main").querySelectorAll("[data-mdp]").forEach(b=>b.onclick=()=>{const a=AG_(b.dataset.mdp),c=comptes.find(k=>k.agent_id===a.id),nomC=nomAg(a);
+    saisirMdp("Nouveau mot de passe · "+esc(nomC),"L'ancien mot de passe ne fonctionnera plus. Identifiant : <b>"+esc(a.matricule)+"</b>","Changer",async mdp=>{await appel({action:"mot_de_passe",user_id:c.id,mot_de_passe:mdp});toast("Mot de passe changé")},()=>{closeModal();vEquipe()},{nom:nomC,prenom:a.prenom,identifiant:a.matricule,telephone:a.telephone})});
+}
 
 /* ---------- supervision : visites, notes, rapports ---------- */
 const CRIT=[["presence","Présent au poste",["Oui","Non"]],["tenue","Tenue et carte",["Correcte","À revoir","Incorrecte"]],["vigilance","Vigilance",["Bonne","Moyenne","Insuffisante"]],["consignes","Connaît les consignes",["Oui","En partie","Non"]]];
