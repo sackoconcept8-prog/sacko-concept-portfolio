@@ -91,6 +91,17 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 .punch{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px 18px;text-align:center;margin-bottom:14px}
 .punch .big{font-size:40px;font-weight:700;letter-spacing:-.02em;margin:4px 0}
 .punch .bigbtn{width:100%;max-width:360px;padding:18px;font-size:18px;border-radius:14px;margin-top:14px}
+.doc{font-size:14px;line-height:1.6;color:#1f2933}.doc p{margin:0 0 10px}
+.doc-h{display:flex;gap:14px;align-items:center;border-bottom:2px solid var(--p);padding-bottom:12px;margin-bottom:16px}
+.doc-h img{width:56px;height:56px;object-fit:contain}.doc-h b{font-size:16px}
+.doc-t{text-align:center;font-weight:700;font-size:16px;letter-spacing:.04em;margin:6px 0 14px}
+.doc dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0 0 14px;font-size:13px}.doc dt{color:var(--muted)}.doc dd{margin:0}
+.doc .encart{padding:10px 14px;background:var(--bg);border-left:3px solid var(--p);border-radius:6px}
+.doc .rep{padding:10px 14px;background:var(--green-l);border-left:3px solid var(--green);border-radius:6px}
+.doc .sig{display:flex;justify-content:space-between;gap:20px;margin-top:30px;font-size:13px}
+.doc h4{margin:14px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--p)}
+.badge{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;padding:0 5px;margin-left:4px}
+@media print{body>*:not(#modal){display:none!important}#modal{position:static;display:block;background:none;padding:0}.box{box-shadow:none;max-width:none}.box-h,.box-f{display:none}.box-b{padding:0}}
 @media(max-width:560px){.head h1{font-size:21px}.week{grid-template-columns:repeat(7,minmax(40px,1fr));overflow-x:auto}.brand small{display:none}}
 </style>
 </head>
@@ -251,9 +262,9 @@ async function entrer(){
   if(!ctx.acces_ouvert)return bloquer(ctx.motif_blocage);
   $("#hd-moi").textContent=moi.nom_complet+" · "+(moi.fonction||ROLES[moi.role]||moi.role);
   ecran("app");majAvatar();$("#hd-av").onclick=maPhoto;
-  const T=estDirection()?[["accueil","Accueil"],["planning","Planning"],["pointage","Pointage"],["agents","Agents"],["sites","Sites"],["comptes","Comptes"],["support","Support"]]
+  const T=estDirection()?[["accueil","Accueil"],["planning","Planning"],["pointage","Pointage"],["conges","Congés"],["documents","Documents"],["messages","Messages"],["agents","Agents"],["sites","Sites"],["comptes","Comptes"],["support","Support"]]
     :moi.role==="superviseur"?[["pointage","Pointage"],["planning","Planning"]]
-    :moi.role==="agent"?[["accueil","Pointer"],["monplanning","Mon planning"]]:[["accueil","Accueil"]];
+    :moi.role==="agent"?[["accueil","Pointer"],["monplanning","Planning"],["mesconges","Congés"],["mesdocs","Documents"],["mesmsg","Messages"]]:[["accueil","Accueil"]];
   $("#tabs").innerHTML=T.map(([k,l])=>`<button data-tab="${k}">${l}</button>`).join("");
   await ouvrir(T[0][0]);
 }
@@ -274,7 +285,7 @@ async function charger(){
 }
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
+  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
@@ -373,10 +384,11 @@ function ficheAgent(id){const a=agents.find(x=>x.id===id);if(!a)return closeModa
   <div class="sec">Accès à l'application</div>
   ${c?`<div class="idbox">Identifiant : <b>${esc(a.matricule)}</b> · ${c.est_actif?"accès ouvert":"<b>accès coupé</b>"}<br><span class="muted xs">Dernière connexion : ${fdt(c.derniere_connexion)}</span></div><div class="actions"><button class="btn sm" id="fa-mdp">Nouveau mot de passe</button></div>`
      :`<p class="muted sm" style="margin:0 0 8px">Cet agent n'a pas encore d'accès. Créez-le pour qu'il puisse se connecter avec son matricule.</p><button class="btn sm pri" id="fa-acc" ${a.statut==="Actif"?"":"disabled"}>Créer son accès</button>`}
+  <div class="sec">Documents RH</div><div class="actions"><button class="btn sm" id="fa-doc">Créer un document pour cet agent</button></div>
   <div class="sec">Effectif</div>
   <div class="actions">${a.statut==="Actif"?`<button class="btn sm" id="fa-lock">Retirer l'accès</button><button class="btn sm" id="fa-exit">Sortie de l'effectif</button>`:`<button class="btn sm" id="fa-unlock">Rétablir l'agent</button>`}<button class="btn sm danger" id="fa-del">Supprimer définitivement</button></div>`,
   `<button class="btn" id="fa-no">Fermer</button>`);
-  $("#fa-no").onclick=closeModal;$("#fa-edit").onclick=()=>formAgent(a);
+  $("#fa-no").onclick=closeModal;$("#fa-edit").onclick=()=>formAgent(a);$("#fa-doc").onclick=()=>nouveauDoc(id);
   const on=(s,f)=>{const e=$(s);if(e)e.onclick=f};
   const statut=async(v,msg)=>{must(await sb.from("agents").update({statut:v}).eq("id",id));if(c&&c.est_actif!==(v==="Actif"))await appel({action:"activer",user_id:c.id,est_actif:v==="Actif"});toast(msg);await ouvrir("agents");ficheAgent(id)};
   on("#fa-acc",()=>saisirMdp("Créer l'accès de "+esc(nomC),`Identifiant de connexion : <b>${esc(a.matricule)}</b>`,"Créer l'accès",async mdp=>{await appel({action:"creer",role:"agent",agent_id:id,nom_complet:nomC,email:emailAgent(a.matricule),mot_de_passe:mdp});toast("Accès créé");await ouvrir("agents");ficheAgent(id)},()=>ficheAgent(id)));
@@ -561,6 +573,9 @@ async function vAgentAccueil(){
   $("#main").innerHTML=`<div class="head"><div><h1>Bonjour ${esc(monAgent.prenom||monAgent.nom)}</h1><p class="muted sm" style="margin:2px 0 0">${esc(monAgent.matricule)} · ${esc(monAgent.grade)}</p></div></div>${carte}
   <div class="card"><h2>Mes derniers pointages</h2>${po.slice(0,10).map(p=>`<div class="line"><div class="grow"><b>${esc(fjourc(p.date_service))}</b> <span class="muted sm">· ${esc(S(p.site_id).nom)}</span></div><span class="sm">${hm(p.heure_arrivee)} → ${hm(p.heure_depart)}</span>${p.mode==="secours"?'<span class="pill p-amber">manuel</span>':""}</div>`).join("")||'<p class="muted sm" style="margin:0">Aucun pointage pour le moment.</p>'}</div>`;
   const arr=$("#ag-arr");if(arr)arr.onclick=()=>pointerArrivee(arr,vise,S(vise.site_id));
+  nouveautesAgent().then(n=>{if(!n.docs&&!n.msg)return;const c=document.createElement("div");c.className="card";
+    c.innerHTML=`<h2>À lire</h2><div class="actions">${n.docs?`<button class="btn" data-go3="mesdocs">${n.docs} document(s) non lu(s)</button>`:""}${n.msg?`<button class="btn" data-go3="mesmsg">${n.msg} message(s) non lu(s)</button>`:""}</div>`;
+    const pc=$("#main .punch");if(pc){pc.after(c);c.querySelectorAll("[data-go3]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go3))}}).catch(()=>{});
   const dep=$("#ag-dep");if(dep)dep.onclick=()=>busy(dep,async()=>{must(await sb.from("pointages").update({heure_depart:new Date().toISOString()}).eq("id",ouvert.id));toast("Départ enregistré");await vAgentAccueil()});
 }
 function pointerArrivee(btn,vise,site){busy(btn,async()=>{btn.textContent="Localisation en cours…";let pos=null,err=null;
@@ -577,6 +592,157 @@ async function vMonPlanning(){
   $("#main").innerHTML=`<div class="head"><div><h1>Mon planning</h1><p class="muted sm" style="margin:2px 0 0">Vos 14 prochains jours.</p></div></div><div class="card">${jours.map(d=>{const a=affectations(d,P,[monAgent]),i=indispo(P,monAgent.id,d);
     const j=fjour(d);return `<div class="line"><div class="grow"><b>${esc(j[0].toUpperCase()+j.slice(1))}</b></div>${a.length?a.map(x=>`<span class="sm">${esc(S(x.site_id))} · ${esc(POSTE(x.poste).libelle.toLowerCase())} ${POSTE(x.poste).debut}–${POSTE(x.poste).fin}</span>${x.type==="remplacement"?'<span class="pill p-amber">remplacement</span>':""}`).join(""):`<span class="pill ${i?"p-amber":"p-grey"}">${i?esc(i.t):monAgent.site_id&&monAgent.jour_repos!=null&&+monAgent.jour_repos===dowOf(d)?"Repos":monAgent.site_id?"Pas de service":"Pas de poste prévu"}</span>`}</div>`}).join("")}</div>`;
 }
+
+/* ---------- congés ---------- */
+const TYPES_CONGE=["Congé annuel","Congé maladie","Congé maternité","Permission exceptionnelle","Congé sans solde"];
+const nbJours=c=>Math.round((new Date(c.date_fin+"T12:00:00")-new Date(c.date_debut+"T12:00:00"))/864e5)+1;
+const stC=c=>c.statut==="Validée"?"p-green":c.statut==="Refusée"?"p-red":"p-amber";
+async function vConges(){
+  const l=must(await sb.from("conges").select("*").order("date_debut",{ascending:false}).limit(300)),ds=auj(),an=ds.slice(0,4);
+  const att=l.filter(c=>c.statut==="En attente"),cours=l.filter(c=>c.statut==="Validée"&&c.date_fin>=ds).sort((a,b)=>a.date_debut.localeCompare(b.date_debut)),hist=l.filter(c=>!att.includes(c)&&!cours.includes(c)).slice(0,40);
+  const pris=id=>l.filter(c=>c.agent_id===id&&c.statut==="Validée"&&c.type==="Congé annuel"&&c.date_debut.startsWith(an)).reduce((t,c)=>t+nbJours(c),0);
+  const L=(c,act)=>`<div class="line"><div class="grow"><b>${esc(nomAg(AG_(c.agent_id)))}</b><div class="muted xs">${esc(c.type)} · du ${fd(c.date_debut)} au ${fd(c.date_fin)} · ${nbJours(c)} jour(s)${c.type==="Congé annuel"?" · déjà pris en "+an+" : "+pris(c.agent_id)+" j":""}${c.motif?" · "+esc(c.motif):""}</div></div><span class="pill ${stC(c)}">${esc(c.statut)}</span>${act}</div>`;
+  $("#main").innerHTML=`<div class="head"><div><h1>Congés</h1><p class="muted sm" style="margin:2px 0 0">Les agents font leurs demandes depuis leur téléphone. Un congé validé retire l'agent du planning.</p></div><button class="btn pri" id="cg-new">+ Enregistrer un congé</button></div>
+  <div class="card"><h2>Demandes à traiter ${att.length?`<span class="badge">${att.length}</span>`:""}</h2>${att.map(c=>L(c,`<button class="btn sm pri" data-val="${c.id}">Valider</button><button class="btn sm danger" data-ref="${c.id}">Refuser</button>`)).join("")||'<p class="muted sm" style="margin:0">Aucune demande en attente.</p>'}</div>
+  <div class="card"><h2>En cours et à venir</h2>${cours.map(c=>L(c,`<button class="btn sm" data-ann="${c.id}">Annuler</button>`)).join("")||'<p class="muted sm" style="margin:0">Aucun congé en cours.</p>'}</div>
+  ${hist.length?`<div class="card"><h2>Historique</h2>${hist.map(c=>L(c,"")).join("")}</div>`:""}`;
+  const Q=(sel,f)=>$("#main").querySelectorAll(sel).forEach(b=>b.onclick=()=>f(b));
+  const decider=(b,st,msg)=>busy(b,async()=>{must(await sb.from("conges").update({statut:st,decide_par:moi.id}).eq("id",b.dataset.val||b.dataset.ref||b.dataset.ann));toast(msg);await vConges()});
+  Q("[data-val]",b=>decider(b,"Validée","Congé validé"));Q("[data-ref]",b=>decider(b,"Refusée","Demande refusée"));
+  Q("[data-ann]",b=>confirmerSimple("Annuler ce congé ?","L'agent sera de nouveau prévu au planning sur ces dates.","Annuler le congé",async()=>{must(await sb.from("conges").update({statut:"Refusée",decide_par:moi.id}).eq("id",b.dataset.ann));toast("Congé annulé");await vConges()}));
+  $("#cg-new").onclick=()=>formConge(null,async d=>{must(await sb.from("conges").insert({...d,statut:"Validée",decide_par:moi.id}));toast("Congé enregistré");await vConges()});
+}
+function formConge(agentFixe,envoyer){const ds=auj();
+  modal(agentFixe?"Demander un congé":"Enregistrer un congé",`${agentFixe?"":`<div class="field"><label class="f">Agent</label><select class="input" id="cg-a">${agents.filter(a=>a.statut==="Actif").map(a=>`<option value="${a.id}">${esc(nomAg(a))} · ${esc(a.matricule)}</option>`).join("")}</select></div>`}
+  <div class="row"><div class="field"><label class="f">Type</label><select class="input" id="cg-t">${TYPES_CONGE.map(t=>`<option>${t}</option>`).join("")}</select></div></div>
+  <div class="row"><div class="field"><label class="f">Du</label><input class="input" type="date" id="cg-d1" value="${ajout(ds,agentFixe?7:0)}"></div><div class="field"><label class="f">Au (inclus)</label><input class="input" type="date" id="cg-d2" value="${ajout(ds,agentFixe?13:6)}"></div></div>
+  <div class="field"><label class="f">Motif <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" id="cg-m"></div>`,`<button class="btn" id="cg-no">Annuler</button><button class="btn pri" id="cg-ok">${agentFixe?"Envoyer la demande":"Enregistrer"}</button>`);
+  $("#cg-no").onclick=closeModal;
+  $("#cg-ok").onclick=()=>busy($("#cg-ok"),async()=>{const d1=$("#cg-d1").value,d2=$("#cg-d2").value;if(!d1||!d2)throw new Error("Indiquez les deux dates.");if(d2<d1)throw new Error("La date de fin doit être après la date de début.");
+    const ag_=agentFixe||($("#cg-a")||{}).value;if(!ag_)throw new Error("Choisissez un agent.");
+    await envoyer({agent_id:ag_,type:$("#cg-t").value,date_debut:d1,date_fin:d2,motif:$("#cg-m").value.trim()||null});closeModal()});
+}
+async function chargerMonAgent(){if(!moi.agent_id)throw new Error("Votre compte n'est relié à aucune fiche agent. Contactez votre responsable.");
+  if(!monAgent||monAgent.id!==moi.agent_id)monAgent=must(await sb.from("agents").select("*").eq("id",moi.agent_id).maybeSingle());
+  if(!monAgent)throw new Error("Fiche agent introuvable.");return monAgent}
+async function vMesConges(){await chargerMonAgent();
+  const l=must(await sb.from("conges").select("*").eq("agent_id",monAgent.id).order("date_debut",{ascending:false}).limit(50));
+  $("#main").innerHTML=`<div class="head"><div><h1>Mes congés</h1><p class="muted sm" style="margin:2px 0 0">Faites votre demande ici. Votre responsable la valide ou la refuse.</p></div><button class="btn pri" id="mc-new">+ Demander un congé</button></div>
+  <div class="card">${l.map(c=>`<div class="line"><div class="grow"><b>${esc(c.type)}</b><div class="muted xs">du ${fd(c.date_debut)} au ${fd(c.date_fin)} · ${nbJours(c)} jour(s)${c.motif?" · "+esc(c.motif):""}</div></div><span class="pill ${stC(c)}">${c.statut==="En attente"?"En attente de réponse":esc(c.statut)}</span></div>`).join("")||'<p class="muted sm" style="margin:0">Aucune demande pour le moment.</p>'}</div>`;
+  $("#mc-new").onclick=()=>formConge(monAgent.id,async d=>{must(await sb.from("conges").insert({...d,statut:"En attente"}));toast("Demande envoyée");await vMesConges()});
+}
+
+/* ---------- documents RH ---------- */
+const DOC_TYPES={"Demande d'explication":"DEX","Avertissement":"AVT","Blâme":"BLM","Mise à pied":"MAP","Attestation de travail":"ATT","Contrat de travail":"CTR","Fiche de poste":"FDP","Note de service":"NS","Règlement intérieur":"RI"};
+const POUR_TOUS=["Note de service","Règlement intérieur"],SANS_TEXTE=["Attestation de travail","Contrat de travail","Fiche de poste","Règlement intérieur"];
+const lireContenu=d=>{try{const j=JSON.parse(d.contenu||"{}");return typeof j==="object"&&j?j:{texte:d.contenu}}catch(_){return {texte:d.contenu}}};
+const fdl=ds=>ds?new Date(String(ds).length===10?ds+"T12:00:00":ds).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"}):"—";
+function docHTML(d,a){const c=lireContenu(d),nom=esc(ag.nom_agence),sig=esc(c.signataire||"La Direction"),fct=esc(c.fonction||""),ville=ag.ville?"à "+esc(ag.ville)+", ":"",st=a&&a.site_id?(sites.find(x=>x.id===a.site_id)||null):null,an=a?nomAg(a):"";
+  let h=`<div class="doc"><div class="doc-h">${ag.logo_url?`<img src="${esc(ag.logo_url)}" alt="">`:""}<div><b>${nom}</b><div class="muted xs">${esc([ag.raison_sociale,ag.adresse,ag.ville,ag.pays].filter(Boolean).join(" · "))}</div><div class="muted xs">${esc([ag.telephone,ag.identifiant_fiscal].filter(Boolean).join(" · "))}</div></div></div>
+  <div class="doc-t">${esc(d.type.toUpperCase())} · N° ${esc(d.numero)}</div>`;
+  h+=a?`<dl><dt>Destinataire</dt><dd>${esc(an)} · ${esc(a.matricule)}</dd><dt>Emploi</dt><dd>${esc(a.grade)}${st?" · "+esc(st.nom):""}</dd><dt>Émis le</dt><dd>${fdl(d.created_at)} à ${hm(d.created_at)}</dd></dl>`:`<dl><dt>Destinataires</dt><dd>Tout le personnel</dd><dt>Diffusé le</dt><dd>${fdl(d.created_at)}</dd></dl>`;
+  const t=esc(c.texte||"");
+  if(d.type==="Demande d'explication")h+=`<p>Madame, Monsieur,</p><p>Il a été constaté les faits suivants :</p><p class="encart">${t}</p><p>Nous vous demandons de bien vouloir fournir vos explications écrites <b>dans un délai de ${+d.delai_heures||48} heures</b>, directement depuis votre application.</p>`;
+  else if(d.type==="Attestation de travail")h+=`<p>Nous soussignés, <b>${nom}</b>, attestons que <b>${esc(an)}</b>, matricule ${esc(a.matricule)}, est employé(e) dans notre société en qualité de <b>${esc(a.grade)}</b>${a.date_embauche?" depuis le "+fdl(a.date_embauche):""}, et y exerce à ce jour.</p><p>Cette attestation est délivrée à l'intéressé(e) pour servir et valoir ce que de droit.</p>${t?`<p>${t}</p>`:""}<p>Fait ${ville}le ${fdl(d.created_at)}.</p>`;
+  else if(d.type==="Contrat de travail")h+=`<p>Entre les soussignés :</p><p><b>${nom}</b>${ag.raison_sociale?", "+esc(ag.raison_sociale):""}${ag.adresse?", "+esc(ag.adresse):""}, représentée par ${sig}${fct?", "+fct:""}, ci-après « l'Employeur »,</p><p>et <b>${esc(an)}</b>, matricule ${esc(a.matricule)}${a.date_naissance?", né(e) le "+fdl(a.date_naissance):""}, ci-après « le Salarié »,</p><p>il a été convenu ce qui suit.</p>
+    <p><b>Article 1 · Engagement.</b> Le Salarié est engagé en qualité de <b>${esc(a.grade)}</b>${a.date_embauche?" à compter du "+fdl(a.date_embauche):""}. Nature et durée du contrat : ………………………… Période d'essai : …………………………</p>
+    <p><b>Article 2 · Lieu de travail.</b> Le Salarié exerce ses fonctions ${st?"sur le site « "+esc(st.nom)+" »":"sur les sites confiés à l'Employeur"}. Il peut être affecté sur un autre site selon les besoins du service.</p>
+    <p><b>Article 3 · Horaires.</b> Le travail est organisé par postes, selon le planning communiqué par l'Employeur, avec un jour de repos par semaine (${a.jour_repos!=null?JOURS[+a.jour_repos]:"selon planning"}).</p>
+    <p><b>Article 4 · Rémunération.</b> Le Salarié perçoit un salaire de base mensuel de <b>${Math.round(+a.salaire_base||0).toLocaleString("fr-FR")} ${esc(ag.parametres.devise||"F CFA")}</b>, auquel s'ajoutent les primes prévues par l'Employeur.</p>
+    <p><b>Article 5 · Obligations.</b> Le Salarié respecte les consignes du poste et le règlement intérieur, pointe à chaque prise et fin de service, porte la tenue et la carte professionnelle, prend soin du matériel confié et garde confidentielles les informations des clients.</p>
+    <p><b>Article 6 · Fin du contrat.</b> Le contrat prend fin dans les conditions prévues par la législation du travail en vigueur.</p>${t?`<p><b>Clauses particulières.</b> ${t}</p>`:""}
+    <p>Fait ${ville}en deux exemplaires, le ${fdl(d.created_at)}.</p><div class="sig"><div><b>L'Employeur</b><br>${sig}<br><span class="muted xs">Signature et cachet</span></div><div style="text-align:right"><b>Le Salarié</b><br>${esc(an)}<br><span class="muted xs">Lu et approuvé, signature</span></div></div>`;
+  else if(d.type==="Fiche de poste"){const M={"Chef de poste":["Organiser la relève et répartir les agents sur le site","Contrôler la tenue, la présence et le pointage de l'équipe","Tenir la main courante et signaler tout incident","Être l'interlocuteur du client sur le site"],"Superviseur":["Contrôler les sites et les agents pendant son poste","Vérifier les pointages, les rondes et la tenue des postes","Traiter les alertes et les absences","Rédiger le rapport de supervision"],"Maître-chien":["Assurer la surveillance du site avec le chien","Effectuer les rondes prévues","Veiller aux soins et à la sécurité de l'animal","Signaler tout incident"],"Agent volant":["Remplacer un agent absent sur le site indiqué","Appliquer les consignes du site d'affectation du jour","Pointer à chaque prise et fin de service","Signaler tout incident"]}[a.grade]||["Contrôler les accès, les personnes et les véhicules","Effectuer les rondes prévues","Pointer à chaque prise et fin de service","Signaler tout incident dans la main courante","Appliquer les consignes du site"];
+    h+=`<dl><dt>Intitulé du poste</dt><dd>${esc(a.grade)}</dd><dt>Site</dt><dd>${st?esc(st.nom):"Selon affectation"}</dd><dt>Poste</dt><dd>${a.poste?esc(POSTE(a.poste).libelle)+" · "+POSTE(a.poste).debut+" – "+POSTE(a.poste).fin:"Selon planning"}</dd><dt>Jour de repos</dt><dd>${a.jour_repos!=null?JOURS[+a.jour_repos]:"Selon planning"}</dd></dl>
+    <h4>Missions</h4><ul style="margin:0 0 10px 18px">${M.map(x=>`<li>${x}</li>`).join("")}</ul>${st&&st.consignes?`<h4>Consignes du site</h4><p>${esc(st.consignes)}</p>`:""}<h4>Tenue et matériel</h4><p>Tenue complète et carte professionnelle visibles pendant tout le service. Le matériel remis est sous la responsabilité de l'agent.</p>${t?`<h4>Précisions</h4><p>${t}</p>`:""}
+    <div class="sig"><div><b>La Direction</b><br>${sig}<br><span class="muted xs">Signature et cachet</span></div><div style="text-align:right"><b>${esc(an)}</b><br><span class="muted xs">Reçu et lu, signature</span></div></div>`}
+  else if(d.type==="Règlement intérieur")h+=[["Objet","Le présent règlement fixe les règles de discipline, de tenue et de sécurité applicables à tout le personnel de "+nom+", au siège comme sur les sites des clients."],["Horaires et pointage","Chaque agent prend son service à l'heure prévue par le planning et pointe à l'arrivée et au départ. Nul ne quitte son poste avant l'arrivée de la relève."],["Tenue","La tenue complète, propre, et la carte professionnelle sont obligatoires pendant tout le service."],["Comportement au poste","Sont interdits : l'abandon de poste, le sommeil pendant le service, la consommation d'alcool ou de stupéfiants, l'usage du téléphone à des fins personnelles pendant le service et tout manque de respect envers le client, le public ou un collègue."],["Matériel","Le matériel remis reste la propriété de l'entreprise. Toute perte ou dégradation est signalée sans délai."],["Absences et retards","Tout retard ou absence est signalé avant la prise de service. Un justificatif est remis dans les 48 heures."],["Discipline","Selon la gravité des faits, l'agent peut recevoir une demande d'explication, un avertissement, un blâme, une mise à pied, ou être licencié dans le respect de la procédure légale."],["Confidentialité","Les informations concernant les clients, leurs sites et leurs dispositifs de sécurité sont strictement confidentielles, y compris après le départ de l'entreprise."],["Entrée en vigueur","Le présent règlement est porté à la connaissance de chaque agent, qui peut le consulter à tout moment dans son application."]].map(([x,y],i)=>`<p><b>Article ${i+1} · ${x}.</b> ${y}</p>`).join("")+(t?`<p><b>Dispositions particulières.</b> ${t}</p>`:"")+`<p>Fait ${ville}le ${fdl(d.created_at)}.</p><p><b>La Direction</b><br>${sig}</p>`;
+  else h+=`<p class="encart">${t}</p>`;
+  if(d.reponse)h+=`<h4>Réponse de l'agent</h4><p class="rep">${esc(d.reponse)}</p><p class="muted xs">Réponse envoyée depuis l'application le ${fdl(d.repondu_le)} à ${hm(d.repondu_le)}.</p>`;
+  else if(d.type==="Demande d'explication")h+=`<p class="muted xs">Réponse de l'agent : en attente.</p>`;
+  if(d.lu_le)h+=`<p class="muted xs">Document lu par l'agent dans l'application le ${fdl(d.lu_le)} à ${hm(d.lu_le)}.</p>`;
+  if(!["Contrat de travail","Fiche de poste","Règlement intérieur"].includes(d.type))h+=`<p style="margin-top:22px"><b>${sig}</b>${fct?"<br>"+fct:""}</p>`;
+  return h+`<p class="muted xs" style="margin-top:16px">Document généré et horodaté par le logiciel de gestion de ${nom}.</p></div>`}
+const stD=d=>d.statut==="Clôturé"?["Clôturé","p-grey"]:d.reponse?["Répondu","p-green"]:d.lu_le?["Lu","p-main"]:d.agent_id?["Non lu","p-amber"]:["Diffusé","p-main"];
+let filtreDoc="";
+async function vDocuments(){
+  const l=must(await sb.from("documents_rh").select("*").order("created_at",{ascending:false}).limit(300));
+  const v=l.filter(d=>!filtreDoc||d.type===filtreDoc),aRep=l.filter(d=>d.reponse&&d.statut!=="Clôturé").length;
+  $("#main").innerHTML=`<div class="head"><div><h1>Documents RH</h1><p class="muted sm" style="margin:2px 0 0">Chaque document arrive sur le téléphone de l'agent. Vous voyez quand il l'a lu et ce qu'il a répondu.</p></div><button class="btn pri" id="dc-new">+ Nouveau document</button></div>
+  <div class="tools"><select class="input" id="dc-f" style="flex:0 1 280px"><option value="">Tous les types</option>${Object.keys(DOC_TYPES).map(t=>`<option ${t===filtreDoc?"selected":""}>${t}</option>`).join("")}</select>${aRep?`<span class="pill p-green" style="align-self:center">${aRep} réponse(s) à examiner</span>`:""}</div>
+  ${v.length?`<div class="card">${v.map(d=>{const e=stD(d);return `<div class="line click" data-doc="${d.id}"><div class="grow"><b class="n">${esc(d.type)}</b> <span class="muted sm">· ${esc(d.numero)}</span><div class="muted xs">${d.agent_id?esc(nomAg(AG_(d.agent_id))):"Tout le personnel"} · ${fdt(d.created_at)}</div></div><span class="pill ${e[1]}">${e[0]}</span></div>`}).join("")}</div>`:`<div class="empty">Aucun document pour le moment.</div>`}`;
+  $("#dc-f").onchange=e=>{filtreDoc=e.target.value;vDocuments()};$("#dc-new").onclick=()=>nouveauDoc();
+  $("#main").querySelectorAll("[data-doc]").forEach(x=>x.onclick=()=>ouvrirDoc(l.find(d=>d.id===x.dataset.doc)));
+}
+async function prochainNumero(type){const pre=DOC_TYPES[type]+"-"+auj().slice(0,4)+"-";
+  const l=must(await sb.from("documents_rh").select("numero").like("numero",pre+"%"));
+  return pre+String(l.reduce((m,x)=>Math.max(m,+(x.numero.split("-").pop())||0),0)+1).padStart(3,"0")}
+function nouveauDoc(agentId,type){
+  const dg=comptes.find(c=>c.id===moi.id)||{};
+  modal("Nouveau document",`<div class="row"><div class="field"><label class="f">Type de document</label><select class="input" id="nd-t">${Object.keys(DOC_TYPES).map(t=>`<option ${t===type?"selected":""}>${t}</option>`).join("")}</select></div>
+  <div class="field" id="nd-ab"><label class="f">Agent</label><select class="input" id="nd-a">${agents.filter(a=>a.statut!=="Sorti").map(a=>`<option value="${a.id}" ${a.id===agentId?"selected":""}>${esc(nomAg(a))} · ${esc(a.matricule)}</option>`).join("")}</select></div></div>
+  <div class="field" id="nd-xb"><label class="f" id="nd-xl">Faits constatés</label><textarea class="input" id="nd-x"></textarea></div>
+  <div class="field" id="nd-db" style="max-width:220px"><label class="f">Délai de réponse (heures)</label><input class="input" type="number" min="1" id="nd-d" value="48"></div>
+  <div class="row"><div class="field"><label class="f">Signataire</label><input class="input" id="nd-s" value="${esc(moi.nom_complet)}"></div><div class="field"><label class="f">Fonction</label><input class="input" id="nd-fc" value="${esc(moi.fonction||dg.fonction||"")}"></div></div>`,
+  `<button class="btn" id="nd-no">Annuler</button><button class="btn pri" id="nd-ok">Créer et envoyer</button>`);
+  const maj=()=>{const t=$("#nd-t").value;$("#nd-ab").classList.toggle("hide",POUR_TOUS.includes(t));$("#nd-db").classList.toggle("hide",t!=="Demande d'explication");
+    $("#nd-xl").textContent=SANS_TEXTE.includes(t)?"Précisions ou clauses particulières (facultatif)":t==="Note de service"?"Contenu de la note":"Faits constatés"};
+  $("#nd-t").onchange=maj;maj();$("#nd-no").onclick=closeModal;
+  $("#nd-ok").onclick=()=>busy($("#nd-ok"),async()=>{const t=$("#nd-t").value,x=$("#nd-x").value.trim();
+    if(!SANS_TEXTE.includes(t)&&x.length<3){$("#nd-x").focus();throw new Error("Rédigez le contenu du document.")}
+    const d={type:t,agent_id:POUR_TOUS.includes(t)?null:$("#nd-a").value,contenu:JSON.stringify({texte:x,signataire:$("#nd-s").value.trim(),fonction:$("#nd-fc").value.trim()}),delai_heures:t==="Demande d'explication"?Math.max(1,+$("#nd-d").value||48):null,statut:"Remis",cree_par:moi.id};
+    if(!d.agent_id&&!POUR_TOUS.includes(t))throw new Error("Choisissez un agent.");
+    let r,n=0;do{d.numero=await prochainNumero(t);r=await sb.from("documents_rh").insert(d).select("*").single();n++}while(r.error&&/documents_rh_agence_id_numero_key/.test(r.error.message)&&n<4);
+    const doc=must(r);toast("Document envoyé à l'agent");if(tab==="documents")await vDocuments();ouvrirDoc(doc)});
+}
+function ouvrirDoc(d){const a=d.agent_id?AG_(d.agent_id):null;
+  modal(esc(d.type)+" · "+esc(d.numero),docHTML(d,a),`${d.reponse&&d.statut!=="Clôturé"?`<button class="btn" id="od-avt">Notifier un avertissement</button><button class="btn" id="od-clo">Clôturer</button>`:""}<button class="btn" id="od-no">Fermer</button><button class="btn pri" id="od-pr">Imprimer / PDF</button>`);
+  $("#od-no").onclick=closeModal;$("#od-pr").onclick=()=>window.print();
+  const c=$("#od-clo");if(c)c.onclick=()=>busy(c,async()=>{must(await sb.from("documents_rh").update({statut:"Clôturé"}).eq("id",d.id));closeModal();toast("Dossier clôturé");if(tab==="documents")await vDocuments()});
+  const v=$("#od-avt");if(v)v.onclick=()=>busy(v,async()=>{must(await sb.from("documents_rh").update({statut:"Clôturé"}).eq("id",d.id));closeModal();
+    nouveauDoc(d.agent_id,"Avertissement");$("#nd-x").value="Suite aux faits exposés dans la demande d'explication "+d.numero+" et à votre réponse, un avertissement vous est notifié. Tout nouveau manquement pourra entraîner une sanction plus lourde."});
+}
+async function vMesDocs(){await chargerMonAgent();
+  const l=must(await sb.from("documents_rh").select("*").order("created_at",{ascending:false}).limit(100));
+  $("#main").innerHTML=`<div class="head"><div><h1>Mes documents</h1><p class="muted sm" style="margin:2px 0 0">Les documents que la direction vous a remis.</p></div></div>
+  ${l.length?`<div class="card">${l.map(d=>{const nl=d.agent_id&&!d.lu_le,att=d.type==="Demande d'explication"&&!d.reponse;return `<div class="line click" data-md="${d.id}"><div class="grow"><b class="n">${esc(d.type)}</b><div class="muted xs">${esc(d.numero)} · ${fdt(d.created_at)}</div></div>${att?'<span class="pill p-red">Réponse attendue</span>':nl?'<span class="pill p-amber">Nouveau</span>':""}</div>`}).join("")}</div>`:`<div class="empty">Aucun document pour le moment.</div>`}`;
+  $("#main").querySelectorAll("[data-md]").forEach(x=>x.onclick=()=>lireDoc(l.find(d=>d.id===x.dataset.md)));
+}
+async function lireDoc(d){
+  if(d.agent_id&&!d.lu_le){try{await sb.rpc("marquer_document_lu",{p_id:d.id});d.lu_le=new Date().toISOString()}catch(_){}}
+  const rep=d.type==="Demande d'explication"&&!d.reponse;
+  modal(esc(d.type),docHTML(d,d.agent_id?monAgent:null)+(rep?`<h4 style="color:var(--p)">Votre réponse</h4><textarea class="input" id="ld-r" placeholder="Écrivez vos explications ici."></textarea>`:""),`<button class="btn" id="ld-no">Fermer</button>${rep?'<button class="btn pri" id="ld-ok">Envoyer ma réponse</button>':""}`);
+  $("#ld-no").onclick=()=>{closeModal();vMesDocs()};
+  const ok=$("#ld-ok");if(ok)ok.onclick=()=>busy(ok,async()=>{const t=$("#ld-r").value.trim();if(t.length<3){$("#ld-r").focus();throw new Error("Écrivez votre réponse.")}
+    must(await sb.rpc("repondre_document",{p_id:d.id,p_reponse:t}));closeModal();toast("Réponse envoyée");await vMesDocs()});
+}
+
+/* ---------- messages ---------- */
+async function vMessages(){
+  const [m,lec]=await Promise.all([sb.from("messages").select("*").order("created_at",{ascending:false}).limit(100).then(must),sb.from("message_lectures").select("message_id,agent_id").then(must)]);
+  const dest=x=>{const act=agents.filter(a=>a.statut==="Actif");return x.cible==="agent"?act.filter(a=>a.id===x.agent_id):x.cible==="site"?act.filter(a=>a.site_id===x.site_id):act};
+  $("#main").innerHTML=`<div class="head"><div><h1>Messages</h1><p class="muted sm" style="margin:2px 0 0">Envoyez une consigne à tous les agents, à un site ou à un agent. Vous voyez qui l'a lue.</p></div></div>
+  <div class="card"><div class="row"><div class="field"><label class="f">Destinataires</label><select class="input" id="ms-c"><option value="tous">Tous les agents</option>${sites.length?'<option value="site">Les agents d\'un site</option>':""}<option value="agent">Un agent</option></select></div>
+  <div class="field hide" id="ms-sb"><label class="f">Site</label><select class="input" id="ms-s">${sites.map(s=>`<option value="${s.id}">${esc(s.nom)}</option>`).join("")}</select></div>
+  <div class="field hide" id="ms-ab"><label class="f">Agent</label><select class="input" id="ms-a">${agents.filter(a=>a.statut==="Actif").map(a=>`<option value="${a.id}">${esc(nomAg(a))}</option>`).join("")}</select></div></div>
+  <div class="field"><label class="f">Objet</label><input class="input" id="ms-o" placeholder="Ex. Contrôle des tenues demain"></div>
+  <div class="field"><label class="f">Message</label><textarea class="input" id="ms-t"></textarea></div><button class="btn pri" id="ms-ok">Envoyer</button></div>
+  ${m.length?`<div class="card"><h2>Messages envoyés</h2>${m.map(x=>{const d=dest(x),lu=lec.filter(l=>l.message_id===x.id).length;return `<div class="line" style="align-items:flex-start"><div class="grow"><b>${esc(x.objet||"Sans objet")}</b> <span class="muted xs">· ${fdt(x.created_at)} · ${x.cible==="tous"?"tous les agents":x.cible==="site"?"site "+esc(siteNom(x.site_id)):esc(nomAg(AG_(x.agent_id)))}</span><div class="sm" style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(x.contenu)}</div></div><span class="pill ${lu>=d.length&&d.length?"p-green":"p-amber"}">Lu par ${lu} / ${d.length}</span><button class="btn sm danger" data-delm="${x.id}" title="Supprimer">×</button></div>`}).join("")}</div>`:""}`;
+  $("#ms-c").onchange=e=>{$("#ms-sb").classList.toggle("hide",e.target.value!=="site");$("#ms-ab").classList.toggle("hide",e.target.value!=="agent")};
+  $("#ms-ok").onclick=()=>busy($("#ms-ok"),async()=>{const t=$("#ms-t").value.trim(),c=$("#ms-c").value;if(t.length<2){$("#ms-t").focus();throw new Error("Écrivez votre message.")}
+    must(await sb.from("messages").insert({expediteur:moi.id,cible:c,site_id:c==="site"?$("#ms-s").value:null,agent_id:c==="agent"?$("#ms-a").value:null,objet:$("#ms-o").value.trim()||null,contenu:t}));toast("Message envoyé");await vMessages()});
+  $("#main").querySelectorAll("[data-delm]").forEach(b=>b.onclick=()=>busy(b,async()=>{must(await sb.from("messages").delete().eq("id",b.dataset.delm));toast("Message supprimé");await vMessages()}));
+}
+async function vMesMessages(){await chargerMonAgent();
+  const [m,lec]=await Promise.all([sb.from("messages").select("*").order("created_at",{ascending:false}).limit(60).then(must),sb.from("message_lectures").select("message_id").eq("agent_id",monAgent.id).then(must)]);
+  const nl=m.filter(x=>!lec.some(l=>l.message_id===x.id));
+  $("#main").innerHTML=`<div class="head"><div><h1>Messages</h1><p class="muted sm" style="margin:2px 0 0">Les consignes de votre direction.</p></div></div>
+  ${m.length?`<div class="card">${m.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><b>${esc(x.objet||"Message de la direction")}</b> ${nl.includes(x)?'<span class="pill p-amber">Nouveau</span>':""}<div class="muted xs">${fdt(x.created_at)}</div><div style="white-space:pre-wrap;overflow-wrap:anywhere;margin-top:4px">${esc(x.contenu)}</div></div></div>`).join("")}</div>`:`<div class="empty">Aucun message pour le moment.</div>`}`;
+  if(nl.length)sb.from("message_lectures").insert(nl.map(x=>({message_id:x.id,agent_id:monAgent.id}))).then(()=>{},()=>{});
+}
+async function nouveautesAgent(){await chargerMonAgent();
+  const [d,m,lec]=await Promise.all([sb.from("documents_rh").select("id").eq("agent_id",monAgent.id).is("lu_le",null).then(must),sb.from("messages").select("id").then(must),sb.from("message_lectures").select("message_id").eq("agent_id",monAgent.id).then(must)]);
+  return {docs:d.length,msg:m.filter(x=>!lec.some(l=>l.message_id===x.id)).length}}
 
 /* ---------- journal des erreurs + démarrage ---------- */
 let nbErr=0;
