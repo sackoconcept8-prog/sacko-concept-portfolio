@@ -103,6 +103,22 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;padding:0 5px;margin-left:4px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}.tbl th{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}.tbl td.r,.tbl th.r{text-align:right;white-space:nowrap}.tbl tr.click{cursor:pointer}.tbl tr.click:hover td{background:var(--bg)}
 .scroll{overflow-x:auto}.tot{display:flex;justify-content:space-between;font-weight:700;font-size:17px;border-top:2px solid var(--p);margin-top:8px;padding-top:10px}
+.layout{max-width:1320px;margin:0 auto}.layout.avec{display:grid;grid-template-columns:230px minmax(0,1fr)}
+#side{position:sticky;top:61px;align-self:start;height:calc(100vh - 61px);overflow:auto;padding:14px 10px 30px;border-right:1px solid var(--line);background:#fff}
+#side .grp{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 12px 6px;font-weight:700}
+#side button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;background:none;padding:8px 12px;border-radius:9px;font-weight:600;font-size:14px;color:var(--ink);cursor:pointer}
+#side button:hover{background:var(--bg)}#side button.on{background:var(--p-l);color:var(--p)}
+#voile{position:fixed;inset:0;background:rgba(20,30,45,.35);z-index:14}
+#sos-bar{background:var(--red);color:#fff;padding:12px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-weight:600}
+#sos-bar .btn{background:#fff;color:var(--red);border-color:#fff}
+.seg{display:inline-flex;gap:4px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:16px;max-width:100%;overflow-x:auto}
+.seg button{border:0;background:none;padding:7px 14px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted);white-space:nowrap}.seg button.on{background:var(--p-l);color:var(--p)}
+.sos-btn{width:100%;border:0;border-radius:16px;background:var(--red);color:#fff;font-weight:700;font-size:18px;padding:16px;cursor:pointer;box-shadow:0 8px 20px -10px var(--red)}
+.terrain{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}.terrain .btn{padding:14px;font-size:15px}
+.pt-r{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}.pt-r.ok{background:var(--green-l);border-color:transparent}
+.photo{max-width:100%;border-radius:10px;margin-top:8px}
+@media(min-width:901px){#menu-btn{display:none!important}}
+@media(max-width:900px){.layout.avec{grid-template-columns:1fr}#side{position:fixed;left:0;top:0;bottom:0;height:100vh;width:270px;z-index:15;transform:translateX(-105%);transition:transform .2s;box-shadow:0 0 40px rgba(0,0,0,.2)}#side.open{transform:none}}
 @media print{body>*:not(#modal){display:none!important}#modal{position:static;display:block;background:none;padding:0}.box{box-shadow:none;max-width:none}.box-h,.box-f{display:none}.box-b{padding:0}}
 @media(max-width:560px){.head h1{font-size:21px}.week{grid-template-columns:repeat(7,minmax(40px,1fr));overflow-x:auto}.brand small{display:none}}
 </style>
@@ -135,11 +151,12 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 <div id="app" class="hide">
   <header class="top"><div class="top-in">
     <div class="brand"><img id="hd-logo" src="../assets/sacko-logo-vert-96.png" alt=""><div style="min-width:0"><span id="hd-nom"></span><small id="hd-moi"></small></div></div>
+    <button class="btn sm hide" id="menu-btn" aria-label="Menu">☰ Menu</button>
     <nav class="tabs" id="tabs"></nav>
     <button class="avbtn" id="hd-av" title="Ma photo de profil" aria-label="Ma photo de profil"></button>
     <button class="btn sm" id="logout">Déconnexion</button>
   </div></header>
-  <main id="main"></main>
+  <div class="layout" id="layout"><aside id="side" class="hide"></aside><div id="voile" class="hide"></div><div style="min-width:0"><div id="sos-bar" class="hide"></div><main id="main"></main></div></div>
 </div>
 
 <div id="modal"><div class="box" id="box"></div></div>
@@ -252,7 +269,7 @@ $("#login-form").onsubmit=ev=>{ev.preventDefault();busy($("#l-btn"),async()=>{
   if(error)return showLogin(/fetch|network/i.test(error.message)?"Connexion Internet indisponible. Réessayez.":"Identifiant ou mot de passe incorrect.");
   $("#l-pass").value="";await entrer();
 })};
-async function sortir(msg){await sb.auth.signOut();ctx=ag=moi=null;showLogin(msg)}
+async function sortir(msg){clearInterval(veille);await sb.auth.signOut();ctx=ag=moi=null;showLogin(msg)}
 $("#logout").onclick=()=>sortir();$("#bl-out").onclick=()=>sortir();
 async function entrer(){
   const r=await sb.rpc("contexte");
@@ -264,11 +281,18 @@ async function entrer(){
   if(!ctx.acces_ouvert)return bloquer(ctx.motif_blocage);
   $("#hd-moi").textContent=moi.nom_complet+" · "+(moi.fonction||ROLES[moi.role]||moi.role);
   ecran("app");majAvatar();$("#hd-av").onclick=maPhoto;
-  const T=estDirection()?[["accueil","Accueil"],["planning","Planning"],["pointage","Pointage"],["conges","Congés"],["documents","Documents"],["messages","Messages"],["paie","Paie"],["materiel","Matériel"],["agents","Agents"],["sites","Sites"],["comptes","Comptes"],...(moi.role==="dg"?[["reglages","Réglages"]]:[]),["support","Support"]]
-    :moi.role==="superviseur"?[["pointage","Pointage"],["planning","Planning"]]
-    :moi.role==="agent"?[["accueil","Pointer"],["monplanning","Planning"],["mesconges","Congés"],["mesdocs","Documents"],["mesmsg","Messages"],["mapaie","Paie"],["monmat","Matériel"]]:[["accueil","Accueil"]];
-  $("#tabs").innerHTML=T.map(([k,l])=>`<button data-tab="${k}">${l}</button>`).join("");
+  const G=estDirection()?[["",[["accueil","Tableau de bord"]]],["Opérations",[["planning","Planning"],["pointage","Pointage"],["incidents","Main courante"],["rondes","Rondes"]]],
+      ["Personnel",[["agents","Agents"],["conges","Congés"],["documents","Documents RH"],["messages","Messages"],["paie","Paie"],["materiel","Matériel"]]],
+      ["Clients",[["sites","Sites"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["comptes","Comptes"],...(moi.role==="dg"?[["reglages","Réglages"]]:[]),["support","Support"]]]]:null;
+  const T=G?G.flatMap(g=>g[1]):moi.role==="superviseur"?[["pointage","Pointage"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"]]
+    :moi.role==="agent"?[["accueil","Accueil"],["monplanning","Planning"],["mesdemandes","Demandes"],["mesdocs","Documents"],["mesmsg","Messages"],["mapaie","Paie"]]
+    :moi.role==="client"?[["client","Mon site"],["cl-incidents","Incidents"],["cl-factures","Factures"],["cl-demandes","Demandes"]]:[["accueil","Accueil"]];
+  $("#layout").classList.toggle("avec",!!G);$("#side").classList.toggle("hide",!G);$("#tabs").classList.toggle("hide",!!G);$("#menu-btn").classList.toggle("hide",!G);
+  $("#side").innerHTML="";$("#tabs").innerHTML="";
+  if(G)$("#side").innerHTML=G.map(([g,l])=>(g?`<div class="grp">${g}</div>`:"")+l.map(([k,x])=>`<button data-tab="${k}">${x}<span class="badge hide" data-b="${k}"></span></button>`).join("")).join("");
+  else $("#tabs").innerHTML=T.map(([k,l])=>`<button data-tab="${k}">${l}</button>`).join("");
   await ouvrir(T[0][0]);
+  demarrerVeille();
 }
 async function bloquer(motif){
   const M={suspendu:["Accès suspendu","L'accès de votre agence à ce logiciel est suspendu. Vos données sont conservées. Contactez SACKO CONCEPT pour le rétablir."],
@@ -281,13 +305,16 @@ async function bloquer(motif){
 async function waSupport(){try{const r=await sb.rpc("support_contact");return String((r.data&&r.data.whatsapp)||"").replace(/\D/g,"")}catch(_){return ""}}
 
 $("#tabs").onclick=e=>{const b=e.target.closest("button[data-tab]");if(b)ouvrir(b.dataset.tab)};
+$("#side").onclick=e=>{const b=e.target.closest("button[data-tab]");if(b)ouvrir(b.dataset.tab)};
+const menu=o=>{$("#side").classList.toggle("open",o);$("#voile").classList.toggle("hide",!o)};
+$("#menu-btn").onclick=()=>menu(true);$("#voile").onclick=()=>menu(false);
 async function charger(){
   const [s,a,c]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.from("agents").select("*").order("nom"),sb.from("profiles").select("id,nom_complet,role,fonction,photo_url,agent_id,site_id,est_actif,derniere_connexion").order("created_at")]);
   sites=must(s);agents=must(a);comptes=must(c);
 }
-async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
+async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button,#side button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));menu(false);window.scrollTo(0,0);
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
+  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
@@ -299,8 +326,7 @@ async function vAccueil(){
   $("#main").innerHTML=`<div class="head"><div><h1>Bonjour ${esc(moi.nom_complet.split(" ")[0])}</h1><p class="muted sm" style="margin:2px 0 0">${esc(ag.nom_agence)}${ag.ville?" · "+esc(ag.ville):""}</p></div></div>
   <div class="tiles"><div class="tile"><b>${actifs} / ${+ag.nb_agents_max}</b><span class="muted sm">Agents actifs</span></div><div class="tile"><b>${sites.filter(s=>s.actif).length}</b><span class="muted sm">Sites clients</span></div><div class="tile"><b>${avecCompte}</b><span class="muted sm">Agents avec accès</span></div><div class="tile"><b>${fd(ag.date_expiration)}</b><span class="muted sm">Fin de l'accès${j<=7?` · <span style="color:var(--amber)">dans ${Math.max(j,0)} j</span>`:""}</span></div></div>
   <div class="card" id="jour-bloc"><h2>Aujourd'hui</h2><p class="muted sm" style="margin:0">Chargement…</p></div>
-  <div class="card"><h2>Pour bien démarrer</h2><ul class="steps">${et.map(([ok,l,t])=>`<li><span class="dot ${ok?"ok":""}">${ok?"✓":""}</span><span style="flex:1">${l}</span>${ok?"":`<button class="btn sm" data-go="${t}">Commencer</button>`}</li>`).join("")}</ul></div>
-  <div class="card"><h2>Prochainement dans votre espace</h2><p class="muted sm" style="margin:0">Congés, documents RH, paie, matériel, facturation et rapports arrivent au fil des mises à jour. Vous n'aurez rien à installer : ils apparaîtront ici automatiquement.</p></div>`;
+  <div class="card"><h2>Pour bien démarrer</h2><ul class="steps">${et.map(([ok,l,t])=>`<li><span class="dot ${ok?"ok":""}">${ok?"✓":""}</span><span style="flex:1">${l}</span>${ok?"":`<button class="btn sm" data-go="${t}">Commencer</button>`}</li>`).join("")}</ul></div>`;
   $("#main").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go));
   try{const ds=auj(),P=await chargerPlanning(ajout(ds,-1),ds),po=must(await sb.from("pointages").select("*").eq("date_service",ds));
     const aff=affectations(ds,P,agents),now=Date.now();let pres=0,ret=0,np=0,trou=0;
@@ -327,6 +353,10 @@ function ficheSite(s){const n=!s;s=s||{actif:true,besoins:{J:1,N:1}};const b=s.b
   <div class="actions" style="margin:-4px 0 12px"><button class="btn sm" id="s-gps" type="button">Prendre ma position actuelle</button><a class="btn sm ${s.latitude!=null?"":"hide"}" id="s-map" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${s.latitude},${s.longitude}">Voir sur la carte</a></div>
   <p class="muted xs" style="margin:-6px 0 12px">Faites-le une fois sur place, depuis un téléphone : l'application vérifiera ensuite que l'agent pointe bien depuis le site.</p>
   <div class="field"><label class="f">Consignes pour les agents</label><textarea class="input" id="s-cons">${esc(s.consignes)}</textarea></div>
+  <div class="field"><label class="f">Points de ronde <span class="muted" style="font-weight:400">(un par ligne, dans l'ordre du parcours)</span></label><textarea class="input" id="s-pts" placeholder="Portail principal&#10;Parking&#10;Local technique">${esc((s.points_ronde||[]).join("\n"))}</textarea></div>
+  <div class="sec">Client facturé</div>
+  <div class="row"><div class="field"><label class="f">Nom ou raison sociale du client</label><input class="input" id="s-cln" value="${esc(s.client_nom)}"></div><div class="field"><label class="f">NIF / RCCM du client</label><input class="input" id="s-cli" value="${esc(s.client_identifiant)}"></div></div>
+  <div class="field"><label class="f">Adresse de facturation</label><input class="input" id="s-cla" value="${esc(s.client_adresse)}"></div>
   <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="s-act" ${s.actif?"checked":""}> Site actif</label>`,
   `${n?"":`<button class="btn danger" id="s-del" style="margin-right:auto">Supprimer</button>`}<button class="btn" id="s-no">Annuler</button><button class="btn pri" id="s-ok">Enregistrer</button>`);
   $("#s-no").onclick=closeModal;
@@ -334,7 +364,7 @@ function ficheSite(s){const n=!s;s=s||{actif:true,besoins:{J:1,N:1}};const b=s.b
     const m=$("#s-map");m.href="https://www.google.com/maps?q="+pos.lat+","+pos.lng;m.classList.remove("hide");toast("Position relevée (précision ± "+Math.round(pos.precision)+" m)")});
   $("#s-ok").onclick=()=>busy($("#s-ok"),async()=>{const nom=$("#s-nom").value.trim();if(nom.length<2){$("#s-nom").focus();throw new Error("Indiquez le nom du site.")}
     const v=x=>$(x).value.trim()||null;
-    const d={nom,type:v("#s-type"),adresse:v("#s-adr"),ville:v("#s-ville"),besoins:{...b,J:Math.max(0,+$("#s-bj").value||0),N:Math.max(0,+$("#s-bn").value||0)},montant_contrat:+$("#s-mt").value||0,contact_nom:v("#s-cn"),contact_telephone:v("#s-ct"),consignes:v("#s-cons"),actif:$("#s-act").checked,
+    const d={nom,type:v("#s-type"),adresse:v("#s-adr"),ville:v("#s-ville"),besoins:{...b,J:Math.max(0,+$("#s-bj").value||0),N:Math.max(0,+$("#s-bn").value||0)},montant_contrat:+$("#s-mt").value||0,contact_nom:v("#s-cn"),contact_telephone:v("#s-ct"),consignes:v("#s-cons"),actif:$("#s-act").checked,points_ronde:$("#s-pts").value.split("\n").map(x=>x.trim()).filter(Boolean),client_nom:v("#s-cln"),client_identifiant:v("#s-cli"),client_adresse:v("#s-cla"),
       latitude:$("#s-lat").value.trim()===""?null:+$("#s-lat").value.replace(",","."),longitude:$("#s-lng").value.trim()===""?null:+$("#s-lng").value.replace(",","."),rayon_m:Math.max(30,+$("#s-ray").value||300)};
     if([d.latitude,d.longitude].some(x=>x!=null&&isNaN(x))||(d.latitude!=null)!==(d.longitude!=null))throw new Error("Coordonnées GPS invalides : remplissez la latitude et la longitude, ou laissez les deux vides.");
     must(n?await sb.from("sites").insert(d):await sb.from("sites").update(d).eq("id",s.id));closeModal();toast(n?"Site ajouté":"Site mis à jour");await ouvrir("sites")});
@@ -412,15 +442,17 @@ async function appel(body){
 
 /* ---------- comptes de l'équipe ---------- */
 function vComptes(){
-  const eq=comptes.filter(c=>c.role!=="agent"),creables=moi.role==="dg"?["rh","superviseur"]:["superviseur"];
+  const eq=comptes.filter(c=>c.role!=="agent"),creables=moi.role==="dg"?["rh","superviseur","client"]:["superviseur","client"];
   $("#main").innerHTML=`<div class="head"><div><h1>Comptes de l'équipe</h1><p class="muted sm" style="margin:2px 0 0">Direction, ressources humaines et superviseurs. Les accès des agents se créent depuis leur fiche.</p></div><button class="btn pri" id="c-new">+ Nouveau compte</button></div>
   <div class="card">${eq.map(c=>{const gerable=creables.includes(c.role);return `<div class="line">${avatar(c)}<div class="grow"><b>${esc(c.nom_complet)}</b>${c.id===moi.id?' <span class="muted sm">(vous)</span>':""}<div class="muted xs">${titre(c)}${c.fonction?" · accès "+ROLES[c.role].toLowerCase():""} · dernière connexion : ${fdt(c.derniere_connexion)}</div></div><span class="pill ${c.est_actif?"p-green":"p-grey"}">${c.est_actif?"Actif":"Désactivé"}</span>${gerable?`<button class="btn sm" data-mdp="${c.id}">Nouveau mot de passe</button><button class="btn sm ${c.est_actif?"danger":""}" data-act="${c.id}" data-val="${c.est_actif?0:1}">${c.est_actif?"Désactiver":"Réactiver"}</button>`:""}</div>`}).join("")}</div>`;
   $("#c-new").onclick=()=>{
-    modal("Nouveau compte",`<div class="row"><div class="field"><label class="f">Niveau d'accès</label><select class="input" id="k-role">${creables.map(k=>`<option value="${k}">${ROLES[k]}</option>`).join("")}</select></div><div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div></div>
+    modal("Nouveau compte",`<div class="row"><div class="field"><label class="f">Niveau d'accès</label><select class="input" id="k-role">${creables.map(k=>`<option value="${k}">${k==="client"?"Client (voit son site)":ROLES[k]}</option>`).join("")}</select></div><div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div></div>
+    <div class="field hide" id="k-sb"><label class="f">Site du client</label><select class="input" id="k-site">${sites.map(x=>`<option value="${x.id}">${esc(x.nom)}</option>`).join("")}</select></div>
     <div class="field"><label class="f">Fonction affichée <span class="muted" style="font-weight:400">(ex. CEO, Directeur général, DRH)</span></label><input class="input" id="k-fonc" maxlength="60"></div>
     <div class="field"><label class="f">Adresse e-mail (sert d'identifiant)</label><input class="input" id="k-mail" type="email" autocomplete="off"></div>
     <div class="field"><label class="f">Mot de passe provisoire (8 caractères minimum)</label><input class="input" id="k-mdp" type="text" autocomplete="off"></div>`,`<button class="btn" id="k-no">Annuler</button><button class="btn pri" id="k-ok">Créer le compte</button>`);
-    $("#k-no").onclick=closeModal;$("#k-ok").onclick=()=>busy($("#k-ok"),async()=>{await appel({action:"creer",role:$("#k-role").value,fonction:$("#k-fonc").value,nom_complet:$("#k-nom").value,email:$("#k-mail").value,mot_de_passe:$("#k-mdp").value});closeModal();toast("Compte créé");await ouvrir("comptes")})};
+    $("#k-no").onclick=closeModal;$("#k-ok").onclick=()=>busy($("#k-ok"),async()=>{const rl=$("#k-role").value;if(rl==="client"&&!sites.length)throw new Error("Créez d'abord le site du client.");await appel({action:"creer",role:rl,site_id:rl==="client"?$("#k-site").value:null,fonction:$("#k-fonc").value,nom_complet:$("#k-nom").value,email:$("#k-mail").value,mot_de_passe:$("#k-mdp").value});closeModal();toast("Compte créé");await ouvrir("comptes")});
+    $("#k-role").onchange=e=>$("#k-sb").classList.toggle("hide",e.target.value!=="client")};
   $("#main").querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>busy(b,async()=>{await appel({action:"activer",user_id:b.dataset.act,est_actif:b.dataset.val==="1"});toast(b.dataset.val==="1"?"Compte réactivé":"Compte désactivé");await ouvrir("comptes")}));
   $("#main").querySelectorAll("[data-mdp]").forEach(b=>b.onclick=()=>{const c=comptes.find(x=>x.id===b.dataset.mdp);saisirMdp("Nouveau mot de passe · "+esc(c.nom_complet),"L'ancien mot de passe ne fonctionnera plus.","Changer",async mdp=>{await appel({action:"mot_de_passe",user_id:c.id,mot_de_passe:mdp});closeModal();toast("Mot de passe changé")},closeModal)});
 }
@@ -552,7 +584,7 @@ async function exporterPointages(ym){const d1=ym+"-01",d2=iso(new Date(+ym.slice
 let monAgent=null;
 async function donneesAgent(){
   if(!moi.agent_id)throw new Error("Votre compte n'est relié à aucune fiche agent. Contactez votre responsable.");
-  const ds=auj(),[a,s,P,po]=await Promise.all([sb.from("agents").select("*").eq("id",moi.agent_id).maybeSingle(),sb.from("sites").select("id,nom,adresse,ville,latitude,longitude,rayon_m,consignes"),
+  const ds=auj(),[a,s,P,po]=await Promise.all([sb.from("agents").select("*").eq("id",moi.agent_id).maybeSingle(),sb.from("sites").select("id,nom,adresse,ville,latitude,longitude,rayon_m,consignes,points_ronde"),
     chargerPlanning(ajout(ds,-1),ajout(ds,13),moi.agent_id),sb.from("pointages").select("*").eq("agent_id",moi.agent_id).gte("date_service",ajout(ds,-30)).order("heure_arrivee",{ascending:false})]);
   monAgent=must(a);sites=must(s);if(!monAgent)throw new Error("Fiche agent introuvable. Contactez votre responsable.");
   return {P,po:must(po)};
@@ -572,12 +604,17 @@ async function vAgentAccueil(){
       ${s.consignes?`<div class="idbox" style="text-align:left;margin:14px 0 0"><b>Consignes :</b> ${esc(s.consignes)}</div>`:""}<button class="btn pri bigbtn" id="ag-arr">Pointer mon arrivée</button><p class="muted xs" style="margin:10px 0 0">Votre position sera vérifiée. Activez la localisation de votre téléphone.</p></div>`}
   else if(fait){carte=`<div class="punch"><span class="pill p-green">Service terminé</span><div class="big" style="font-size:24px">${hm(fait.heure_arrivee)} → ${hm(fait.heure_depart)}</div><div class="muted">Merci, bon repos.</div></div>`}
   else{const i=indispo(P,monAgent.id,auj());carte=`<div class="punch"><span class="pill ${i?"p-amber":"p-grey"}">${i?esc(i.t):monAgent.site_id?"Repos":"Pas de poste prévu"}</span><div class="big" style="font-size:24px">Pas de service prévu</div><div class="muted">Consultez « Mon planning » pour vos prochains services.</div></div>`}
-  $("#main").innerHTML=`<div class="head"><div><h1>Bonjour ${esc(monAgent.prenom||monAgent.nom)}</h1><p class="muted sm" style="margin:2px 0 0">${esc(monAgent.matricule)} · ${esc(monAgent.grade)}</p></div></div>${carte}
+  const siteTerrain=ouvert?S(ouvert.site_id):vise?S(vise.site_id):(monAgent.site_id?S(monAgent.site_id):null);
+  const terrain=siteTerrain&&siteTerrain.id?`<div class="terrain">${(siteTerrain.points_ronde||[]).length?`<button class="btn" id="ag-ronde">Faire une ronde</button>`:""}<button class="btn" id="ag-inc">Signaler un incident</button></div><button class="sos-btn" id="ag-sos">ALERTE SOS</button><p class="muted xs" style="text-align:center;margin:6px 0 16px">En cas de danger : votre position est envoyée immédiatement à votre direction.</p>`:"";
+  $("#main").innerHTML=`<div class="head"><div><h1>Bonjour ${esc(monAgent.prenom||monAgent.nom)}</h1><p class="muted sm" style="margin:2px 0 0">${esc(monAgent.matricule)} · ${esc(monAgent.grade)}</p></div></div>${carte}${terrain}
   <div class="card"><h2>Mes derniers pointages</h2>${po.slice(0,10).map(p=>`<div class="line"><div class="grow"><b>${esc(fjourc(p.date_service))}</b> <span class="muted sm">· ${esc(S(p.site_id).nom)}</span></div><span class="sm">${hm(p.heure_arrivee)} → ${hm(p.heure_depart)}</span>${p.mode==="secours"?'<span class="pill p-amber">manuel</span>':""}</div>`).join("")||'<p class="muted sm" style="margin:0">Aucun pointage pour le moment.</p>'}</div>`;
   const arr=$("#ag-arr");if(arr)arr.onclick=()=>pointerArrivee(arr,vise,S(vise.site_id));
   nouveautesAgent().then(n=>{if(!n.docs&&!n.msg)return;const c=document.createElement("div");c.className="card";
     c.innerHTML=`<h2>À lire</h2><div class="actions">${n.docs?`<button class="btn" data-go3="mesdocs">${n.docs} document(s) non lu(s)</button>`:""}${n.msg?`<button class="btn" data-go3="mesmsg">${n.msg} message(s) non lu(s)</button>`:""}</div>`;
     const pc=$("#main .punch");if(pc){pc.after(c);c.querySelectorAll("[data-go3]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go3))}}).catch(()=>{});
+  const ro=$("#ag-ronde");if(ro)ro.onclick=()=>faireRonde(siteTerrain,vise||{ds:auj(),poste:monAgent.poste});
+  const ic_=$("#ag-inc");if(ic_)ic_.onclick=()=>signalerIncident(siteTerrain);
+  const so=$("#ag-sos");if(so)so.onclick=()=>alerteSOS(siteTerrain);
   const dep=$("#ag-dep");if(dep)dep.onclick=()=>busy(dep,async()=>{must(await sb.from("pointages").update({heure_depart:new Date().toISOString()}).eq("id",ouvert.id));toast("Départ enregistré");await vAgentAccueil()});
 }
 function pointerArrivee(btn,vise,site){busy(btn,async()=>{btn.textContent="Localisation en cours…";let pos=null,err=null;
@@ -876,15 +913,223 @@ async function vReglages(){const p=ag.parametres||{},J=POSTE("J"),N=POSTE("N"),g
   <div class="card"><h2>Paie</h2><div class="row"><div class="field"><label class="f">Prime de nuit (par mois)</label><input class="input" type="number" min="0" id="rg-pn" value="${+p.prime_nuit||0}"></div><div class="field"><label class="f">Prime de panier (par mois)</label><input class="input" type="number" min="0" id="rg-pp" value="${+p.prime_panier||0}"></div><div class="field"><label class="f">Cotisations sociales salariales (%)</label><input class="input" type="number" min="0" max="50" step="0.1" id="rg-cot" value="${+p.taux_cotisations||0}"></div><div class="field"><label class="f">Mode de paiement</label><input class="input" id="rg-mp" value="${esc(p.mode_paiement||"espèces")}"></div></div>
   <label style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><input type="checkbox" id="rg-anc" ${p.anciennete!==false?"checked":""}> Prime d'ancienneté automatique (1 % du salaire de base par année, à partir de 2 ans, plafonnée à 25 %)</label>
   <p class="f" style="font-weight:600;font-size:13px;margin:0 0 6px">Prime de responsabilité par grade (par mois)</p><div class="row">${grades.map((g,i)=>`<div class="field"><label class="f" style="font-weight:500">${esc(g)}</label><input class="input" type="number" min="0" data-pg="${i}" value="${+pg[g]||0}"></div>`).join("")}</div></div>
+  <div class="card"><h2>Factures</h2><div class="row"><div class="field"><label class="f">TVA (%)</label><input class="input" type="number" min="0" max="50" step="0.1" id="rg-tva" value="${+p.tva||0}"></div><div class="field"><label class="f">Délai de paiement (jours)</label><input class="input" type="number" min="0" id="rg-del" value="${+p.delai_paiement_jours||30}"></div></div>
+  <div class="field"><label class="f">Mentions en bas de facture <span class="muted" style="font-weight:400">(RCCM, NIF, coordonnées bancaires…)</span></label><textarea class="input" id="rg-men">${esc(p.mentions_facture||"")}</textarea></div></div>
   <div class="card"><h2>Grades</h2><div class="field"><label class="f">Un grade par ligne</label><textarea class="input" id="rg-gr">${esc(grades.join("\n"))}</textarea></div></div>
   <button class="btn pri" id="rg-ok">Enregistrer les réglages</button>`;
   $("#rg-ok").onclick=()=>busy($("#rg-ok"),async()=>{const gr=$("#rg-gr").value.split("\n").map(x=>x.trim()).filter(Boolean);if(!gr.length)throw new Error("Indiquez au moins un grade.");
     const primes={};grades.forEach((g,i)=>{const v=+$(`[data-pg="${i}"]`).value||0;if(v)primes[g]=v});
     const autres=(p.postes||[]).filter(x=>x.code!=="J"&&x.code!=="N");
     const n={postes:[{code:"J",libelle:"Jour",debut:$("#rg-jd").value||J.debut,fin:$("#rg-jf").value||J.fin},{code:"N",libelle:"Nuit",debut:$("#rg-nd").value||N.debut,fin:$("#rg-nf").value||N.fin},...autres],
-      tolerance_retard:Math.max(0,Math.min(120,+$("#rg-tol").value||0)),prime_nuit:Math.max(0,+$("#rg-pn").value||0),prime_panier:Math.max(0,+$("#rg-pp").value||0),taux_cotisations:Math.max(0,Math.min(50,+$("#rg-cot").value||0)),mode_paiement:$("#rg-mp").value.trim()||"espèces",anciennete:$("#rg-anc").checked,primes_grade:primes,grades:gr};
+      tolerance_retard:Math.max(0,Math.min(120,+$("#rg-tol").value||0)),prime_nuit:Math.max(0,+$("#rg-pn").value||0),prime_panier:Math.max(0,+$("#rg-pp").value||0),taux_cotisations:Math.max(0,Math.min(50,+$("#rg-cot").value||0)),mode_paiement:$("#rg-mp").value.trim()||"espèces",anciennete:$("#rg-anc").checked,primes_grade:primes,grades:gr,tva:Math.max(0,Math.min(50,+$("#rg-tva").value||0)),delai_paiement_jours:Math.max(0,+$("#rg-del").value||0),mentions_facture:$("#rg-men").value.trim()};
     ag.parametres=must(await sb.rpc("maj_parametres",{p:n}));toast("Réglages enregistrés");await vReglages()});
 }
+
+/* ---------- veille : alertes SOS et compteurs ---------- */
+let veille=null;
+function demarrerVeille(){clearInterval(veille);if(!estEncadrement())return;const f=()=>verifierAlertes().catch(()=>{});f();veille=setInterval(f,45000)}
+async function verifierAlertes(){
+  const al=must(await sb.from("alertes_sos").select("*").eq("statut","En cours").order("declenchee_le",{ascending:false}));
+  const bar=$("#sos-bar");
+  if(al.length){bar.innerHTML=`<span>🚨 ${al.length} alerte(s) SOS en cours · ${al.map(x=>esc(nomAg(AG_(x.agent_id))+" ("+hm(x.declenchee_le)+")")).join(", ")}</span><button class="btn sm" id="sos-voir">Voir</button>`;bar.classList.remove("hide");$("#sos-voir").onclick=()=>ouvrir("incidents")}
+  else bar.classList.add("hide");
+  if(!estDirection())return;
+  const [c,d,a,m,dc,r]=await Promise.all([sb.from("conges").select("id").eq("statut","En attente"),sb.from("documents_rh").select("id").eq("statut","Répondu"),sb.from("avances").select("id").eq("statut","En attente"),sb.from("demandes_materiel").select("id").eq("statut","En attente"),sb.from("demandes_clients").select("id").eq("statut","Nouvelle"),sb.from("incidents").select("id").eq("statut","Ouvert")]);
+  const n={conges:(c.data||[]).length,documents:(d.data||[]).length,paie:(a.data||[]).length,materiel:(m.data||[]).length,demandes:(dc.data||[]).length,incidents:(r.data||[]).length+al.length};
+  Object.entries(n).forEach(([k,v])=>{const e=document.querySelector(`[data-b="${k}"]`);if(e){e.textContent=v;e.classList.toggle("hide",!v)}});
+}
+
+/* ---------- sous-onglets ---------- */
+async function segments(liste,cle){const actif=window["seg_"+cle]||liste[0][0];
+  await liste.find(x=>x[0]===actif)[2]();
+  const bar=document.createElement("div");bar.className="seg";bar.innerHTML=liste.map(([k,l])=>`<button data-sg="${k}" class="${k===actif?"on":""}">${l}</button>`).join("");
+  $("#main").prepend(bar);bar.onclick=e=>{const b=e.target.closest("[data-sg]");if(!b)return;window["seg_"+cle]=b.dataset.sg;ouvrir(tab)}}
+const vMesDemandes=()=>segments([["conges","Congés",vMesConges],["materiel","Matériel",vMonMateriel]],"dem");
+
+/* ---------- terrain : incidents, rondes, SOS ---------- */
+const TYPES_INC=["Intrusion","Vol","Tentative de vol","Dégradation","Agression","Incendie","Panne (électricité, éclairage…)","Visiteur suspect","Autre"];
+const GRAV={Mineur:"p-grey",Moyen:"p-amber",Grave:"p-red"};
+function positionRapide(){return Promise.race([position().catch(()=>null),new Promise(r=>setTimeout(()=>r(null),9000))])}
+function signalerIncident(site,apres){
+  modal("Signaler un incident",`<div class="row"><div class="field"><label class="f">Type</label><select class="input" id="in-t">${TYPES_INC.map(t=>`<option>${t}</option>`).join("")}</select></div><div class="field"><label class="f">Gravité</label><select class="input" id="in-g"><option>Mineur</option><option>Moyen</option><option>Grave</option></select></div></div>
+  ${estEncadrement()?`<div class="field"><label class="f">Site</label><select class="input" id="in-s">${sites.map(x=>`<option value="${x.id}" ${site&&x.id===site.id?"selected":""}>${esc(x.nom)}</option>`).join("")}</select></div>`:`<p class="muted sm" style="margin-top:0">Site : <b>${esc(site.nom)}</b></p>`}
+  <div class="field"><label class="f">Que s'est-il passé ?</label><textarea class="input" id="in-d" placeholder="Décrivez les faits : heure, personnes, ce que vous avez fait."></textarea></div>
+  <div class="field"><label class="btn" style="cursor:pointer">📷 Ajouter une photo<input type="file" id="in-p" accept="image/*" capture="environment" hidden></label> <span class="muted sm" id="in-pn"></span></div>`,
+  `<button class="btn" id="in-no">Annuler</button><button class="btn pri" id="in-ok">Envoyer</button>`);
+  let photo=null;$("#in-p").onchange=e=>{photo=e.target.files[0]||null;$("#in-pn").textContent=photo?"Photo jointe":""};
+  $("#in-no").onclick=closeModal;
+  $("#in-ok").onclick=()=>busy($("#in-ok"),async()=>{const d=$("#in-d").value.trim();if(d.length<3){$("#in-d").focus();throw new Error("Décrivez l'incident.")}
+    const siteId=$("#in-s")?$("#in-s").value:site.id;let chemin=null;
+    if(photo){const b=await reduirePhoto(photo,1280);chemin=ag.id+"/incidents/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+".jpg";must(await sb.storage.from("documents_agences").upload(chemin,b,{contentType:"image/jpeg"}))}
+    must(await sb.from("incidents").insert({site_id:siteId,agent_id:moi.role==="agent"?monAgent.id:null,type:$("#in-t").value,gravite:$("#in-g").value,description:d,photo_path:chemin,visible_client:true}));
+    closeModal();toast("Incident signalé à la direction");if(apres)await apres()});
+}
+function reduirePhoto(file,max){return new Promise((ok,ko)=>{const im=new Image(),u=URL.createObjectURL(file);
+  im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),cv=document.createElement("canvas");cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);
+    cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);URL.revokeObjectURL(u);cv.toBlob(b=>b?ok(b):ko(new Error("Photo illisible.")),"image/jpeg",.82)};
+  im.onerror=()=>{URL.revokeObjectURL(u);ko(new Error("Ce fichier n'est pas une photo lisible."))};im.src=u})}
+function alerteSOS(site){
+  modal("Envoyer une alerte SOS ?",`<p style="margin-top:0">Votre direction et vos superviseurs seront alertés immédiatement, avec votre position.</p>${ag.telephone?`<p class="muted sm">Vous pouvez aussi appeler directement : <a href="tel:${esc(ag.telephone.replace(/\s/g,""))}">${esc(ag.telephone)}</a></p>`:""}`,
+  `<button class="btn" id="so-no">Annuler</button><button class="btn pri" id="so-ok" style="background:var(--red);border-color:var(--red)">Envoyer l'alerte</button>`);
+  $("#so-no").onclick=closeModal;
+  $("#so-ok").onclick=()=>busy($("#so-ok"),async()=>{$("#so-ok").textContent="Envoi…";const pos=await positionRapide();
+    must(await sb.from("alertes_sos").insert({agent_id:monAgent.id,site_id:site&&site.id||null,latitude:pos?pos.lat:null,longitude:pos?pos.lng:null}));
+    modal("Alerte envoyée",`<p style="margin-top:0"><b>Votre direction a été prévenue.</b> Mettez-vous en sécurité.</p>${ag.telephone?`<a class="btn pri" href="tel:${esc(ag.telephone.replace(/\s/g,""))}" style="width:100%">Appeler la direction</a>`:""}`,`<button class="btn" id="so-f">Fermer</button>`);$("#so-f").onclick=closeModal});
+}
+async function faireRonde(site,vise){
+  const r=must(await sb.from("rondes").insert({site_id:site.id,agent_id:monAgent.id,date_service:vise.ds,poste:vise.poste||null,points:[]}).select("*").single());
+  const pts=site.points_ronde||[],faits=[];
+  const dessiner=()=>{$("#box .box-b").innerHTML=`<p class="muted sm" style="margin-top:0">${esc(site.nom)} · commencée à ${hm(r.debut)}. Touchez chaque point quand vous y êtes.</p>${pts.map((n,i)=>{const f=faits.find(x=>x.i===i);return `<div class="pt-r ${f?"ok":""}"><span style="flex:1"><b>${esc(n)}</b>${f?`<div class="muted xs">Vérifié à ${hm(f.heure)}${f.lat==null?" · sans position":""}</div>`:""}</span>${f?"✓":`<button class="btn sm pri" data-pt="${i}">Vérifié</button>`}</div>`}).join("")}`;
+    $("#box").querySelectorAll("[data-pt]").forEach(b=>b.onclick=()=>busy(b,async()=>{b.textContent="…";const pos=await positionRapide();
+      faits.push({i:+b.dataset.pt,nom:pts[+b.dataset.pt],heure:new Date().toISOString(),lat:pos?pos.lat:null,lng:pos?pos.lng:null});
+      must(await sb.from("rondes").update({points:faits}).eq("id",r.id));dessiner()}))};
+  modal("Ronde en cours","",`<button class="btn pri" id="rd-fin">Terminer la ronde</button>`);dessiner();
+  const fin=async()=>{must(await sb.from("rondes").update({fin:new Date().toISOString(),points:faits}).eq("id",r.id));closeModal();toast(`Ronde terminée · ${faits.length}/${pts.length} point(s)`)};
+  $("#rd-fin").onclick=()=>busy($("#rd-fin"),fin);$("#m-x").onclick=()=>busy(null,fin);
+}
+let filtreInc={periode:"7",site:"",statut:""};
+async function vIncidents(){const d1=filtreInc.periode==="mois"?auj().slice(0,8)+"01":ajout(auj(),-(+filtreInc.periode||7));
+  let q=sb.from("incidents").select("*").gte("survenu_le",d1+"T00:00:00").order("survenu_le",{ascending:false}).limit(200);if(filtreInc.site)q=q.eq("site_id",filtreInc.site);if(filtreInc.statut)q=q.eq("statut",filtreInc.statut);
+  const [l,al]=await Promise.all([q.then(must),sb.from("alertes_sos").select("*").order("declenchee_le",{ascending:false}).limit(20).then(must)]);
+  const enCours=al.filter(x=>x.statut==="En cours");
+  $("#main").innerHTML=`<div class="head"><div><h1>Main courante</h1><p class="muted sm" style="margin:2px 0 0">Incidents signalés par les agents et alertes SOS.</p></div><button class="btn pri" id="inc-new">+ Consigner un incident</button></div>
+  ${al.length?`<div class="card" ${enCours.length?'style="border-color:var(--red)"':""}><h2>Alertes SOS</h2>${al.slice(0,8).map(x=>`<div class="line"><div class="grow"><b>${esc(nomAg(AG_(x.agent_id)))}</b><div class="muted xs">${fdt(x.declenchee_le)} · ${esc(x.site_id?siteNom(x.site_id):"site inconnu")}${x.traitee_le?" · traitée à "+hm(x.traitee_le):""}</div></div>${x.latitude!=null?`<a class="btn sm" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${x.latitude},${x.longitude}">Voir la position</a>`:'<span class="muted xs">sans position</span>'}${(AG_(x.agent_id)||{}).telephone?`<a class="btn sm" href="tel:${esc(AG_(x.agent_id).telephone.replace(/\s/g,""))}">Appeler</a>`:""}${x.statut==="En cours"?`<button class="btn sm pri" data-sos="${x.id}">Prise en charge</button>`:'<span class="pill p-green">Traitée</span>'}</div>`).join("")}</div>`:""}
+  <div class="tools"><select class="input" id="fi-p"><option value="7">7 derniers jours</option><option value="mois">Ce mois-ci</option><option value="90">90 derniers jours</option></select><select class="input" id="fi-s"><option value="">Tous les sites</option>${sites.map(x=>`<option value="${x.id}">${esc(x.nom)}</option>`).join("")}</select><select class="input" id="fi-st"><option value="">Tous</option><option>Ouvert</option><option>Clos</option></select></div>
+  ${l.length?`<div class="card">${l.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><b>${esc(x.type)}</b> <span class="pill ${GRAV[x.gravite]||"p-grey"}">${esc(x.gravite)}</span><div class="muted xs">${fdt(x.survenu_le)} · ${esc(siteNom(x.site_id))}${x.agent_id?" · "+esc(nomAg(AG_(x.agent_id))):""}${x.visible_client?"":" · masqué au client"}</div><div class="sm" style="white-space:pre-wrap;overflow-wrap:anywhere;margin-top:4px">${esc(x.description||"")}</div>${x.photo_path?`<button class="btn sm" data-ph="${esc(x.photo_path)}" style="margin-top:6px">Voir la photo</button>`:""}</div>
+    <span class="pill ${x.statut==="Clos"?"p-grey":"p-amber"}">${esc(x.statut)}</span>${estDirection()?`<button class="btn sm" data-cl="${x.id}" data-v="${x.statut==="Clos"?"Ouvert":"Clos"}">${x.statut==="Clos"?"Rouvrir":"Clore"}</button><button class="btn sm" data-vis="${x.id}" data-v="${x.visible_client?0:1}">${x.visible_client?"Masquer au client":"Montrer au client"}</button>`:""}</div>`).join("")}</div>`:`<div class="empty">Aucun incident sur cette période.</div>`}`;
+  $("#fi-p").value=filtreInc.periode;$("#fi-s").value=filtreInc.site;$("#fi-st").value=filtreInc.statut;
+  const re=()=>vIncidents().catch(e=>toast(traduire(e.message),true));
+  $("#fi-p").onchange=e=>{filtreInc.periode=e.target.value;re()};$("#fi-s").onchange=e=>{filtreInc.site=e.target.value;re()};$("#fi-st").onchange=e=>{filtreInc.statut=e.target.value;re()};
+  $("#inc-new").onclick=()=>signalerIncident(sites[0]||null,vIncidents);
+  const Q=(sel,f)=>$("#main").querySelectorAll(sel).forEach(b=>b.onclick=()=>f(b));
+  Q("[data-sos]",b=>busy(b,async()=>{must(await sb.from("alertes_sos").update({statut:"Traitée",traitee_par:moi.id,traitee_le:new Date().toISOString()}).eq("id",b.dataset.sos));toast("Alerte prise en charge");await verifierAlertes();await vIncidents()}));
+  Q("[data-cl]",b=>busy(b,async()=>{must(await sb.from("incidents").update({statut:b.dataset.v}).eq("id",b.dataset.cl));await vIncidents()}));
+  Q("[data-vis]",b=>busy(b,async()=>{must(await sb.from("incidents").update({visible_client:b.dataset.v==="1"}).eq("id",b.dataset.vis));await vIncidents()}));
+  Q("[data-ph]",b=>busy(b,async()=>{const r=must(await sb.storage.from("documents_agences").createSignedUrl(b.dataset.ph,600));modal("Photo de l'incident",`<img class="photo" src="${esc(r.signedUrl)}" alt="">`,`<button class="btn" id="ph-f2">Fermer</button>`);$("#ph-f2").onclick=closeModal}));
+}
+let jourR=null;
+async function vRondes(){jourR=jourR||auj();const ds=jourR;
+  const l=must(await sb.from("rondes").select("*").eq("date_service",ds).order("debut"));
+  $("#main").innerHTML=`<div class="head"><div><h1>Rondes</h1><p class="muted sm" style="margin:2px 0 0">Chaque point est horodaté et localisé par le téléphone de l'agent.</p></div></div>
+  <div class="daybar"><button class="btn sm" id="rd-prev">‹</button><input class="input" type="date" id="rd-d" value="${ds}"><button class="btn sm" id="rd-next">›</button><button class="btn sm" id="rd-auj">Aujourd'hui</button></div>
+  ${l.length?`<div class="card">${l.map(x=>{const s=sites.find(y=>y.id===x.site_id)||{},tot=(s.points_ronde||[]).length,n=(x.points||[]).length;return `<div class="line click" data-rd="${x.id}"><div class="grow"><b class="n">${esc(s.nom||"Site")}</b><div class="muted xs">${esc(nomAg(AG_(x.agent_id)))} · ${hm(x.debut)} → ${x.fin?hm(x.fin):"en cours"}</div></div><span class="pill ${n>=tot&&tot?"p-green":"p-amber"}">${n} / ${tot} points</span></div>`}).join("")}</div>`:`<div class="empty">Aucune ronde ce jour-là.${sites.some(s=>(s.points_ronde||[]).length)?"":"<br>Ajoutez d'abord les points de ronde dans la fiche de chaque site."}</div>`}`;
+  const go=d=>{jourR=d;vRondes().catch(e=>toast(traduire(e.message),true))};
+  $("#rd-prev").onclick=()=>go(ajout(ds,-1));$("#rd-next").onclick=()=>go(ajout(ds,1));$("#rd-auj").onclick=()=>go(auj());$("#rd-d").onchange=e=>e.target.value&&go(e.target.value);
+  $("#main").querySelectorAll("[data-rd]").forEach(t=>t.onclick=()=>{const x=l.find(y=>y.id===t.dataset.rd),s=sites.find(y=>y.id===x.site_id)||{};
+    modal("Ronde · "+esc(s.nom||""),`<p class="muted sm" style="margin-top:0">${esc(nomAg(AG_(x.agent_id)))} · ${hm(x.debut)} → ${x.fin?hm(x.fin):"en cours"}</p>${(s.points_ronde||[]).map((n,i)=>{const f=(x.points||[]).find(p=>p.i===i),dist=f?distance(f.lat,f.lng,s.latitude,s.longitude):null;
+      return `<div class="pt-r ${f?"ok":""}"><span style="flex:1"><b>${esc(n)}</b><div class="muted xs">${f?"Vérifié à "+hm(f.heure)+(dist!=null?" · à "+dist+" m du site":f.lat==null?" · sans position":""):"Non vérifié"}</div></span>${f?"✓":"—"}</div>`}).join("")}`,`<button class="btn" id="rd-f">Fermer</button>`);$("#rd-f").onclick=closeModal});
+}
+
+/* ---------- factures ---------- */
+function enLettres(n){n=Math.round(+n||0);if(!n)return "zéro";
+  const U=["","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"],D=["","dix","vingt","trente","quarante","cinquante","soixante","soixante","quatre-vingt","quatre-vingt"];
+  const c99=x=>{if(x<20)return U[x];const d=Math.floor(x/10),u=x%10;if(d===7||d===9)return D[d]+(d===7&&u===1?" et ":"-")+U[10+u];return D[d]+(u===1&&d<8?" et un":u?"-"+U[u]:d===8?"s":"")};
+  const c999=x=>{const c=Math.floor(x/100),r=x%100;return (c?(c>1?U[c]+" cent"+(r?"":"s"):"cent")+(r?" ":""):"")+(r?c99(r):"")};
+  const parts=[[1e9,"milliard"],[1e6,"million"],[1e3,"mille"]];let out=[];
+  for(const [v,m] of parts){const q=Math.floor(n/v);if(q){out.push(m==="mille"?(q===1?"mille":c999(q).replace(/(cent|vingt)s$/,"$1")+" mille"):c999(q)+" "+m+(q>1?"s":""));n%=v}}
+  if(n)out.push(c999(n));return out.join(" ")}
+const etatF=f=>f.statut==="En attente"&&f.date_echeance&&f.date_echeance<auj()?["En retard","p-red"]:f.statut==="Payée"?["Payée","p-green"]:f.statut==="Annulée"?["Annulée","p-grey"]:["En attente","p-amber"];
+function factureHTML(f,site){const p=ag.parametres||{},c=site||{};
+  return `<div class="doc"><div class="doc-h">${ag.logo_url?`<img src="${esc(ag.logo_url)}" alt="">`:""}<div><b>${esc(ag.nom_agence)}</b><div class="muted xs">${esc([ag.raison_sociale,ag.adresse,ag.ville,ag.pays].filter(Boolean).join(" · "))}</div><div class="muted xs">${esc([ag.telephone,ag.email_dg,ag.identifiant_fiscal].filter(Boolean).join(" · "))}</div></div></div>
+  <div class="doc-t">FACTURE N° ${esc(f.numero)}</div>
+  <div class="row" style="justify-content:space-between;margin-bottom:14px"><dl style="margin:0"><dt>Date</dt><dd>${fdl(f.date_emission)}</dd><dt>Échéance</dt><dd>${fdl(f.date_echeance)}</dd><dt>Période</dt><dd>${esc(/^\d{4}-\d{2}$/.test(f.periode)?fmo(f.periode):f.periode)}</dd></dl>
+  <div class="encart" style="min-width:220px"><b>Facturé à</b><br>${esc(c.client_nom||c.nom||"Client")}${c.client_adresse?"<br>"+esc(c.client_adresse):c.adresse?"<br>"+esc(c.adresse):""}${c.client_identifiant?`<br><span class="xs">${esc(c.client_identifiant)}</span>`:""}<br><span class="xs muted">Site : ${esc(c.nom||"")}</span></div></div>
+  <table class="tbl"><thead><tr><th>Désignation</th><th class="r">Montant HT</th></tr></thead><tbody><tr><td>${esc(f.libelle||"Prestation de gardiennage")}</td><td class="r">${fm(f.montant_ht||f.montant)}</td></tr>
+  ${+f.taux_tva?`<tr><td>TVA ${String(+f.taux_tva).replace(".",",")} %</td><td class="r">${fm((+f.montant)-(+f.montant_ht))}</td></tr>`:""}</tbody></table>
+  <div class="tot"><span>TOTAL${+f.taux_tva?" TTC":""}</span><span>${fm(f.montant)}</span></div>
+  <p class="sm" style="margin-top:10px">Arrêtée la présente facture à la somme de <b>${esc(enLettres(f.montant))} ${esc(dev())}</b>.</p>
+  ${f.statut==="Payée"?`<p class="encart sm"><b>Facture acquittée</b>${f.paye_le?" le "+fdl(f.paye_le):""}.</p>`:`<p class="muted sm">Paiement à réception, au plus tard le ${fdl(f.date_echeance)}.</p>`}
+  ${p.mentions_facture?`<p class="muted xs" style="white-space:pre-wrap">${esc(p.mentions_facture)}</p>`:""}<p class="muted xs">Facture générée par le logiciel de gestion de ${esc(ag.nom_agence)}.</p></div>`}
+function voirFacture(f,site){modal("Facture "+esc(f.numero),factureHTML(f,site),`<button class="btn" id="vf-no">Fermer</button><button class="btn pri" id="vf-pr">Imprimer / PDF</button>`);$("#vf-no").onclick=closeModal;$("#vf-pr").onclick=()=>window.print()}
+let moisF=null;
+async function prochainNumFacture(){const pre="FAC-"+auj().slice(0,4)+"-",l=must(await sb.from("factures").select("numero").like("numero",pre+"%"));return {pre,n:l.reduce((m,x)=>Math.max(m,+(x.numero.split("-").pop())||0),0)}}
+async function vFactures(){moisF=moisF||auj().slice(0,7);const ym=moisF,p=ag.parametres||{};
+  const l=must(await sb.from("factures").select("*").order("numero",{ascending:false}).limit(400)),duMois=l.filter(f=>f.periode===ym),aFaire=sites.filter(x=>x.actif&&+x.montant_contrat>0&&!duMois.some(f=>f.site_id===x.id&&f.statut!=="Annulée"));
+  const som=a=>a.reduce((t,f)=>t+(+f.montant||0),0),ouvertes=l.filter(f=>f.statut==="En attente"),retard=ouvertes.filter(f=>etatF(f)[0]==="En retard");
+  $("#main").innerHTML=`<div class="head"><div><h1>Factures</h1><p class="muted sm" style="margin:2px 0 0">Une facture par site et par mois, à partir du montant du contrat. TVA : ${String(+p.tva||0).replace(".",",")} %${moi.role==="dg"?" (modifiable dans Réglages)":""}.</p></div><div class="actions"><input class="input" type="month" id="fa-m" value="${ym}" style="width:auto"><button class="btn" id="fa-new">+ Facture libre</button><button class="btn pri" id="fa-gen" ${aFaire.length?"":"disabled"}>Générer ${aFaire.length} facture(s)</button></div></div>
+  <div class="tiles"><div class="tile"><b>${fm(som(duMois.filter(f=>f.statut!=="Annulée")))}</b><span class="muted sm">Facturé en ${esc(fmo(ym))}</span></div><div class="tile"><b class="ok-t">${fm(som(duMois.filter(f=>f.statut==="Payée")))}</b><span class="muted sm">Encaissé sur ce mois</span></div><div class="tile"><b>${fm(som(ouvertes))}</b><span class="muted sm">Reste à encaisser (tous mois)</span></div><div class="tile"><b class="${retard.length?"ko-t":""}">${retard.length}</b><span class="muted sm">Factures en retard</span></div></div>
+  ${!sites.some(x=>+x.montant_contrat>0)?`<div class="idbox sm">Renseignez le « montant mensuel du contrat » dans la fiche de chaque site pour générer les factures automatiquement.</div>`:""}
+  ${l.length?`<div class="card">${l.filter(f=>f.periode===ym||f.statut==="En attente").map(f=>{const e=etatF(f);return `<div class="line"><div class="grow click" data-vf="${f.id}" style="cursor:pointer"><b class="n">${esc(f.numero)}</b> · ${esc(siteNom(f.site_id))}<div class="muted xs">${esc(/^\d{4}-\d{2}$/.test(f.periode)?fmo(f.periode):f.periode)} · émise le ${fd(f.date_emission)} · échéance ${fd(f.date_echeance)}</div></div><b>${fm(f.montant)}</b><span class="pill ${e[1]}">${e[0]}</span>${f.statut==="En attente"?`<button class="btn sm pri" data-pay="${f.id}">Payée</button><button class="btn sm" data-ann="${f.id}">Annuler</button>`:""}</div>`}).join("")||'<p class="muted sm" style="margin:0">Aucune facture pour ce mois.</p>'}</div>`:`<div class="empty">Aucune facture pour le moment.</div>`}`;
+  $("#fa-m").onchange=e=>{if(e.target.value){moisF=e.target.value;vFactures().catch(x=>toast(traduire(x.message),true))}};
+  const creer=async lignes=>{let {pre,n}=await prochainNumFacture();const tva=+p.tva||0,delai=+p.delai_paiement_jours||30;
+    for(const x of lignes){let r,essais=0;do{n++;const ht=Math.round(+x.ht);r=await sb.from("factures").insert({site_id:x.site_id,numero:pre+String(n).padStart(3,"0"),periode:x.periode,date_emission:auj(),date_echeance:ajout(auj(),delai),montant_ht:ht,taux_tva:tva,montant:Math.round(ht*(1+tva/100)),libelle:x.libelle,statut:"En attente"});essais++}while(r.error&&/factures_agence_id_numero_key/.test(r.error.message)&&essais<4);must(r)}};
+  $("#fa-gen").onclick=()=>confirmerSimple("Générer les factures de "+esc(fmo(ym))+" ?",aFaire.map(x=>esc(x.nom)+" · "+fm(x.montant_contrat)).join("<br>"),"Générer",async()=>{await creer(aFaire.map(x=>({site_id:x.id,periode:ym,ht:x.montant_contrat,libelle:"Prestation de gardiennage · "+fmo(ym)})));toast("Factures générées");await vFactures()});
+  $("#fa-new").onclick=()=>{if(!sites.length)return toast("Créez d'abord un site.",true);
+    modal("Facture libre",`<div class="field"><label class="f">Site / client</label><select class="input" id="fl-s">${sites.map(x=>`<option value="${x.id}">${esc(x.client_nom||x.nom)} · ${esc(x.nom)}</option>`).join("")}</select></div><div class="field"><label class="f">Désignation</label><input class="input" id="fl-l" placeholder="Ex. Renfort de 2 agents pour un événement"></div><div class="row"><div class="field"><label class="f">Montant HT (${dev()})</label><input class="input" type="number" min="1" id="fl-m"></div><div class="field"><label class="f">Période</label><input class="input" type="month" id="fl-p" value="${ym}"></div></div>`,`<button class="btn" id="fl-no">Annuler</button><button class="btn pri" id="fl-ok">Créer la facture</button>`);
+    $("#fl-no").onclick=closeModal;$("#fl-ok").onclick=()=>busy($("#fl-ok"),async()=>{const m=+$("#fl-m").value,lb=$("#fl-l").value.trim();if(!lb){$("#fl-l").focus();throw new Error("Indiquez la désignation.")}if(!(m>0))throw new Error("Indiquez le montant.");
+      await creer([{site_id:$("#fl-s").value,periode:$("#fl-p").value||ym,ht:m,libelle:lb}]);closeModal();toast("Facture créée");await vFactures()})};
+  const Q=(sel,f)=>$("#main").querySelectorAll(sel).forEach(b=>b.onclick=()=>f(b));
+  Q("[data-vf]",b=>{const f=l.find(x=>x.id===b.dataset.vf);voirFacture(f,sites.find(x=>x.id===f.site_id))});
+  Q("[data-pay]",b=>busy(b,async()=>{must(await sb.from("factures").update({statut:"Payée",paye_le:auj()}).eq("id",b.dataset.pay));toast("Facture marquée payée");await vFactures()}));
+  Q("[data-ann]",b=>confirmerSimple("Annuler cette facture ?","Elle restera dans l'historique avec la mention « Annulée ». Son numéro ne sera pas réutilisé.","Annuler la facture",async()=>{must(await sb.from("factures").update({statut:"Annulée"}).eq("id",b.dataset.ann));toast("Facture annulée");await vFactures()}));
+}
+
+/* ---------- demandes des clients ---------- */
+async function vDemandesClients(){
+  const l=must(await sb.from("demandes_clients").select("*").order("created_at",{ascending:false}).limit(100)),ST={Nouvelle:"p-red","En cours":"p-amber",Traitée:"p-green"};
+  $("#main").innerHTML=`<div class="head"><div><h1>Demandes clients</h1><p class="muted sm" style="margin:2px 0 0">Renforts, remplacements et réclamations envoyés par vos clients depuis leur espace. Créez un compte « Client » dans « Comptes » pour leur donner accès.</p></div></div>
+  ${l.length?l.map(x=>`<div class="card"><div class="actions" style="justify-content:space-between"><div><b>${esc(x.type)}</b> · ${esc(siteNom(x.site_id))}<div class="muted xs">${fdt(x.created_at)}${x.objet?" · "+esc(x.objet):""}</div></div><span class="pill ${ST[x.statut]||"p-grey"}">${esc(x.statut)}</span></div><p style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(x.message||"")}</p>
+  <div class="field"><label class="f">Réponse au client</label><textarea class="input" data-rp="${x.id}">${esc(x.reponse)}</textarea></div><div class="actions"><select class="input" data-st="${x.id}" style="width:auto">${["Nouvelle","En cours","Traitée"].map(k=>`<option ${k===x.statut?"selected":""}>${k}</option>`).join("")}</select><button class="btn sm pri" data-sv="${x.id}">Enregistrer</button></div></div>`).join(""):`<div class="empty">Aucune demande de client pour le moment.</div>`}`;
+  $("#main").querySelectorAll("[data-sv]").forEach(b=>b.onclick=()=>busy(b,async()=>{const id=b.dataset.sv;must(await sb.from("demandes_clients").update({reponse:$(`[data-rp="${id}"]`).value.trim()||null,statut:$(`[data-st="${id}"]`).value}).eq("id",id));toast("Demande mise à jour");await vDemandesClients();verifierAlertes().catch(()=>{})}));
+}
+
+/* ---------- rapports ---------- */
+let moisR=null;
+async function donneesMois(ym){const m1=ym+"-01",m2=finMois(ym);
+  const [P,po,inc,ro,docs]=await Promise.all([chargerPlanning(m1,m2),sb.from("pointages").select("*").gte("date_service",m1).lte("date_service",m2).then(must),sb.from("incidents").select("*").gte("survenu_le",m1+"T00:00:00").lte("survenu_le",m2+"T23:59:59").then(must),sb.from("rondes").select("*").gte("date_service",m1).lte("date_service",m2).then(must),sb.from("documents_rh").select("type,agent_id,created_at").gte("created_at",m1+"T00:00:00").lte("created_at",m2+"T23:59:59").then(must)]);
+  const jours=[];for(let d=m1;d<=m2&&d<=auj();d=ajout(d,1))jours.push(d);
+  const att=jours.flatMap(d=>affectations(d,P,agents).map(a=>({...a,ds:d})));
+  return {P,po,inc,ro,docs,att,jours}}
+function classement(D){const sanc=["Avertissement","Blâme","Mise à pied"];
+  return agents.filter(a=>a.statut==="Actif").map(a=>{const pts=D.po.filter(p=>p.agent_id===a.id),ret=pts.filter(p=>(new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste))/6e4>TOL()).length;
+    const prevus=D.att.filter(x=>x.agent_id===a.id),manques=prevus.filter(x=>!D.po.some(p=>p.agent_id===a.id&&p.date_service===x.ds&&p.poste===x.poste)&&finPoste(x.ds,x.poste)<new Date()).length;
+    const absNJ=D.P.abs.filter(x=>x.agent_id===a.id&&!x.justifiee).length,s=D.docs.filter(d=>d.agent_id===a.id&&sanc.includes(d.type)).length,r=D.ro.filter(x=>x.agent_id===a.id&&x.fin).length,i=D.inc.filter(x=>x.agent_id===a.id).length;
+    const score=Math.max(0,pts.length*3+r*2+i-ret*4-manques*8-absNJ*10-s*15);
+    return {a,services:pts.length,prevus:prevus.length,ret,manques,absNJ,s,r,i,score,ponct:pts.length?Math.round(100*(pts.length-ret)/pts.length):0}}).sort((x,y)=>y.score-x.score||y.ponct-x.ponct)}
+async function vRapports(){moisR=moisR||auj().slice(0,7);const ym=moisR,D=await donneesMois(ym),C=classement(D),elig=C.filter(x=>x.services>=5&&!x.s&&!x.absNJ);
+  const parSite=sites.map(s=>{const at=D.att.filter(x=>x.site_id===s.id&&finPoste(x.ds,x.poste)<new Date()),ok=at.filter(x=>D.po.some(p=>p.agent_id===x.agent_id&&p.date_service===x.ds&&p.poste===x.poste)).length;
+    return {s,att:at.length,ok,taux:at.length?Math.round(100*ok/at.length):null,inc:D.inc.filter(x=>x.site_id===s.id).length,ro:D.ro.filter(x=>x.site_id===s.id).length}});
+  const totAtt=parSite.reduce((t,x)=>t+x.att,0),totOk=parSite.reduce((t,x)=>t+x.ok,0),ret=D.po.filter(p=>(new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste))/6e4>TOL()).length;
+  $("#main").innerHTML=`<div class="head"><div><h1>Rapport · ${esc(fmo(ym))}</h1><p class="muted sm" style="margin:2px 0 0">Calculé automatiquement à partir du planning, des pointages, des rondes, des incidents et des documents RH.</p></div><div class="actions"><input class="input" type="month" id="rp-m" value="${ym}" style="width:auto"><button class="btn" id="rp-csv">Exporter (Excel)</button></div></div>
+  <div class="tiles"><div class="tile"><b>${totAtt?Math.round(100*totOk/totAtt)+" %":"—"}</b><span class="muted sm">Services assurés (${totOk}/${totAtt})</span></div><div class="tile"><b>${D.po.length}</b><span class="muted sm">Pointages</span></div><div class="tile"><b class="${ret?"wa-t":""}">${ret}</b><span class="muted sm">Retards</span></div><div class="tile"><b>${D.inc.length}</b><span class="muted sm">Incidents</span></div><div class="tile"><b>${D.ro.length}</b><span class="muted sm">Rondes</span></div></div>
+  <div class="card"><h2>🏆 Meilleur agent du mois</h2>${elig.length?`<div class="line"><span class="av" style="width:52px;height:52px;font-size:18px">1</span><div class="grow"><b style="font-size:17px">${esc(nomAg(elig[0].a))}</b><div class="muted sm">${esc(elig[0].a.grade)} · ${esc(siteNom(elig[0].a.site_id))} · ${elig[0].services} services · ponctualité ${elig[0].ponct} % · ${elig[0].r} ronde(s)</div></div><button class="btn pri" id="rp-cert">Certificat</button></div>${elig.slice(1,3).map((x,i)=>`<div class="line"><span class="av">${i+2}</span><div class="grow"><b>${esc(nomAg(x.a))}</b><div class="muted xs">${x.services} services · ponctualité ${x.ponct} %</div></div></div>`).join("")}`:'<p class="muted sm" style="margin:0">Pas encore assez de pointages ce mois-ci (5 services minimum, sans absence injustifiée ni sanction).</p>'}
+  <p class="muted xs" style="margin:10px 0 0">Calcul : 3 points par service pointé, 2 par ronde terminée, 1 par incident signalé ; retrait de 4 points par retard, 8 par service manqué, 10 par absence injustifiée, 15 par sanction.</p></div>
+  <div class="card scroll"><h2>Par site</h2><table class="tbl"><thead><tr><th>Site</th><th class="r">Services assurés</th><th class="r">Incidents</th><th class="r">Rondes</th><th></th></tr></thead><tbody>${parSite.map(x=>`<tr><td><b>${esc(x.s.nom)}</b></td><td class="r ${x.taux!=null&&x.taux<90?"ko-t":""}">${x.taux==null?"—":x.taux+" % ("+x.ok+"/"+x.att+")"}</td><td class="r">${x.inc}</td><td class="r">${x.ro}</td><td class="r"><button class="btn sm" data-rs="${x.s.id}">Rapport client</button></td></tr>`).join("")}</tbody></table></div>
+  <div class="card scroll"><h2>Par agent</h2><table class="tbl"><thead><tr><th>Agent</th><th class="r">Services</th><th class="r">Retards</th><th class="r">Manqués</th><th class="r">Abs. injust.</th><th class="r">Rondes</th><th class="r">Score</th></tr></thead><tbody>${C.map(x=>`<tr><td><b>${esc(nomAg(x.a))}</b><div class="muted xs">${esc(x.a.matricule)}</div></td><td class="r">${x.services}/${x.prevus}</td><td class="r">${x.ret}</td><td class="r ${x.manques?"ko-t":""}">${x.manques}</td><td class="r">${x.absNJ}</td><td class="r">${x.r}</td><td class="r"><b>${x.score}</b></td></tr>`).join("")}</tbody></table></div>`;
+  $("#rp-m").onchange=e=>{if(e.target.value){moisR=e.target.value;vRapports().catch(x=>toast(traduire(x.message),true))}};
+  $("#rp-csv").onclick=()=>{const c=v=>'"'+String(v??"").replace(/"/g,'""')+'"',L=[["Matricule","Agent","Grade","Site","Services pointés","Services prévus","Retards","Manqués","Absences injustifiées","Sanctions","Rondes","Incidents signalés","Score"]].concat(C.map(x=>[x.a.matricule,nomAg(x.a),x.a.grade,siteNom(x.a.site_id),x.services,x.prevus,x.ret,x.manques,x.absNJ,x.s,x.r,x.i,x.score]));
+    const u=URL.createObjectURL(new Blob(["﻿"+L.map(r=>r.map(c).join(";")).join("\r\n")],{type:"text/csv;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download="rapport-"+ag.slug+"-"+ym+".csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)};
+  const ce=$("#rp-cert");if(ce)ce.onclick=()=>{const x=elig[0];modal("Certificat",`<div class="doc" style="text-align:center;padding:20px 10px">${ag.logo_url?`<img src="${esc(ag.logo_url)}" alt="" style="width:80px;height:80px;object-fit:contain">`:""}<div class="doc-t" style="font-size:22px;margin-top:14px">CERTIFICAT</div><p style="font-size:16px">${esc(ag.nom_agence)} décerne le titre de</p><p style="font-size:24px;font-weight:700;color:var(--p);margin:10px 0">Meilleur agent du mois</p><p style="font-size:16px">à <b>${esc(nomAg(x.a))}</b>, ${esc(x.a.grade.toLowerCase())}</p><p>pour ${esc(fmo(ym))}, en reconnaissance de sa ponctualité (${x.ponct} %), de sa présence (${x.services} services) et de son sérieux.</p><p style="margin-top:30px">Fait ${ag.ville?"à "+esc(ag.ville)+", ":""}le ${fdl(auj())}</p><p><b>La Direction</b></p></div>`,`<button class="btn" id="ct-no">Fermer</button><button class="btn pri" id="ct-pr">Imprimer / PDF</button>`);$("#ct-no").onclick=closeModal;$("#ct-pr").onclick=()=>window.print()};
+  $("#main").querySelectorAll("[data-rs]").forEach(b=>b.onclick=()=>{const x=parSite.find(y=>y.s.id===b.dataset.rs),inc=D.inc.filter(i=>i.site_id===x.s.id&&i.visible_client);
+    modal("Rapport client · "+esc(x.s.nom),`<div class="doc"><div class="doc-h">${ag.logo_url?`<img src="${esc(ag.logo_url)}" alt="">`:""}<div><b>${esc(ag.nom_agence)}</b><div class="muted xs">${esc([ag.raison_sociale,ag.ville].filter(Boolean).join(" · "))}</div></div></div><div class="doc-t">RAPPORT MENSUEL D'ACTIVITÉ · ${esc(fmo(ym).toUpperCase())}</div>
+    <dl><dt>Client</dt><dd>${esc(x.s.client_nom||x.s.nom)}</dd><dt>Site</dt><dd>${esc(x.s.nom)}</dd></dl>
+    <table class="tbl"><tbody><tr><td>Services assurés</td><td class="r"><b>${x.taux==null?"—":x.taux+" %"}</b> (${x.ok} sur ${x.att})</td></tr><tr><td>Rondes effectuées</td><td class="r">${x.ro}</td></tr><tr><td>Incidents</td><td class="r">${inc.length}</td></tr></tbody></table>
+    ${inc.length?`<h4>Incidents du mois</h4>${inc.map(i=>`<p class="sm"><b>${fd(i.survenu_le)} · ${esc(i.type)}</b> (${esc(i.gravite)}) : ${esc(i.description||"")}</p>`).join("")}`:"<p>Aucun incident à signaler ce mois-ci.</p>"}
+    <p class="muted xs" style="margin-top:16px">Rapport généré par le logiciel de gestion de ${esc(ag.nom_agence)}.</p></div>`,`<button class="btn" id="rc-no">Fermer</button><button class="btn pri" id="rc-pr">Imprimer / PDF</button>`);$("#rc-no").onclick=closeModal;$("#rc-pr").onclick=()=>window.print()});
+}
+
+/* ---------- espace client ---------- */
+let monSite=null;
+async function chargerMonSite(){if(!moi.site_id)throw new Error("Votre compte n'est relié à aucun site. Contactez votre prestataire.");
+  monSite=must(await sb.from("sites").select("*").eq("id",moi.site_id).maybeSingle());if(!monSite)throw new Error("Site introuvable.");sites=[monSite];return monSite}
+async function vClient(){await chargerMonSite();const ds=auj();
+  const [pr,ro,inc,fa]=await Promise.all([sb.rpc("client_presences",{p_date:ds}).then(must),sb.from("rondes").select("*").eq("date_service",ds).then(must),sb.from("incidents").select("*").order("survenu_le",{ascending:false}).limit(5).then(must),sb.from("factures").select("*").eq("statut","En attente").then(must)]);
+  $("#main").innerHTML=`<div class="head"><div><h1>${esc(monSite.nom)}</h1><p class="muted sm" style="margin:2px 0 0">Votre site surveillé par ${esc(ag.nom_agence)} · ${esc(fjour(ds))}</p></div></div>
+  <div class="tiles"><div class="tile"><b class="ok-t">${pr.filter(x=>!x.depart).length}</b><span class="muted sm">Agent(s) en poste</span></div><div class="tile"><b>${ro.length}</b><span class="muted sm">Ronde(s) aujourd'hui</span></div><div class="tile"><b>${fa.length}</b><span class="muted sm">Facture(s) à régler</span></div></div>
+  <div class="card"><h2>Présence aujourd'hui</h2>${pr.map(x=>`<div class="line"><div class="grow"><b>${esc(x.agent)}</b><div class="muted xs">${esc(x.grade)} · poste de ${esc(POSTE(x.poste).libelle.toLowerCase())}</div></div><span class="sm">arrivé à ${hm(x.arrivee)}${x.depart?" · parti à "+hm(x.depart):""}</span><span class="pill ${x.depart?"p-grey":"p-green"}">${x.depart?"Parti":"En poste"}</span></div>`).join("")||'<p class="muted sm" style="margin:0">Aucun pointage pour le moment aujourd\'hui.</p>'}</div>
+  <div class="card"><h2>Derniers incidents</h2>${inc.map(x=>`<div class="line"><div class="grow"><b>${esc(x.type)}</b> <span class="pill ${GRAV[x.gravite]||"p-grey"}">${esc(x.gravite)}</span><div class="muted xs">${fdt(x.survenu_le)}</div><div class="sm">${esc(x.description||"")}</div></div></div>`).join("")||'<p class="muted sm" style="margin:0">Aucun incident.</p>'}</div>`;
+}
+async function vClientIncidents(){await chargerMonSite();const l=must(await sb.from("incidents").select("*").order("survenu_le",{ascending:false}).limit(100));
+  $("#main").innerHTML=`<div class="head"><div><h1>Incidents</h1><p class="muted sm" style="margin:2px 0 0">Les incidents signalés sur votre site.</p></div></div>${l.length?`<div class="card">${l.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><b>${esc(x.type)}</b> <span class="pill ${GRAV[x.gravite]||"p-grey"}">${esc(x.gravite)}</span><div class="muted xs">${fdt(x.survenu_le)} · ${esc(x.statut)}</div><div class="sm" style="white-space:pre-wrap">${esc(x.description||"")}</div></div></div>`).join("")}</div>`:`<div class="empty">Aucun incident sur votre site.</div>`}`}
+async function vClientFactures(){await chargerMonSite();const l=must(await sb.from("factures").select("*").order("date_emission",{ascending:false}).limit(60));
+  $("#main").innerHTML=`<div class="head"><div><h1>Factures</h1></div></div>${l.length?`<div class="card">${l.filter(f=>f.statut!=="Annulée").map(f=>{const e=etatF(f);return `<div class="line click" data-vf="${f.id}"><div class="grow"><b class="n">${esc(f.numero)}</b><div class="muted xs">${esc(/^\d{4}-\d{2}$/.test(f.periode)?fmo(f.periode):f.periode)} · échéance ${fd(f.date_echeance)}</div></div><b>${fm(f.montant)}</b><span class="pill ${e[1]}">${e[0]}</span></div>`}).join("")}</div>`:`<div class="empty">Aucune facture pour le moment.</div>`}`;
+  $("#main").querySelectorAll("[data-vf]").forEach(t=>t.onclick=()=>voirFacture(l.find(f=>f.id===t.dataset.vf),monSite))}
+async function vClientDemandes(){await chargerMonSite();const l=must(await sb.from("demandes_clients").select("*").order("created_at",{ascending:false}).limit(50));
+  $("#main").innerHTML=`<div class="head"><div><h1>Demandes</h1><p class="muted sm" style="margin:2px 0 0">Un renfort, un remplacement, une réclamation ? Écrivez-nous ici.</p></div></div>
+  <div class="card"><div class="row"><div class="field"><label class="f">Type de demande</label><select class="input" id="cd-t"><option>Renfort ponctuel</option><option>Remplacement d'un agent</option><option>Réclamation</option><option>Autre</option></select></div><div class="field"><label class="f">Objet</label><input class="input" id="cd-o"></div></div><div class="field"><label class="f">Message</label><textarea class="input" id="cd-m"></textarea></div><button class="btn pri" id="cd-ok">Envoyer</button></div>
+  ${l.length?`<div class="card"><h2>Vos demandes</h2>${l.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><b>${esc(x.type)}</b>${x.objet?" · "+esc(x.objet):""}<div class="muted xs">${fdt(x.created_at)}</div><div class="sm" style="white-space:pre-wrap">${esc(x.message||"")}</div>${x.reponse?`<div class="idbox" style="margin:8px 0 0"><b>Réponse :</b> ${esc(x.reponse)}</div>`:""}</div><span class="pill ${x.statut==="Traitée"?"p-green":x.statut==="En cours"?"p-main":"p-amber"}">${esc(x.statut)}</span></div>`).join("")}</div>`:""}`;
+  $("#cd-ok").onclick=()=>busy($("#cd-ok"),async()=>{const m=$("#cd-m").value.trim();if(m.length<3){$("#cd-m").focus();throw new Error("Écrivez votre message.")}
+    must(await sb.from("demandes_clients").insert({site_id:monSite.id,type:$("#cd-t").value,objet:$("#cd-o").value.trim()||null,message:m,statut:"Nouvelle"}));toast("Demande envoyée");await vClientDemandes()})}
 
 /* ---------- journal des erreurs + démarrage ---------- */
 let nbErr=0;
