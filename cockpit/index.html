@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Cockpit · SACKO CONCEPT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf7f1;--card:#fff;--ink:#2a2723;--muted:#7a736a;--line:#e9e2d6;--gold:#b08d4a;--gold-d:#8f6f33;--gold-l:#f4ecdc;--green:#2e7d55;--green-l:#e4f3ea;--red:#b83a3a;--red-l:#fbe9e9;--amber:#a86a12;--amber-l:#fbf0d9;--blue:#2c5fa8;--blue-l:#e6eefa;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Playfair Display",Georgia,serif;margin:0;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+.hide{display:none!important}
+.muted{color:var(--muted)}.sm{font-size:13px}.xs{font-size:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--gold)}
+.btn.pri{background:var(--gold);border-color:var(--gold);color:#fff}.btn.pri:hover{background:var(--gold-d)}
+.btn.danger{color:var(--red)}.btn.danger:hover{border-color:var(--red)}
+.btn.sm{padding:6px 10px;font-size:13px}
+.btn:disabled{opacity:.55;cursor:wait}
+.input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;outline:none}
+.input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-l)}
+textarea.input{min-height:84px;resize:vertical}
+label.f{display:block;font-size:13px;font-weight:600;margin:0 0 5px}
+.field{margin-bottom:12px;min-width:0}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>.field{flex:1 1 160px}
+.pill{display:inline-block;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}
+.p-green{background:var(--green-l);color:var(--green)}.p-red{background:var(--red-l);color:var(--red)}.p-amber{background:var(--amber-l);color:var(--amber)}.p-blue{background:var(--blue-l);color:var(--blue)}.p-grey{background:#efeae1;color:var(--muted)}
+/* connexion */
+#login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:34px 30px;width:100%;max-width:400px;box-shadow:0 18px 50px -30px rgba(80,60,20,.35)}
+.mono{width:54px;height:54px;border-radius:14px;background:var(--gold);color:#fff;display:grid;place-items:center;font-family:"Playfair Display",serif;font-weight:700;font-size:22px;margin-bottom:16px}
+.err{background:var(--red-l);color:var(--red);border-radius:10px;padding:9px 12px;font-size:13px;margin-bottom:12px}
+/* application */
+header.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.top-in{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;margin-right:auto}
+.brand .mono{width:36px;height:36px;font-size:15px;border-radius:10px;margin:0}
+nav.tabs{display:flex;gap:4px;background:var(--bg);border-radius:12px;padding:4px}
+nav.tabs button{border:0;background:none;padding:7px 14px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted)}
+nav.tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+main{max-width:1180px;margin:0 auto;padding:24px 20px 70px}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.head h1{font-size:28px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.tile b{display:block;font-size:26px;font-family:"Playfair Display",serif}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.ag-top{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.logo{width:46px;height:46px;border-radius:12px;background:var(--gold-l);display:grid;place-items:center;font-weight:700;color:var(--gold-d);overflow:hidden;flex:none}
+.logo img{width:100%;height:100%;object-fit:contain}
+.ag-name{font-weight:700;font-size:16px;line-height:1.25}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;margin:10px 0 14px}
+.kv span:nth-child(odd){color:var(--muted)}
+.kv span:nth-child(even){text-align:right;font-weight:500}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:var(--r);padding:40px 20px;text-align:center;color:var(--muted)}
+/* fenêtre */
+#modal{position:fixed;inset:0;background:rgba(42,39,35,.42);display:none;align-items:flex-start;justify-content:center;padding:24px 14px;overflow-y:auto;z-index:20}
+#modal.on{display:flex}
+.box{background:#fff;border-radius:18px;width:100%;max-width:640px;box-shadow:0 30px 80px -30px rgba(0,0,0,.4)}
+.box.wide{max-width:820px}
+.box-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.box-h h2{font-size:20px}
+.box-b{padding:18px 20px}
+.box-f{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--line);flex-wrap:wrap}
+.x{border:1px solid var(--line);background:#fff;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:18px;line-height:1}
+.sec{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--gold-d);margin:20px 0 10px;padding-top:16px;border-top:1px solid var(--line)}
+.sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.checks label{display:flex;align-items:center;gap:8px;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer}
+.checks input{accent-color:var(--gold);width:16px;height:16px}
+.acc{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:8px}
+.acc .grow{flex:1 1 160px;min-width:0}
+.ticket{border-left:4px solid var(--gold)}
+.ticket p{margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+pre.log{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:var(--bg);border-radius:8px;padding:8px 10px;margin:8px 0 0}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;max-width:90vw}
+#toast.on{opacity:1}#toast.bad{background:var(--red)}
+@media(max-width:560px){.head h1{font-size:23px}.grid{grid-template-columns:1fr}.brand span{display:none}}
+</style>
+</head>
+<body>
+
+<section id="login">
+  <form class="login-card" id="login-form">
+    <div class="mono">SC</div>
+    <h1 style="font-size:26px">Cockpit</h1>
+    <p class="muted sm" style="margin:4px 0 20px">Espace réservé à l'administration SACKO CONCEPT.</p>
+    <div class="err hide" id="login-err"></div>
+    <div class="field"><label class="f" for="l-email">Adresse e-mail</label><input class="input" id="l-email" type="email" autocomplete="username" required></div>
+    <div class="field"><label class="f" for="l-pass">Mot de passe</label><input class="input" id="l-pass" type="password" autocomplete="current-password" required></div>
+    <button class="btn pri" id="l-btn" style="width:100%;padding:12px">Se connecter</button>
+  </form>
+</section>
+
+<div id="app" class="hide">
+  <header class="top"><div class="top-in">
+    <div class="brand"><div class="mono">SC</div><span>Cockpit SACKO CONCEPT</span></div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="agences" class="on">Agences</button>
+      <button data-tab="support">Support <span id="nb-tickets"></span></button>
+      <button data-tab="erreurs">Erreurs</button>
+    </nav>
+    <button class="btn sm" id="logout">Déconnexion</button>
+  </div></header>
+  <main id="main"></main>
+</div>
+
+<div id="modal"><div class="box" id="box"></div></div>
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL="https://bwiihwrdgnaqfbizudpx.supabase.co";
+const SB_KEY="sb_publishable_8u8N-9EmQBMgvftQDSPpKA_97yA5AT6";
+const sb=supabase.createClient(SB_URL,SB_KEY);
+
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fd=d=>d?new Date(d).toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"}):"—";
+const fdt=d=>d?new Date(d).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"—";
+const isoDay=d=>{const x=new Date(d);return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0")};
+const slugify=t=>t.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,40);
+let tT;function toast(m,bad){const t=$("#toast");t.textContent=m;t.className="on"+(bad?" bad":"");clearTimeout(tT);tT=setTimeout(()=>t.className="",3200)}
+function modal(title,body,foot,wide){$("#box").className="box"+(wide?" wide":"");$("#box").innerHTML=`<div class="box-h"><h2>${title}</h2><button class="x" id="m-x" aria-label="Fermer">×</button></div><div class="box-b">${body}</div>${foot?`<div class="box-f">${foot}</div>`:""}`;$("#modal").classList.add("on");$("#m-x").onclick=closeModal;$("#modal").scrollTop=0}
+function closeModal(){$("#modal").classList.remove("on");$("#box").innerHTML=""}
+async function busy(btn,fn){if(btn)btn.disabled=true;try{await fn()}catch(e){toast(e.message||"Une erreur est survenue",true)}finally{if(btn)btn.disabled=false}}
+const must=r=>{if(r.error)throw new Error(r.error.message);return r.data};
+
+const OFFRES={essai:"Essai gratuit",mensuel:"Mensuel",annuel:"Annuel",licence:"Licence"};
+const ROLES={dg:"Directeur général",rh:"Ressources humaines",superviseur:"Superviseur",agent:"Agent",client:"Client"};
+const MODULES={planning:"Planning",pointage:"Pointage",conges:"Congés et absences",documents:"Documents RH",messagerie:"Messagerie",paie:"Paie",materiel:"Matériel et stock",facturation:"Facturation",rapports:"Rapports",main_courante:"Main courante",rondes:"Rondes",supervision:"Supervision",espace_client:"Espace client",sos:"Alerte SOS"};
+
+let agences=[],tab="agences";
+function etat(a){
+  if(a.statut_abonnement!=="actif")return{k:"suspendu",l:"Suspendu",c:"p-red"};
+  const j=Math.ceil((new Date(a.date_expiration)-Date.now())/864e5);
+  if(j<=0)return{k:"expire",l:"Expiré",c:"p-red"};
+  if(j<=7)return{k:"bientot",l:"Expire dans "+j+" j",c:"p-amber"};
+  return{k:"actif",l:"Actif",c:"p-green"};
+}
+
+/* ---------- connexion ---------- */
+function showLogin(msg){$("#app").classList.add("hide");$("#login").classList.remove("hide");const e=$("#login-err");e.textContent=msg||"";e.classList.toggle("hide",!msg)}
+$("#login-form").onsubmit=ev=>{ev.preventDefault();busy($("#l-btn"),async()=>{
+  const {error}=await sb.auth.signInWithPassword({email:$("#l-email").value.trim(),password:$("#l-pass").value});
+  if(error)return showLogin("E-mail ou mot de passe incorrect.");
+  $("#l-pass").value="";await entrer();
+})};
+async function entrer(){
+  const r=await sb.rpc("contexte");
+  if(r.error||!r.data||!r.data.connecte||r.data.profil.role!=="super_admin"||!r.data.acces_ouvert){await sb.auth.signOut();return showLogin("Cet espace est réservé à l'administration SACKO CONCEPT.")}
+  $("#login").classList.add("hide");$("#app").classList.remove("hide");await ouvrir("agences");
+}
+$("#logout").onclick=async()=>{await sb.auth.signOut();showLogin()};
+$("#tabs").onclick=e=>{const b=e.target.closest("button[data-tab]");if(b)ouvrir(b.dataset.tab)};
+async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
+  $("#main").innerHTML='<p class="muted">Chargement…</p>';
+  try{await({agences:vAgences,support:vSupport,erreurs:vErreurs}[t])()}catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(e.message)}</div>`}}
+
+/* ---------- agences ---------- */
+async function vAgences(){
+  agences=must(await sb.rpc("cockpit_resume"))||[];
+  const n=k=>agences.filter(a=>k.includes(etat(a).k)).length;
+  const tk=agences.reduce((s,a)=>s+(+a.tickets_ouverts||0),0);$("#nb-tickets").textContent=tk?"("+tk+")":"";
+  $("#main").innerHTML=`<div class="head"><div><h1>Agences clientes</h1><p class="muted sm" style="margin:2px 0 0">Créez une agence, gérez son abonnement et coupez l'accès en un clic.</p></div><button class="btn pri" id="new-ag">+ Nouvelle agence</button></div>
+  <div class="tiles"><div class="tile"><b>${agences.length}</b><span class="muted sm">Agences</span></div><div class="tile"><b>${n(["actif","bientot"])}</b><span class="muted sm">Accès ouvert</span></div><div class="tile"><b>${agences.filter(a=>a.type_offre==="essai").length}</b><span class="muted sm">En essai</span></div><div class="tile"><b>${n(["suspendu","expire"])}</b><span class="muted sm">Accès coupé</span></div><div class="tile"><b>${agences.reduce((s,a)=>s+(+a.nb_agents||0),0)}</b><span class="muted sm">Agents gérés</span></div></div>
+  ${agences.length?`<div class="grid">${agences.map(carte).join("")}</div>`:`<div class="empty">Aucune agence pour le moment.<br>Cliquez sur « Nouvelle agence » pour créer la première.</div>`}`;
+  $("#new-ag").onclick=nouvelleAgence;
+  $("#main").querySelectorAll("[data-fiche]").forEach(b=>b.onclick=()=>fiche(b.dataset.fiche));
+  $("#main").querySelectorAll("[data-bascule]").forEach(b=>b.onclick=()=>bascule(b.dataset.bascule,b));
+}
+function carte(a){const e=etat(a);
+  return `<div class="card"><div class="ag-top"><div class="logo">${a.logo_url?`<img src="${esc(a.logo_url)}" alt="">`:esc((a.nom_agence||"?").slice(0,2).toUpperCase())}</div><div style="min-width:0"><div class="ag-name">${esc(a.nom_agence)}</div><div class="muted xs">${esc([a.ville,a.pays].filter(Boolean).join(", ")||"—")}</div></div></div>
+  <span class="pill ${e.c}">${e.l}</span> <span class="pill p-blue">${OFFRES[a.type_offre]||esc(a.type_offre)}</span>
+  <div class="kv"><span>Fin de l'accès</span><span>${fd(a.date_expiration)}</span><span>Agents</span><span>${+a.nb_agents} / ${+a.nb_agents_max}</span><span>Sites</span><span>${+a.nb_sites}</span><span>Comptes</span><span>${+a.nb_comptes}</span><span>Dernière activité</span><span>${fdt(a.derniere_activite)}</span></div>
+  <div class="actions"><button class="btn sm pri" data-fiche="${a.id}">Ouvrir la fiche</button>${a.statut_abonnement==="actif"?`<button class="btn sm danger" data-bascule="${a.id}">Suspendre l'accès</button>`:`<button class="btn sm" data-bascule="${a.id}">Réactiver l'accès</button>`}</div></div>`}
+function bascule(id,btn){const a=agences.find(x=>x.id===id);const couper=a.statut_abonnement==="actif";
+  if(couper){modal("Suspendre "+esc(a.nom_agence),`<p>Tous les utilisateurs de cette agence (direction, superviseurs, agents) seront bloqués <b>immédiatement</b>, sur ordinateur comme sur téléphone.</p><p class="muted sm">Leurs données sont conservées. Vous pourrez réactiver l'accès à tout moment.</p>`,`<button class="btn" id="c-no">Annuler</button><button class="btn pri" id="c-ok" style="background:var(--red);border-color:var(--red)">Suspendre</button>`);
+    $("#c-no").onclick=closeModal;$("#c-ok").onclick=()=>busy($("#c-ok"),async()=>{must(await sb.from("agences").update({statut_abonnement:"suspendu"}).eq("id",id));closeModal();toast("Accès suspendu");await vAgences()})}
+  else busy(btn,async()=>{must(await sb.from("agences").update({statut_abonnement:"actif"}).eq("id",id));toast("Accès réactivé");await vAgences()})}
+
+function nouvelleAgence(){
+  modal("Nouvelle agence",`<div class="field"><label class="f">Nom de l'agence</label><input class="input" id="n-nom" placeholder="Ex. Agence Spéciale"></div>
+  <div class="field"><label class="f">Identifiant du lien <span class="muted" style="font-weight:400">(lettres, chiffres, tirets)</span></label><input class="input" id="n-slug" placeholder="agence-speciale"></div>
+  <div class="row"><div class="field"><label class="f">Ville</label><input class="input" id="n-ville"></div><div class="field"><label class="f">Pays</label><input class="input" id="n-pays"></div></div>
+  <div class="row"><div class="field"><label class="f">Offre</label><select class="input" id="n-offre">${Object.entries(OFFRES).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div><div class="field"><label class="f">Fin de l'accès</label><input class="input" id="n-exp" type="date" value="${isoDay(Date.now()+30*864e5)}"></div><div class="field"><label class="f">Agents maximum</label><input class="input" id="n-max" type="number" min="1" value="50"></div></div>
+  <p class="muted sm" style="margin:0">Vous compléterez le logo, les couleurs, les modules et le compte du directeur dans la fiche.</p>`,
+  `<button class="btn" id="n-no">Annuler</button><button class="btn pri" id="n-ok">Créer l'agence</button>`);
+  let touche=false;$("#n-slug").oninput=()=>touche=true;$("#n-nom").oninput=()=>{if(!touche)$("#n-slug").value=slugify($("#n-nom").value)};
+  $("#n-no").onclick=closeModal;
+  $("#n-ok").onclick=()=>busy($("#n-ok"),async()=>{
+    const nom=$("#n-nom").value.trim(),slug=slugify($("#n-slug").value);
+    if(nom.length<2){$("#n-nom").focus();throw new Error("Indiquez le nom de l'agence.")}
+    if(slug.length<2){$("#n-slug").focus();throw new Error("Indiquez l'identifiant du lien.")}
+    if(!$("#n-exp").value)throw new Error("Indiquez la date de fin de l'accès.");
+    const r=await sb.from("agences").insert({nom_agence:nom,slug,ville:$("#n-ville").value.trim()||null,pays:$("#n-pays").value.trim()||null,type_offre:$("#n-offre").value,date_expiration:new Date($("#n-exp").value+"T23:59:59").toISOString(),nb_agents_max:Math.max(1,+$("#n-max").value||50)}).select("id").single();
+    if(r.error)throw new Error(/duplicate|unique/i.test(r.error.message)?"Cet identifiant de lien est déjà utilisé par une autre agence.":r.error.message);
+    toast("Agence créée");await vAgences();fiche(r.data.id);
+  })}
+
+/* ---------- fiche d'une agence ---------- */
+async function fiche(id){
+  const a=agences.find(x=>x.id===id);if(!a)return;const p=a.parametres||{},m=a.modules||{};
+  const poste=c=>(p.postes||[]).find(x=>x.code===c)||{};
+  modal(esc(a.nom_agence),`
+  <div class="sec">Abonnement</div>
+  <div class="row"><div class="field"><label class="f">Offre</label><select class="input" id="f-offre">${Object.entries(OFFRES).map(([k,v])=>`<option value="${k}" ${a.type_offre===k?"selected":""}>${v}</option>`).join("")}</select></div>
+  <div class="field"><label class="f">Fin de l'accès</label><input class="input" id="f-exp" type="date" value="${isoDay(a.date_expiration)}"></div>
+  <div class="field"><label class="f">Agents maximum</label><input class="input" id="f-max" type="number" min="1" value="${+a.nb_agents_max}"></div></div>
+  <div class="actions" style="margin-bottom:4px"><button class="btn sm" data-plus="30">+ 30 jours</button><button class="btn sm" data-plus="365">+ 1 an</button><span class="pill ${etat(a).c}" style="align-self:center">${etat(a).l}</span></div>
+
+  <div class="sec">Identité</div>
+  <div class="row"><div class="field"><label class="f">Nom de l'agence</label><input class="input" id="f-nom" value="${esc(a.nom_agence)}"></div><div class="field"><label class="f">Raison sociale / activité</label><input class="input" id="f-rs" value="${esc(a.raison_sociale)}"></div></div>
+  <div class="row"><div class="field"><label class="f">E-mail du directeur</label><input class="input" id="f-mail" type="email" value="${esc(a.email_dg)}"></div><div class="field"><label class="f">Téléphone</label><input class="input" id="f-tel" value="${esc(a.telephone)}"></div></div>
+  <div class="row"><div class="field"><label class="f">Adresse</label><input class="input" id="f-adr" value="${esc(a.adresse)}"></div><div class="field"><label class="f">Ville</label><input class="input" id="f-ville" value="${esc(a.ville)}"></div><div class="field"><label class="f">Pays</label><input class="input" id="f-pays" value="${esc(a.pays)}"></div></div>
+  <div class="field"><label class="f">Identifiant fiscal (NIF, RCCM…)</label><input class="input" id="f-nif" value="${esc(a.identifiant_fiscal)}"></div>
+  <div class="row" style="align-items:flex-end"><div class="field" style="flex:0 0 auto"><label class="f">Logo</label><div class="logo" id="f-logo-pv" style="width:64px;height:64px">${a.logo_url?`<img src="${esc(a.logo_url)}" alt="">`:"—"}</div></div>
+  <div class="field" style="flex:0 0 auto"><label class="btn sm" style="cursor:pointer">Changer le logo<input type="file" id="f-logo" accept="image/png,image/jpeg,image/webp" hidden></label></div>
+  <div class="field" style="flex:0 0 110px"><label class="f">Couleur 1</label><input class="input" id="f-c1" type="color" value="${esc(a.couleur_principale)}" style="height:42px;padding:4px"></div>
+  <div class="field" style="flex:0 0 110px"><label class="f">Couleur 2</label><input class="input" id="f-c2" type="color" value="${esc(a.couleur_secondaire)}" style="height:42px;padding:4px"></div></div>
+  <p class="muted xs" style="margin:0">Lien de connexion de l'agence : identifiant « ${esc(a.slug)} »</p>
+
+  <div class="sec">Modules activés</div>
+  <div class="checks">${Object.entries(MODULES).map(([k,v])=>`<label><input type="checkbox" data-mod="${k}" ${m[k]!==false?"checked":""}>${v}</label>`).join("")}</div>
+
+  <div class="sec">Réglages</div>
+  <div class="row"><div class="field"><label class="f">Poste de jour — début</label><input class="input" id="f-jd" type="time" value="${esc(poste("J").debut||"07:00")}"></div><div class="field"><label class="f">Fin</label><input class="input" id="f-jf" type="time" value="${esc(poste("J").fin||"19:00")}"></div><div class="field"><label class="f">Poste de nuit — début</label><input class="input" id="f-nd" type="time" value="${esc(poste("N").debut||"19:00")}"></div><div class="field"><label class="f">Fin</label><input class="input" id="f-nf" type="time" value="${esc(poste("N").fin||"07:00")}"></div></div>
+  <div class="row"><div class="field"><label class="f">Cotisations sociales (%)</label><input class="input" id="f-cot" type="number" min="0" max="100" step="0.1" value="${+p.taux_cotisations||0}"></div><div class="field"><label class="f">Prime de nuit</label><input class="input" id="f-pn" type="number" min="0" value="${+p.prime_nuit||0}"></div><div class="field"><label class="f">Prime de panier</label><input class="input" id="f-pp" type="number" min="0" value="${+p.prime_panier||0}"></div><div class="field"><label class="f">Devise</label><input class="input" id="f-dev" value="${esc(p.devise||"F CFA")}"></div></div>
+  <div class="field"><label class="f">Grades <span class="muted" style="font-weight:400">(un par ligne)</span></label><textarea class="input" id="f-grades">${esc((p.grades||[]).join("\n"))}</textarea></div>
+
+  <div class="sec">Comptes utilisateurs</div>
+  <div id="f-comptes"><p class="muted sm">Chargement…</p></div>
+  <button class="btn sm" id="f-add-acc">+ Créer un compte</button>
+
+  <div class="sec">Zone sensible</div>
+  <button class="btn sm danger" id="f-del">Supprimer cette agence</button>`,
+  `<button class="btn" id="f-no">Fermer</button><button class="btn pri" id="f-ok">Enregistrer</button>`,true);
+
+  let logoUrl=a.logo_url||null;
+  $("#box").querySelectorAll("[data-plus]").forEach(b=>b.onclick=()=>{const base=Math.max(Date.now(),new Date($("#f-exp").value+"T12:00:00").getTime()||0);$("#f-exp").value=isoDay(base+(+b.dataset.plus)*864e5)});
+  $("#f-logo").onchange=e=>{const f=e.target.files[0];if(!f)return;if(f.size>1048576)return toast("Logo trop lourd (1 Mo maximum).",true);
+    busy(null,async()=>{const ext=(f.name.split(".").pop()||"png").toLowerCase();const path=id+"/logo-"+Date.now()+"."+ext;
+      must(await sb.storage.from("logos_agences").upload(path,f,{upsert:true,contentType:f.type}));
+      logoUrl=sb.storage.from("logos_agences").getPublicUrl(path).data.publicUrl;$("#f-logo-pv").innerHTML=`<img src="${esc(logoUrl)}" alt="">`;toast("Logo chargé. Cliquez sur Enregistrer.")})};
+  $("#f-no").onclick=closeModal;
+  $("#f-ok").onclick=()=>busy($("#f-ok"),async()=>{
+    const nom=$("#f-nom").value.trim();if(nom.length<2)throw new Error("Le nom de l'agence est obligatoire.");
+    if(!$("#f-exp").value)throw new Error("Indiquez la date de fin de l'accès.");
+    const modules={...m};$("#box").querySelectorAll("[data-mod]").forEach(c=>modules[c.dataset.mod]=c.checked);
+    const autres=(p.postes||[]).filter(x=>x.code!=="J"&&x.code!=="N");
+    const parametres={...p,postes:[{code:"J",libelle:"Jour",debut:$("#f-jd").value,fin:$("#f-jf").value},{code:"N",libelle:"Nuit",debut:$("#f-nd").value,fin:$("#f-nf").value},...autres],
+      grades:$("#f-grades").value.split("\n").map(x=>x.trim()).filter(Boolean),taux_cotisations:+$("#f-cot").value||0,prime_nuit:+$("#f-pn").value||0,prime_panier:+$("#f-pp").value||0,devise:$("#f-dev").value.trim()||"F CFA"};
+    const v=s=>$(s).value.trim()||null;
+    must(await sb.from("agences").update({nom_agence:nom,raison_sociale:v("#f-rs"),email_dg:v("#f-mail"),telephone:v("#f-tel"),adresse:v("#f-adr"),ville:v("#f-ville"),pays:v("#f-pays"),identifiant_fiscal:v("#f-nif"),logo_url:logoUrl,couleur_principale:$("#f-c1").value,couleur_secondaire:$("#f-c2").value,type_offre:$("#f-offre").value,date_expiration:new Date($("#f-exp").value+"T23:59:59").toISOString(),nb_agents_max:Math.max(1,+$("#f-max").value||1),modules,parametres}).eq("id",id));
+    closeModal();toast("Fiche enregistrée");await vAgences();
+  });
+  $("#f-add-acc").onclick=()=>creerCompte(a);
+  $("#f-del").onclick=()=>supprimerAgence(a);
+  chargerComptes(id);
+}
+async function chargerComptes(id){
+  const z=$("#f-comptes");if(!z)return;
+  const r=await sb.from("profiles").select("id,nom_complet,role,est_actif,derniere_connexion").eq("agence_id",id).order("created_at");
+  if(!$("#f-comptes"))return;
+  if(r.error){z.innerHTML=`<p class="err">${esc(r.error.message)}</p>`;return}
+  z.innerHTML=r.data.length?r.data.map(c=>`<div class="acc"><div class="grow"><b>${esc(c.nom_complet)}</b><div class="muted xs">${ROLES[c.role]||esc(c.role)} · dernière connexion : ${fdt(c.derniere_connexion)}</div></div><span class="pill ${c.est_actif?"p-green":"p-grey"}">${c.est_actif?"Actif":"Désactivé"}</span><button class="btn sm" data-mdp="${c.id}" data-nom="${esc(c.nom_complet)}">Nouveau mot de passe</button><button class="btn sm ${c.est_actif?"danger":""}" data-act="${c.id}" data-val="${c.est_actif?0:1}">${c.est_actif?"Désactiver":"Réactiver"}</button></div>`).join(""):`<p class="muted sm">Aucun compte. Créez d'abord celui du directeur général.</p>`;
+  z.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>busy(b,async()=>{await appel({action:"activer",user_id:b.dataset.act,est_actif:b.dataset.val==="1"});toast(b.dataset.val==="1"?"Compte réactivé":"Compte désactivé");await chargerComptes(id)}));
+  z.querySelectorAll("[data-mdp]").forEach(b=>b.onclick=()=>nouveauMdp(b.dataset.mdp,b.dataset.nom,id));
+}
+async function appel(body){
+  const r=await sb.functions.invoke("comptes",{body});
+  if(r.error){let msg=r.error.message;try{const j=await r.error.context.json();if(j&&j.erreur)msg=j.erreur}catch(_){}throw new Error(msg)}
+  if(r.data&&r.data.ok===false)throw new Error(r.data.erreur||"Action refusée.");
+  return r.data;
+}
+function sousFenetre(title,body,okLabel,onOk,retour){
+  modal(title,body,`<button class="btn" id="s-no">Retour</button><button class="btn pri" id="s-ok">${okLabel}</button>`);
+  $("#s-no").onclick=retour;$("#m-x").onclick=retour;$("#s-ok").onclick=()=>busy($("#s-ok"),onOk);
+}
+function creerCompte(a){
+  sousFenetre("Créer un compte · "+esc(a.nom_agence),`<div class="row"><div class="field"><label class="f">Rôle</label><select class="input" id="k-role">${Object.entries(ROLES).filter(([k])=>k!=="agent"&&k!=="client").map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div><div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div></div>
+  <div class="field"><label class="f">Adresse e-mail (sert d'identifiant)</label><input class="input" id="k-mail" type="email" value="${esc(a.email_dg)}" autocomplete="off"></div>
+  <div class="field"><label class="f">Mot de passe provisoire (8 caractères minimum)</label><input class="input" id="k-mdp" type="text" autocomplete="off"></div>
+  <p class="muted sm" style="margin:0">Transmettez l'e-mail et ce mot de passe à la personne. Les comptes des agents et des clients se créeront depuis l'espace de l'agence.</p>`,"Créer le compte",async()=>{
+    await appel({action:"creer",agence_id:a.id,role:$("#k-role").value,nom_complet:$("#k-nom").value,email:$("#k-mail").value,mot_de_passe:$("#k-mdp").value});
+    toast("Compte créé");await vAgences();fiche(a.id);
+  },()=>fiche(a.id));
+}
+function nouveauMdp(userId,nom,agenceId){
+  sousFenetre("Nouveau mot de passe · "+esc(nom),`<div class="field"><label class="f">Nouveau mot de passe (8 caractères minimum)</label><input class="input" id="k-mdp" type="text" autocomplete="off"></div><p class="muted sm" style="margin:0">L'ancien mot de passe ne fonctionnera plus.</p>`,"Changer le mot de passe",async()=>{
+    await appel({action:"mot_de_passe",user_id:userId,mot_de_passe:$("#k-mdp").value});toast("Mot de passe changé");fiche(agenceId);
+  },()=>fiche(agenceId));
+}
+function supprimerAgence(a){
+  sousFenetre("Supprimer "+esc(a.nom_agence),`<p><b>Attention :</b> l'agence et <b>toutes ses données</b> (agents, sites, pointages, paies, documents) seront effacées. Cette action est irréversible.</p><p class="muted sm">Pour couper l'accès sans rien perdre, utilisez plutôt « Suspendre l'accès ».</p><div class="field"><label class="f">Pour confirmer, tapez SUPPRIMER</label><input class="input" id="k-conf" autocomplete="off"></div>`,"Supprimer définitivement",async()=>{
+    if($("#k-conf").value.trim().toUpperCase()!=="SUPPRIMER"){$("#k-conf").focus();throw new Error("Tapez SUPPRIMER pour confirmer.")}
+    must(await sb.from("agences").delete().eq("id",a.id));closeModal();toast("Agence supprimée");await vAgences();
+  },()=>fiche(a.id));
+}
+
+/* ---------- support ---------- */
+async function vSupport(){
+  const t=must(await sb.from("support_tickets").select("id,agence_id,user_id,page_concernee,message,statut,reponse,created_at").order("created_at",{ascending:false}).limit(100));
+  if(!agences.length)agences=must(await sb.rpc("cockpit_resume"))||[];
+  const ouverts=t.filter(x=>x.statut!=="resolu").length;$("#nb-tickets").textContent=ouverts?"("+ouverts+")":"";
+  const noms={};if(t.length){(must(await sb.from("profiles").select("id,nom_complet,role").in("id",[...new Set(t.map(x=>x.user_id))]))||[]).forEach(p=>noms[p.id]=p)}
+  const ST={nouveau:["Nouveau","p-red"],en_cours:["En cours","p-amber"],resolu:["Résolu","p-green"]};
+  $("#main").innerHTML=`<div class="head"><div><h1>Support</h1><p class="muted sm" style="margin:2px 0 0">Les demandes envoyées par vos clients depuis leur logiciel.</p></div></div>
+  ${t.length?t.map(x=>{const ag=agences.find(a=>a.id===x.agence_id),u=noms[x.user_id];return `<div class="card ticket" style="margin-bottom:12px"><div class="row" style="align-items:center;justify-content:space-between"><div><b>${esc(ag?ag.nom_agence:"Agence")}</b> <span class="muted sm">· ${esc(u?u.nom_complet+" ("+(ROLES[u.role]||u.role)+")":"Utilisateur")} · ${fdt(x.created_at)}</span></div><span class="pill ${ST[x.statut][1]}">${ST[x.statut][0]}</span></div>
+  ${x.page_concernee?`<div class="muted xs">Page : ${esc(x.page_concernee)}</div>`:""}<p>${esc(x.message)}</p>
+  <div class="field"><label class="f">Votre réponse</label><textarea class="input" data-rep="${x.id}">${esc(x.reponse)}</textarea></div>
+  <div class="actions"><select class="input" data-st="${x.id}" style="width:auto">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${x.statut===k?"selected":""}>${v[0]}</option>`).join("")}</select><button class="btn sm pri" data-save="${x.id}">Enregistrer</button></div></div>`}).join(""):`<div class="empty">Aucune demande de support pour le moment.</div>`}`;
+  $("#main").querySelectorAll("[data-save]").forEach(b=>b.onclick=()=>busy(b,async()=>{const id=b.dataset.save;
+    must(await sb.from("support_tickets").update({reponse:$(`[data-rep="${id}"]`).value.trim()||null,statut:$(`[data-st="${id}"]`).value}).eq("id",id));toast("Demande mise à jour");await vSupport()}));
+}
+
+/* ---------- erreurs ---------- */
+async function vErreurs(){
+  const l=must(await sb.from("logs_erreurs").select("id,agence_id,page,erreur_technique,created_at").order("created_at",{ascending:false}).limit(100));
+  if(!agences.length)agences=must(await sb.rpc("cockpit_resume"))||[];
+  $("#main").innerHTML=`<div class="head"><div><h1>Erreurs techniques</h1><p class="muted sm" style="margin:2px 0 0">Les 100 dernières erreurs rencontrées par les utilisateurs. Transmettez-les pour correction.</p></div></div>
+  ${l.length?l.map(x=>{const ag=agences.find(a=>a.id===x.agence_id);return `<div class="card" style="margin-bottom:10px"><b>${esc(ag?ag.nom_agence:"—")}</b> <span class="muted sm">· ${fdt(x.created_at)}${x.page?" · "+esc(x.page):""}</span><pre class="log">${esc(x.erreur_technique)}</pre></div>`}).join(""):`<div class="empty">Aucune erreur enregistrée. Tout fonctionne.</div>`}`;
+}
+
+/* ---------- démarrage ---------- */
+(async()=>{const {data}=await sb.auth.getSession();if(data&&data.session)await entrer();else showLogin()})();
+</script>
+</body>
+</html>
