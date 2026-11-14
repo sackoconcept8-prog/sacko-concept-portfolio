@@ -295,6 +295,23 @@ tbody tr:last-child td{border-bottom:0}
 .task.done .tk{background:var(--green);border-color:var(--green);color:#fff}
 .task.done .tt{text-decoration:line-through;color:var(--muted)}
 .hbar{display:flex;align-items:center;gap:10px;font-size:13px;margin:9px 0}.hbar .lb{width:150px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hbar .tr{flex:1;height:9px;border-radius:9px;background:var(--surface2);overflow:hidden}.hbar .tr i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--blue2),var(--blue))}
+
+/* Bandeau essai gratuit */
+.offer{width:100%;max-width:1280px;margin:0 0 26px;padding:14px 18px;border-radius:18px;border:1px solid #BFE6D0;background:linear-gradient(90deg,#EAF8F0,#F4FBF7);display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 6px 20px rgba(20,145,90,.08)}
+.offer .of-tag{flex:none;background:var(--green);color:#fff;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:6px 11px;border-radius:999px}
+.offer .of-txt{flex:1 1 320px;font-size:15px;line-height:1.45;color:var(--fg)}
+.offer .of-txt b{font-weight:700}
+.offer .of-acts{display:flex;gap:8px;flex-wrap:wrap}
+.of-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:11px;padding:10px 15px;font:inherit;font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;white-space:nowrap;border:1px solid var(--green);background:var(--green);color:#fff}
+.of-btn.alt{background:#fff;color:var(--green)}
+.of-btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.of-list{margin:0;padding:0;list-style:none;display:grid;gap:14px}
+.of-list li{display:grid;gap:3px;padding-left:14px;border-left:3px solid #BFE6D0}
+.of-list b{font-size:14.5px}
+.of-list span{font-size:14px;color:var(--muted);line-height:1.5}
+@media (max-width:560px){.offer{padding:14px}.offer .of-acts{width:100%}.of-btn{flex:1}}
+.modal .mf:has(.of-btn){flex-wrap:wrap}
+@media (max-width:560px){.modal .mf .of-btn{flex:1 1 100%}}
 </style>
 </head>
 <body>
@@ -304,6 +321,14 @@ tbody tr:last-child td{border-bottom:0}
 
 <!-- ===== Choix de l'espace ===== -->
 <section id="login">
+  <div class="offer" role="region" aria-label="Offre d'essai gratuit">
+    <span class="of-tag">Essai gratuit</span>
+    <div class="of-txt"><b>Agences de moins de 50 agents : profitez d'un mois gratuit.</b> Testez le logiciel avec vos propres sites et vos propres agents, sans rien payer.</div>
+    <div class="of-acts">
+      <a class="of-btn" id="offerTry" target="_blank" rel="noopener">Demander mon essai gratuit</a>
+      <button class="of-btn alt" id="offerCond" type="button">Voir les conditions</button>
+    </div>
+  </div>
   <div class="brand">
     <img src="logo-securipro-256.png" alt="Logo SécuriPro">
     <div class="xs muted" style="letter-spacing:.12em;text-transform:uppercase;font-weight:700">Agence de démonstration · SécuriPro</div>
@@ -1599,6 +1624,22 @@ hydrateIcons();
 const h=location.hash.slice(1);if(["dir","rh","agent","sup","client","direction"].includes(h))enter(h==="direction"?"dir":h);
 window.addEventListener("hashchange",()=>{const x=location.hash.slice(1);if(!x)showLogin();else if(["dir","rh","agent","sup","client"].includes(x)&&x!==role)enter(x)});
 setInterval(()=>{if(["dir","rh","client"].includes(role))renderTop()},30000);
+/* ===== Bandeau essai gratuit ===== */
+(function(){
+  const wa=t=>"https://wa.me/15054642331?text="+encodeURIComponent(t);
+  const TRY=wa("Bonjour, je dirige une agence de sécurité de moins de 50 agents et je souhaite profiter du mois d'essai gratuit du logiciel.");
+  const QUOTE=wa("Bonjour, je souhaite recevoir un devis pour le logiciel de gestion de mon agence de sécurité. Nombre d'agents : ");
+  const t=document.getElementById("offerTry"),c=document.getElementById("offerCond");
+  if(!t||!c)return;
+  t.href=TRY;
+  c.onclick=()=>modal("Conditions de l'essai gratuit",`<ul class="of-list">
+    <li><b>Pour qui ?</b><span>Les agences de sécurité et de gardiennage de moins de 50 agents. Au-delà de 50 agents, nous préparons un devis sur mesure.</span></li>
+    <li><b>Combien de temps ?</b><span>Un mois complet, gratuit, sans paiement à l'avance.</span></li>
+    <li><b>Ce que vous recevez</b><span>Le logiciel préparé au nom de votre agence, avec votre logo, pour le tester avec vos propres sites et vos propres agents.</span></li>
+    <li><b>Comment commencer ?</b><span>Vous nous écrivez sur WhatsApp, vous remplissez une courte fiche de configuration, puis nous vous remettons votre accès.</span></li>
+    <li><b>Et après le mois gratuit ?</b><span>Si le logiciel vous convient, vous continuez avec un abonnement mensuel ou annuel. Le tarif dépend de votre nombre d'agents et vous est communiqué par devis avant le début de l'essai. Sinon, vous arrêtez et vous ne payez rien.</span></li>
+  </ul>`,`<a class="of-btn alt" href="${QUOTE}" target="_blank" rel="noopener">Demander un devis</a><a class="of-btn" href="${TRY}" target="_blank" rel="noopener">Demander mon essai gratuit</a>`);
+})();
 </script>
 <script src="../sacko-config.js"></script>
 <script src="../sacko-track.js" defer></script>
