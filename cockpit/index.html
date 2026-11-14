@@ -267,6 +267,12 @@ async function fiche(id){
   const a=agences.find(x=>x.id===id);if(!a)return;const p=a.parametres||{},m=a.modules||{};
   const poste=c=>(p.postes||[]).find(x=>x.code===c)||{};
   modal(esc(a.nom_agence),`
+  <div class="sec">Accès du client</div>
+  <div class="field" style="margin:0 0 14px"><label class="f">Lien de connexion à envoyer au client</label><div class="row" style="gap:8px;flex-wrap:nowrap"><input class="input" id="f-lien" readonly value="https://www.sackoconcept.com/espace/?a=${esc(a.slug)}"><button class="btn" id="f-copie" type="button">Copier</button></div></div>
+  <label class="f">Comptes utilisateurs</label>
+  <div id="f-comptes"><p class="muted sm">Chargement…</p></div>
+  <button class="btn pri" id="f-add-acc">+ Créer un compte</button>
+
   <div class="sec">Abonnement</div>
   <div class="row"><div class="field"><label class="f">Offre</label><select class="input" id="f-offre">${Object.entries(OFFRES).map(([k,v])=>`<option value="${k}" ${a.type_offre===k?"selected":""}>${v}</option>`).join("")}</select></div>
   <div class="field"><label class="f">Fin de l'accès</label><input class="input" id="f-exp" type="date" value="${isoDay(a.date_expiration)}"></div>
@@ -282,7 +288,7 @@ async function fiche(id){
   <div class="field" style="flex:0 0 auto"><label class="btn sm" style="cursor:pointer">Changer le logo<input type="file" id="f-logo" accept="image/png,image/jpeg,image/webp" hidden></label></div>
   <div class="field" style="flex:0 0 110px"><label class="f">Couleur 1</label><input class="input" id="f-c1" type="color" value="${esc(a.couleur_principale)}" style="height:42px;padding:4px"></div>
   <div class="field" style="flex:0 0 110px"><label class="f">Couleur 2</label><input class="input" id="f-c2" type="color" value="${esc(a.couleur_secondaire)}" style="height:42px;padding:4px"></div></div>
-  <div class="field" style="margin:4px 0 0"><label class="f">Lien de connexion à envoyer au client</label><div class="row" style="gap:8px;flex-wrap:nowrap"><input class="input" id="f-lien" readonly value="https://www.sackoconcept.com/espace/?a=${esc(a.slug)}"><button class="btn" id="f-copie" type="button">Copier</button></div></div>
+  
 
   <div class="sec">Modules activés</div>
   <div class="checks">${Object.entries(MODULES).map(([k,v])=>`<label><input type="checkbox" data-mod="${k}" ${m[k]!==false?"checked":""}>${v}</label>`).join("")}</div>
@@ -298,10 +304,6 @@ async function fiche(id){
   <div class="sec">Paiements reçus</div>
   <div id="f-paie"><p class="muted sm">Chargement…</p></div>
   <button class="btn sm" id="f-add-pay">+ Enregistrer un paiement</button>
-
-  <div class="sec">Comptes utilisateurs</div>
-  <div id="f-comptes"><p class="muted sm">Chargement…</p></div>
-  <button class="btn sm" id="f-add-acc">+ Créer un compte</button>
 
   <div class="sec">Activité récente</div>
   <div id="f-journal"><p class="muted sm">Chargement…</p></div>
