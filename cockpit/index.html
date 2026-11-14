@@ -282,7 +282,7 @@ async function fiche(id){
   <div class="field" style="flex:0 0 auto"><label class="btn sm" style="cursor:pointer">Changer le logo<input type="file" id="f-logo" accept="image/png,image/jpeg,image/webp" hidden></label></div>
   <div class="field" style="flex:0 0 110px"><label class="f">Couleur 1</label><input class="input" id="f-c1" type="color" value="${esc(a.couleur_principale)}" style="height:42px;padding:4px"></div>
   <div class="field" style="flex:0 0 110px"><label class="f">Couleur 2</label><input class="input" id="f-c2" type="color" value="${esc(a.couleur_secondaire)}" style="height:42px;padding:4px"></div></div>
-  <p class="muted xs" style="margin:0">Lien de connexion de l'agence : identifiant « ${esc(a.slug)} »</p>
+  <div class="field" style="margin:4px 0 0"><label class="f">Lien de connexion à envoyer au client</label><div class="row" style="gap:8px;flex-wrap:nowrap"><input class="input" id="f-lien" readonly value="https://www.sackoconcept.com/espace/?a=${esc(a.slug)}"><button class="btn" id="f-copie" type="button">Copier</button></div></div>
 
   <div class="sec">Modules activés</div>
   <div class="checks">${Object.entries(MODULES).map(([k,v])=>`<label><input type="checkbox" data-mod="${k}" ${m[k]!==false?"checked":""}>${v}</label>`).join("")}</div>
@@ -316,6 +316,7 @@ async function fiche(id){
     busy(null,async()=>{const ext=(f.name.split(".").pop()||"png").toLowerCase();const path=id+"/logo-"+Date.now()+"."+ext;
       must(await sb.storage.from("logos_agences").upload(path,f,{upsert:true,contentType:f.type}));
       logoUrl=sb.storage.from("logos_agences").getPublicUrl(path).data.publicUrl;$("#f-logo-pv").innerHTML=`<img src="${esc(logoUrl)}" alt="">`;toast("Logo chargé. Cliquez sur Enregistrer.")})};
+  $("#f-copie").onclick=async()=>{const i=$("#f-lien");try{await navigator.clipboard.writeText(i.value)}catch(_){i.select();document.execCommand("copy")}toast("Lien copié")};
   $("#f-no").onclick=closeModal;
   $("#f-ok").onclick=()=>busy($("#f-ok"),async()=>{
     const nom=$("#f-nom").value.trim();if(nom.length<2)throw new Error("Le nom de l'agence est obligatoire.");
@@ -367,7 +368,7 @@ function creerCompte(a){
   sousFenetre("Créer un compte · "+esc(a.nom_agence),`<div class="row"><div class="field"><label class="f">Rôle</label><select class="input" id="k-role">${Object.entries(ROLES).filter(([k])=>k!=="agent"&&k!=="client").map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div><div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div></div>
   <div class="field"><label class="f">Adresse e-mail (sert d'identifiant)</label><input class="input" id="k-mail" type="email" value="${esc(a.email_dg)}" autocomplete="off"></div>
   <div class="field"><label class="f">Mot de passe provisoire (8 caractères minimum)</label><input class="input" id="k-mdp" type="text" autocomplete="off"></div>
-  <p class="muted sm" style="margin:0">Transmettez l'e-mail et ce mot de passe à la personne. Les comptes des agents et des clients se créeront depuis l'espace de l'agence.</p>`,"Créer le compte",async()=>{
+  <p class="muted sm" style="margin:0">Transmettez l'e-mail et ce mot de passe à la personne. Les accès des agents se créent depuis l'espace de l'agence, par le directeur ou le RH.</p>`,"Créer le compte",async()=>{
     await appel({action:"creer",agence_id:a.id,role:$("#k-role").value,nom_complet:$("#k-nom").value,email:$("#k-mail").value,mot_de_passe:$("#k-mdp").value});
     toast("Compte créé");await vAgences();fiche(a.id);
   },()=>fiche(a.id));

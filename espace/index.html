@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Espace de gestion</title>
+<link rel="icon" id="fav" href="../assets/sacko-logo-vert-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--p:#217346;--p-l:#e5f2ea;--bg:#f5f7fa;--card:#fff;--ink:#17202b;--muted:#667085;--line:#e1e6ee;--green:#2e7d55;--green-l:#e4f3ea;--red:#b83a3a;--red-l:#fbe9e9;--amber:#a86a12;--amber-l:#fbf0d9;--r:14px}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2{margin:0;letter-spacing:-.015em}
+button,input,select,textarea{font:inherit;color:inherit}
+.hide{display:none!important}.muted{color:var(--muted)}.sm{font-size:13px}.xs{font-size:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--p)}
+.btn.pri{background:var(--p);border-color:var(--p);color:#fff}.btn.pri:hover{filter:brightness(.92)}
+.btn.danger{color:var(--red)}.btn.danger:hover{border-color:var(--red)}
+.btn.sm{padding:6px 10px;font-size:13px}.btn:disabled{opacity:.55;cursor:wait}
+.input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;outline:none}
+.input:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--p-l)}
+textarea.input{min-height:90px;resize:vertical}
+label.f{display:block;font-size:13px;font-weight:600;margin:0 0 5px}
+.field{margin-bottom:12px;min-width:0}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>.field{flex:1 1 170px}
+.pill{display:inline-block;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+.p-green{background:var(--green-l);color:var(--green)}.p-red{background:var(--red-l);color:var(--red)}.p-amber{background:var(--amber-l);color:var(--amber)}.p-grey{background:#eceff3;color:var(--muted)}.p-main{background:var(--p-l);color:var(--p)}
+.center{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:32px 28px;width:100%;max-width:400px;box-shadow:0 20px 50px -34px rgba(20,40,80,.45);text-align:center}
+.login-card .field{text-align:left}
+.biglogo{width:96px;height:96px;object-fit:contain;margin:0 auto 12px;display:block}
+.err{background:var(--red-l);color:var(--red);border-radius:10px;padding:9px 12px;font-size:13px;margin-bottom:12px;text-align:left}
+.by{margin-top:18px;font-size:12px;color:var(--muted)}
+header.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.top-in{max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;margin-right:auto;min-width:0}
+.brand img{width:40px;height:40px;object-fit:contain;flex:none}
+.brand small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+nav.tabs{display:flex;gap:4px;background:var(--bg);border-radius:12px;padding:4px;overflow-x:auto;max-width:100%}
+nav.tabs button{border:0;background:none;padding:7px 13px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted);white-space:nowrap}
+nav.tabs button.on{background:#fff;color:var(--p);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.head h1{font-size:25px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.tile b{display:block;font-size:24px;white-space:nowrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.card h2{font-size:17px;margin-bottom:8px}
+.line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:11px 0}
+.line:last-child{border-bottom:0}.line .grow{flex:1 1 180px;min-width:0}
+.line.click{cursor:pointer}.line.click:hover b.n{color:var(--p)}
+.av{width:38px;height:38px;border-radius:50%;background:var(--p-l);color:var(--p);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}.tools .input{flex:1 1 160px;width:auto}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:var(--r);padding:36px 20px;text-align:center;color:var(--muted)}
+.steps{margin:0;padding:0;list-style:none}
+.steps li{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.steps li:last-child{border:0}
+.dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;flex:none}
+.dot.ok{background:var(--green);border-color:var(--green);color:#fff}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sec{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--p);margin:18px 0 10px;padding-top:14px;border-top:1px solid var(--line)}
+.sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.idbox{background:var(--p-l);border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:12px;overflow-wrap:anywhere}
+#modal{position:fixed;inset:0;background:rgba(20,30,45,.45);display:none;align-items:flex-start;justify-content:center;padding:24px 14px;overflow-y:auto;z-index:20}
+#modal.on{display:flex}
+.box{background:#fff;border-radius:18px;width:100%;max-width:660px;box-shadow:0 30px 80px -30px rgba(0,0,0,.4)}
+.box-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.box-h h2{font-size:19px}.box-b{padding:18px 20px}
+.box-f{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--line);flex-wrap:wrap}
+.x{border:1px solid var(--line);background:#fff;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:18px;line-height:1}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;max-width:90vw}
+#toast.on{opacity:1}#toast.bad{background:var(--red)}
+@media(max-width:560px){.head h1{font-size:21px}.brand small{display:none}}
+</style>
+</head>
+<body>
+
+<section id="login" class="center">
+  <form class="login-card" id="login-form">
+    <img class="biglogo" id="lg-logo" src="../assets/sacko-logo-vert-512.png" alt="">
+    <h1 id="lg-nom" style="font-size:24px">Espace de gestion</h1>
+    <p class="muted sm" id="lg-sous" style="margin:4px 0 20px">Connectez-vous pour accéder à votre espace.</p>
+    <div class="err hide" id="login-err"></div>
+    <div class="field"><label class="f" for="l-id">E-mail ou matricule</label><input class="input" id="l-id" autocomplete="username" autocapitalize="none" required></div>
+    <div class="field"><label class="f" for="l-pass">Mot de passe</label><input class="input" id="l-pass" type="password" autocomplete="current-password" required></div>
+    <button class="btn pri" id="l-btn" style="width:100%;padding:12px">Se connecter</button>
+    <div class="by">Logiciel conçu par SACKO CONCEPT</div>
+  </form>
+</section>
+
+<section id="bloque" class="center hide">
+  <div class="login-card">
+    <img class="biglogo" id="bl-logo" src="../assets/sacko-logo-vert-512.png" alt="">
+    <h1 id="bl-titre" style="font-size:22px"></h1>
+    <p class="muted" id="bl-texte" style="margin:10px 0 18px"></p>
+    <div class="actions" style="justify-content:center"><a class="btn pri hide" id="bl-wa" target="_blank" rel="noopener">Contacter le support (WhatsApp)</a><button class="btn" id="bl-out">Se déconnecter</button></div>
+    <div class="by">Logiciel conçu par SACKO CONCEPT</div>
+  </div>
+</section>
+
+<div id="app" class="hide">
+  <header class="top"><div class="top-in">
+    <div class="brand"><img id="hd-logo" src="../assets/sacko-logo-vert-96.png" alt=""><div style="min-width:0"><span id="hd-nom"></span><small id="hd-moi"></small></div></div>
+    <nav class="tabs" id="tabs"></nav>
+    <button class="btn sm" id="logout">Déconnexion</button>
+  </div></header>
+  <main id="main"></main>
+</div>
+
+<div id="modal"><div class="box" id="box"></div></div>
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL="https://bwiihwrdgnaqfbizudpx.supabase.co";
+const SB_KEY="sb_publishable_8u8N-9EmQBMgvftQDSPpKA_97yA5AT6";
+const sb=supabase.createClient(SB_URL,SB_KEY);
+
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fd=d=>d?new Date(d).toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"}):"—";
+const fdt=d=>d?new Date(d).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"—";
+const slugify=t=>String(t||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+const JOURS=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+const ROLES={dg:"Directeur général",rh:"Ressources humaines",superviseur:"Superviseur",agent:"Agent",client:"Client"};
+let tT;function toast(m,bad){const t=$("#toast");t.textContent=m;t.className="on"+(bad?" bad":"");clearTimeout(tT);tT=setTimeout(()=>t.className="",3400)}
+function modal(title,body,foot){$("#box").innerHTML=`<div class="box-h"><h2>${title}</h2><button class="x" id="m-x" aria-label="Fermer">×</button></div><div class="box-b">${body}</div>${foot?`<div class="box-f">${foot}</div>`:""}`;$("#modal").classList.add("on");$("#m-x").onclick=closeModal;$("#modal").scrollTop=0}
+function closeModal(){$("#modal").classList.remove("on");$("#box").innerHTML=""}
+function traduire(m){m=String(m||"");
+  if(/Nombre maximum d'agents/.test(m))return m+" Contactez SACKO CONCEPT pour augmenter votre offre.";
+  if(/agents_agence_id_matricule_key/.test(m))return "Ce matricule est déjà utilisé par un autre agent.";
+  if(/sites_agence_id_nom_key/.test(m))return "Un site porte déjà ce nom.";
+  if(/row-level security|permission denied/i.test(m))return "Action non autorisée. Votre accès est peut-être suspendu ou expiré.";
+  if(/foreign key/i.test(m))return "Suppression impossible : cet élément est encore utilisé ailleurs (planning, pointages…).";
+  if(/Failed to fetch|NetworkError/i.test(m))return "Connexion Internet indisponible. Réessayez.";
+  return m||"Une erreur est survenue."}
+async function busy(btn,fn){if(btn)btn.disabled=true;try{await fn()}catch(e){toast(traduire(e.message),true)}finally{if(btn)btn.disabled=false}}
+const must=r=>{if(r.error)throw new Error(r.error.message);return r.data};
+
+/* ---------- état ---------- */
+let slug=(new URLSearchParams(location.search).get("a")||"").toLowerCase().replace(/[^a-z0-9-]/g,"");
+try{if(!slug)slug=localStorage.getItem("espace-slug")||""}catch(_){}
+let ctx=null,ag=null,moi=null,sites=[],agents=[],comptes=[],tab="accueil",fAg={q:"",site:"",statut:"Actif"};
+const estDirection=()=>moi&&(moi.role==="dg"||moi.role==="rh");
+const emailAgent=mat=>slugify(mat)+"@"+ag.slug+".agents.sackoconcept.com";
+const siteNom=id=>(sites.find(s=>s.id===id)||{}).nom||"Sans affectation";
+
+function habiller(a){if(!a)return;
+  const r=document.documentElement.style;if(/^#[0-9a-f]{6}$/i.test(a.couleur_principale||"")){r.setProperty("--p",a.couleur_principale);r.setProperty("--p-l",a.couleur_principale+"1c")}
+  if(a.logo_url){["#lg-logo","#bl-logo","#hd-logo"].forEach(s=>$(s).src=a.logo_url);$("#fav").href=a.logo_url}
+  const nom=a.nom||a.nom_agence;if(nom){$("#lg-nom").textContent=nom;$("#hd-nom").textContent=nom;document.title=nom+" · Espace de gestion"}
+  if(a.devise||a.raison_sociale)$("#lg-sous").textContent=a.devise||a.raison_sociale;
+}
+function ecran(id){["login","bloque","app"].forEach(x=>$("#"+x).classList.toggle("hide",x!==id))}
+function showLogin(msg){ecran("login");const e=$("#login-err");e.textContent=msg||"";e.classList.toggle("hide",!msg)}
+
+/* ---------- connexion ---------- */
+$("#login-form").onsubmit=ev=>{ev.preventDefault();busy($("#l-btn"),async()=>{
+  let id=$("#l-id").value.trim();
+  if(!id.includes("@")){if(!slug)return showLogin("Pour vous connecter avec un matricule, ouvrez le lien fourni par votre agence.");id=slugify(id)+"@"+slug+".agents.sackoconcept.com"}
+  const {error}=await sb.auth.signInWithPassword({email:id.toLowerCase(),password:$("#l-pass").value});
+  if(error)return showLogin(/fetch|network/i.test(error.message)?"Connexion Internet indisponible. Réessayez.":"Identifiant ou mot de passe incorrect.");
+  $("#l-pass").value="";await entrer();
+})};
+async function sortir(msg){await sb.auth.signOut();ctx=ag=moi=null;showLogin(msg)}
+$("#logout").onclick=()=>sortir();$("#bl-out").onclick=()=>sortir();
+async function entrer(){
+  const r=await sb.rpc("contexte");
+  if(r.error||!r.data||!r.data.connecte)return sortir("Compte non reconnu. Contactez votre responsable.");
+  ctx=r.data;moi=ctx.profil;ag=ctx.agence;
+  if(moi.role==="super_admin")return sortir("Ce compte est celui de l'administration. Utilisez le cockpit SACKO CONCEPT.");
+  if(slug&&ag&&ag.slug!==slug)return sortir("Ce compte n'appartient pas à cette agence.");
+  if(ag){slug=ag.slug;try{localStorage.setItem("espace-slug",slug)}catch(_){}habiller(ag)}
+  if(!ctx.acces_ouvert)return bloquer(ctx.motif_blocage);
+  $("#hd-moi").textContent=moi.nom_complet+" · "+(ROLES[moi.role]||moi.role);
+  ecran("app");
+  const T=estDirection()?[["accueil","Accueil"],["sites","Sites"],["agents","Agents"],["comptes","Comptes"],["support","Support"]]:[["accueil","Accueil"]];
+  $("#tabs").innerHTML=T.map(([k,l])=>`<button data-tab="${k}">${l}</button>`).join("");
+  await ouvrir("accueil");
+}
+async function bloquer(motif){
+  const M={suspendu:["Accès suspendu","L'accès de votre agence à ce logiciel est suspendu. Vos données sont conservées. Contactez SACKO CONCEPT pour le rétablir."],
+    expire:["Période d'accès terminée","La période d'accès de votre agence est arrivée à son terme. Vos données sont conservées. Renouvelez votre abonnement pour continuer."],
+    compte_desactive:["Compte désactivé","Votre compte a été désactivé. Contactez votre responsable."]}[motif]||["Accès indisponible","Contactez votre responsable."];
+  $("#bl-titre").textContent=M[0];$("#bl-texte").textContent=M[1];ecran("bloque");
+  const wa=await waSupport();const b=$("#bl-wa");
+  if(wa&&motif!=="compte_desactive"){b.href="https://wa.me/"+wa+"?text="+encodeURIComponent("Bonjour, je vous contacte au sujet de l'accès de "+(ag?ag.nom_agence:"mon agence")+" au logiciel.");b.classList.remove("hide")}else b.classList.add("hide");
+}
+async function waSupport(){try{const r=await sb.rpc("support_contact");return String((r.data&&r.data.whatsapp)||"").replace(/\D/g,"")}catch(_){return ""}}
+
+$("#tabs").onclick=e=>{const b=e.target.closest("button[data-tab]");if(b)ouvrir(b.dataset.tab)};
+async function charger(){
+  const [s,a,c]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.from("agents").select("*").order("nom"),sb.from("profiles").select("id,nom_complet,role,agent_id,site_id,est_actif,derniere_connexion").order("created_at")]);
+  sites=must(s);agents=must(a);comptes=must(c);
+}
+async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
+  $("#main").innerHTML='<p class="muted">Chargement…</p>';
+  try{if(estDirection())await charger();({accueil:vAccueil,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
+  catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
+
+/* ---------- accueil ---------- */
+function vAccueil(){
+  if(!estDirection()){$("#main").innerHTML=`<div class="empty"><b style="color:var(--ink)">Bonjour ${esc(moi.nom_complet)}</b><br>Votre compte est bien actif. Votre espace ${esc((ROLES[moi.role]||"").toLowerCase())} sera disponible très prochainement.</div>`;return}
+  const actifs=agents.filter(a=>a.statut==="Actif").length,j=Math.ceil((new Date(ag.date_expiration)-Date.now())/864e5);
+  const avecCompte=agents.filter(a=>comptes.some(c=>c.agent_id===a.id)).length;
+  const et=[[sites.length>0,"Ajoutez vos sites clients","sites"],[agents.length>0,"Enregistrez vos agents","agents"],[avecCompte>0,"Créez les accès de vos agents (depuis leur fiche)","agents"],[comptes.some(c=>c.role==="rh"||c.role==="superviseur"),"Créez les comptes de votre équipe (RH, superviseurs)","comptes"]];
+  $("#main").innerHTML=`<div class="head"><div><h1>Bonjour ${esc(moi.nom_complet.split(" ")[0])}</h1><p class="muted sm" style="margin:2px 0 0">${esc(ag.nom_agence)}${ag.ville?" · "+esc(ag.ville):""}</p></div></div>
+  <div class="tiles"><div class="tile"><b>${actifs} / ${+ag.nb_agents_max}</b><span class="muted sm">Agents actifs</span></div><div class="tile"><b>${sites.filter(s=>s.actif).length}</b><span class="muted sm">Sites clients</span></div><div class="tile"><b>${avecCompte}</b><span class="muted sm">Agents avec accès</span></div><div class="tile"><b>${fd(ag.date_expiration)}</b><span class="muted sm">Fin de l'accès${j<=7?` · <span style="color:var(--amber)">dans ${Math.max(j,0)} j</span>`:""}</span></div></div>
+  <div class="card"><h2>Pour bien démarrer</h2><ul class="steps">${et.map(([ok,l,t])=>`<li><span class="dot ${ok?"ok":""}">${ok?"✓":""}</span><span style="flex:1">${l}</span>${ok?"":`<button class="btn sm" data-go="${t}">Commencer</button>`}</li>`).join("")}</ul></div>
+  <div class="card"><h2>Prochainement dans votre espace</h2><p class="muted sm" style="margin:0">Planning, pointage, congés, documents RH, paie, matériel, facturation et rapports seront ajoutés au fil des mises à jour. Vous n'aurez rien à installer : ils apparaîtront ici automatiquement.</p></div>`;
+  $("#main").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go));
+}
+
+/* ---------- sites ---------- */
+function vSites(){
+  $("#main").innerHTML=`<div class="head"><div><h1>Sites clients</h1><p class="muted sm" style="margin:2px 0 0">Les lieux que vos agents surveillent.</p></div><button class="btn pri" id="s-new">+ Nouveau site</button></div>
+  ${sites.length?`<div class="card">${sites.map(s=>{const n=agents.filter(a=>a.site_id===s.id&&a.statut==="Actif").length,b=s.besoins||{};return `<div class="line click" data-site="${s.id}"><div class="grow"><b class="n">${esc(s.nom)}</b><div class="muted xs">${esc([s.type,s.adresse,s.ville].filter(Boolean).join(" · ")||"—")}</div></div><span class="muted sm">${n} agent(s) · besoin ${+b.J||0} jour / ${+b.N||0} nuit</span><span class="pill ${s.actif?"p-green":"p-grey"}">${s.actif?"Actif":"Inactif"}</span></div>`}).join("")}</div>`:`<div class="empty">Aucun site pour le moment.<br>Cliquez sur « Nouveau site » pour ajouter le premier.</div>`}`;
+  $("#s-new").onclick=()=>ficheSite();
+  $("#main").querySelectorAll("[data-site]").forEach(l=>l.onclick=()=>ficheSite(sites.find(s=>s.id===l.dataset.site)));
+}
+function ficheSite(s){const n=!s;s=s||{actif:true,besoins:{J:1,N:1}};const b=s.besoins||{};
+  modal(n?"Nouveau site":esc(s.nom),`<div class="row"><div class="field" style="flex:2 1 240px"><label class="f">Nom du site</label><input class="input" id="s-nom" value="${esc(s.nom)}" placeholder="Ex. Pharmacie du Port"></div><div class="field"><label class="f">Type</label><input class="input" id="s-type" value="${esc(s.type)}" placeholder="Bureau, commerce, chantier…"></div></div>
+  <div class="row"><div class="field" style="flex:2 1 240px"><label class="f">Adresse</label><input class="input" id="s-adr" value="${esc(s.adresse)}"></div><div class="field"><label class="f">Ville</label><input class="input" id="s-ville" value="${esc(s.ville??ag.ville)}"></div></div>
+  <div class="row"><div class="field"><label class="f">Agents nécessaires le jour</label><input class="input" id="s-bj" type="number" min="0" value="${+b.J||0}"></div><div class="field"><label class="f">La nuit</label><input class="input" id="s-bn" type="number" min="0" value="${+b.N||0}"></div><div class="field"><label class="f">Montant mensuel du contrat</label><input class="input" id="s-mt" type="number" min="0" value="${+s.montant_contrat||0}"></div></div>
+  <div class="row"><div class="field"><label class="f">Contact sur place</label><input class="input" id="s-cn" value="${esc(s.contact_nom)}"></div><div class="field"><label class="f">Téléphone du contact</label><input class="input" id="s-ct" value="${esc(s.contact_telephone)}"></div></div>
+  <div class="field"><label class="f">Consignes pour les agents</label><textarea class="input" id="s-cons">${esc(s.consignes)}</textarea></div>
+  <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="s-act" ${s.actif?"checked":""}> Site actif</label>`,
+  `${n?"":`<button class="btn danger" id="s-del" style="margin-right:auto">Supprimer</button>`}<button class="btn" id="s-no">Annuler</button><button class="btn pri" id="s-ok">Enregistrer</button>`);
+  $("#s-no").onclick=closeModal;
+  $("#s-ok").onclick=()=>busy($("#s-ok"),async()=>{const nom=$("#s-nom").value.trim();if(nom.length<2){$("#s-nom").focus();throw new Error("Indiquez le nom du site.")}
+    const v=x=>$(x).value.trim()||null;
+    const d={nom,type:v("#s-type"),adresse:v("#s-adr"),ville:v("#s-ville"),besoins:{...b,J:Math.max(0,+$("#s-bj").value||0),N:Math.max(0,+$("#s-bn").value||0)},montant_contrat:+$("#s-mt").value||0,contact_nom:v("#s-cn"),contact_telephone:v("#s-ct"),consignes:v("#s-cons"),actif:$("#s-act").checked};
+    must(n?await sb.from("sites").insert(d):await sb.from("sites").update(d).eq("id",s.id));closeModal();toast(n?"Site ajouté":"Site mis à jour");await ouvrir("sites")});
+  if(!n)$("#s-del").onclick=()=>confirmer("Supprimer "+esc(s.nom)+" ?","Le site sera effacé. Les agents affectés resteront dans votre liste, sans affectation.","Supprimer",async()=>{must(await sb.from("sites").delete().eq("id",s.id));toast("Site supprimé");await ouvrir("sites")});
+}
+function confirmer(titre,texte,label,fn,mot){
+  modal(titre,`<p style="margin-top:0">${texte}</p>${mot?`<div class="field"><label class="f">Pour confirmer, tapez ${mot}</label><input class="input" id="cf-t" autocomplete="off"></div>`:""}`,`<button class="btn" id="cf-no">Annuler</button><button class="btn pri" id="cf-ok" style="background:var(--red);border-color:var(--red)">${label}</button>`);
+  $("#cf-no").onclick=closeModal;$("#cf-ok").onclick=()=>busy($("#cf-ok"),async()=>{if(mot&&$("#cf-t").value.trim().toUpperCase()!==mot){$("#cf-t").focus();throw new Error("Tapez "+mot+" pour confirmer.")}await fn();closeModal()});
+}
+
+/* ---------- agents ---------- */
+const stA=a=>a.statut==="Actif"?["Actif","p-green"]:a.statut==="Sorti"?["Sorti de l'effectif","p-grey"]:["Accès retiré","p-amber"];
+function vAgents(){
+  $("#main").innerHTML=`<div class="head"><div><h1>Agents</h1><p class="muted sm" style="margin:2px 0 0">${agents.filter(a=>a.statut!=="Sorti").length} agent(s) sur ${+ag.nb_agents_max} autorisés par votre offre.</p></div><button class="btn pri" id="a-new">+ Nouvel agent</button></div>
+  <div class="tools"><input class="input" id="a-q" type="search" placeholder="Rechercher un nom, un matricule…" value="${esc(fAg.q)}" style="flex:3 1 220px"><select class="input" id="a-site"><option value="">Tous les sites</option>${sites.map(s=>`<option value="${s.id}">${esc(s.nom)}</option>`).join("")}<option value="aucun">Sans affectation</option></select><select class="input" id="a-st"><option value="Actif">Actifs</option><option value="Suspendu">Accès retiré</option><option value="Sorti">Sortis</option><option value="">Tous</option></select></div>
+  <div id="a-liste"></div>`;
+  $("#a-site").value=fAg.site;$("#a-st").value=fAg.statut;
+  $("#a-q").oninput=e=>{fAg.q=e.target.value;listeAgents()};$("#a-site").onchange=e=>{fAg.site=e.target.value;listeAgents()};$("#a-st").onchange=e=>{fAg.statut=e.target.value;listeAgents()};
+  $("#a-new").onclick=()=>formAgent();listeAgents();
+}
+function listeAgents(){const q=slugify(fAg.q);
+  const l=agents.filter(a=>(!q||slugify(a.nom+" "+(a.prenom||"")+" "+a.matricule).includes(q))&&(!fAg.statut||a.statut===fAg.statut)&&(!fAg.site||(fAg.site==="aucun"?!a.site_id:a.site_id===fAg.site)));
+  const z=$("#a-liste");
+  z.innerHTML=l.length?`<div class="card">${l.map(a=>{const c=comptes.find(x=>x.agent_id===a.id),st=stA(a);return `<div class="line click" data-ag="${a.id}"><span class="av">${esc(((a.prenom||a.nom||"?")[0]+(a.prenom?a.nom[0]:(a.nom[1]||""))).toUpperCase())}</span><div class="grow"><b class="n">${esc([a.prenom,a.nom].filter(Boolean).join(" "))}</b><div class="muted xs">${esc(a.matricule)} · ${esc(a.grade)} · ${esc(siteNom(a.site_id))}${a.poste?" · "+(a.poste==="N"?"nuit":"jour"):""}</div></div>${c?`<span class="pill p-main">Accès créé</span>`:""}<span class="pill ${st[1]}">${st[0]}</span></div>`}).join("")}</div>`:`<div class="empty">${agents.length?"Aucun agent ne correspond.":"Aucun agent pour le moment.<br>Cliquez sur « Nouvel agent » pour ajouter le premier."}</div>`;
+  z.querySelectorAll("[data-ag]").forEach(x=>x.onclick=()=>ficheAgent(x.dataset.ag));
+}
+function matSuivant(){const pre=(ag.slug.split("-").map(x=>x[0]).join("")||"ag").toUpperCase().slice(0,3);
+  const n=agents.reduce((m,a)=>{const k=/(\d+)\s*$/.exec(a.matricule||"");return k?Math.max(m,+k[1]):m},0);return pre+"-"+String(n+1).padStart(4,"0")}
+function formAgent(a){const n=!a;a=a||{grade:(ag.parametres.grades||[])[0],poste:"J",jour_repos:0,matricule:matSuivant()};
+  const verrou=!n&&comptes.some(c=>c.agent_id===a.id);const grades=[...(ag.parametres.grades||[])];if(a.grade&&!grades.includes(a.grade))grades.push(a.grade);
+  modal(n?"Nouvel agent":"Modifier · "+esc([a.prenom,a.nom].filter(Boolean).join(" ")),`<div class="row"><div class="field"><label class="f">Nom</label><input class="input" id="g-nom" value="${esc(a.nom)}"></div><div class="field"><label class="f">Prénom</label><input class="input" id="g-pre" value="${esc(a.prenom)}"></div><div class="field" style="flex:0 1 150px"><label class="f">Matricule</label><input class="input" id="g-mat" value="${esc(a.matricule)}" ${verrou?'disabled title="Le matricule sert d\'identifiant de connexion : il ne peut plus être modifié."':""}></div></div>
+  <div class="row"><div class="field"><label class="f">Grade</label><select class="input" id="g-gr">${grades.map(g=>`<option ${g===a.grade?"selected":""}>${esc(g)}</option>`).join("")}</select></div><div class="field"><label class="f">Téléphone</label><input class="input" id="g-tel" value="${esc(a.telephone)}"></div><div class="field"><label class="f">Quartier</label><input class="input" id="g-q" value="${esc(a.quartier)}"></div></div>
+  <div class="row"><div class="field"><label class="f">Site</label><select class="input" id="g-site"><option value="">Sans affectation (volant)</option>${sites.map(s=>`<option value="${s.id}" ${a.site_id===s.id?"selected":""}>${esc(s.nom)}</option>`).join("")}</select></div><div class="field"><label class="f">Poste</label><select class="input" id="g-poste"><option value="J" ${a.poste!=="N"?"selected":""}>Jour</option><option value="N" ${a.poste==="N"?"selected":""}>Nuit</option></select></div><div class="field"><label class="f">Jour de repos</label><select class="input" id="g-rep">${JOURS.map((j,i)=>`<option value="${i}" ${+a.jour_repos===i?"selected":""}>${j}</option>`).join("")}</select></div></div>
+  <div class="row"><div class="field"><label class="f">Date d'embauche</label><input class="input" id="g-emb" type="date" value="${a.date_embauche||""}"></div><div class="field"><label class="f">Carte pro valable jusqu'au</label><input class="input" id="g-carte" type="date" value="${a.carte_pro_expiration||""}"></div><div class="field"><label class="f">Salaire de base (${esc(ag.parametres.devise||"F CFA")})</label><input class="input" id="g-sal" type="number" min="0" value="${+a.salaire_base||0}"></div></div>
+  <div class="row"><div class="field"><label class="f">N° de sécurité sociale</label><input class="input" id="g-ss" value="${esc(a.num_securite_sociale)}"></div><div class="field"><label class="f">Personne à prévenir en cas d'urgence</label><input class="input" id="g-urg" value="${esc(a.contact_urgence)}"></div></div>`,
+  `<button class="btn" id="g-no">Annuler</button><button class="btn pri" id="g-ok">Enregistrer</button>`);
+  $("#g-no").onclick=()=>n?closeModal():ficheAgent(a.id);$("#m-x").onclick=$("#g-no").onclick;
+  $("#g-ok").onclick=()=>busy($("#g-ok"),async()=>{const nom=$("#g-nom").value.trim(),mat=$("#g-mat").value.trim();
+    if(nom.length<2){$("#g-nom").focus();throw new Error("Indiquez le nom de l'agent.")}if(!mat){$("#g-mat").focus();throw new Error("Indiquez le matricule.")}
+    const v=x=>$(x).value.trim()||null,site=$("#g-site").value||null;
+    const d={nom,prenom:v("#g-pre"),matricule:mat,grade:$("#g-gr").value,telephone:v("#g-tel"),quartier:v("#g-q"),site_id:site,poste:site?$("#g-poste").value:null,jour_repos:+$("#g-rep").value,date_embauche:v("#g-emb"),carte_pro_expiration:v("#g-carte"),salaire_base:+$("#g-sal").value||0,num_securite_sociale:v("#g-ss"),contact_urgence:v("#g-urg")};
+    let id=a.id;if(n)id=must(await sb.from("agents").insert(d).select("id").single()).id;else must(await sb.from("agents").update(d).eq("id",a.id));
+    toast(n?"Agent ajouté":"Fiche mise à jour");await ouvrir("agents");ficheAgent(id)});
+}
+function ficheAgent(id){const a=agents.find(x=>x.id===id);if(!a)return closeModal();const c=comptes.find(x=>x.agent_id===id),st=stA(a),nomC=[a.prenom,a.nom].filter(Boolean).join(" ");
+  const L=(k,v)=>`<div class="line" style="padding:7px 0"><span class="muted sm" style="flex:0 0 170px">${k}</span><span class="grow">${v}</span></div>`;
+  modal(esc(nomC),`<div class="actions" style="margin-bottom:12px"><span class="pill ${st[1]}">${st[0]}</span><span class="pill p-main">${esc(a.matricule)}</span><button class="btn sm pri" id="fa-edit" style="margin-left:auto">Modifier</button></div>
+  ${L("Grade",esc(a.grade))}${L("Affectation",esc(siteNom(a.site_id))+(a.poste?" · poste de "+(a.poste==="N"?"nuit":"jour"):""))}${L("Jour de repos",JOURS[+a.jour_repos]||"—")}${L("Téléphone",esc(a.telephone||"—"))}${L("Quartier",esc(a.quartier||"—"))}${L("Date d'embauche",fd(a.date_embauche))}${L("Carte professionnelle",a.carte_pro_expiration?"Valable jusqu'au "+fd(a.carte_pro_expiration):"—")}${L("Salaire de base",Math.round(+a.salaire_base||0).toLocaleString("fr-FR")+" "+esc(ag.parametres.devise||"F CFA"))}${L("Urgence",esc(a.contact_urgence||"—"))}
+  <div class="sec">Accès à l'application</div>
+  ${c?`<div class="idbox">Identifiant : <b>${esc(a.matricule)}</b> · ${c.est_actif?"accès ouvert":"<b>accès coupé</b>"}<br><span class="muted xs">Dernière connexion : ${fdt(c.derniere_connexion)}</span></div><div class="actions"><button class="btn sm" id="fa-mdp">Nouveau mot de passe</button></div>`
+     :`<p class="muted sm" style="margin:0 0 8px">Cet agent n'a pas encore d'accès. Créez-le pour qu'il puisse se connecter avec son matricule.</p><button class="btn sm pri" id="fa-acc" ${a.statut==="Actif"?"":"disabled"}>Créer son accès</button>`}
+  <div class="sec">Effectif</div>
+  <div class="actions">${a.statut==="Actif"?`<button class="btn sm" id="fa-lock">Retirer l'accès</button><button class="btn sm" id="fa-exit">Sortie de l'effectif</button>`:`<button class="btn sm" id="fa-unlock">Rétablir l'agent</button>`}<button class="btn sm danger" id="fa-del">Supprimer définitivement</button></div>`,
+  `<button class="btn" id="fa-no">Fermer</button>`);
+  $("#fa-no").onclick=closeModal;$("#fa-edit").onclick=()=>formAgent(a);
+  const on=(s,f)=>{const e=$(s);if(e)e.onclick=f};
+  const statut=async(v,msg)=>{must(await sb.from("agents").update({statut:v}).eq("id",id));if(c&&c.est_actif!==(v==="Actif"))await appel({action:"activer",user_id:c.id,est_actif:v==="Actif"});toast(msg);await ouvrir("agents");ficheAgent(id)};
+  on("#fa-acc",()=>saisirMdp("Créer l'accès de "+esc(nomC),`Identifiant de connexion : <b>${esc(a.matricule)}</b>`,"Créer l'accès",async mdp=>{await appel({action:"creer",role:"agent",agent_id:id,nom_complet:nomC,email:emailAgent(a.matricule),mot_de_passe:mdp});toast("Accès créé");await ouvrir("agents");ficheAgent(id)},()=>ficheAgent(id)));
+  on("#fa-mdp",()=>saisirMdp("Nouveau mot de passe · "+esc(nomC),"L'ancien mot de passe ne fonctionnera plus.","Changer",async mdp=>{await appel({action:"mot_de_passe",user_id:c.id,mot_de_passe:mdp});toast("Mot de passe changé");ficheAgent(id)},()=>ficheAgent(id)));
+  on("#fa-lock",e=>busy(e.target,()=>statut("Suspendu","Accès retiré")));
+  on("#fa-unlock",e=>busy(e.target,()=>statut("Actif","Agent rétabli")));
+  on("#fa-exit",()=>confirmer("Sortie de l'effectif · "+esc(nomC),"À utiliser quand l'agent quitte l'entreprise. Son accès est coupé, mais sa fiche et son historique restent dans vos archives.","Confirmer la sortie",()=>statut("Sorti","Agent sorti de l'effectif")));
+  on("#fa-del",()=>confirmer("Supprimer définitivement · "+esc(nomC),"<b>Attention :</b> la fiche de l'agent sera effacée. Cette action est irréversible. Si l'agent a simplement quitté l'entreprise, préférez « Sortie de l'effectif ».","Supprimer",async()=>{if(c)await appel({action:"activer",user_id:c.id,est_actif:false});must(await sb.from("agents").delete().eq("id",id));toast("Agent supprimé");await ouvrir("agents")},"SUPPRIMER"));
+}
+function saisirMdp(titre,info,label,fn,retour){
+  modal(titre,`<div class="idbox">${info}</div><div class="field"><label class="f">Mot de passe (8 caractères minimum)</label><input class="input" id="mp" type="text" autocomplete="off"></div><p class="muted sm" style="margin:0">Notez-le et transmettez-le à la personne.</p>`,`<button class="btn" id="mp-no">Retour</button><button class="btn pri" id="mp-ok">${label}</button>`);
+  $("#mp-no").onclick=retour;$("#m-x").onclick=retour;$("#mp-ok").onclick=()=>busy($("#mp-ok"),async()=>{const m=$("#mp").value;if(m.length<8){$("#mp").focus();throw new Error("Le mot de passe doit contenir au moins 8 caractères.")}await fn(m)});
+}
+async function appel(body){
+  const r=await sb.functions.invoke("comptes",{body});
+  if(r.error){let msg=r.error.message;try{const j=await r.error.context.json();if(j&&j.erreur)msg=j.erreur}catch(_){}throw new Error(msg)}
+  if(r.data&&r.data.ok===false)throw new Error(r.data.erreur||"Action refusée.");return r.data;
+}
+
+/* ---------- comptes de l'équipe ---------- */
+function vComptes(){
+  const eq=comptes.filter(c=>c.role!=="agent"),creables=moi.role==="dg"?["rh","superviseur"]:["superviseur"];
+  $("#main").innerHTML=`<div class="head"><div><h1>Comptes de l'équipe</h1><p class="muted sm" style="margin:2px 0 0">Direction, ressources humaines et superviseurs. Les accès des agents se créent depuis leur fiche.</p></div><button class="btn pri" id="c-new">+ Nouveau compte</button></div>
+  <div class="card">${eq.map(c=>{const gerable=creables.includes(c.role);return `<div class="line"><div class="grow"><b>${esc(c.nom_complet)}</b>${c.id===moi.id?' <span class="muted sm">(vous)</span>':""}<div class="muted xs">${ROLES[c.role]||esc(c.role)} · dernière connexion : ${fdt(c.derniere_connexion)}</div></div><span class="pill ${c.est_actif?"p-green":"p-grey"}">${c.est_actif?"Actif":"Désactivé"}</span>${gerable?`<button class="btn sm" data-mdp="${c.id}">Nouveau mot de passe</button><button class="btn sm ${c.est_actif?"danger":""}" data-act="${c.id}" data-val="${c.est_actif?0:1}">${c.est_actif?"Désactiver":"Réactiver"}</button>`:""}</div>`}).join("")}</div>`;
+  $("#c-new").onclick=()=>{
+    modal("Nouveau compte",`<div class="row"><div class="field"><label class="f">Rôle</label><select class="input" id="k-role">${creables.map(k=>`<option value="${k}">${ROLES[k]}</option>`).join("")}</select></div><div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div></div>
+    <div class="field"><label class="f">Adresse e-mail (sert d'identifiant)</label><input class="input" id="k-mail" type="email" autocomplete="off"></div>
+    <div class="field"><label class="f">Mot de passe provisoire (8 caractères minimum)</label><input class="input" id="k-mdp" type="text" autocomplete="off"></div>`,`<button class="btn" id="k-no">Annuler</button><button class="btn pri" id="k-ok">Créer le compte</button>`);
+    $("#k-no").onclick=closeModal;$("#k-ok").onclick=()=>busy($("#k-ok"),async()=>{await appel({action:"creer",role:$("#k-role").value,nom_complet:$("#k-nom").value,email:$("#k-mail").value,mot_de_passe:$("#k-mdp").value});closeModal();toast("Compte créé");await ouvrir("comptes")})};
+  $("#main").querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>busy(b,async()=>{await appel({action:"activer",user_id:b.dataset.act,est_actif:b.dataset.val==="1"});toast(b.dataset.val==="1"?"Compte réactivé":"Compte désactivé");await ouvrir("comptes")}));
+  $("#main").querySelectorAll("[data-mdp]").forEach(b=>b.onclick=()=>{const c=comptes.find(x=>x.id===b.dataset.mdp);saisirMdp("Nouveau mot de passe · "+esc(c.nom_complet),"L'ancien mot de passe ne fonctionnera plus.","Changer",async mdp=>{await appel({action:"mot_de_passe",user_id:c.id,mot_de_passe:mdp});closeModal();toast("Mot de passe changé")},closeModal)});
+}
+
+/* ---------- support ---------- */
+async function vSupport(){
+  const t=must(await sb.from("support_tickets").select("id,page_concernee,message,statut,reponse,created_at").order("created_at",{ascending:false}).limit(50));
+  const wa=await waSupport(),ST={nouveau:["Envoyée","p-amber"],en_cours:["En cours de traitement","p-main"],resolu:["Résolue","p-green"]};
+  $("#main").innerHTML=`<div class="head"><div><h1>Support</h1><p class="muted sm" style="margin:2px 0 0">Une question, un problème ? Écrivez à SACKO CONCEPT.</p></div>${wa?`<a class="btn" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${encodeURIComponent("Bonjour, je suis "+moi.nom_complet+" ("+ag.nom_agence+"). ")}">Écrire sur WhatsApp</a>`:""}</div>
+  <div class="card"><div class="row"><div class="field"><label class="f">Partie concernée</label><select class="input" id="t-page"><option>Agents</option><option>Sites</option><option>Comptes et accès</option><option>Abonnement</option><option>Autre</option></select></div></div>
+  <div class="field"><label class="f">Votre message</label><textarea class="input" id="t-msg" placeholder="Décrivez ce qui se passe, le plus simplement possible."></textarea></div><button class="btn pri" id="t-ok">Envoyer la demande</button></div>
+  ${t.length?`<div class="card"><h2>Vos demandes</h2>${t.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><div class="muted xs">${fdt(x.created_at)}${x.page_concernee?" · "+esc(x.page_concernee):""}</div><div style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(x.message)}</div>${x.reponse?`<div class="idbox" style="margin:8px 0 0;white-space:pre-wrap"><b>Réponse de SACKO CONCEPT :</b><br>${esc(x.reponse)}</div>`:""}</div><span class="pill ${ST[x.statut][1]}">${ST[x.statut][0]}</span></div>`).join("")}</div>`:""}`;
+  $("#t-ok").onclick=()=>busy($("#t-ok"),async()=>{const m=$("#t-msg").value.trim();if(m.length<3){$("#t-msg").focus();throw new Error("Écrivez votre message.")}
+    must(await sb.from("support_tickets").insert({page_concernee:$("#t-page").value,message:m}));toast("Demande envoyée");await ouvrir("support")});
+}
+
+/* ---------- journal des erreurs + démarrage ---------- */
+let nbErr=0;
+function noterErreur(m){if(!moi||nbErr++>4)return;try{sb.from("logs_erreurs").insert({page:tab,erreur_technique:String(m).slice(0,3000)}).then(()=>{},()=>{})}catch(_){}}
+window.addEventListener("error",e=>noterErreur((e.message||"")+" @ "+(e.filename||"").split("/").pop()+":"+e.lineno));
+window.addEventListener("unhandledrejection",e=>noterErreur("Promesse : "+((e.reason&&e.reason.message)||e.reason)));
+(async()=>{
+  if(slug){try{const r=await sb.rpc("agence_publique",{p_slug:slug});if(r.data)habiller(r.data)}catch(_){}}
+  const {data}=await sb.auth.getSession();if(data&&data.session)await entrer();else showLogin();
+})();
+</script>
+</body>
+</html>
