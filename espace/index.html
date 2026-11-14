@@ -128,13 +128,13 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 .carte{width:428px;height:270px;position:relative;overflow:hidden;border-radius:12px;background:linear-gradient(115deg,#fff 0%,#fff 55%,#f1f3f6 55.2%,#fff 78%);box-shadow:0 6px 24px -10px rgba(10,20,40,.4);font-family:Inter,Arial,sans-serif;color:#13213a;flex:none}
 .carte .bh{position:absolute;left:0;right:0;top:0;height:9px;background:#13213a;border-bottom:2px solid #c8971f}
 .carte .bb{position:absolute;left:0;right:0;bottom:0;height:24px;background:#13213a;border-top:2px solid #c8971f;color:#fff;font-size:7.6px;letter-spacing:2.2px;font-weight:600;display:flex;align-items:center;justify-content:center}
-.carte .lg{position:absolute;left:14px;top:17px;width:58px;height:58px;object-fit:contain}
+.carte .lg{position:absolute;left:14px;top:15px;width:52px;height:72px;object-fit:contain}
 .carte .qr{position:absolute;right:14px;top:17px;width:56px;height:56px;background:#fff;padding:3px;border:1px solid #e3e7ee;border-radius:4px}.carte .qr svg,.carte .qr img{width:100%;height:100%;display:block}
 .carte .ti{position:absolute;left:80px;right:80px;top:22px;text-align:center}
 .carte .ti b{display:block;font-size:17px;letter-spacing:2.6px;font-weight:800;line-height:1.1}
 .carte .ti span{display:block;color:#c8971f;font-size:9.5px;letter-spacing:1.8px;font-weight:700;margin-top:5px}
 .carte .ti i{display:flex;height:2.5px;width:150px;margin:6px auto 0}.carte .ti i u{flex:1}.carte .ti i u:nth-child(1){background:#13213a}.carte .ti i u:nth-child(2){background:#c8971f}.carte .ti i u:nth-child(3){background:#8a94a6}
-.carte .wm{position:absolute;left:50%;top:56%;width:150px;height:150px;transform:translate(-50%,-50%);opacity:.07;object-fit:contain}
+.carte .wm{position:absolute;left:47%;top:58%;width:120px;height:160px;transform:translate(-50%,-50%);opacity:.1;object-fit:contain}
 .carte .ch{position:absolute;left:18px;top:94px;width:255px;font-size:9.6px;line-height:1.25}
 .carte .ch div{margin-bottom:8.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.carte .ch em{font-style:normal;color:#3d4a5e;font-weight:500}.carte .ch strong{font-weight:800;text-transform:uppercase;letter-spacing:.3px}
 .carte .ch .or{color:#c8971f}
@@ -693,17 +693,17 @@ async function photoAgent(a){if(!a||!a.photo_path)return null;if(photos[a.photo_
 const estSup=a=>/superviseur/i.test((a.fonction||"")+" "+(a.grade||""));
 
 /* ---------- carte professionnelle ---------- */
-function carteHTML(a,photo){const nomA=esc(String(ag.nom_agence||"").toUpperCase()),lg=ag.logo_url?esc(ag.logo_url):"",p=ag.parametres||{};
+function carteHTML(a,photo){const p=ag.parametres||{},nomA=esc(String(ag.nom_agence||"").toUpperCase()),lg=(p.logo_carte||ag.logo_url)?esc(p.logo_carte||ag.logo_url):"";
   const url=location.origin+location.pathname+"?verif="+a.id,qr=window.qrcode?qrSVG(url):"";
   const ini=esc(((a.prenom||" ")[0]+(a.nom||" ")[0]).toUpperCase());
   const recto=`<div class="carte face-recto"><div class="bh"></div>${lg?`<img class="wm" src="${lg}" alt="" crossorigin="anonymous"><img class="lg" src="${lg}" alt="" crossorigin="anonymous">`:""}<div class="qr">${qr}</div>
     <div class="ti"><b>${nomA}</b><span>CARTE PROFESSIONNELLE</span><i><u></u><u></u><u></u></i></div>
     <div class="ch"><div><em>Nom :</em> <strong>${esc(a.nom||"")}</strong></div><div><em>Prénom :</em> <strong>${esc(a.prenom||"")}</strong></div><div><em>Fonction :</em> <strong class="or">${esc(a.fonction||a.grade||"")}</strong></div><div><em>Matricule :</em> <strong>${esc(a.matricule)}</strong></div><div><em>Contact :</em> <strong>${esc(a.telephone||"—")}</strong></div></div>
     ${photo?`<img class="ph" src="${photo}" alt="">`:`<div class="phv">${ini}</div>`}<div class="bb">CARTE PROFESSIONNELLE STRICTEMENT PERSONNELLE</div></div>`;
-  const verso=`<div class="carte face-verso"><div class="bh"></div>${lg?`<img class="wm" src="${lg}" alt="" crossorigin="anonymous"><img class="lg" src="${lg}" alt="" crossorigin="anonymous" style="width:46px;height:46px">`:""}
+  const verso=`<div class="carte face-verso"><div class="bh"></div>${lg?`<img class="wm" src="${lg}" alt="" crossorigin="anonymous"><img class="lg" src="${lg}" alt="" crossorigin="anonymous" style="width:44px;height:62px">`:""}
     <div class="ti" style="top:24px"><b style="font-size:14px">${nomA}</b><span>${esc(p.forme_juridique||ag.raison_sociale||"SÉCURITÉ ET GARDIENNAGE")}</span></div>
     <div class="vs"><div class="g"><div><em>N° de carte</em><strong>${esc(a.matricule)}</strong></div><div><em>Groupe sanguin</em><strong>${esc(a.groupe_sanguin||"—")}</strong></div><div><em>Délivrée le</em><strong>${fd(auj())}</strong></div><div><em>Valable jusqu'au</em><strong>${a.carte_pro_expiration?fd(a.carte_pro_expiration):"—"}</strong></div><div style="grid-column:span 2"><em>En cas d'urgence</em><strong>${esc(a.contact_urgence||"—")}</strong></div></div>
-    <div class="enc">Cette carte est la propriété de ${esc(ag.nom_agence)}. Elle doit être restituée en fin de contrat. En cas de perte, merci de la remettre à : ${esc([p.adresse_siege||ag.adresse,ag.ville].filter(Boolean).join(", ")||ag.nom_agence)}${(p.telephone_contact||ag.telephone)?" · Tél. "+esc(p.telephone_contact||ag.telephone):""}.</div></div>
+    <div class="enc">Cette carte est la propriété de ${esc(ag.nom_agence)}. Elle doit être restituée en fin de contrat. En cas de perte, merci de la remettre à : ${esc([...new Set([p.adresse_siege||ag.adresse,ag.ville].filter(Boolean))].join(", ")||ag.nom_agence)}${(p.telephone_contact||ag.telephone)?" · Tél. "+esc(p.telephone_contact||ag.telephone):""}.</div></div>
     <div class="sg"><b>La Direction</b><br>${esc(p.signataire||"")}</div><div class="bb">SCANNEZ LE CODE QR POUR VÉRIFIER CETTE CARTE</div></div>`;
   return `<div class="cartes">${recto}${verso}</div>`}
 async function voirCarte(a){
