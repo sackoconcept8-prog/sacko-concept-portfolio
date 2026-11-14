@@ -284,6 +284,8 @@ async function fiche(id){
   <label class="f">Comptes utilisateurs</label>
   <div id="f-comptes"><p class="muted sm">Chargement…</p></div>
   <button class="btn pri" id="f-add-acc">+ Créer un compte</button>
+  <div class="field" style="margin:16px 0 0"><label class="f">Importer les données du client</label><p class="muted sm" style="margin:0 0 8px">Sites, agents et matériel, à partir du fichier Excel rempli par le client. Les lignes déjà présentes sont mises à jour, rien n'est supprimé.</p>
+  <div class="actions"><label class="btn" style="cursor:pointer">Choisir le fichier Excel<input type="file" id="f-xls" accept=".xlsx,.xls" hidden></label><a class="btn" href="../assets/SecuriPro-Donnees-a-remplir.xlsx" download>Télécharger le modèle vierge</a></div></div>
 
   <div class="sec">Abonnement</div>
   <div class="row"><div class="field"><label class="f">Offre</label><select class="input" id="f-offre">${Object.entries(OFFRES).map(([k,v])=>`<option value="${k}" ${a.type_offre===k?"selected":""}>${v}</option>`).join("")}</select></div>
@@ -345,6 +347,7 @@ async function fiche(id){
     closeModal();toast("Fiche enregistrée");await vAgences();
   });
   $("#f-add-acc").onclick=()=>creerCompte(a);
+  $("#f-xls").onchange=e=>{const f=e.target.files[0];if(f)importerExcel(a,f)};
   $("#f-del").onclick=()=>supprimerAgence(a);
   $("#f-add-pay").onclick=()=>paiement(a,()=>fiche(id));
   chargerComptes(id);chargerPaiements(id);chargerJournal(id);
@@ -401,6 +404,58 @@ function supprimerAgence(a){
     if($("#k-conf").value.trim().toUpperCase()!=="SUPPRIMER"){$("#k-conf").focus();throw new Error("Tapez SUPPRIMER pour confirmer.")}
     must(await sb.from("agences").delete().eq("id",a.id));closeModal();toast("Agence supprimée");await vAgences();
   },()=>fiche(a.id));
+}
+
+/* ---------- import Excel ---------- */
+const nrm=x=>String(x??"").trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/\s+/g," ");
+const pad2=n=>String(n).padStart(2,"0");
+function xDate(v){if(v instanceof Date&&!isNaN(v)){const d=new Date(v.getTime()+6*3600e3);return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate())}
+  if(typeof v==="number"&&v>10000&&v<80000){const d=new Date(Math.round((v-25569)*864e5));return d.getUTCFullYear()+"-"+pad2(d.getUTCMonth()+1)+"-"+pad2(d.getUTCDate())}
+  const t=String(v??"").trim();let m=t.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/);
+  if(m){const y=+m[3]<100?(+m[3]>40?1900:2000)+ +m[3]:+m[3];if(+m[2]>=1&&+m[2]<=12&&+m[1]>=1&&+m[1]<=31)return y+"-"+pad2(+m[2])+"-"+pad2(+m[1])}
+  m=t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);return m?m[1]+"-"+pad2(+m[2])+"-"+pad2(+m[3]):null}
+const xNum=v=>{if(typeof v==="number")return v;const n=parseFloat(String(v??"").replace(/[^\d,.\-]/g,"").replace(",","."));return isNaN(n)?0:n};
+const xTxt=v=>{const t=String(v??"").trim();return t||null};
+function xSheet(wb,key,first,cols){const name=wb.SheetNames.find(n=>nrm(n).includes(key));if(!name)return [];
+  const rows=XLSX.utils.sheet_to_json(wb.Sheets[name],{header:1,defval:"",raw:true}),hi=rows.findIndex(r=>r.some(c=>nrm(c).startsWith(first)));if(hi<0)return [];
+  const H=rows[hi].map(nrm),ix={};Object.entries(cols).forEach(([k,t])=>{ix[k]=H.findIndex(t)});
+  return rows.slice(hi+1).filter(r=>r.some(c=>String(c??"").trim()!=="")).map(r=>{const o={};Object.keys(cols).forEach(k=>{const v=ix[k]<0?"":r[ix[k]];o[k]=typeof v==="string"?v.trim():v});return o})}
+function chargerXLSX(){return window.XLSX?Promise.resolve():new Promise((ok,ko)=>{const sc=document.createElement("script");sc.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";sc.onload=ok;sc.onerror=()=>ko(new Error("Lecteur Excel indisponible. Vérifiez votre connexion Internet."));document.head.appendChild(sc)})}
+const JOURS_X=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+async function importerExcel(a,file){
+  modal("Import · "+esc(a.nom_agence),`<p class="muted">Lecture du fichier…</p>`,"");
+  try{await chargerXLSX();const wb=XLSX.read(new Uint8Array(await file.arrayBuffer()),{type:"array",cellDates:true}),grades=(a.parametres&&a.parametres.grades)||[];
+    const S=xSheet(wb,"site","nom du site",{nom:h=>h.startsWith("nom du site"),type:h=>h.startsWith("type"),adr:h=>h.startsWith("adresse"),ville:h=>h==="ville",j:h=>h.includes("de jour"),n:h=>h.includes("de nuit"),mt:h=>h.includes("contrat"),cn:h=>h.startsWith("responsable"),ct:h=>h.startsWith("telephone"),ce:h=>h.startsWith("email")||h.startsWith("e-mail"),pts:h=>h.includes("ronde"),cons:h=>h.startsWith("consignes")})
+      .filter(r=>xTxt(r.nom)&&!nrm(r.nom).startsWith("banque x "));
+    const A=xSheet(wb,"agent","matricule",{mat:h=>h.startsWith("matricule"),nom:h=>h==="nom",pre:h=>h.startsWith("prenom"),gr:h=>h.startsWith("grade"),tel:h=>h.startsWith("telephone"),emb:h=>h.includes("embauche"),nais:h=>h.includes("naissance"),site:h=>h.startsWith("site"),poste:h=>h.startsWith("poste"),rep:h=>h.includes("repos"),sal:h=>h.includes("salaire"),ss:h=>h.includes("securite sociale")||h.includes("cnss"),carte:h=>h.includes("carte"),urg:h=>h.includes("urgence"),sang:h=>h.includes("sanguin")})
+      .filter(r=>(xTxt(r.nom)||xTxt(r.pre))&&!(nrm(r.mat)==="ag-0001"&&nrm(r.nom)==="kouassi"));
+    const M=xSheet(wb,"materiel","article",{nom:h=>h.startsWith("article"),cat:h=>h.startsWith("categorie"),q:h=>h.includes("quantite"),s:h=>h.includes("seuil"),p:h=>h.includes("prix")})
+      .filter(r=>xTxt(r.nom)&&!(nrm(r.nom)==="talkie-walkie"&&xNum(r.q)===18&&xNum(r.s)===10&&xNum(r.p)===35000));
+    if(!S.length&&!A.length&&!M.length){modal("Import impossible","<p>Aucune ligne trouvée. Vérifiez qu'il s'agit bien du modèle rempli (feuilles Sites, Agents, Matériel) et que les exemples ont été remplacés.</p>",`<button class="btn" id="im-f">Retour</button>`);$("#im-f").onclick=()=>fiche(a.id);return}
+    modal("Import · "+esc(a.nom_agence),`<p>Le fichier contient :</p><ul><li><b>${S.length}</b> site(s)</li><li><b>${A.length}</b> agent(s)${A.length>a.nb_agents_max?` <span class="pill p-red">au-delà de la limite de ${a.nb_agents_max}</span>`:""}</li><li><b>${M.length}</b> article(s) de matériel</li></ul><p class="muted sm">Les sites, agents (par matricule) et articles déjà présents seront mis à jour. Rien ne sera supprimé.</p>`,
+      `<button class="btn" id="im-no">Annuler</button><button class="btn pri" id="im-ok">Importer</button>`);
+    $("#im-no").onclick=()=>fiche(a.id);
+    $("#im-ok").onclick=()=>busy($("#im-ok"),async()=>{$("#im-ok").textContent="Import en cours…";const warn=[],res={s:0,a:0,m:0};
+      const [es,ea,em]=await Promise.all([sb.from("sites").select("id,nom").eq("agence_id",a.id).then(must),sb.from("agents").select("id,matricule,nom,prenom").eq("agence_id",a.id).then(must),sb.from("stock_articles").select("id,nom").eq("agence_id",a.id).then(must)]);
+      for(const r of S){const d={nom:xTxt(r.nom),type:xTxt(r.type),adresse:xTxt(r.adr),ville:xTxt(r.ville),besoins:{J:Math.max(0,Math.round(xNum(r.j))),N:Math.max(0,Math.round(xNum(r.n)))},montant_contrat:Math.max(0,Math.round(xNum(r.mt))),contact_nom:xTxt(r.cn),contact_telephone:xTxt(r.ct),contact_email:xTxt(r.ce),points_ronde:String(r.pts||"").split(/[,;\n]/).map(x=>x.trim()).filter(Boolean),consignes:xTxt(r.cons)};
+        const ex=es.find(x=>nrm(x.nom)===nrm(d.nom));const q=ex?await sb.from("sites").update(d).eq("id",ex.id):await sb.from("sites").insert({...d,agence_id:a.id}).select("id,nom").single();
+        if(q.error)warn.push("Site « "+d.nom+" » : "+q.error.message);else{res.s++;if(!ex)es.push(q.data)}}
+      let num=[...ea.map(x=>x.matricule),...A.map(r=>xTxt(r.mat))].reduce((m,x)=>{const k=/(\d+)\s*$/.exec(x||"");return k?Math.max(m,+k[1]):m},0);
+      for(const r of A){const nom=xTxt(r.nom)||xTxt(r.pre),pre=xTxt(r.nom)?xTxt(r.pre):null,po=nrm(r.poste);let grade=grades.find(g=>nrm(g)===nrm(r.gr))||xTxt(r.gr)||"Agent de sécurité",site=null,poste=null;
+        const sn=xTxt(r.site);if(sn){const st=es.find(x=>nrm(x.nom)===nrm(sn));if(st){site=st.id;poste=po.startsWith("n")?"N":"J"}else warn.push(nom+" "+(pre||"")+" : site « "+sn+" » introuvable, agent laissé sans affectation")}
+        if(po.startsWith("v")){site=null;poste=null}
+        const parNom=!xTxt(r.mat)&&ea.find(x=>nrm(x.nom)===nrm(nom)&&nrm(x.prenom)===nrm(pre));
+        const ri=JOURS_X.indexOf(nrm(r.rep)),mat=xTxt(r.mat)||(parNom?parNom.matricule:"AS-"+String(++num).padStart(4,"0"));
+        const d={matricule:mat,nom,prenom:pre,grade,telephone:xTxt(r.tel),date_embauche:xDate(r.emb),date_naissance:xDate(r.nais),site_id:site,poste,jour_repos:ri<0?null:ri,salaire_base:Math.max(0,Math.round(xNum(r.sal))),num_securite_sociale:xTxt(r.ss),carte_pro_expiration:xDate(r.carte),contact_urgence:xTxt(r.urg),groupe_sanguin:xTxt(r.sang)};
+        const ex=parNom||ea.find(x=>nrm(x.matricule)===nrm(mat));
+        const q=ex?await sb.from("agents").update(d).eq("id",ex.id):await sb.from("agents").insert({...d,agence_id:a.id}).select("id,matricule,nom,prenom").single();
+        if(q.error)warn.push((nom+" "+(pre||"")).trim()+" : "+(/Nombre maximum/.test(q.error.message)?"limite d'agents de l'offre atteinte":q.error.message));else{res.a++;if(!ex)ea.push(q.data)}}
+      for(const r of M){const d={nom:xTxt(r.nom),categorie:xTxt(r.cat),quantite:Math.max(0,Math.round(xNum(r.q))),seuil:Math.max(0,Math.round(xNum(r.s))),prix_unitaire:Math.max(0,Math.round(xNum(r.p)))};
+        const ex=em.find(x=>nrm(x.nom)===nrm(d.nom));const q=ex?await sb.from("stock_articles").update(d).eq("id",ex.id):await sb.from("stock_articles").insert({...d,agence_id:a.id});
+        if(q.error)warn.push("Article « "+d.nom+" » : "+q.error.message);else res.m++}
+      modal("Import terminé",`<p><b>${res.s}</b> site(s), <b>${res.a}</b> agent(s) et <b>${res.m}</b> article(s) importés.</p>${warn.length?`<div class="err">${warn.slice(0,15).map(esc).join("<br>")}${warn.length>15?"<br>… et "+(warn.length-15)+" autre(s)":""}</div>`:""}`,`<button class="btn pri" id="im-f">Terminé</button>`);
+      $("#im-f").onclick=async()=>{await vAgences();fiche(a.id)}});
+  }catch(e){modal("Import impossible",`<p>${esc(e.message)}</p>`,`<button class="btn" id="im-f">Retour</button>`);$("#im-f").onclick=()=>fiche(a.id)}
 }
 
 /* ---------- support ---------- */
