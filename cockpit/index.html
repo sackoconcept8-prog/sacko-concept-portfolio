@@ -106,8 +106,8 @@ pre.log{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:va
     <h1 style="font-size:26px">Cockpit SACKO CONCEPT</h1>
     <p class="muted sm" style="margin:4px 0 20px">Espace réservé à l'administration SACKO CONCEPT.</p>
     <div class="err hide" id="login-err"></div>
-    <div class="field"><label class="f" for="l-email">Adresse e-mail</label><input class="input" id="l-email" type="email" autocomplete="username" required></div>
-    <div class="field"><label class="f" for="l-pass">Mot de passe</label><input class="input" id="l-pass" type="password" autocomplete="current-password" required></div>
+    <div class="field"><label class="f" for="l-email">Adresse e-mail</label><input class="input" id="l-email" type="text" inputmode="email" autocomplete="username" autocapitalize="none" required></div>
+    <div class="field"><label class="f" for="l-pass">Mot de passe</label><div style="display:flex;gap:8px"><input class="input" id="l-pass" type="password" autocomplete="current-password" required><button type="button" class="btn" id="l-voir" style="flex:none">Afficher</button></div></div>
     <button class="btn pri" id="l-btn" style="width:100%;padding:12px">Se connecter</button>
   </form>
 </section>
@@ -178,7 +178,9 @@ function etat(a){
 
 /* ---------- connexion ---------- */
 function showLogin(msg){$("#app").classList.add("hide");$("#login").classList.remove("hide");const e=$("#login-err");e.textContent=msg||"";e.classList.toggle("hide",!msg)}
+$("#l-voir").onclick=()=>{const i=$("#l-pass"),v=i.type==="password";i.type=v?"text":"password";$("#l-voir").textContent=v?"Masquer":"Afficher"};
 $("#login-form").onsubmit=ev=>{ev.preventDefault();busy($("#l-btn"),async()=>{
+  if(!$("#l-email").value.includes("@"))return showLogin("Ce cockpit est réservé à SACKO CONCEPT. Les agents et superviseurs se connectent avec leur matricule sur le lien de leur agence (sackoconcept.com/espace/?a=…).");
   const {error}=await sb.auth.signInWithPassword({email:$("#l-email").value.trim(),password:$("#l-pass").value});
   if(error)return showLogin("E-mail ou mot de passe incorrect.");
   $("#l-pass").value="";await entrer();

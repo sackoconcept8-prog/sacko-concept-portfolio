@@ -157,7 +157,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
     <p class="muted sm" id="lg-sous" style="margin:4px 0 20px">Connectez-vous pour accéder à votre espace.</p>
     <div class="err hide" id="login-err"></div>
     <div class="field"><label class="f" for="l-id">E-mail ou matricule</label><input class="input" id="l-id" autocomplete="username" autocapitalize="none" required></div>
-    <div class="field"><label class="f" for="l-pass">Mot de passe</label><input class="input" id="l-pass" type="password" autocomplete="current-password" required></div>
+    <div class="field"><label class="f" for="l-pass">Mot de passe</label><div style="display:flex;gap:8px"><input class="input" id="l-pass" type="password" autocomplete="current-password" required><button type="button" class="btn" id="l-voir" style="flex:none">Afficher</button></div></div>
     <button class="btn pri" id="l-btn" style="width:100%;padding:12px">Se connecter</button>
     <div class="by">Logiciel conçu par SACKO CONCEPT</div>
   </form>
@@ -178,7 +178,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
     <div class="brand"><img id="hd-logo" src="../assets/sacko-logo-vert-96.png" alt=""><div style="min-width:0"><span id="hd-nom"></span><small id="hd-moi"></small></div></div>
     <button class="btn sm hide" id="menu-btn" aria-label="Menu">☰ Menu</button>
     <nav class="tabs" id="tabs"></nav>
-    <button class="avbtn" id="hd-av" title="Ma photo de profil" aria-label="Ma photo de profil"></button>
+    <button class="avbtn" id="hd-av" title="Mon profil et mon mot de passe" aria-label="Mon profil"></button>
     <button class="btn sm" id="logout">Déconnexion</button>
   </div></header>
   <div class="layout" id="layout"><aside id="side" class="hide"></aside><div id="voile" class="hide"></div><div style="min-width:0"><div id="sos-bar" class="hide"></div><main id="main"></main></div></div>
@@ -225,9 +225,12 @@ function reduire(file){return new Promise((ok,ko)=>{const im=new Image(),u=URL.c
   im.onerror=()=>{URL.revokeObjectURL(u);ko(new Error("Ce fichier n'est pas une photo lisible."))};im.src=u})}
 function majAvatar(){$("#hd-av").innerHTML=avatar(moi)}
 function maPhoto(){
-  modal("Ma photo de profil",`<div style="text-align:center"><div id="ph-pv">${avatar(moi).replace('class="av"','class="av bigav"')}</div><p class="muted sm" style="margin:0 0 14px">Choisissez une photo de vous, de face. Elle sera recadrée en carré automatiquement.</p>
-  <div class="actions" style="justify-content:center"><label class="btn pri" style="cursor:pointer">Choisir une photo<input type="file" id="ph-f" accept="image/*" hidden></label>${moi.photo_url?`<button class="btn danger" id="ph-del">Retirer la photo</button>`:""}</div></div>`,`<button class="btn" id="ph-no">Fermer</button>`);
+  modal("Mon profil",`<div style="text-align:center"><div id="ph-pv">${avatar(moi).replace('class="av"','class="av bigav"')}</div><p class="muted sm" style="margin:0 0 14px">Choisissez une photo de vous, de face. Elle sera recadrée en carré automatiquement.</p>
+  <div class="actions" style="justify-content:center"><label class="btn pri" style="cursor:pointer">Choisir une photo<input type="file" id="ph-f" accept="image/*" hidden></label>${moi.photo_url?`<button class="btn danger" id="ph-del">Retirer la photo</button>`:""}</div></div>
+  <div class="sec">Changer mon mot de passe</div><div class="row"><div class="field"><label class="f">Nouveau mot de passe (8 caractères minimum)</label><input class="input" type="password" id="pm-1" autocomplete="new-password"></div><div class="field"><label class="f">Confirmez-le</label><input class="input" type="password" id="pm-2" autocomplete="new-password"></div></div><button class="btn" id="pm-ok">Changer mon mot de passe</button>`,`<button class="btn" id="ph-no">Fermer</button>`);
   $("#ph-no").onclick=closeModal;
+  $("#pm-ok").onclick=()=>busy($("#pm-ok"),async()=>{const a=$("#pm-1").value;if(a.length<8)throw new Error("Le mot de passe doit contenir au moins 8 caractères.");if(a!==$("#pm-2").value)throw new Error("Les deux mots de passe ne sont pas identiques.");
+    const r=await sb.auth.updateUser({password:a});if(r.error)throw new Error(/different|same/i.test(r.error.message)?"Choisissez un mot de passe différent de l'actuel.":r.error.message);$("#pm-1").value=$("#pm-2").value="";toast("Mot de passe changé")});
   const poser=async chemin=>{const ancien=moi.photo_url;must(await sb.rpc("definir_ma_photo",{p_chemin:chemin}));moi.photo_url=chemin;
     const c=comptes.find(x=>x.id===moi.id);if(c)c.photo_url=chemin;if(ancien)sb.storage.from("photos_profils").remove([ancien]).then(()=>{},()=>{});majAvatar();closeModal();if(tab==="comptes")vComptes()};
   $("#ph-f").onchange=e=>{const f=e.target.files[0];if(!f)return;busy(null,async()=>{const b=await reduire(f),chemin=moi.id+"/photo-"+Date.now()+".jpg";
@@ -287,6 +290,7 @@ function ecran(id){["login","bloque","app"].forEach(x=>$("#"+x).classList.toggle
 function showLogin(msg){ecran("login");const e=$("#login-err");e.textContent=msg||"";e.classList.toggle("hide",!msg)}
 
 /* ---------- connexion ---------- */
+$("#l-voir").onclick=()=>{const i=$("#l-pass"),v=i.type==="password";i.type=v?"text":"password";$("#l-voir").textContent=v?"Masquer":"Afficher"};
 $("#login-form").onsubmit=ev=>{ev.preventDefault();busy($("#l-btn"),async()=>{
   let id=$("#l-id").value.trim();
   if(!id.includes("@")){if(!slug)return showLogin("Pour vous connecter avec un matricule, ouvrez le lien fourni par votre agence.");id=slugify(id)+"@"+slug+".agents.sackoconcept.com"}
@@ -454,17 +458,25 @@ function ficheAgent(id){const a=agents.find(x=>x.id===id);if(!a)return closeModa
   photoAgent(a).then(u=>{const i=$("#fa-ph");if(u&&i){i.src=u;i.classList.remove("hide")}});
   const on=(s,f)=>{const e=$(s);if(e)e.onclick=f};
   const statut=async(v,msg)=>{must(await sb.from("agents").update({statut:v}).eq("id",id));if(c&&c.est_actif!==(v==="Actif"))await appel({action:"activer",user_id:c.id,est_actif:v==="Actif"});toast(msg);await ouvrir("agents");ficheAgent(id)};
-  on("#fa-acc",()=>saisirMdp("Créer l'accès de "+esc(nomC),`Identifiant de connexion : <b>${esc(a.matricule)}</b>`,"Créer l'accès",async mdp=>{await appel({action:"creer",role:estSup(a)?"superviseur":"agent",fonction:a.fonction||null,agent_id:id,nom_complet:nomC,email:emailAgent(a.matricule),mot_de_passe:mdp});toast("Accès créé");await ouvrir("agents");ficheAgent(id)},()=>ficheAgent(id)));
-  on("#fa-mdp",()=>saisirMdp("Nouveau mot de passe · "+esc(nomC),"L'ancien mot de passe ne fonctionnera plus.","Changer",async mdp=>{await appel({action:"mot_de_passe",user_id:c.id,mot_de_passe:mdp});toast("Mot de passe changé");ficheAgent(id)},()=>ficheAgent(id)));
+  on("#fa-acc",()=>saisirMdp("Créer l'accès de "+esc(nomC),`Identifiant de connexion : <b>${esc(a.matricule)}</b>`,"Créer l'accès",async mdp=>{await appel({action:"creer",role:estSup(a)?"superviseur":"agent",fonction:a.fonction||null,agent_id:id,nom_complet:nomC,email:emailAgent(a.matricule),mot_de_passe:mdp});await charger();toast("Accès créé")},()=>{ouvrir("agents").then(()=>ficheAgent(id))},{nom:nomC,prenom:a.prenom,identifiant:a.matricule,telephone:a.telephone}));
+  on("#fa-mdp",()=>saisirMdp("Nouveau mot de passe · "+esc(nomC),"L'ancien mot de passe ne fonctionnera plus.","Changer",async mdp=>{await appel({action:"mot_de_passe",user_id:c.id,mot_de_passe:mdp});toast("Mot de passe changé")},()=>ficheAgent(id),{nom:nomC,prenom:a.prenom,identifiant:a.matricule,telephone:a.telephone}));
   on("#fa-lock",e=>busy(e.target,()=>statut("Suspendu","Accès retiré")));
   on("#fa-unlock",e=>busy(e.target,()=>statut("Actif","Agent rétabli")));
   on("#fa-exit",()=>confirmer("Sortie de l'effectif · "+esc(nomC),"À utiliser quand l'agent quitte l'entreprise. Son accès est coupé, mais sa fiche et son historique restent dans vos archives.","Confirmer la sortie",()=>statut("Sorti","Agent sorti de l'effectif")));
   on("#fa-del",()=>confirmer("Supprimer définitivement · "+esc(nomC),"<b>Attention :</b> la fiche de l'agent sera effacée. Cette action est irréversible. Si l'agent a simplement quitté l'entreprise, préférez « Sortie de l'effectif ».","Supprimer",async()=>{if(c)await appel({action:"activer",user_id:c.id,est_actif:false});must(await sb.from("agents").delete().eq("id",id));toast("Agent supprimé");await ouvrir("agents")},"SUPPRIMER"));
 }
-function saisirMdp(titre,info,label,fn,retour){
-  modal(titre,`<div class="idbox">${info}</div><div class="field"><label class="f">Mot de passe (8 caractères minimum)</label><input class="input" id="mp" type="text" autocomplete="off"></div><p class="muted sm" style="margin:0">Notez-le et transmettez-le à la personne.</p>`,`<button class="btn" id="mp-no">Retour</button><button class="btn pri" id="mp-ok">${label}</button>`);
-  $("#mp-no").onclick=retour;$("#m-x").onclick=retour;$("#mp-ok").onclick=()=>busy($("#mp-ok"),async()=>{const m=$("#mp").value;if(m.length<8){$("#mp").focus();throw new Error("Le mot de passe doit contenir au moins 8 caractères.")}await fn(m)});
+function genMdp(){const M=["Vigie","Garde","Ronde","Portail","Veille","Bouclier","Lanterne","Sentinelle","Phare","Rempart"],r=new Uint32Array(2);crypto.getRandomValues(r);return M[r[0]%M.length]+"-"+String(1000+r[1]%9000)}
+function saisirMdp(titre,info,label,fn,retour,envoi){
+  modal(titre,`<div class="idbox">${info}</div><div class="field"><label class="f">Mot de passe (8 caractères minimum)</label><div style="display:flex;gap:8px"><input class="input" id="mp" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" value="${genMdp()}"><button type="button" class="btn" id="mp-gen" style="flex:none">Autre</button></div></div><p class="muted sm" style="margin:0">Un mot de passe vous est proposé. Vous pouvez le garder ou le changer.</p>`,`<button class="btn" id="mp-no">Retour</button><button class="btn pri" id="mp-ok">${label}</button>`);
+  $("#mp-gen").onclick=()=>{$("#mp").value=genMdp()};
+  $("#mp-no").onclick=retour;$("#m-x").onclick=retour;$("#mp-ok").onclick=()=>busy($("#mp-ok"),async()=>{const m=$("#mp").value.trim();if(m.length<8){$("#mp").focus();throw new Error("Le mot de passe doit contenir au moins 8 caractères.")}await fn(m);if(envoi)recapAcces(envoi,m,retour)});
 }
+function recapAcces(e,mdp,fin){const lien=location.origin+location.pathname+"?a="+ag.slug,
+  txt=`Bonjour ${e.prenom||e.nom},\nVotre accès à l'application ${ag.nom_agence} est prêt.\nLien : ${lien}\nIdentifiant : ${e.identifiant}\nMot de passe : ${mdp}\nConseil : ouvrez le lien sur votre téléphone, puis « Ajouter à l'écran d'accueil ».`,tel=String(e.telephone||"").replace(/\D/g,"");
+  modal("Accès prêt",`<p style="margin-top:0">Transmettez ces informations à <b>${esc(e.nom)}</b> :</p><div class="idbox" style="font-size:15px">Lien : <b>${esc(lien)}</b><br>Identifiant : <b>${esc(e.identifiant)}</b><br>Mot de passe : <b>${esc(mdp)}</b></div><p class="muted sm" style="margin:0">L'identifiant se tape tel quel, majuscules ou minuscules. La personne pourra changer son mot de passe en touchant sa photo, en haut à droite.</p>`,
+  `<button class="btn" id="ra-cp">Copier le message</button>${tel?`<a class="btn" id="ra-wa" target="_blank" rel="noopener" href="https://wa.me/${tel}?text=${encodeURIComponent(txt)}">Envoyer par WhatsApp</a>`:""}<button class="btn pri" id="ra-ok">Terminé</button>`);
+  $("#ra-cp").onclick=async()=>{try{await navigator.clipboard.writeText(txt);toast("Message copié")}catch(_){toast("Copie impossible : notez les informations à la main.",true)}};
+  $("#ra-ok").onclick=fin;$("#m-x").onclick=fin}
 async function appel(body){
   const r=await sb.functions.invoke("comptes",{body});
   if(r.error){let msg=r.error.message;try{const j=await r.error.context.json();if(j&&j.erreur)msg=j.erreur}catch(_){}throw new Error(msg)}
