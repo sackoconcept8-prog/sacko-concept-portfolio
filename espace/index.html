@@ -6,6 +6,12 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Espace de gestion</title>
 <link rel="icon" id="fav" href="../assets/sacko-logo-vert-96.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mon agence">
+<link rel="apple-touch-icon" id="apple-ic" href="../assets/sacko-logo-vert-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -109,6 +115,12 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 #side .grp{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 12px 6px;font-weight:700}
 #side button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;background:none;padding:8px 12px;border-radius:9px;font-weight:600;font-size:14px;color:var(--ink);cursor:pointer}
 #side button:hover{background:var(--bg)}#side button.on{background:var(--p-l);color:var(--p)}
+.esp{display:flex;gap:4px;background:var(--bg);border-radius:11px;padding:4px;margin:0 2px 8px}
+#side .esp button{justify-content:center;padding:7px 6px;font-size:13px;border-radius:8px;color:var(--muted)}
+#side .esp button.on{background:#fff;color:var(--p);box-shadow:0 1px 3px rgba(16,24,40,.12)}
+.hl-bar{background:var(--amber-l);color:var(--amber);border-radius:12px;padding:12px 14px;margin:0 0 14px;font-weight:600;font-size:14px}
+.ech{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.ech:last-child{border-bottom:0}
+.ech .d{flex:0 0 auto;font-weight:700;font-size:13px;border-radius:8px;padding:3px 8px}
 #voile{position:fixed;inset:0;background:rgba(20,30,45,.35);z-index:14}
 #sos-bar{background:var(--red);color:#fff;padding:12px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-weight:600}
 #sos-bar .btn{background:#fff;color:var(--red);border-color:#fff}
@@ -303,10 +315,17 @@ $("#login-form").onsubmit=ev=>{ev.preventDefault();busy($("#l-btn"),async()=>{
   if(error)return showLogin(/fetch|network/i.test(error.message)?"Connexion Internet indisponible. Réessayez.":"Identifiant ou mot de passe incorrect.");
   $("#l-pass").value="";await entrer();
 })};
-async function sortir(msg){clearInterval(veille);await sb.auth.signOut();ctx=ag=moi=null;showLogin(msg)}
+function demarrerHorsLigne(){let sn=null;try{sn=JSON.parse(localStorage.getItem("sp-snap")||"null")}catch(_){}
+  if(!sn)return showLogin("Pas de réseau. Réessayez quand la connexion revient.");
+  moi=sn.moi;ag=sn.ag;habiller(ag);ecran("app");$("#hd-moi").textContent=moi.nom_complet;
+  $("#layout").classList.remove("avec");$("#side").classList.add("hide");$("#tabs").classList.remove("hide");$("#menu-btn").classList.add("hide");
+  $("#tabs").innerHTML=`<button data-tab="accueil" class="on">Accueil</button>`;tab="accueil";afficherHorsLigne();
+  window.addEventListener("online",()=>location.reload(),{once:true})}
+async function sortir(msg){clearInterval(veille);try{const r=swReg||await navigator.serviceWorker.getRegistration();const sub=r&&await r.pushManager.getSubscription();if(sub)await sb.from("push_abonnements").delete().eq("endpoint",sub.endpoint)}catch(_){}await sb.auth.signOut();ctx=ag=moi=null;showLogin(msg)}
 $("#logout").onclick=()=>sortir();$("#bl-out").onclick=()=>sortir();
 async function entrer(){
-  const r=await sb.rpc("contexte");
+  let r;try{r=await sb.rpc("contexte")}catch(e){r={error:e}}
+  if(r.error&&horsReseau(r.error))return demarrerHorsLigne();
   if(r.error||!r.data||!r.data.connecte)return sortir("Compte non reconnu. Contactez votre responsable.");
   ctx=r.data;moi=ctx.profil;ag=ctx.agence;
   if(moi.role==="super_admin")return sortir("Ce compte est celui de l'administration. Utilisez le cockpit SACKO CONCEPT.");
@@ -315,18 +334,32 @@ async function entrer(){
   if(!ctx.acces_ouvert)return bloquer(ctx.motif_blocage);
   $("#hd-moi").textContent=moi.nom_complet+" · "+(moi.fonction||ROLES[moi.role]||moi.role);
   ecran("app");majAvatar();$("#hd-av").onclick=maPhoto;
-  const G=estDirection()?[["",[["accueil","Tableau de bord"]]],["Opérations",[["planning","Planning"],["pointage","Pointage"],["incidents","Main courante"],["rondes","Rondes"],["supervision","Supervision"]]],
-      ["Personnel",[["agents","Agents"],["conges","Congés"],["documents","Documents RH"],["messages","Messages"],["paie","Paie"],["materiel","Matériel"]]],
-      ["Clients",[["sites","Sites"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["comptes","Comptes"],...(moi.role==="dg"?[["reglages","Réglages"]]:[]),["support","Support"]]]]:null;
+  if(moi.role==="rh")espace="rh";else if(moi.role==="dg"){try{espace=localStorage.getItem("espace-"+moi.id)==="rh"?"rh":"direction"}catch(_){espace="direction"}}
+  const G=estDirection()?menuDirection():null;
   const T=G?G.flatMap(g=>g[1]):moi.role==="superviseur"?[["pointage","Pointage"],["visites","Visites et notes"],["rapport","Mon rapport"],["equipe","Mes agents"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"]]
     :moi.role==="agent"?[["accueil","Accueil"],["monplanning","Planning"],["mesdemandes","Demandes"],["mesdocs","Documents"],["mesmsg","Messages"],["mapaie","Paie"]]
     :moi.role==="client"?[["client","Mon site"],["cl-incidents","Incidents"],["cl-factures","Factures"],["cl-demandes","Demandes"]]:[["accueil","Accueil"]];
   $("#layout").classList.toggle("avec",!!G);$("#side").classList.toggle("hide",!G);$("#tabs").classList.toggle("hide",!!G);$("#menu-btn").classList.toggle("hide",!G);
   $("#side").innerHTML="";$("#tabs").innerHTML="";
-  if(G)$("#side").innerHTML=G.map(([g,l])=>(g?`<div class="grp">${g}</div>`:"")+l.map(([k,x])=>`<button data-tab="${k}">${x}<span class="badge hide" data-b="${k}"></span></button>`).join("")).join("");
+  if(G)dessinerMenu(G);
   else $("#tabs").innerHTML=T.map(([k,l])=>`<button data-tab="${k}">${l}</button>`).join("");
-  await ouvrir(T[0][0]);
-  demarrerVeille();
+  const voulu=new URLSearchParams(location.search).get("t");
+  await ouvrir(voulu&&T.some(x=>x[0]===voulu)?voulu:T[0][0]);
+  demarrerVeille();demarrerPWA();
+  if(moi.role==="agent")envoyerFile();
+}
+let espace="direction";
+function menuDirection(){
+  if(espace==="rh")return [["",[["accueil","Tableau de bord RH"]]],["Personnel",[["agents","Agents"],["conges","Congés"],["documents","Documents RH"],["messages","Messages"],["paie","Paie"],["materiel","Matériel"]]],
+    ["Suivi",[["planning","Planning"],["pointage","Pointage"]]],["Aide",[["support","Support"]]]];
+  return [["",[["accueil","Tableau de bord"]]],["Opérations",[["planning","Planning"],["pointage","Pointage"],["incidents","Main courante"],["rondes","Rondes"],["supervision","Supervision"]]],
+    ["Clients",[["sites","Sites"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["comptes","Comptes"],["reglages","Réglages"],["support","Support"]]]];
+}
+function dessinerMenu(G){
+  const sw=moi.role==="dg"?`<div class="esp"><button data-esp="direction" class="${espace==="direction"?"on":""}">Direction</button><button data-esp="rh" class="${espace==="rh"?"on":""}">Espace RH</button></div>`:`<div class="grp" style="margin-top:4px">Espace RH</div>`;
+  $("#side").innerHTML=sw+G.map(([g,l])=>(g?`<div class="grp">${g}</div>`:"")+l.map(([k,x])=>`<button data-tab="${k}">${x}<span class="badge hide" data-b="${k}"></span></button>`).join("")).join("");
+  $("#side").querySelectorAll("[data-esp]").forEach(b=>b.onclick=e=>{e.stopPropagation();if(espace===b.dataset.esp)return;espace=b.dataset.esp;try{localStorage.setItem("espace-"+moi.id,espace)}catch(_){}
+    const mob=getComputedStyle($("#menu-btn")).display!=="none";dessinerMenu(menuDirection());ouvrir("accueil").then(()=>{if(mob)menu(true)});verifierAlertes().catch(()=>{})});
 }
 async function bloquer(motif){
   const M={suspendu:["Accès suspendu","L'accès de votre agence à ce logiciel est suspendu. Vos données sont conservées. Contactez SACKO CONCEPT pour le rétablir."],
@@ -346,12 +379,35 @@ async function charger(){
   const [s,a,c]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.from("agents").select("*").order("nom"),sb.from("profiles").select("id,nom_complet,role,fonction,photo_url,agent_id,site_id,est_actif,derniere_connexion").order("created_at")]);
   sites=must(s);agents=must(a);comptes=must(c);
 }
-async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button,#side button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));menu(false);window.scrollTo(0,0);
+async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button,#side button[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));menu(false);window.scrollTo(0,0);
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
+  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
+/* échéances : cartes professionnelles, fins de CDD, fins de période d'essai (30 jours) */
+async function echeances(){const out=[],lim=ajout(auj(),30),act=agents.filter(a=>a.statut==="Actif");
+  act.forEach(a=>{if(a.carte_pro_expiration&&a.carte_pro_expiration<=lim)out.push({a,d:a.carte_pro_expiration,t:"Carte professionnelle"})});
+  let docs=[];try{docs=must(await sb.from("documents_rh").select("agent_id,contenu,created_at").eq("type","Contrat de travail").order("created_at",{ascending:false}))}catch(_){}
+  const vu=new Set();docs.forEach(d=>{if(!d.agent_id||vu.has(d.agent_id))return;vu.add(d.agent_id);const a=act.find(x=>x.id===d.agent_id);if(!a)return;const c=lireContenu(d);
+    if(c.type_contrat==="CDD"&&c.date_fin&&c.date_fin<=lim)out.push({a,d:c.date_fin,t:"Fin du CDD"});
+    if(+c.essai_mois>0){const dep=new Date((a.date_embauche||String(d.created_at).slice(0,10))+"T12:00:00");dep.setMonth(dep.getMonth()+(+c.essai_mois));const f=iso(dep);if(f<=lim&&f>=ajout(auj(),-7))out.push({a,d:f,t:"Fin de la période d'essai"})}});
+  return out.sort((x,y)=>x.d.localeCompare(y.d))}
+function carteEcheances(l){if(!l.length)return `<div class="card"><h2>Échéances des 30 prochains jours</h2><p class="muted sm" style="margin:0">Aucune carte professionnelle ni aucun contrat n'arrive à échéance.</p></div>`;
+  return `<div class="card"><h2>Échéances des 30 prochains jours</h2>${l.map(x=>{const j=Math.round((new Date(x.d+"T12:00:00")-new Date(auj()+"T12:00:00"))/864e5),c=j<0?"p-red":j<=7?"p-amber":"p-grey";
+    return `<div class="ech click" data-ag-ech="${x.a.id}"><span class="d pill ${c}">${j<0?"Dépassée":j===0?"Aujourd'hui":"J-"+j}</span><div class="grow"><b class="n">${esc(nomAg(x.a))}</b><div class="muted xs">${esc(x.t)} · ${fd(x.d)}</div></div></div>`}).join("")}</div>`}
+function brancherEcheances(){$("#main").querySelectorAll("[data-ag-ech]").forEach(x=>x.onclick=()=>ficheAgent(x.dataset.agEch))}
+async function vAccueilRH(){
+  const [cg,dc,av]=await Promise.all([sb.from("conges").select("id").eq("statut","En attente").then(must),sb.from("documents_rh").select("id,type,reponse,statut").eq("type","Demande d'explication").neq("statut","Clôturé").then(must).catch(()=>[]),sb.from("avances").select("id,statut").then(must).catch(()=>[])]);
+  const actifs=agents.filter(a=>a.statut==="Actif"),sansAcces=actifs.filter(a=>!comptes.some(c=>c.agent_id===a.id)).length;
+  $("#main").innerHTML=`<div class="head"><div><h1>Espace RH</h1><p class="muted sm" style="margin:2px 0 0">${esc(ag.nom_agence)} · le personnel, les congés, les documents et la paie.</p></div></div>
+  <div class="tiles"><div class="tile click" data-go="agents"><b>${actifs.length}</b><span class="muted sm">Agents actifs</span></div><div class="tile click" data-go="conges"><b style="${cg.length?"color:var(--amber)":""}">${cg.length}</b><span class="muted sm">Congés à valider</span></div>
+  <div class="tile click" data-go="documents"><b>${dc.filter(d=>d.reponse).length}</b><span class="muted sm">Réponses à lire</span></div><div class="tile click" data-go="agents"><b>${sansAcces}</b><span class="muted sm">Agents sans accès</span></div></div>
+  <div id="ech-z"><div class="card"><h2>Échéances des 30 prochains jours</h2><p class="muted sm" style="margin:0">Chargement…</p></div></div>
+  ${moi.role==="dg"?`<div class="idbox sm">Vous gérez l'espace RH en attendant de le confier. Le jour où vous recrutez un responsable RH, créez son compte (Direction → Comptes, niveau « Ressources humaines ») : il n'aura accès qu'à cet espace.</div>`:""}`;
+  $("#main").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go));
+  $("#ech-z").innerHTML=carteEcheances(await echeances());brancherEcheances();
+}
 async function vAccueil(){
   if(!estDirection()){$("#main").innerHTML=`<div class="empty"><b style="color:var(--ink)">Bonjour ${esc(moi.nom_complet)}</b><br>Votre compte est bien actif. Votre espace ${esc((ROLES[moi.role]||"").toLowerCase())} sera disponible très prochainement.</div>`;return}
   const actifs=agents.filter(a=>a.statut==="Actif").length,j=Math.ceil((new Date(ag.date_expiration)-Date.now())/864e5);
@@ -360,8 +416,10 @@ async function vAccueil(){
   $("#main").innerHTML=`<div class="head"><div><h1>Bonjour ${esc(moi.nom_complet.split(" ")[0])}</h1><p class="muted sm" style="margin:2px 0 0">${esc(ag.nom_agence)}${ag.ville?" · "+esc(ag.ville):""}</p></div></div>
   <div class="tiles"><div class="tile"><b>${actifs} / ${+ag.nb_agents_max}</b><span class="muted sm">Agents actifs</span></div><div class="tile"><b>${sites.filter(s=>s.actif).length}</b><span class="muted sm">Sites clients</span></div><div class="tile"><b>${avecCompte}</b><span class="muted sm">Agents avec accès</span></div><div class="tile"><b>${fd(ag.date_expiration)}</b><span class="muted sm">Fin de l'accès${j<=7?` · <span style="color:var(--amber)">dans ${Math.max(j,0)} j</span>`:""}</span></div></div>
   <div class="card" id="jour-bloc"><h2>Aujourd'hui</h2><p class="muted sm" style="margin:0">Chargement…</p></div>
+  <div id="notif-z"></div><div id="ech-z"></div>
   <div class="card"><h2>Pour bien démarrer</h2><ul class="steps">${et.map(([ok,l,t])=>`<li><span class="dot ${ok?"ok":""}">${ok?"✓":""}</span><span style="flex:1">${l}</span>${ok?"":`<button class="btn sm" data-go="${t}">Commencer</button>`}</li>`).join("")}</ul></div>`;
   $("#main").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go));
+  carteNotifs($("#notif-z"));echeances().then(l=>{const z=$("#ech-z");if(z&&l.length){z.innerHTML=carteEcheances(l);brancherEcheances()}}).catch(()=>{});
   try{const ds=auj(),P=await chargerPlanning(ajout(ds,-1),ds),po=must(await sb.from("pointages").select("*").eq("date_service",ds));
     const aff=affectations(ds,P,agents),now=Date.now();let pres=0,ret=0,np=0,trou=0;
     aff.forEach(a=>{const x=po.find(p=>p.agent_id===a.agent_id&&p.poste===a.poste);if(x){pres++;if((new Date(x.heure_arrivee)-debutPoste(ds,a.poste))/6e4>TOL())ret++}else if(now>debutPoste(ds,a.poste).getTime())np++});
@@ -589,7 +647,7 @@ async function vPointage(){jourT=jourT||auj();const ds=jourT,dir=estDirection(),
   <div class="tiles"><div class="tile"><b>${lignes.length}</b><span class="muted sm">Attendus</span></div><div class="tile"><b class="ok-t">${n("ok")}</b><span class="muted sm">À l'heure</span></div><div class="tile"><b class="wa-t">${n("ret")}</b><span class="muted sm">En retard</span></div><div class="tile"><b class="ko-t">${n("np")}</b><span class="muted sm">Pas pointé</span></div></div>
   ${lignes.length?`<div class="card">${lignes.map(l=>{const a=AG_(l.agent_id),e=etat(l),pt=l.pt,s=sites.find(x=>x.id===l.site_id)||{},loin=pt&&pt.distance_m!=null&&pt.distance_m>(+s.rayon_m||300);
     return `<div class="line"><div class="grow"><b>${esc(nomAg(a))}</b><div class="muted xs">${esc(siteNom(l.site_id))} · ${esc(POSTE(l.poste).libelle.toLowerCase())} ${POSTE(l.poste).debut}–${POSTE(l.poste).fin}${l.type!=="titulaire"?" · "+esc(l.type):""}</div>
-      ${pt?`<div class="xs">Arrivée <b>${hm(pt.heure_arrivee)}</b> · départ <b>${hm(pt.heure_depart)}</b>${pt.distance_m!=null?` · <span class="${loin?"ko-t":"muted"}">à ${pt.distance_m} m du site</span>`:pt.mode==="application"?' · <span class="muted">sans position</span>':""}${pt.mode==="secours"?' · <span class="wa-t">saisie manuelle</span>':""}${pt.note?` · <span class="muted">${esc(pt.note)}</span>`:""}</div>`:""}</div>
+      ${pt?`<div class="xs">Arrivée <b>${hm(pt.heure_arrivee)}</b> · départ <b>${hm(pt.heure_depart)}</b>${pt.distance_m!=null?` · <span class="${loin?"ko-t":"muted"}">à ${pt.distance_m} m du site</span>`:pt.mode==="application"?' · <span class="muted">sans position</span>':""}${pt.mode==="secours"?' · <span class="wa-t">saisie manuelle</span>':""}${pt.mode==="hors_ligne"?' · <span class="wa-t">pointé hors réseau</span>':""}${pt.note?` · <span class="muted">${esc(pt.note)}</span>`:""}</div>`:""}</div>
       <span class="pill ${e[1]}">${e[0]}</span>
       ${dir?(pt?`<button class="btn sm" data-corr="${pt.id}">Corriger</button>`:`<button class="btn sm" data-man="${l.agent_id}|${l.site_id}|${l.poste}">Saisir</button><button class="btn sm" data-abs2="${l.agent_id}">Absent</button>`)
         :sup?(pt?(pt.mode==="secours"&&!pt.heure_depart?`<button class="btn sm" data-sdep="${pt.id}">Pointer son départ</button>`:""):`<button class="btn sm pri" data-ssec="${l.agent_id}|${l.site_id}|${l.poste}">Pointer pour lui</button>`):""}</div>`}).join("")}</div>`
@@ -605,6 +663,7 @@ async function vPointage(){jourT=jourT||auj();const ds=jourT,dir=estDirection(),
       async()=>{must(await sb.from("pointages").insert({agent_id:ag_,site_id:si,poste:c,date_service:ds,mode:"secours"}));toast("Pointage enregistré");await vPointage()})});
   Q("[data-sdep]",b=>busy(b,async()=>{must(await sb.from("pointages").update({heure_depart:new Date().toISOString()}).eq("id",b.dataset.sdep));toast("Départ enregistré");await vPointage()}));
   const csv=$("#pt-csv");if(csv)csv.onclick=()=>busy(csv,()=>exporterPointages(ds.slice(0,7)));
+  if(moi.role==="superviseur"){const z=document.createElement("div");const h=$("#main .head");if(h){h.after(z);carteNotifs(z)}}
 }
 function confirmerSimple(titre,texte,label,fn){modal(titre,`<p style="margin-top:0">${texte}</p>`,`<button class="btn" id="cs-no">Annuler</button><button class="btn pri" id="cs-ok">${label}</button>`);
   $("#cs-no").onclick=closeModal;$("#cs-ok").onclick=()=>busy($("#cs-ok"),async()=>{await fn();closeModal()})}
@@ -659,7 +718,7 @@ async function vAgentAccueil(){
   const siteTerrain=ouvert?S(ouvert.site_id):vise?S(vise.site_id):(monAgent.site_id?S(monAgent.site_id):null);
   const terrain=siteTerrain&&siteTerrain.id?`<div class="terrain">${(siteTerrain.points_ronde||[]).length?`<button class="btn" id="ag-ronde">Faire une ronde</button>`:""}<button class="btn" id="ag-inc">Signaler un incident</button></div><button class="sos-btn" id="ag-sos">ALERTE SOS</button><p class="muted xs" style="text-align:center;margin:6px 0 16px">En cas de danger : votre position est envoyée immédiatement à votre direction.</p>`:"";
   $("#main").innerHTML=`<div class="head"><div><h1>Bonjour ${esc(monAgent.prenom||monAgent.nom)}</h1><p class="muted sm" style="margin:2px 0 0">${esc(monAgent.matricule)} · ${esc(monAgent.grade)}</p></div></div>${carte}${terrain}
-  <div class="card"><h2>Mes derniers pointages</h2>${po.slice(0,10).map(p=>`<div class="line"><div class="grow"><b>${esc(fjourc(p.date_service))}</b> <span class="muted sm">· ${esc(S(p.site_id).nom)}</span></div><span class="sm">${hm(p.heure_arrivee)} → ${hm(p.heure_depart)}</span>${p.mode==="secours"?'<span class="pill p-amber">manuel</span>':""}</div>`).join("")||'<p class="muted sm" style="margin:0">Aucun pointage pour le moment.</p>'}</div>`;
+  <div class="card"><h2>Mes derniers pointages</h2>${po.slice(0,10).map(p=>`<div class="line"><div class="grow"><b>${esc(fjourc(p.date_service))}</b> <span class="muted sm">· ${esc(S(p.site_id).nom)}</span></div><span class="sm">${hm(p.heure_arrivee)} → ${hm(p.heure_depart)}</span>${p.mode==="secours"?'<span class="pill p-amber">manuel</span>':""}${p.mode==="hors_ligne"?'<span class="pill p-amber">hors réseau</span>':""}</div>`).join("")||'<p class="muted sm" style="margin:0">Aucun pointage pour le moment.</p>'}</div>`;
   const arr=$("#ag-arr");if(arr)arr.onclick=()=>pointerArrivee(arr,vise,S(vise.site_id));
   nouveautesAgent().then(n=>{if(!n.docs&&!n.msg)return;const c=document.createElement("div");c.className="card";
     c.innerHTML=`<h2>À lire</h2><div class="actions">${n.docs?`<button class="btn" data-go3="mesdocs">${n.docs} document(s) non lu(s)</button>`:""}${n.msg?`<button class="btn" data-go3="mesmsg">${n.msg} message(s) non lu(s)</button>`:""}</div>`;
@@ -667,12 +726,20 @@ async function vAgentAccueil(){
   const ro=$("#ag-ronde");if(ro)ro.onclick=()=>faireRonde(siteTerrain,vise||{ds:auj(),poste:monAgent.poste});
   const ic_=$("#ag-inc");if(ic_)ic_.onclick=()=>signalerIncident(siteTerrain);
   const so=$("#ag-sos");if(so)so.onclick=()=>alerteSOS(siteTerrain);
-  const dep=$("#ag-dep");if(dep)dep.onclick=()=>busy(dep,async()=>{must(await sb.from("pointages").update({heure_depart:new Date().toISOString()}).eq("id",ouvert.id));toast("Départ enregistré");await vAgentAccueil()});
+  const dep=$("#ag-dep");if(dep)dep.onclick=()=>busy(dep,async()=>{const h=new Date().toISOString();
+    try{must(await sb.from("pointages").update({heure_depart:h}).eq("id",ouvert.id));toast("Départ enregistré");await vAgentAccueil()}
+    catch(e){if(!horsReseau(e))throw e;mettreEnFile({k:"dep",pid:ouvert.id,ds:ouvert.date_service,poste:ouvert.poste,h});await afficherHorsLigne()}});
+  try{localStorage.setItem("sp-snap",JSON.stringify({uid:moi.id,ag,moi,monAgent:{id:monAgent.id,prenom:monAgent.prenom,nom:monAgent.nom,matricule:monAgent.matricule,grade:monAgent.grade},
+    vise:vise?{ds:vise.ds,poste:vise.poste,site_id:vise.site_id}:null,site:vise?S(vise.site_id):null,ouvert:ouvert?{id:ouvert.id,heure_arrivee:ouvert.heure_arrivee,date_service:ouvert.date_service,poste:ouvert.poste,site:S(ouvert.site_id).nom}:null,fait:!!fait,at:Date.now()}))}catch(_){}
+  if(lireFile().length){const b=document.createElement("div");b.className="hl-bar";b.textContent="Envoi des pointages faits sans réseau…";$("#main .head").after(b);envoyerFile()}
 }
 function pointerArrivee(btn,vise,site){busy(btn,async()=>{btn.textContent="Localisation en cours…";let pos=null,err=null;
   try{pos=await position()}catch(e){err=e.message}finally{btn.textContent="Pointer mon arrivée"}
   const dist=pos?distance(pos.lat,pos.lng,site.latitude,site.longitude):null;
-  const envoyer=async()=>{const r=await sb.from("pointages").insert({agent_id:monAgent.id,site_id:vise.site_id,poste:vise.poste,date_service:vise.ds,mode:"application",latitude:pos?pos.lat:null,longitude:pos?pos.lng:null,distance_m:dist});
+  const ligne={agent_id:monAgent.id,site_id:vise.site_id,poste:vise.poste,date_service:vise.ds,mode:"application",latitude:pos?pos.lat:null,longitude:pos?pos.lng:null,distance_m:dist};
+  const envoyer=async()=>{const h=new Date().toISOString();let r;
+    try{if(!navigator.onLine)throw new Error("network");r=await sb.from("pointages").insert(ligne)}catch(e){r={error:e}}
+    if(r.error&&horsReseau(r.error)){mettreEnFile({k:"arr",ligne:{...ligne,mode:"hors_ligne",heure_arrivee:h},h});closeModal();await afficherHorsLigne();return}
     if(r.error)throw new Error(/duplicate|pointages_agent_id_date_service_poste_key/.test(r.error.message)?"Vous avez déjà pointé pour ce service.":r.error.message);closeModal();toast("Arrivée enregistrée");await vAgentAccueil()};
   if(err)return confirmerSimple("Position introuvable",esc(err)+"<br><br>Vous pouvez pointer quand même : votre responsable verra que la position n'a pas été vérifiée.","Pointer sans position",envoyer);
   if(dist!=null&&dist>(+site.rayon_m||300))return confirmerSimple("Vous semblez loin du site","Vous êtes à environ <b>"+dist+" m</b> de "+esc(site.nom)+". Si vous êtes bien sur place, le GPS est peut-être imprécis : attendez quelques secondes et réessayez.<br><br>Vous pouvez aussi pointer quand même : votre responsable verra la distance.","Pointer quand même",envoyer);
@@ -1295,6 +1362,67 @@ async function vClientDemandes(){await chargerMonSite();const l=must(await sb.fr
   ${l.length?`<div class="card"><h2>Vos demandes</h2>${l.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><b>${esc(x.type)}</b>${x.objet?" · "+esc(x.objet):""}<div class="muted xs">${fdt(x.created_at)}</div><div class="sm" style="white-space:pre-wrap">${esc(x.message||"")}</div>${x.reponse?`<div class="idbox" style="margin:8px 0 0"><b>Réponse :</b> ${esc(x.reponse)}</div>`:""}</div><span class="pill ${x.statut==="Traitée"?"p-green":x.statut==="En cours"?"p-main":"p-amber"}">${esc(x.statut)}</span></div>`).join("")}</div>`:""}`;
   $("#cd-ok").onclick=()=>busy($("#cd-ok"),async()=>{const m=$("#cd-m").value.trim();if(m.length<3){$("#cd-m").focus();throw new Error("Écrivez votre message.")}
     must(await sb.from("demandes_clients").insert({site_id:monSite.id,type:$("#cd-t").value,objet:$("#cd-o").value.trim()||null,message:m,statut:"Nouvelle"}));toast("Demande envoyée");await vClientDemandes()})}
+
+/* ---------- sans réseau : file d'attente des pointages ---------- */
+const horsReseau=e=>!navigator.onLine||/fetch|network|load failed|internet|timeout/i.test(String((e&&e.message)||e||""));
+function lireFile(){try{return JSON.parse(localStorage.getItem("sp-file")||"[]")}catch(_){return []}}
+function ecrireFile(f){try{localStorage.setItem("sp-file",JSON.stringify(f))}catch(_){}}
+function mettreEnFile(op){const f=lireFile();f.push({...op,uid:moi&&moi.id});ecrireFile(f);
+  toast(op.k==="arr"?"Pas de réseau : arrivée gardée sur le téléphone":"Pas de réseau : départ gardé sur le téléphone")}
+let envoiEnCours=false;
+async function envoyerFile(){if(envoiEnCours||!navigator.onLine)return;let f=lireFile();if(!f.length)return;envoiEnCours=true;let n=0;
+  try{while(f.length){const op=f[0];
+      if(op.k==="arr"){const r=await sb.from("pointages").insert(op.ligne);if(r.error&&horsReseau(r.error))break}
+      else if(op.k==="dep"){let id=op.pid;
+        if(!id){const r=await sb.from("pointages").select("id").eq("agent_id",(op.agent_id||moi.agent_id)).eq("date_service",op.ds).eq("poste",op.poste).maybeSingle();if(r.error&&horsReseau(r.error))break;id=r.data&&r.data.id}
+        if(id){const r=await sb.from("pointages").update({heure_depart:op.h,note:"[depart_hors_reseau]"}).eq("id",id);if(r.error&&horsReseau(r.error))break}}
+      f.shift();ecrireFile(f);n++}}
+  catch(e){if(!horsReseau(e))noterErreur("File hors réseau : "+e.message)}
+  finally{envoiEnCours=false}
+  if(n){toast(n>1?n+" pointages envoyés":"Pointage envoyé");if(moi&&moi.role==="agent"&&tab==="accueil")ouvrir("accueil")}}
+window.addEventListener("online",()=>{envoyerFile();if(moi&&moi.role==="agent"&&$("#hl-ecran"))ouvrir("accueil")});
+setInterval(()=>{if(lireFile().length)envoyerFile()},60000);
+async function afficherHorsLigne(){let sn=null;try{sn=JSON.parse(localStorage.getItem("sp-snap")||"null")}catch(_){}
+  const f=lireFile(),tel=ag&&ag.telephone?ag.telephone.replace(/\s/g,""):"";
+  if(!sn||!moi||sn.uid!==moi.id){$("#main").innerHTML=`<div class="empty" id="hl-ecran"><b style="color:var(--ink)">Pas de réseau</b><br>Reconnectez-vous dès que le réseau revient.</div>`;return}
+  const v=sn.vise,arr=f.find(o=>o.k==="arr"&&v&&o.ligne.date_service===v.ds&&o.ligne.poste===v.poste),dep=f.find(o=>o.k==="dep");
+  const enPoste=(sn.ouvert||arr)&&!dep,debut=sn.ouvert?sn.ouvert.heure_arrivee:arr&&arr.h,lieu=sn.ouvert?sn.ouvert.site:sn.site&&sn.site.nom;
+  let carte;
+  if(dep)carte=`<div class="punch"><span class="pill p-green">Départ enregistré</span><div class="big">${hm(dep.h)}</div><div class="muted">Gardé sur le téléphone. Il sera envoyé dès le retour du réseau.</div></div>`;
+  else if(enPoste)carte=`<div class="punch"><span class="pill p-green">En poste</span><div class="big">${hm(debut)}</div><div class="muted">Arrivée ${arr?"gardée sur le téléphone":"enregistrée"} · ${esc(lieu||"")}</div><button class="btn pri bigbtn" id="hl-dep">Pointer mon départ</button></div>`;
+  else if(v&&!sn.fait)carte=`<div class="punch"><div class="muted">${esc(fjour(v.ds))}</div><div class="big" style="font-size:26px">${esc(lieu||"")}</div><div class="muted">Poste de ${esc(POSTE(v.poste).libelle.toLowerCase())}</div><button class="btn pri bigbtn" id="hl-arr">Pointer mon arrivée</button><p class="muted xs" style="margin:10px 0 0">Votre position est relevée même sans réseau.</p></div>`;
+  else carte=`<div class="punch"><div class="big" style="font-size:22px">Pas de service à pointer</div></div>`;
+  $("#main").innerHTML=`<div id="hl-ecran"><div class="head"><div><h1>Bonjour ${esc(sn.monAgent.prenom||sn.monAgent.nom)}</h1><p class="muted sm" style="margin:2px 0 0">${esc(sn.monAgent.matricule)}</p></div></div>
+  <div class="hl-bar">Pas de réseau. Vos pointages sont gardés sur le téléphone et envoyés automatiquement dès le retour du réseau.${f.length?` (${f.length} en attente)`:""}</div>${carte}
+  ${tel?`<a class="sos-btn" href="tel:${esc(tel)}" style="display:block;text-align:center;text-decoration:none">URGENCE : APPELER LA DIRECTION</a><p class="muted xs" style="text-align:center;margin:6px 0 16px">Sans réseau Internet, l'alerte SOS ne peut pas partir : appelez directement.</p>`:""}</div>`;
+  const a=$("#hl-arr");if(a)a.onclick=()=>busy(a,async()=>{a.textContent="Localisation en cours…";let pos=null;try{pos=await position()}catch(_){}
+    const s=sn.site||{},dist=pos?distance(pos.lat,pos.lng,s.latitude,s.longitude):null,h=new Date().toISOString();
+    mettreEnFile({k:"arr",h,ligne:{agent_id:sn.monAgent.id,site_id:v.site_id,poste:v.poste,date_service:v.ds,mode:"hors_ligne",heure_arrivee:h,latitude:pos?pos.lat:null,longitude:pos?pos.lng:null,distance_m:dist}});await afficherHorsLigne()});
+  const d=$("#hl-dep");if(d)d.onclick=()=>busy(d,async()=>{const h=new Date().toISOString();
+    mettreEnFile({k:"dep",pid:sn.ouvert&&!arr?sn.ouvert.id:null,agent_id:sn.monAgent.id,ds:sn.ouvert&&!arr?sn.ouvert.date_service:v.ds,poste:sn.ouvert&&!arr?sn.ouvert.poste:v.poste,h});await afficherHorsLigne()});
+}
+
+/* ---------- application installable et notifications ---------- */
+let swReg=null;
+function demarrerPWA(){if(!("serviceWorker" in navigator)||location.protocol!=="https:")return;
+  navigator.serviceWorker.register("sw.js").then(r=>{swReg=r}).catch(()=>{})}
+if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").then(r=>{swReg=r}).catch(()=>{});
+const b64u=s=>{const p="=".repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))};
+const estIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent),estInstallee=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+async function etatNotifs(){if(!("Notification" in window)||!("serviceWorker" in navigator)||!("PushManager" in window))return estIOS()&&!estInstallee()?"ios":"impossible";
+  if(Notification.permission==="denied")return "refuse";
+  try{const r=swReg||await navigator.serviceWorker.getRegistration();const sub=r&&await r.pushManager.getSubscription();return sub&&Notification.permission==="granted"?"actif":"inactif"}catch(_){return "inactif"}}
+async function activerNotifs(){const perm=await Notification.requestPermission();if(perm!=="granted")throw new Error("Notifications refusées. Autorisez-les dans les réglages du navigateur.");
+  const r=swReg||await navigator.serviceWorker.register("sw.js");await navigator.serviceWorker.ready;
+  const k=(await sb.rpc("vapid_public")).data;if(!k)throw new Error("Service de notification indisponible.");
+  let sub=await r.pushManager.getSubscription();if(!sub)sub=await r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(k)});
+  const j=sub.toJSON();must(await sb.rpc("enregistrer_push",{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth}));
+  toast("Notifications activées sur ce téléphone")}
+async function carteNotifs(z){if(!z||!estEncadrement())return;const e=await etatNotifs();if(e==="actif"||e==="impossible")return;
+  const txt={inactif:"Recevez les alertes SOS et les incidents graves sur ce téléphone, même quand l'application est fermée.",refuse:"Les notifications sont bloquées sur ce téléphone. Autorisez-les dans les réglages du navigateur, pour ce site.",
+    ios:"Sur iPhone, ajoutez d'abord l'application à l'écran d'accueil (bouton Partager, puis « Sur l'écran d'accueil »), ouvrez-la depuis l'icône, puis activez les alertes ici."}[e];
+  z.innerHTML=`<div class="card" style="border-color:var(--red)"><h2>🔔 Alertes SOS sur ce téléphone</h2><p class="muted sm" style="margin:4px 0 10px">${txt}</p>${e==="inactif"?`<button class="btn pri" id="nt-on">Activer les alertes</button>`:""}</div>`;
+  const b=$("#nt-on");if(b)b.onclick=()=>busy(b,async()=>{await activerNotifs();z.innerHTML=""})}
 
 /* ---------- mot de passe oublié (écran de connexion) ---------- */
 $("#l-oubli").onclick=async()=>{const id=$("#l-id").value.trim(),mail=id.includes("@"),wa=await waSupport(),nA=$("#lg-nom").textContent||"votre agence";

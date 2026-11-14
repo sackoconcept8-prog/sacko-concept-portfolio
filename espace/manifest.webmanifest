@@ -1,0 +1,15 @@
+{
+  "name": "Espace de gestion",
+  "short_name": "Mon agence",
+  "description": "Pointage, planning, main courante et alertes de votre agence.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#ffffff",
+  "lang": "fr",
+  "icons": [
+    { "src": "../assets/sacko-logo-vert-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../assets/sacko-logo-vert-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
