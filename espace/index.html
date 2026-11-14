@@ -76,7 +76,22 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 .x{border:1px solid var(--line);background:#fff;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:18px;line-height:1}
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;max-width:90vw}
 #toast.on{opacity:1}#toast.bad{background:var(--red)}
-@media(max-width:560px){.head h1{font-size:21px}.brand small{display:none}}
+.daybar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.daybar input{width:auto}
+.site-blk{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:12px}
+.site-blk h3{margin:0;font-size:16px}.poste{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 6px 4px 12px;font-size:13px;background:#fff}
+.chip button{border:0;background:var(--bg);border-radius:999px;width:22px;height:22px;cursor:pointer;font-size:12px;line-height:1;color:var(--muted)}
+.chip button:hover{color:var(--red)}
+.gap{color:var(--red);font-weight:600;font-size:13px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px}
+.week button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 4px;cursor:pointer;font-size:12px;text-align:center}
+.week button.on{border-color:var(--p);box-shadow:0 0 0 2px var(--p-l)}.week b{display:block;font-size:15px}
+.ok-t{color:var(--green)}.ko-t{color:var(--red)}.wa-t{color:var(--amber)}
+.punch{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px 18px;text-align:center;margin-bottom:14px}
+.punch .big{font-size:40px;font-weight:700;letter-spacing:-.02em;margin:4px 0}
+.punch .bigbtn{width:100%;max-width:360px;padding:18px;font-size:18px;border-radius:14px;margin-top:14px}
+@media(max-width:560px){.head h1{font-size:21px}.week{grid-template-columns:repeat(7,minmax(40px,1fr));overflow-x:auto}.brand small{display:none}}
 </style>
 </head>
 <body>
@@ -165,11 +180,45 @@ function maPhoto(){
   const d=$("#ph-del");if(d)d.onclick=()=>busy(d,async()=>{await poser(null);toast("Photo retirée")});
 }
 
+/* ---------- dates et planning ---------- */
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>{const x=new Date(d);return x.getFullYear()+"-"+pad(x.getMonth()+1)+"-"+pad(x.getDate())};
+const auj=()=>iso(Date.now());
+const ajout=(ds,n)=>{const d=new Date(ds+"T12:00:00");d.setDate(d.getDate()+n);return iso(d)};
+const dowOf=ds=>new Date(ds+"T12:00:00").getDay();
+const fjour=ds=>new Date(ds+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+const fjourc=ds=>new Date(ds+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric"});
+const hm=t=>t?new Date(t).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}):"—";
+const POSTE=c=>{const p=((ag&&ag.parametres&&ag.parametres.postes)||[]).find(x=>x.code===c)||{};return {code:c,libelle:p.libelle||(c==="N"?"Nuit":"Jour"),debut:p.debut||(c==="N"?"19:00":"07:00"),fin:p.fin||(c==="N"?"07:00":"19:00")}};
+const debutPoste=(ds,c)=>new Date(ds+"T"+POSTE(c).debut+":00");
+const finPoste=(ds,c)=>{const p=POSTE(c),f=new Date(ds+"T"+p.fin+":00");if(p.fin<=p.debut)f.setDate(f.getDate()+1);return f};
+const TOL=()=>+((ag&&ag.parametres&&ag.parametres.tolerance_retard)??15);
+const nomAg=a=>a?[a.prenom,a.nom].filter(Boolean).join(" "):"Agent supprimé";
+const AG_=id=>agents.find(a=>a.id===id);
+function distance(a,b,c,d){if([a,b,c,d].some(x=>x==null||x===""))return null;const R=6371e3,r=x=>x*Math.PI/180,dl=r(c-a),dg=r(d-b);
+  const h=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dg/2)**2;return Math.round(2*R*Math.asin(Math.sqrt(h)))}
+async function chargerPlanning(d1,d2,agentId){
+  let p=sb.from("plannings").select("*").gte("date_service",d1).lte("date_service",d2),
+      ab=sb.from("absences").select("*").gte("date_absence",d1).lte("date_absence",d2),
+      co=sb.from("conges").select("*").eq("statut","Validée").lte("date_debut",d2).gte("date_fin",d1);
+  if(agentId){p=p.eq("agent_id",agentId);ab=ab.eq("agent_id",agentId);co=co.eq("agent_id",agentId)}
+  const [a,b,c]=await Promise.all([p,ab,co]);return {plan:must(a),abs:must(b),cong:must(c)};
+}
+function indispo(P,id,ds){const a=P.abs.find(x=>x.agent_id===id&&x.date_absence===ds);if(a)return {t:a.type||"Absence",abs:a};
+  const c=P.cong.find(x=>x.agent_id===id&&x.date_debut<=ds&&x.date_fin>=ds);if(c)return {t:c.type||"Congé"};return null}
+function affectations(ds,P,liste){const dow=dowOf(ds),out=[];
+  liste.filter(a=>a.statut==="Actif"&&a.site_id&&a.poste).forEach(a=>{if(a.jour_repos!=null&&+a.jour_repos===dow)return;if(indispo(P,a.id,ds))return;
+    out.push({agent_id:a.id,site_id:a.site_id,poste:a.poste,type:"titulaire"})});
+  P.plan.filter(x=>x.date_service===ds).forEach(x=>{if(indispo(P,x.agent_id,ds))return;if(out.some(o=>o.agent_id===x.agent_id&&o.poste===x.poste))return;
+    out.push({agent_id:x.agent_id,site_id:x.site_id,poste:x.poste,type:"remplacement",id:x.id})});
+  return out}
+
 /* ---------- état ---------- */
 let slug=(new URLSearchParams(location.search).get("a")||"").toLowerCase().replace(/[^a-z0-9-]/g,"");
 try{if(!slug)slug=localStorage.getItem("espace-slug")||""}catch(_){}
 let ctx=null,ag=null,moi=null,sites=[],agents=[],comptes=[],tab="accueil",fAg={q:"",site:"",statut:"Actif"};
 const estDirection=()=>moi&&(moi.role==="dg"||moi.role==="rh");
+const estEncadrement=()=>estDirection()||(moi&&moi.role==="superviseur");
 const emailAgent=mat=>slugify(mat)+"@"+ag.slug+".agents.sackoconcept.com";
 const siteNom=id=>(sites.find(s=>s.id===id)||{}).nom||"Sans affectation";
 
@@ -202,9 +251,11 @@ async function entrer(){
   if(!ctx.acces_ouvert)return bloquer(ctx.motif_blocage);
   $("#hd-moi").textContent=moi.nom_complet+" · "+(moi.fonction||ROLES[moi.role]||moi.role);
   ecran("app");majAvatar();$("#hd-av").onclick=maPhoto;
-  const T=estDirection()?[["accueil","Accueil"],["sites","Sites"],["agents","Agents"],["comptes","Comptes"],["support","Support"]]:[["accueil","Accueil"]];
+  const T=estDirection()?[["accueil","Accueil"],["planning","Planning"],["pointage","Pointage"],["agents","Agents"],["sites","Sites"],["comptes","Comptes"],["support","Support"]]
+    :moi.role==="superviseur"?[["pointage","Pointage"],["planning","Planning"]]
+    :moi.role==="agent"?[["accueil","Pointer"],["monplanning","Mon planning"]]:[["accueil","Accueil"]];
   $("#tabs").innerHTML=T.map(([k,l])=>`<button data-tab="${k}">${l}</button>`).join("");
-  await ouvrir("accueil");
+  await ouvrir(T[0][0]);
 }
 async function bloquer(motif){
   const M={suspendu:["Accès suspendu","L'accès de votre agence à ce logiciel est suspendu. Vos données sont conservées. Contactez SACKO CONCEPT pour le rétablir."],
@@ -223,20 +274,28 @@ async function charger(){
 }
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estDirection())await charger();({accueil:vAccueil,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
+  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
-function vAccueil(){
+async function vAccueil(){
   if(!estDirection()){$("#main").innerHTML=`<div class="empty"><b style="color:var(--ink)">Bonjour ${esc(moi.nom_complet)}</b><br>Votre compte est bien actif. Votre espace ${esc((ROLES[moi.role]||"").toLowerCase())} sera disponible très prochainement.</div>`;return}
   const actifs=agents.filter(a=>a.statut==="Actif").length,j=Math.ceil((new Date(ag.date_expiration)-Date.now())/864e5);
   const avecCompte=agents.filter(a=>comptes.some(c=>c.agent_id===a.id)).length;
   const et=[[sites.length>0,"Ajoutez vos sites clients","sites"],[agents.length>0,"Enregistrez vos agents","agents"],[avecCompte>0,"Créez les accès de vos agents (depuis leur fiche)","agents"],[comptes.some(c=>c.role==="rh"||c.role==="superviseur"),"Créez les comptes de votre équipe (RH, superviseurs)","comptes"]];
   $("#main").innerHTML=`<div class="head"><div><h1>Bonjour ${esc(moi.nom_complet.split(" ")[0])}</h1><p class="muted sm" style="margin:2px 0 0">${esc(ag.nom_agence)}${ag.ville?" · "+esc(ag.ville):""}</p></div></div>
   <div class="tiles"><div class="tile"><b>${actifs} / ${+ag.nb_agents_max}</b><span class="muted sm">Agents actifs</span></div><div class="tile"><b>${sites.filter(s=>s.actif).length}</b><span class="muted sm">Sites clients</span></div><div class="tile"><b>${avecCompte}</b><span class="muted sm">Agents avec accès</span></div><div class="tile"><b>${fd(ag.date_expiration)}</b><span class="muted sm">Fin de l'accès${j<=7?` · <span style="color:var(--amber)">dans ${Math.max(j,0)} j</span>`:""}</span></div></div>
+  <div class="card" id="jour-bloc"><h2>Aujourd'hui</h2><p class="muted sm" style="margin:0">Chargement…</p></div>
   <div class="card"><h2>Pour bien démarrer</h2><ul class="steps">${et.map(([ok,l,t])=>`<li><span class="dot ${ok?"ok":""}">${ok?"✓":""}</span><span style="flex:1">${l}</span>${ok?"":`<button class="btn sm" data-go="${t}">Commencer</button>`}</li>`).join("")}</ul></div>
-  <div class="card"><h2>Prochainement dans votre espace</h2><p class="muted sm" style="margin:0">Planning, pointage, congés, documents RH, paie, matériel, facturation et rapports seront ajoutés au fil des mises à jour. Vous n'aurez rien à installer : ils apparaîtront ici automatiquement.</p></div>`;
+  <div class="card"><h2>Prochainement dans votre espace</h2><p class="muted sm" style="margin:0">Congés, documents RH, paie, matériel, facturation et rapports arrivent au fil des mises à jour. Vous n'aurez rien à installer : ils apparaîtront ici automatiquement.</p></div>`;
   $("#main").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go));
+  try{const ds=auj(),P=await chargerPlanning(ajout(ds,-1),ds),po=must(await sb.from("pointages").select("*").eq("date_service",ds));
+    const aff=affectations(ds,P,agents),now=Date.now();let pres=0,ret=0,np=0,trou=0;
+    aff.forEach(a=>{const x=po.find(p=>p.agent_id===a.agent_id&&p.poste===a.poste);if(x){pres++;if((new Date(x.heure_arrivee)-debutPoste(ds,a.poste))/6e4>TOL())ret++}else if(now>debutPoste(ds,a.poste).getTime())np++});
+    sites.filter(s=>s.actif).forEach(s=>["J","N"].forEach(c=>{trou+=Math.max(0,(+(s.besoins||{})[c]||0)-aff.filter(a=>a.site_id===s.id&&a.poste===c).length)}));
+    const z=$("#jour-bloc");if(z)z.innerHTML=`<h2>Aujourd'hui · ${esc(fjour(ds))}</h2><div class="tiles" style="margin:8px 0 10px"><div class="tile"><b>${aff.length}</b><span class="muted sm">Agents attendus</span></div><div class="tile"><b class="ok-t">${pres}</b><span class="muted sm">Ont pointé</span></div><div class="tile"><b class="${ret?"wa-t":""}">${ret}</b><span class="muted sm">En retard</span></div><div class="tile"><b class="${np?"ko-t":""}">${np}</b><span class="muted sm">Pas encore pointé</span></div><div class="tile"><b class="${trou?"ko-t":""}">${trou}</b><span class="muted sm">Postes non couverts</span></div></div><div class="actions"><button class="btn sm" data-go2="planning">Voir le planning</button><button class="btn sm" data-go2="pointage">Voir le pointage</button></div>`;
+    $("#main").querySelectorAll("[data-go2]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go2));
+  }catch(e){const z=$("#jour-bloc");if(z)z.innerHTML=`<h2>Aujourd'hui</h2><p class="muted sm" style="margin:0">${esc(traduire(e.message))}</p>`}
 }
 
 /* ---------- sites ---------- */
@@ -251,13 +310,20 @@ function ficheSite(s){const n=!s;s=s||{actif:true,besoins:{J:1,N:1}};const b=s.b
   <div class="row"><div class="field" style="flex:2 1 240px"><label class="f">Adresse</label><input class="input" id="s-adr" value="${esc(s.adresse)}"></div><div class="field"><label class="f">Ville</label><input class="input" id="s-ville" value="${esc(s.ville??ag.ville)}"></div></div>
   <div class="row"><div class="field"><label class="f">Agents nécessaires le jour</label><input class="input" id="s-bj" type="number" min="0" value="${+b.J||0}"></div><div class="field"><label class="f">La nuit</label><input class="input" id="s-bn" type="number" min="0" value="${+b.N||0}"></div><div class="field"><label class="f">Montant mensuel du contrat</label><input class="input" id="s-mt" type="number" min="0" value="${+s.montant_contrat||0}"></div></div>
   <div class="row"><div class="field"><label class="f">Contact sur place</label><input class="input" id="s-cn" value="${esc(s.contact_nom)}"></div><div class="field"><label class="f">Téléphone du contact</label><input class="input" id="s-ct" value="${esc(s.contact_telephone)}"></div></div>
+  <div class="row" style="align-items:flex-end"><div class="field"><label class="f">Latitude</label><input class="input" id="s-lat" inputmode="decimal" value="${s.latitude??""}"></div><div class="field"><label class="f">Longitude</label><input class="input" id="s-lng" inputmode="decimal" value="${s.longitude??""}"></div><div class="field" style="flex:0 1 150px"><label class="f">Rayon du pointage (m)</label><input class="input" id="s-ray" type="number" min="30" value="${+s.rayon_m||300}"></div></div>
+  <div class="actions" style="margin:-4px 0 12px"><button class="btn sm" id="s-gps" type="button">Prendre ma position actuelle</button><a class="btn sm ${s.latitude!=null?"":"hide"}" id="s-map" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${s.latitude},${s.longitude}">Voir sur la carte</a></div>
+  <p class="muted xs" style="margin:-6px 0 12px">Faites-le une fois sur place, depuis un téléphone : l'application vérifiera ensuite que l'agent pointe bien depuis le site.</p>
   <div class="field"><label class="f">Consignes pour les agents</label><textarea class="input" id="s-cons">${esc(s.consignes)}</textarea></div>
   <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="s-act" ${s.actif?"checked":""}> Site actif</label>`,
   `${n?"":`<button class="btn danger" id="s-del" style="margin-right:auto">Supprimer</button>`}<button class="btn" id="s-no">Annuler</button><button class="btn pri" id="s-ok">Enregistrer</button>`);
   $("#s-no").onclick=closeModal;
+  $("#s-gps").onclick=e=>busy(e.target,async()=>{const pos=await position();$("#s-lat").value=pos.lat.toFixed(6);$("#s-lng").value=pos.lng.toFixed(6);
+    const m=$("#s-map");m.href="https://www.google.com/maps?q="+pos.lat+","+pos.lng;m.classList.remove("hide");toast("Position relevée (précision ± "+Math.round(pos.precision)+" m)")});
   $("#s-ok").onclick=()=>busy($("#s-ok"),async()=>{const nom=$("#s-nom").value.trim();if(nom.length<2){$("#s-nom").focus();throw new Error("Indiquez le nom du site.")}
     const v=x=>$(x).value.trim()||null;
-    const d={nom,type:v("#s-type"),adresse:v("#s-adr"),ville:v("#s-ville"),besoins:{...b,J:Math.max(0,+$("#s-bj").value||0),N:Math.max(0,+$("#s-bn").value||0)},montant_contrat:+$("#s-mt").value||0,contact_nom:v("#s-cn"),contact_telephone:v("#s-ct"),consignes:v("#s-cons"),actif:$("#s-act").checked};
+    const d={nom,type:v("#s-type"),adresse:v("#s-adr"),ville:v("#s-ville"),besoins:{...b,J:Math.max(0,+$("#s-bj").value||0),N:Math.max(0,+$("#s-bn").value||0)},montant_contrat:+$("#s-mt").value||0,contact_nom:v("#s-cn"),contact_telephone:v("#s-ct"),consignes:v("#s-cons"),actif:$("#s-act").checked,
+      latitude:$("#s-lat").value.trim()===""?null:+$("#s-lat").value.replace(",","."),longitude:$("#s-lng").value.trim()===""?null:+$("#s-lng").value.replace(",","."),rayon_m:Math.max(30,+$("#s-ray").value||300)};
+    if([d.latitude,d.longitude].some(x=>x!=null&&isNaN(x))||(d.latitude!=null)!==(d.longitude!=null))throw new Error("Coordonnées GPS invalides : remplissez la latitude et la longitude, ou laissez les deux vides.");
     must(n?await sb.from("sites").insert(d):await sb.from("sites").update(d).eq("id",s.id));closeModal();toast(n?"Site ajouté":"Site mis à jour");await ouvrir("sites")});
   if(!n)$("#s-del").onclick=()=>confirmer("Supprimer "+esc(s.nom)+" ?","Le site sera effacé. Les agents affectés resteront dans votre liste, sans affectation.","Supprimer",async()=>{must(await sb.from("sites").delete().eq("id",s.id));toast("Site supprimé");await ouvrir("sites")});
 }
@@ -355,6 +421,161 @@ async function vSupport(){
   ${t.length?`<div class="card"><h2>Vos demandes</h2>${t.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><div class="muted xs">${fdt(x.created_at)}${x.page_concernee?" · "+esc(x.page_concernee):""}</div><div style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(x.message)}</div>${x.reponse?`<div class="idbox" style="margin:8px 0 0;white-space:pre-wrap"><b>Réponse de SACKO CONCEPT :</b><br>${esc(x.reponse)}</div>`:""}</div><span class="pill ${ST[x.statut][1]}">${ST[x.statut][0]}</span></div>`).join("")}</div>`:""}`;
   $("#t-ok").onclick=()=>busy($("#t-ok"),async()=>{const m=$("#t-msg").value.trim();if(m.length<3){$("#t-msg").focus();throw new Error("Écrivez votre message.")}
     must(await sb.from("support_tickets").insert({page_concernee:$("#t-page").value,message:m}));toast("Demande envoyée");await ouvrir("support")});
+}
+
+/* ---------- position GPS ---------- */
+function position(){return new Promise((ok,ko)=>{if(!navigator.geolocation)return ko(new Error("Ce téléphone ne permet pas la localisation."));
+  navigator.geolocation.getCurrentPosition(p=>ok({lat:p.coords.latitude,lng:p.coords.longitude,precision:p.coords.accuracy}),
+    e=>ko(new Error(e.code===1?"Localisation refusée. Autorisez la localisation pour ce site dans votre navigateur.":"Position introuvable. Vérifiez que la localisation (GPS) est activée.")),
+    {enableHighAccuracy:true,timeout:20000,maximumAge:0})})}
+
+/* ---------- planning (direction et superviseur) ---------- */
+let jourP=null;
+async function vPlanning(){jourP=jourP||auj();const ds=jourP,dir=estDirection();
+  const lundi=ajout(ds,-((dowOf(ds)+6)%7)),dim=ajout(lundi,6),P=await chargerPlanning(lundi,dim);
+  const besoin=(s,c)=>+((s.besoins||{})[c])||0,actifs=sites.filter(s=>s.actif);
+  const couv=d=>{const a=affectations(d,P,agents);let b=0,m=0;actifs.forEach(s=>["J","N"].forEach(c=>{const n=besoin(s,c);b+=n;m+=Math.max(0,n-a.filter(x=>x.site_id===s.id&&x.poste===c).length)}));return {b,m}};
+  const aff=affectations(ds,P,agents);
+  const semaine=[...Array(7)].map((_,i)=>{const d=ajout(lundi,i),c=couv(d);return `<button data-j="${d}" class="${d===ds?"on":""}">${esc(fjourc(d))}<b class="${c.m?"ko-t":"ok-t"}">${c.m?c.m+" trou"+(c.m>1?"s":""):"OK"}</b></button>`}).join("");
+  const libres=agents.filter(a=>a.statut==="Actif"&&!aff.some(x=>x.agent_id===a.id));
+  $("#main").innerHTML=`<div class="head"><div><h1>Planning</h1><p class="muted sm" style="margin:2px 0 0">Chaque agent travaille sur son site et à son poste habituels, sauf son jour de repos, ses absences et ses congés.</p></div></div>
+  <div class="daybar"><button class="btn sm" id="pj-prev">‹ Semaine précédente</button><input class="input" type="date" id="pj-d" value="${ds}"><button class="btn sm" id="pj-auj">Aujourd'hui</button><button class="btn sm" id="pj-next">Semaine suivante ›</button></div>
+  <div class="week">${semaine}</div><h2 style="font-size:18px;margin:0 0 10px">${esc(fjour(ds).replace(/^./,c=>c.toUpperCase()))}</h2>
+  ${actifs.length?actifs.map(s=>`<div class="site-blk"><h3>${esc(s.nom)}</h3><div class="muted xs">${esc([s.adresse,s.ville].filter(Boolean).join(" · ")||"")}</div>
+    ${["J","N"].map(c=>{const p=POSTE(c),l=aff.filter(x=>x.site_id===s.id&&x.poste===c),m=besoin(s,c)-l.length;if(!besoin(s,c)&&!l.length)return "";
+      return `<div class="poste"><div class="actions"><b>Poste de ${esc(p.libelle.toLowerCase())}</b><span class="muted sm">${p.debut} – ${p.fin} · ${l.length} / ${besoin(s,c)}</span>${m>0?`<span class="gap">${m} poste${m>1?"s":""} non couvert${m>1?"s":""}</span>${dir?`<button class="btn sm pri" data-rempl="${s.id}|${c}">Affecter un remplaçant</button>`:""}`:""}</div>
+      <div class="chips">${l.map(x=>`<span class="chip">${esc(nomAg(AG_(x.agent_id)))}${x.type==="remplacement"?' <span class="pill p-amber">remplaçant</span>':""}${dir?(x.type==="remplacement"?`<button title="Retirer ce remplacement" data-delrempl="${x.id}">×</button>`:`<button title="Déclarer absent" data-abs="${x.agent_id}">×</button>`):""}</span>`).join("")||'<span class="muted sm">Personne</span>'}</div></div>`}).join("")}</div>`).join(""):`<div class="empty">Ajoutez d'abord vos sites et vos agents.</div>`}
+  <div class="card"><h2>Ne travaillent pas ce jour</h2>${libres.length?libres.map(a=>{const i=indispo(P,a.id,ds),r=a.jour_repos!=null&&+a.jour_repos===dowOf(ds);
+    return `<div class="line"><div class="grow"><b>${esc(nomAg(a))}</b><div class="muted xs">${esc(a.grade)} · ${esc(siteNom(a.site_id))}</div></div><span class="pill ${i?"p-red":r?"p-grey":"p-main"}">${i?esc(i.t):r?"Repos":a.site_id?"Sans poste":"Volant disponible"}</span>${dir&&i&&i.abs?`<button class="btn sm" data-annabs="${i.abs.id}">Annuler l'absence</button>`:""}</div>`}).join(""):'<p class="muted sm" style="margin:0">Tous les agents actifs sont en poste.</p>'}</div>`;
+  const go=d=>{jourP=d;vPlanning().catch(e=>toast(traduire(e.message),true))};
+  $("#pj-prev").onclick=()=>go(ajout(ds,-7));$("#pj-next").onclick=()=>go(ajout(ds,7));$("#pj-auj").onclick=()=>go(auj());$("#pj-d").onchange=e=>e.target.value&&go(e.target.value);
+  $("#main").querySelectorAll("[data-j]").forEach(b=>b.onclick=()=>go(b.dataset.j));
+  $("#main").querySelectorAll("[data-rempl]").forEach(b=>b.onclick=()=>{const [sid,c]=b.dataset.rempl.split("|");remplacant(ds,sid,c,libres.filter(a=>!indispo(P,a.id,ds)))});
+  $("#main").querySelectorAll("[data-delrempl]").forEach(b=>b.onclick=()=>busy(b,async()=>{must(await sb.from("plannings").delete().eq("id",b.dataset.delrempl));toast("Remplacement retiré");await vPlanning()}));
+  $("#main").querySelectorAll("[data-abs]").forEach(b=>b.onclick=()=>declarerAbsence(b.dataset.abs,ds,vPlanning));
+  $("#main").querySelectorAll("[data-annabs]").forEach(b=>b.onclick=()=>busy(b,async()=>{must(await sb.from("absences").delete().eq("id",b.dataset.annabs));toast("Absence annulée");await vPlanning()}));
+}
+function remplacant(ds,siteId,c,dispo){
+  dispo.sort((a,b)=>(a.grade==="Agent volant"?0:1)-(b.grade==="Agent volant"?0:1)||nomAg(a).localeCompare(nomAg(b)));
+  modal("Affecter un remplaçant",`<p class="muted sm" style="margin-top:0">${esc(siteNom(siteId))} · poste de ${esc(POSTE(c).libelle.toLowerCase())} · ${esc(fjour(ds))}</p>
+  ${dispo.length?`<div class="field"><label class="f">Agent disponible</label><select class="input" id="rp-a">${dispo.map(a=>`<option value="${a.id}">${esc(nomAg(a))} · ${esc(a.grade)}${a.jour_repos!=null&&+a.jour_repos===dowOf(ds)?" (jour de repos)":""}</option>`).join("")}</select></div>
+  <div class="field"><label class="f">Note <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" id="rp-n" placeholder="Ex. remplace Jean MBA, malade"></div>`:`<p>Aucun agent disponible ce jour-là.</p>`}`,
+  `<button class="btn" id="rp-no">Annuler</button>${dispo.length?'<button class="btn pri" id="rp-ok">Affecter</button>':""}`);
+  $("#rp-no").onclick=closeModal;const ok=$("#rp-ok");
+  if(ok)ok.onclick=()=>busy(ok,async()=>{must(await sb.from("plannings").insert({date_service:ds,site_id:siteId,poste:c,agent_id:$("#rp-a").value,type:"remplacement",note:$("#rp-n").value.trim()||null}));closeModal();toast("Remplaçant affecté");await vPlanning()});
+}
+function declarerAbsence(agentId,ds,apres){const a=AG_(agentId);
+  modal("Déclarer une absence · "+esc(nomAg(a)),`<div class="row"><div class="field"><label class="f">Date</label><input class="input" type="date" id="ab-d" value="${ds}"></div><div class="field"><label class="f">Motif</label><select class="input" id="ab-t"><option>Absence</option><option>Maladie</option><option>Permission</option><option>Mise à pied</option><option>Autre</option></select></div></div>
+  <label style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><input type="checkbox" id="ab-j"> Absence justifiée</label>
+  <div class="field"><label class="f">Note <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" id="ab-n"></div>
+  <p class="muted sm" style="margin:0">L'agent sera retiré du planning ce jour-là. Pensez ensuite à affecter un remplaçant.</p>`,`<button class="btn" id="ab-no">Annuler</button><button class="btn pri" id="ab-ok">Enregistrer l'absence</button>`);
+  $("#ab-no").onclick=closeModal;
+  $("#ab-ok").onclick=()=>busy($("#ab-ok"),async()=>{const r=await sb.from("absences").insert({agent_id:agentId,date_absence:$("#ab-d").value,type:$("#ab-t").value,justifiee:$("#ab-j").checked,note:$("#ab-n").value.trim()||null});
+    if(r.error)throw new Error(/absences_agent_id_date_absence_key|duplicate/.test(r.error.message)?"Une absence est déjà enregistrée pour cet agent ce jour-là.":r.error.message);
+    closeModal();toast("Absence enregistrée");await apres()});
+}
+
+/* ---------- pointage (direction et superviseur) ---------- */
+let jourT=null;
+async function vPointage(){jourT=jourT||auj();const ds=jourT,dir=estDirection(),sup=moi.role==="superviseur";
+  const [P,po]=await Promise.all([chargerPlanning(ajout(ds,-1),ds),sb.from("pointages").select("*").eq("date_service",ds).then(must)]);
+  const aff=affectations(ds,P,agents),now=Date.now();
+  const lignes=aff.map(a=>({...a,pt:po.find(p=>p.agent_id===a.agent_id&&p.poste===a.poste)}));
+  po.filter(p=>!lignes.some(l=>l.pt===p)).forEach(p=>lignes.push({agent_id:p.agent_id,site_id:p.site_id,poste:p.poste,type:"hors planning",pt:p}));
+  const etat=l=>{const deb=debutPoste(ds,l.poste);if(l.pt){const r=Math.round((new Date(l.pt.heure_arrivee)-deb)/6e4);return r>TOL()?["En retard de "+r+" min","p-amber","ret"]:["Présent","p-green","ok"]}
+    return now>deb.getTime()+TOL()*6e4?["Pas pointé","p-red","np"]:["À venir","p-grey","av"]};
+  const n=k=>lignes.filter(l=>etat(l)[2]===k).length;
+  lignes.sort((a,b)=>siteNom(a.site_id).localeCompare(siteNom(b.site_id))||a.poste.localeCompare(b.poste));
+  $("#main").innerHTML=`<div class="head"><div><h1>Pointage</h1><p class="muted sm" style="margin:2px 0 0">Les heures sont celles du serveur : un agent ne peut pas les modifier.</p></div>${dir?'<button class="btn" id="pt-csv">Exporter le mois (Excel)</button>':""}</div>
+  <div class="daybar"><button class="btn sm" id="pt-prev">‹</button><input class="input" type="date" id="pt-d" value="${ds}"><button class="btn sm" id="pt-next">›</button><button class="btn sm" id="pt-auj">Aujourd'hui</button></div>
+  <div class="tiles"><div class="tile"><b>${lignes.length}</b><span class="muted sm">Attendus</span></div><div class="tile"><b class="ok-t">${n("ok")}</b><span class="muted sm">À l'heure</span></div><div class="tile"><b class="wa-t">${n("ret")}</b><span class="muted sm">En retard</span></div><div class="tile"><b class="ko-t">${n("np")}</b><span class="muted sm">Pas pointé</span></div></div>
+  ${lignes.length?`<div class="card">${lignes.map(l=>{const a=AG_(l.agent_id),e=etat(l),pt=l.pt,s=sites.find(x=>x.id===l.site_id)||{},loin=pt&&pt.distance_m!=null&&pt.distance_m>(+s.rayon_m||300);
+    return `<div class="line"><div class="grow"><b>${esc(nomAg(a))}</b><div class="muted xs">${esc(siteNom(l.site_id))} · ${esc(POSTE(l.poste).libelle.toLowerCase())} ${POSTE(l.poste).debut}–${POSTE(l.poste).fin}${l.type!=="titulaire"?" · "+esc(l.type):""}</div>
+      ${pt?`<div class="xs">Arrivée <b>${hm(pt.heure_arrivee)}</b> · départ <b>${hm(pt.heure_depart)}</b>${pt.distance_m!=null?` · <span class="${loin?"ko-t":"muted"}">à ${pt.distance_m} m du site</span>`:pt.mode==="application"?' · <span class="muted">sans position</span>':""}${pt.mode==="secours"?' · <span class="wa-t">saisie manuelle</span>':""}${pt.note?` · <span class="muted">${esc(pt.note)}</span>`:""}</div>`:""}</div>
+      <span class="pill ${e[1]}">${e[0]}</span>
+      ${dir?(pt?`<button class="btn sm" data-corr="${pt.id}">Corriger</button>`:`<button class="btn sm" data-man="${l.agent_id}|${l.site_id}|${l.poste}">Saisir</button><button class="btn sm" data-abs2="${l.agent_id}">Absent</button>`)
+        :sup?(pt?(pt.mode==="secours"&&!pt.heure_depart?`<button class="btn sm" data-sdep="${pt.id}">Pointer son départ</button>`:""):`<button class="btn sm pri" data-ssec="${l.agent_id}|${l.site_id}|${l.poste}">Pointer pour lui</button>`):""}</div>`}).join("")}</div>`
+  :`<div class="empty">Aucun agent prévu ce jour-là.</div>`}`;
+  const go=d=>{jourT=d;vPointage().catch(e=>toast(traduire(e.message),true))};
+  $("#pt-prev").onclick=()=>go(ajout(ds,-1));$("#pt-next").onclick=()=>go(ajout(ds,1));$("#pt-auj").onclick=()=>go(auj());$("#pt-d").onchange=e=>e.target.value&&go(e.target.value);
+  const Q=(sel,f)=>$("#main").querySelectorAll(sel).forEach(b=>b.onclick=()=>f(b));
+  Q("[data-man]",b=>{const [ag_,si,c]=b.dataset.man.split("|");saisieManuelle(ds,{agent_id:ag_,site_id:si,poste:c})});
+  Q("[data-corr]",b=>saisieManuelle(ds,po.find(p=>p.id===b.dataset.corr)));
+  Q("[data-abs2]",b=>declarerAbsence(b.dataset.abs2,ds,vPointage));
+  Q("[data-ssec]",b=>{const [ag_,si,c]=b.dataset.ssec.split("|"),a=AG_(ag_);
+    confirmerSimple("Pointage de secours · "+esc(nomAg(a)),"À utiliser quand l'agent ne peut pas pointer lui-même (téléphone en panne, pas de réseau). L'heure enregistrée sera celle de maintenant, et la direction verra que c'est vous qui avez pointé.","Pointer maintenant",
+      async()=>{must(await sb.from("pointages").insert({agent_id:ag_,site_id:si,poste:c,date_service:ds,mode:"secours"}));toast("Pointage enregistré");await vPointage()})});
+  Q("[data-sdep]",b=>busy(b,async()=>{must(await sb.from("pointages").update({heure_depart:new Date().toISOString()}).eq("id",b.dataset.sdep));toast("Départ enregistré");await vPointage()}));
+  const csv=$("#pt-csv");if(csv)csv.onclick=()=>busy(csv,()=>exporterPointages(ds.slice(0,7)));
+}
+function confirmerSimple(titre,texte,label,fn){modal(titre,`<p style="margin-top:0">${texte}</p>`,`<button class="btn" id="cs-no">Annuler</button><button class="btn pri" id="cs-ok">${label}</button>`);
+  $("#cs-no").onclick=closeModal;$("#cs-ok").onclick=()=>busy($("#cs-ok"),async()=>{await fn();closeModal()})}
+function saisieManuelle(ds,pt){const nouv=!pt.id,a=AG_(pt.agent_id),hhmm=t=>t?hm(t):"";
+  modal((nouv?"Saisir un pointage · ":"Corriger le pointage · ")+esc(nomAg(a)),`<p class="muted sm" style="margin-top:0">${esc(siteNom(pt.site_id))} · poste de ${esc(POSTE(pt.poste).libelle.toLowerCase())} · ${esc(fjour(ds))}</p>
+  <div class="row"><div class="field"><label class="f">Heure d'arrivée</label><input class="input" type="time" id="sm-a" value="${nouv?POSTE(pt.poste).debut:hhmm(pt.heure_arrivee)}"></div><div class="field"><label class="f">Heure de départ <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" type="time" id="sm-d" value="${hhmm(pt.heure_depart)}"></div></div>
+  <div class="field"><label class="f">Motif</label><input class="input" id="sm-n" value="${esc(nouv?"":pt.note||"")}" placeholder="Ex. pointage oublié, téléphone en panne"></div>
+  <p class="muted sm" style="margin:0">La saisie est marquée « manuelle » pour garder une trace.</p>`,
+  `${nouv?"":'<button class="btn danger" id="sm-del" style="margin-right:auto">Supprimer</button>'}<button class="btn" id="sm-no">Annuler</button><button class="btn pri" id="sm-ok">Enregistrer</button>`);
+  $("#sm-no").onclick=closeModal;
+  const ts=(h,depart)=>{if(!h)return null;const d=new Date(ds+"T"+h+":00");if(depart||(pt.poste==="N"&&h<POSTE("N").debut&&POSTE("N").fin<=POSTE("N").debut))if(d<=debutPoste(ds,pt.poste))d.setDate(d.getDate()+1);return d.toISOString()};
+  $("#sm-ok").onclick=()=>busy($("#sm-ok"),async()=>{const h=$("#sm-a").value;if(!h)throw new Error("Indiquez l'heure d'arrivée.");
+    const d={heure_arrivee:ts(h,false),heure_depart:ts($("#sm-d").value,true),note:$("#sm-n").value.trim()||"Saisie par la direction",mode:"secours"};
+    if(d.heure_depart&&d.heure_depart<=d.heure_arrivee)throw new Error("L'heure de départ doit être après l'heure d'arrivée.");
+    must(nouv?await sb.from("pointages").insert({...d,agent_id:pt.agent_id,site_id:pt.site_id,poste:pt.poste,date_service:ds}):await sb.from("pointages").update(d).eq("id",pt.id));
+    closeModal();toast("Pointage enregistré");await vPointage()});
+  const del=$("#sm-del");if(del)del.onclick=()=>busy(del,async()=>{must(await sb.from("pointages").delete().eq("id",pt.id));closeModal();toast("Pointage supprimé");await vPointage()});
+}
+async function exporterPointages(ym){const d1=ym+"-01",d2=iso(new Date(+ym.slice(0,4),+ym.slice(5,7),0));
+  const po=must(await sb.from("pointages").select("*").gte("date_service",d1).lte("date_service",d2).order("date_service"));
+  const c=v=>'"'+String(v??"").replace(/"/g,'""')+'"',L=[["Date","Matricule","Agent","Site","Poste","Arrivée","Départ","Retard (min)","Distance (m)","Mode","Note"]];
+  po.forEach(p=>{const a=AG_(p.agent_id)||{},r=Math.round((new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste))/6e4);
+    L.push([p.date_service,a.matricule,nomAg(a),siteNom(p.site_id),POSTE(p.poste).libelle,hm(p.heure_arrivee),hm(p.heure_depart),r>0?r:0,p.distance_m??"",p.mode==="secours"?"Manuel":"Application",p.note||""])});
+  const u=URL.createObjectURL(new Blob(["﻿"+L.map(r=>r.map(c).join(";")).join("\r\n")],{type:"text/csv;charset=utf-8"})),l=document.createElement("a");
+  l.href=u;l.download="pointages-"+ag.slug+"-"+ym+".csv";document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast(po.length+" pointage(s) exporté(s)");
+}
+
+/* ---------- espace agent ---------- */
+let monAgent=null;
+async function donneesAgent(){
+  if(!moi.agent_id)throw new Error("Votre compte n'est relié à aucune fiche agent. Contactez votre responsable.");
+  const ds=auj(),[a,s,P,po]=await Promise.all([sb.from("agents").select("*").eq("id",moi.agent_id).maybeSingle(),sb.from("sites").select("id,nom,adresse,ville,latitude,longitude,rayon_m,consignes"),
+    chargerPlanning(ajout(ds,-1),ajout(ds,13),moi.agent_id),sb.from("pointages").select("*").eq("agent_id",moi.agent_id).gte("date_service",ajout(ds,-30)).order("heure_arrivee",{ascending:false})]);
+  monAgent=must(a);sites=must(s);if(!monAgent)throw new Error("Fiche agent introuvable. Contactez votre responsable.");
+  return {P,po:must(po)};
+}
+async function vAgentAccueil(){
+  const {P,po}=await donneesAgent(),now=new Date(),ouvert=po.find(p=>!p.heure_depart&&now-new Date(p.heure_arrivee)<20*36e5);
+  const pN=POSTE("N"),hNow=pad(now.getHours())+":"+pad(now.getMinutes());
+  const dsServ=monAgent.poste==="N"&&pN.fin<=pN.debut&&hNow<pN.fin?ajout(auj(),-1):auj();
+  let cand=[ajout(auj(),-1),auj()].flatMap(d=>affectations(d,P,[monAgent]).map(x=>({...x,ds:d}))).filter(x=>finPoste(x.ds,x.poste)>now);
+  const vise=cand.find(x=>x.ds===dsServ)||cand[0];
+  const fait=vise&&po.find(p=>p.date_service===vise.ds&&p.poste===vise.poste);
+  const S=id=>sites.find(x=>x.id===id)||{nom:"Site"};let carte;
+  if(ouvert){const s=S(ouvert.site_id);
+    carte=`<div class="punch"><span class="pill p-green">En poste</span><div class="big">${hm(ouvert.heure_arrivee)}</div><div class="muted">Arrivée enregistrée · ${esc(s.nom)}</div><button class="btn pri bigbtn" id="ag-dep">Pointer mon départ</button></div>`}
+  else if(vise&&!fait){const s=S(vise.site_id),p=POSTE(vise.poste);
+    carte=`<div class="punch"><div class="muted">${esc(fjour(vise.ds))}</div><div class="big" style="font-size:26px">${esc(s.nom)}</div><div class="muted">Poste de ${esc(p.libelle.toLowerCase())} · ${p.debut} – ${p.fin}${vise.type==="remplacement"?" · remplacement":""}</div>
+      ${s.consignes?`<div class="idbox" style="text-align:left;margin:14px 0 0"><b>Consignes :</b> ${esc(s.consignes)}</div>`:""}<button class="btn pri bigbtn" id="ag-arr">Pointer mon arrivée</button><p class="muted xs" style="margin:10px 0 0">Votre position sera vérifiée. Activez la localisation de votre téléphone.</p></div>`}
+  else if(fait){carte=`<div class="punch"><span class="pill p-green">Service terminé</span><div class="big" style="font-size:24px">${hm(fait.heure_arrivee)} → ${hm(fait.heure_depart)}</div><div class="muted">Merci, bon repos.</div></div>`}
+  else{const i=indispo(P,monAgent.id,auj());carte=`<div class="punch"><span class="pill ${i?"p-amber":"p-grey"}">${i?esc(i.t):monAgent.site_id?"Repos":"Pas de poste prévu"}</span><div class="big" style="font-size:24px">Pas de service prévu</div><div class="muted">Consultez « Mon planning » pour vos prochains services.</div></div>`}
+  $("#main").innerHTML=`<div class="head"><div><h1>Bonjour ${esc(monAgent.prenom||monAgent.nom)}</h1><p class="muted sm" style="margin:2px 0 0">${esc(monAgent.matricule)} · ${esc(monAgent.grade)}</p></div></div>${carte}
+  <div class="card"><h2>Mes derniers pointages</h2>${po.slice(0,10).map(p=>`<div class="line"><div class="grow"><b>${esc(fjourc(p.date_service))}</b> <span class="muted sm">· ${esc(S(p.site_id).nom)}</span></div><span class="sm">${hm(p.heure_arrivee)} → ${hm(p.heure_depart)}</span>${p.mode==="secours"?'<span class="pill p-amber">manuel</span>':""}</div>`).join("")||'<p class="muted sm" style="margin:0">Aucun pointage pour le moment.</p>'}</div>`;
+  const arr=$("#ag-arr");if(arr)arr.onclick=()=>pointerArrivee(arr,vise,S(vise.site_id));
+  const dep=$("#ag-dep");if(dep)dep.onclick=()=>busy(dep,async()=>{must(await sb.from("pointages").update({heure_depart:new Date().toISOString()}).eq("id",ouvert.id));toast("Départ enregistré");await vAgentAccueil()});
+}
+function pointerArrivee(btn,vise,site){busy(btn,async()=>{btn.textContent="Localisation en cours…";let pos=null,err=null;
+  try{pos=await position()}catch(e){err=e.message}finally{btn.textContent="Pointer mon arrivée"}
+  const dist=pos?distance(pos.lat,pos.lng,site.latitude,site.longitude):null;
+  const envoyer=async()=>{const r=await sb.from("pointages").insert({agent_id:monAgent.id,site_id:vise.site_id,poste:vise.poste,date_service:vise.ds,mode:"application",latitude:pos?pos.lat:null,longitude:pos?pos.lng:null,distance_m:dist});
+    if(r.error)throw new Error(/duplicate|pointages_agent_id_date_service_poste_key/.test(r.error.message)?"Vous avez déjà pointé pour ce service.":r.error.message);closeModal();toast("Arrivée enregistrée");await vAgentAccueil()};
+  if(err)return confirmerSimple("Position introuvable",esc(err)+"<br><br>Vous pouvez pointer quand même : votre responsable verra que la position n'a pas été vérifiée.","Pointer sans position",envoyer);
+  if(dist!=null&&dist>(+site.rayon_m||300))return confirmerSimple("Vous semblez loin du site","Vous êtes à environ <b>"+dist+" m</b> de "+esc(site.nom)+". Si vous êtes bien sur place, le GPS est peut-être imprécis : attendez quelques secondes et réessayez.<br><br>Vous pouvez aussi pointer quand même : votre responsable verra la distance.","Pointer quand même",envoyer);
+  await envoyer()})}
+async function vMonPlanning(){
+  const {P}=await donneesAgent(),S=id=>(sites.find(x=>x.id===id)||{nom:"Site"}).nom;
+  const jours=[...Array(14)].map((_,i)=>ajout(auj(),i));
+  $("#main").innerHTML=`<div class="head"><div><h1>Mon planning</h1><p class="muted sm" style="margin:2px 0 0">Vos 14 prochains jours.</p></div></div><div class="card">${jours.map(d=>{const a=affectations(d,P,[monAgent]),i=indispo(P,monAgent.id,d);
+    const j=fjour(d);return `<div class="line"><div class="grow"><b>${esc(j[0].toUpperCase()+j.slice(1))}</b></div>${a.length?a.map(x=>`<span class="sm">${esc(S(x.site_id))} · ${esc(POSTE(x.poste).libelle.toLowerCase())} ${POSTE(x.poste).debut}–${POSTE(x.poste).fin}</span>${x.type==="remplacement"?'<span class="pill p-amber">remplacement</span>':""}`).join(""):`<span class="pill ${i?"p-amber":"p-grey"}">${i?esc(i.t):monAgent.site_id&&monAgent.jour_repos!=null&&+monAgent.jour_repos===dowOf(d)?"Repos":monAgent.site_id?"Pas de service":"Pas de poste prévu"}</span>`}</div>`}).join("")}</div>`;
 }
 
 /* ---------- journal des erreurs + démarrage ---------- */
