@@ -54,7 +54,9 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 .line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:11px 0}
 .line:last-child{border-bottom:0}.line .grow{flex:1 1 180px;min-width:0}
 .line.click{cursor:pointer}.line.click:hover b.n{color:var(--p)}
-.av{width:38px;height:38px;border-radius:50%;background:var(--p-l);color:var(--p);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.av{width:38px;height:38px;border-radius:50%;background:var(--p-l);color:var(--p);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;object-fit:cover}
+.avbtn{border:0;background:none;padding:0;cursor:pointer;border-radius:50%;line-height:0}.avbtn:hover .av,.avbtn:focus-visible .av{box-shadow:0 0 0 3px var(--p-l)}
+.bigav{width:120px;height:120px;font-size:38px;margin:0 auto 14px}
 .tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}.tools .input{flex:1 1 160px;width:auto}
 .empty{background:var(--card);border:1px dashed var(--line);border-radius:var(--r);padding:36px 20px;text-align:center;color:var(--muted)}
 .steps{margin:0;padding:0;list-style:none}
@@ -106,6 +108,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
   <header class="top"><div class="top-in">
     <div class="brand"><img id="hd-logo" src="../assets/sacko-logo-vert-96.png" alt=""><div style="min-width:0"><span id="hd-nom"></span><small id="hd-moi"></small></div></div>
     <nav class="tabs" id="tabs"></nav>
+    <button class="avbtn" id="hd-av" title="Ma photo de profil" aria-label="Ma photo de profil"></button>
     <button class="btn sm" id="logout">Déconnexion</button>
   </div></header>
   <main id="main"></main>
@@ -126,7 +129,8 @@ const fd=d=>d?new Date(d).toLocaleDateString("fr-FR",{day:"numeric",month:"short
 const fdt=d=>d?new Date(d).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"—";
 const slugify=t=>String(t||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
 const JOURS=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
-const ROLES={dg:"Directeur général",rh:"Ressources humaines",superviseur:"Superviseur",agent:"Agent",client:"Client"};
+const ROLES={dg:"Direction (accès complet)",rh:"Ressources humaines",superviseur:"Superviseur",agent:"Agent",client:"Client"};
+const titre=c=>c.fonction?esc(c.fonction):(ROLES[c.role]||esc(c.role));
 let tT;function toast(m,bad){const t=$("#toast");t.textContent=m;t.className="on"+(bad?" bad":"");clearTimeout(tT);tT=setTimeout(()=>t.className="",3400)}
 function modal(title,body,foot){$("#box").innerHTML=`<div class="box-h"><h2>${title}</h2><button class="x" id="m-x" aria-label="Fermer">×</button></div><div class="box-b">${body}</div>${foot?`<div class="box-f">${foot}</div>`:""}`;$("#modal").classList.add("on");$("#m-x").onclick=closeModal;$("#modal").scrollTop=0}
 function closeModal(){$("#modal").classList.remove("on");$("#box").innerHTML=""}
@@ -140,6 +144,26 @@ function traduire(m){m=String(m||"");
   return m||"Une erreur est survenue."}
 async function busy(btn,fn){if(btn)btn.disabled=true;try{await fn()}catch(e){toast(traduire(e.message),true)}finally{if(btn)btn.disabled=false}}
 const must=r=>{if(r.error)throw new Error(r.error.message);return r.data};
+
+const photoUrl=p=>p?sb.storage.from("photos_profils").getPublicUrl(p).data.publicUrl:"";
+const initiales=n=>String(n||"?").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
+const avatar=c=>c.photo_url?`<img class="av" src="${esc(photoUrl(c.photo_url))}" alt="">`:`<span class="av">${esc(initiales(c.nom_complet))}</span>`;
+function reduire(file){return new Promise((ok,ko)=>{const im=new Image(),u=URL.createObjectURL(file);
+  im.onload=()=>{const c=Math.min(im.width,im.height),cv=document.createElement("canvas");cv.width=cv.height=400;
+    cv.getContext("2d").drawImage(im,(im.width-c)/2,(im.height-c)/2,c,c,0,0,400,400);URL.revokeObjectURL(u);
+    cv.toBlob(b=>b?ok(b):ko(new Error("Photo illisible.")),"image/jpeg",.85)};
+  im.onerror=()=>{URL.revokeObjectURL(u);ko(new Error("Ce fichier n'est pas une photo lisible."))};im.src=u})}
+function majAvatar(){$("#hd-av").innerHTML=avatar(moi)}
+function maPhoto(){
+  modal("Ma photo de profil",`<div style="text-align:center"><div id="ph-pv">${avatar(moi).replace('class="av"','class="av bigav"')}</div><p class="muted sm" style="margin:0 0 14px">Choisissez une photo de vous, de face. Elle sera recadrée en carré automatiquement.</p>
+  <div class="actions" style="justify-content:center"><label class="btn pri" style="cursor:pointer">Choisir une photo<input type="file" id="ph-f" accept="image/*" hidden></label>${moi.photo_url?`<button class="btn danger" id="ph-del">Retirer la photo</button>`:""}</div></div>`,`<button class="btn" id="ph-no">Fermer</button>`);
+  $("#ph-no").onclick=closeModal;
+  const poser=async chemin=>{const ancien=moi.photo_url;must(await sb.rpc("definir_ma_photo",{p_chemin:chemin}));moi.photo_url=chemin;
+    const c=comptes.find(x=>x.id===moi.id);if(c)c.photo_url=chemin;if(ancien)sb.storage.from("photos_profils").remove([ancien]).then(()=>{},()=>{});majAvatar();closeModal();if(tab==="comptes")vComptes()};
+  $("#ph-f").onchange=e=>{const f=e.target.files[0];if(!f)return;busy(null,async()=>{const b=await reduire(f),chemin=moi.id+"/photo-"+Date.now()+".jpg";
+    must(await sb.storage.from("photos_profils").upload(chemin,b,{contentType:"image/jpeg",upsert:true}));await poser(chemin);toast("Photo enregistrée")})};
+  const d=$("#ph-del");if(d)d.onclick=()=>busy(d,async()=>{await poser(null);toast("Photo retirée")});
+}
 
 /* ---------- état ---------- */
 let slug=(new URLSearchParams(location.search).get("a")||"").toLowerCase().replace(/[^a-z0-9-]/g,"");
@@ -176,8 +200,8 @@ async function entrer(){
   if(slug&&ag&&ag.slug!==slug)return sortir("Ce compte n'appartient pas à cette agence.");
   if(ag){slug=ag.slug;try{localStorage.setItem("espace-slug",slug)}catch(_){}habiller(ag)}
   if(!ctx.acces_ouvert)return bloquer(ctx.motif_blocage);
-  $("#hd-moi").textContent=moi.nom_complet+" · "+(ROLES[moi.role]||moi.role);
-  ecran("app");
+  $("#hd-moi").textContent=moi.nom_complet+" · "+(moi.fonction||ROLES[moi.role]||moi.role);
+  ecran("app");majAvatar();$("#hd-av").onclick=maPhoto;
   const T=estDirection()?[["accueil","Accueil"],["sites","Sites"],["agents","Agents"],["comptes","Comptes"],["support","Support"]]:[["accueil","Accueil"]];
   $("#tabs").innerHTML=T.map(([k,l])=>`<button data-tab="${k}">${l}</button>`).join("");
   await ouvrir("accueil");
@@ -194,7 +218,7 @@ async function waSupport(){try{const r=await sb.rpc("support_contact");return St
 
 $("#tabs").onclick=e=>{const b=e.target.closest("button[data-tab]");if(b)ouvrir(b.dataset.tab)};
 async function charger(){
-  const [s,a,c]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.from("agents").select("*").order("nom"),sb.from("profiles").select("id,nom_complet,role,agent_id,site_id,est_actif,derniere_connexion").order("created_at")]);
+  const [s,a,c]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.from("agents").select("*").order("nom"),sb.from("profiles").select("id,nom_complet,role,fonction,photo_url,agent_id,site_id,est_actif,derniere_connexion").order("created_at")]);
   sites=must(s);agents=must(a);comptes=must(c);
 }
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
@@ -310,12 +334,13 @@ async function appel(body){
 function vComptes(){
   const eq=comptes.filter(c=>c.role!=="agent"),creables=moi.role==="dg"?["rh","superviseur"]:["superviseur"];
   $("#main").innerHTML=`<div class="head"><div><h1>Comptes de l'équipe</h1><p class="muted sm" style="margin:2px 0 0">Direction, ressources humaines et superviseurs. Les accès des agents se créent depuis leur fiche.</p></div><button class="btn pri" id="c-new">+ Nouveau compte</button></div>
-  <div class="card">${eq.map(c=>{const gerable=creables.includes(c.role);return `<div class="line"><div class="grow"><b>${esc(c.nom_complet)}</b>${c.id===moi.id?' <span class="muted sm">(vous)</span>':""}<div class="muted xs">${ROLES[c.role]||esc(c.role)} · dernière connexion : ${fdt(c.derniere_connexion)}</div></div><span class="pill ${c.est_actif?"p-green":"p-grey"}">${c.est_actif?"Actif":"Désactivé"}</span>${gerable?`<button class="btn sm" data-mdp="${c.id}">Nouveau mot de passe</button><button class="btn sm ${c.est_actif?"danger":""}" data-act="${c.id}" data-val="${c.est_actif?0:1}">${c.est_actif?"Désactiver":"Réactiver"}</button>`:""}</div>`}).join("")}</div>`;
+  <div class="card">${eq.map(c=>{const gerable=creables.includes(c.role);return `<div class="line">${avatar(c)}<div class="grow"><b>${esc(c.nom_complet)}</b>${c.id===moi.id?' <span class="muted sm">(vous)</span>':""}<div class="muted xs">${titre(c)}${c.fonction?" · accès "+ROLES[c.role].toLowerCase():""} · dernière connexion : ${fdt(c.derniere_connexion)}</div></div><span class="pill ${c.est_actif?"p-green":"p-grey"}">${c.est_actif?"Actif":"Désactivé"}</span>${gerable?`<button class="btn sm" data-mdp="${c.id}">Nouveau mot de passe</button><button class="btn sm ${c.est_actif?"danger":""}" data-act="${c.id}" data-val="${c.est_actif?0:1}">${c.est_actif?"Désactiver":"Réactiver"}</button>`:""}</div>`}).join("")}</div>`;
   $("#c-new").onclick=()=>{
-    modal("Nouveau compte",`<div class="row"><div class="field"><label class="f">Rôle</label><select class="input" id="k-role">${creables.map(k=>`<option value="${k}">${ROLES[k]}</option>`).join("")}</select></div><div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div></div>
+    modal("Nouveau compte",`<div class="row"><div class="field"><label class="f">Niveau d'accès</label><select class="input" id="k-role">${creables.map(k=>`<option value="${k}">${ROLES[k]}</option>`).join("")}</select></div><div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div></div>
+    <div class="field"><label class="f">Fonction affichée <span class="muted" style="font-weight:400">(ex. CEO, Directeur général, DRH)</span></label><input class="input" id="k-fonc" maxlength="60"></div>
     <div class="field"><label class="f">Adresse e-mail (sert d'identifiant)</label><input class="input" id="k-mail" type="email" autocomplete="off"></div>
     <div class="field"><label class="f">Mot de passe provisoire (8 caractères minimum)</label><input class="input" id="k-mdp" type="text" autocomplete="off"></div>`,`<button class="btn" id="k-no">Annuler</button><button class="btn pri" id="k-ok">Créer le compte</button>`);
-    $("#k-no").onclick=closeModal;$("#k-ok").onclick=()=>busy($("#k-ok"),async()=>{await appel({action:"creer",role:$("#k-role").value,nom_complet:$("#k-nom").value,email:$("#k-mail").value,mot_de_passe:$("#k-mdp").value});closeModal();toast("Compte créé");await ouvrir("comptes")})};
+    $("#k-no").onclick=closeModal;$("#k-ok").onclick=()=>busy($("#k-ok"),async()=>{await appel({action:"creer",role:$("#k-role").value,fonction:$("#k-fonc").value,nom_complet:$("#k-nom").value,email:$("#k-mail").value,mot_de_passe:$("#k-mdp").value});closeModal();toast("Compte créé");await ouvrir("comptes")})};
   $("#main").querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>busy(b,async()=>{await appel({action:"activer",user_id:b.dataset.act,est_actif:b.dataset.val==="1"});toast(b.dataset.val==="1"?"Compte réactivé":"Compte désactivé");await ouvrir("comptes")}));
   $("#main").querySelectorAll("[data-mdp]").forEach(b=>b.onclick=()=>{const c=comptes.find(x=>x.id===b.dataset.mdp);saisirMdp("Nouveau mot de passe · "+esc(c.nom_complet),"L'ancien mot de passe ne fonctionnera plus.","Changer",async mdp=>{await appel({action:"mot_de_passe",user_id:c.id,mot_de_passe:mdp});closeModal();toast("Mot de passe changé")},closeModal)});
 }

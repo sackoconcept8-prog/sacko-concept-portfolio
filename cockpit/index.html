@@ -43,6 +43,9 @@ header.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;t
 .top-in{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;margin-right:auto}
 .brand .mono{width:40px;height:40px;margin:0}
+.av{width:38px;height:38px;border-radius:50%;background:var(--gold-l);color:var(--gold);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;object-fit:cover}
+.avbtn{border:0;background:none;padding:0;cursor:pointer;border-radius:50%;line-height:0}.avbtn:hover .av,.avbtn:focus-visible .av{box-shadow:0 0 0 3px var(--gold-l)}
+.bigav{width:120px;height:120px;font-size:38px;margin:0 auto 14px}
 img.mono{background:none;border-radius:50%;object-fit:cover;display:block}
 .login-card img.mono{width:84px;height:84px;margin:0 auto 14px}
 .login-card{text-align:center}.login-card .field{text-align:left}
@@ -146,9 +149,18 @@ async function busy(btn,fn){if(btn)btn.disabled=true;try{await fn()}catch(e){toa
 const must=r=>{if(r.error)throw new Error(r.error.message);return r.data};
 
 const OFFRES={essai:"Essai gratuit",mensuel:"Mensuel",annuel:"Annuel",licence:"Licence"};
-const ROLES={dg:"Directeur général",rh:"Ressources humaines",superviseur:"Superviseur",agent:"Agent",client:"Client"};
+const ROLES={dg:"Direction (accès complet)",rh:"Ressources humaines",superviseur:"Superviseur",agent:"Agent",client:"Client"};
+const titre=c=>c.fonction?esc(c.fonction)+" · "+ROLES[c.role]:(ROLES[c.role]||esc(c.role));
 const MODULES={planning:"Planning",pointage:"Pointage",conges:"Congés et absences",documents:"Documents RH",messagerie:"Messagerie",paie:"Paie",materiel:"Matériel et stock",facturation:"Facturation",rapports:"Rapports",main_courante:"Main courante",rondes:"Rondes",supervision:"Supervision",espace_client:"Espace client",sos:"Alerte SOS"};
 
+const photoUrl=p=>p?sb.storage.from("photos_profils").getPublicUrl(p).data.publicUrl:"";
+const initiales=n=>String(n||"?").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
+const avatar=c=>c.photo_url?`<img class="av" src="${esc(photoUrl(c.photo_url))}" alt="">`:`<span class="av">${esc(initiales(c.nom_complet))}</span>`;
+function reduire(file){return new Promise((ok,ko)=>{const im=new Image(),u=URL.createObjectURL(file);
+  im.onload=()=>{const c=Math.min(im.width,im.height),cv=document.createElement("canvas");cv.width=cv.height=400;
+    cv.getContext("2d").drawImage(im,(im.width-c)/2,(im.height-c)/2,c,c,0,0,400,400);URL.revokeObjectURL(u);
+    cv.toBlob(b=>b?ok(b):ko(new Error("Photo illisible.")),"image/jpeg",.85)};
+  im.onerror=()=>{URL.revokeObjectURL(u);ko(new Error("Ce fichier n'est pas une photo lisible."))};im.src=u})}
 let agences=[],tab="agences",filtre={q:"",etat:"",offre:""};
 let reglages={tarif_mensuel:100000,tarif_annuel:null,devise:"F CFA",whatsapp_support:"",message_relance:""};
 const MODES=["Espèces","Mobile Money","Virement bancaire","Carte / Stripe","PayPal","Autre"];
@@ -349,12 +361,15 @@ async function chargerJournal(id){
 }
 async function chargerComptes(id){
   const z=$("#f-comptes");if(!z)return;
-  const r=await sb.from("profiles").select("id,nom_complet,role,est_actif,derniere_connexion").eq("agence_id",id).order("created_at");
+  const r=await sb.from("profiles").select("id,nom_complet,role,fonction,photo_url,est_actif,derniere_connexion").eq("agence_id",id).order("created_at");
   if(!$("#f-comptes"))return;
   if(r.error){z.innerHTML=`<p class="err">${esc(r.error.message)}</p>`;return}
-  z.innerHTML=r.data.length?r.data.map(c=>`<div class="acc"><div class="grow"><b>${esc(c.nom_complet)}</b><div class="muted xs">${ROLES[c.role]||esc(c.role)} · dernière connexion : ${fdt(c.derniere_connexion)}</div></div><span class="pill ${c.est_actif?"p-green":"p-grey"}">${c.est_actif?"Actif":"Désactivé"}</span><button class="btn sm" data-mdp="${c.id}" data-nom="${esc(c.nom_complet)}">Nouveau mot de passe</button><button class="btn sm ${c.est_actif?"danger":""}" data-act="${c.id}" data-val="${c.est_actif?0:1}">${c.est_actif?"Désactiver":"Réactiver"}</button></div>`).join(""):`<p class="muted sm">Aucun compte. Créez d'abord celui du directeur général.</p>`;
+  z.innerHTML=r.data.length?r.data.map(c=>`<div class="acc"><label class="avbtn" title="Changer la photo" style="cursor:pointer">${avatar(c)}<input type="file" accept="image/*" hidden data-photo="${c.id}" data-old="${esc(c.photo_url||"")}"></label><div class="grow"><b>${esc(c.nom_complet)}</b><div class="muted xs">${titre(c)} · dernière connexion : ${fdt(c.derniere_connexion)}</div></div><span class="pill ${c.est_actif?"p-green":"p-grey"}">${c.est_actif?"Actif":"Désactivé"}</span><button class="btn sm" data-mdp="${c.id}" data-nom="${esc(c.nom_complet)}">Nouveau mot de passe</button><button class="btn sm ${c.est_actif?"danger":""}" data-act="${c.id}" data-val="${c.est_actif?0:1}">${c.est_actif?"Désactiver":"Réactiver"}</button></div>`).join(""):`<p class="muted sm">Aucun compte. Créez d'abord celui du dirigeant (niveau Direction).</p>`;
   z.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>busy(b,async()=>{await appel({action:"activer",user_id:b.dataset.act,est_actif:b.dataset.val==="1"});toast(b.dataset.val==="1"?"Compte réactivé":"Compte désactivé");await chargerComptes(id)}));
   z.querySelectorAll("[data-mdp]").forEach(b=>b.onclick=()=>nouveauMdp(b.dataset.mdp,b.dataset.nom,id));
+  z.querySelectorAll("[data-photo]").forEach(i=>i.onchange=()=>{const f=i.files[0];if(!f)return;busy(null,async()=>{const b=await reduire(f),chemin=i.dataset.photo+"/photo-"+Date.now()+".jpg";
+    must(await sb.storage.from("photos_profils").upload(chemin,b,{contentType:"image/jpeg",upsert:true}));must(await sb.from("profiles").update({photo_url:chemin}).eq("id",i.dataset.photo));
+    if(i.dataset.old)sb.storage.from("photos_profils").remove([i.dataset.old]).then(()=>{},()=>{});toast("Photo enregistrée");await chargerComptes(id)})});
 }
 async function appel(body){
   const r=await sb.functions.invoke("comptes",{body});
@@ -367,11 +382,12 @@ function sousFenetre(title,body,okLabel,onOk,retour){
   $("#s-no").onclick=retour;$("#m-x").onclick=retour;$("#s-ok").onclick=()=>busy($("#s-ok"),onOk);
 }
 function creerCompte(a){
-  sousFenetre("Créer un compte · "+esc(a.nom_agence),`<div class="row"><div class="field"><label class="f">Rôle</label><select class="input" id="k-role">${Object.entries(ROLES).filter(([k])=>k!=="agent"&&k!=="client").map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div><div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div></div>
+  sousFenetre("Créer un compte · "+esc(a.nom_agence),`<div class="row"><div class="field"><label class="f">Niveau d'accès</label><select class="input" id="k-role">${Object.entries(ROLES).filter(([k])=>k!=="agent"&&k!=="client").map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div><div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div></div>
+<div class="field"><label class="f">Fonction affichée <span class="muted" style="font-weight:400">(ex. CEO, Directeur général, DRH)</span></label><input class="input" id="k-fonc" maxlength="60"></div>
   <div class="field"><label class="f">Adresse e-mail (sert d'identifiant)</label><input class="input" id="k-mail" type="email" value="${esc(a.email_dg)}" autocomplete="off"></div>
   <div class="field"><label class="f">Mot de passe provisoire (8 caractères minimum)</label><input class="input" id="k-mdp" type="text" autocomplete="off"></div>
   <p class="muted sm" style="margin:0">Transmettez l'e-mail et ce mot de passe à la personne. Les accès des agents se créent depuis l'espace de l'agence, par le directeur ou le RH.</p>`,"Créer le compte",async()=>{
-    await appel({action:"creer",agence_id:a.id,role:$("#k-role").value,nom_complet:$("#k-nom").value,email:$("#k-mail").value,mot_de_passe:$("#k-mdp").value});
+    await appel({action:"creer",agence_id:a.id,role:$("#k-role").value,fonction:$("#k-fonc").value,nom_complet:$("#k-nom").value,email:$("#k-mail").value,mot_de_passe:$("#k-mdp").value});
     toast("Compte créé");await vAgences();fiche(a.id);
   },()=>fiche(a.id));
 }
