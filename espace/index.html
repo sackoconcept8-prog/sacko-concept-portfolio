@@ -730,6 +730,7 @@ async function voirCarte(a){
   try{await chargerScript(QRJS,"qrcode")}catch(_){}
   const ph=await photoAgent(a);
   modal("Carte professionnelle · "+esc(nomAg(a)),`${!ph&&estDirection()?'<div class="idbox sm no-pdf">Ajoutez la photo de l\'agent depuis « Modifier » pour qu\'elle apparaisse sur la carte.</div>':""}<div style="overflow-x:auto">${carteHTML(a,ph)}</div><p class="muted xs no-pdf" style="text-align:center">Format carte bancaire (85,6 × 54 mm), recto et verso.</p>`,boutonsPDF());
+  const z=$("#box .cartes");if(z){const w=z.parentElement.clientWidth,f=Math.min(1,(w-4)/440);if(f<1)z.style.zoom=f}
   const d=$("#dl-pdf"),i=$("#dl-print");if(i)i.onclick=()=>window.print();
   if(d)d.onclick=()=>busy(d,()=>cartePDF(a,ph));
 }
@@ -1311,7 +1312,7 @@ async function vVisites(){
 }
 async function nouvelleVisite(siteId){const sv=serviceActuel(),P=await chargerPlanning(ajout(sv.ds,-1),sv.ds),po=must(await sb.from("pointages").select("*").gte("date_service",ajout(sv.ds,-1)));
   siteId=siteId||(sites.find(s=>s.actif)||sites[0]).id;
-  const prevus=[...new Set([...affectations(sv.ds,P,agents).filter(x=>x.site_id===siteId).map(x=>x.agent_id),...po.filter(p=>p.site_id===siteId&&p.date_service===sv.ds).map(p=>p.agent_id)])].filter(id=>id!==moi.agent_id);
+  const prevus=[...new Set([...affectations(sv.ds,P,agents).filter(x=>x.site_id===siteId&&x.poste===sv.poste).map(x=>x.agent_id),...po.filter(p=>p.site_id===siteId&&p.date_service===sv.ds&&(p.poste||sv.poste)===sv.poste).map(p=>p.agent_id)])].filter(id=>id!==moi.agent_id);
   const bloc=a=>`<div class="eval" data-ev="${a.id}"><div class="actions" style="justify-content:space-between"><h3>${esc(nomAg(a))} <span class="muted xs" style="font-weight:500">${esc(a.matricule)} · ${esc(a.fonction||a.grade)}</span></h3><button type="button" class="btn sm" data-rm="${a.id}">Retirer</button></div>
     ${CRIT.map(([k,l,o])=>`<div class="xs muted">${l}</div><div class="choix">${o.map((v,i)=>`<label><input type="radio" name="${k}-${a.id}" value="${esc(v)}" ${i===0?"checked":""}><span>${esc(v)}</span></label>`).join("")}</div>`).join("")}
     <div class="xs muted">Note globale</div>${etoiles("note-"+a.id,0)}<input class="input" data-obs="${a.id}" placeholder="Observation (facultatif)" style="margin-top:8px"></div>`;
