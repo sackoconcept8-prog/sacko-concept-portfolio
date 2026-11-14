@@ -5,11 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Cockpit · SACKO CONCEPT</title>
+<link rel="icon" href="../assets/sacko-logo-96.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#faf7f1;--card:#fff;--ink:#2a2723;--muted:#7a736a;--line:#e9e2d6;--gold:#b08d4a;--gold-d:#8f6f33;--gold-l:#f4ecdc;--green:#2e7d55;--green-l:#e4f3ea;--red:#b83a3a;--red-l:#fbe9e9;--amber:#a86a12;--amber-l:#fbf0d9;--blue:#2c5fa8;--blue-l:#e6eefa;--r:14px}
+:root{--bg:#f4f8f5;--card:#fff;--ink:#1c2a22;--muted:#66756c;--line:#dce7e0;--gold:#217346;--gold-d:#185c37;--gold-l:#e5f2ea;--green:#2e7d55;--green-l:#e4f3ea;--red:#b83a3a;--red-l:#fbe9e9;--amber:#a86a12;--amber-l:#fbf0d9;--blue:#2c5fa8;--blue-l:#e6eefa;--r:14px}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
@@ -19,6 +20,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .muted{color:var(--muted)}.sm{font-size:13px}.xs{font-size:12px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap}
 .btn:hover{border-color:var(--gold)}
+a.btn{text-decoration:none;color:var(--ink)}
 .btn.pri{background:var(--gold);border-color:var(--gold);color:#fff}.btn.pri:hover{background:var(--gold-d)}
 .btn.danger{color:var(--red)}.btn.danger:hover{border-color:var(--red)}
 .btn.sm{padding:6px 10px;font-size:13px}
@@ -30,26 +32,33 @@ label.f{display:block;font-size:13px;font-weight:600;margin:0 0 5px}
 .field{margin-bottom:12px;min-width:0}
 .row{display:flex;gap:12px;flex-wrap:wrap}.row>.field{flex:1 1 160px}
 .pill{display:inline-block;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}
-.p-green{background:var(--green-l);color:var(--green)}.p-red{background:var(--red-l);color:var(--red)}.p-amber{background:var(--amber-l);color:var(--amber)}.p-blue{background:var(--blue-l);color:var(--blue)}.p-grey{background:#efeae1;color:var(--muted)}
+.p-green{background:var(--green-l);color:var(--green)}.p-red{background:var(--red-l);color:var(--red)}.p-amber{background:var(--amber-l);color:var(--amber)}.p-blue{background:var(--blue-l);color:var(--blue)}.p-grey{background:#e9efeb;color:var(--muted)}
 /* connexion */
 #login{min-height:100vh;display:grid;place-items:center;padding:20px}
-.login-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:34px 30px;width:100%;max-width:400px;box-shadow:0 18px 50px -30px rgba(80,60,20,.35)}
+.login-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:34px 30px;width:100%;max-width:400px;box-shadow:0 18px 50px -30px rgba(20,70,40,.35)}
 .mono{width:54px;height:54px;border-radius:14px;background:var(--gold);color:#fff;display:grid;place-items:center;font-family:"Playfair Display",serif;font-weight:700;font-size:22px;margin-bottom:16px}
 .err{background:var(--red-l);color:var(--red);border-radius:10px;padding:9px 12px;font-size:13px;margin-bottom:12px}
 /* application */
 header.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
 .top-in{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;margin-right:auto}
-.brand .mono{width:36px;height:36px;font-size:15px;border-radius:10px;margin:0}
-nav.tabs{display:flex;gap:4px;background:var(--bg);border-radius:12px;padding:4px}
+.brand .mono{width:40px;height:40px;margin:0}
+img.mono{background:none;border-radius:50%;object-fit:cover;display:block}
+.login-card img.mono{width:84px;height:84px;margin:0 auto 14px}
+.login-card{text-align:center}.login-card .field{text-align:left}
+nav.tabs{display:flex;gap:4px;background:var(--bg);border-radius:12px;padding:4px;overflow-x:auto;max-width:100%}
+nav.tabs button{white-space:nowrap}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}.tools .input{flex:1 1 150px;width:auto}.tools .q{flex:3 1 220px}
+.line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:9px 0;font-size:14px}.line:last-child{border-bottom:0}.line .grow{flex:1 1 160px;min-width:0}
+.tile.warn b{color:var(--amber)}
 nav.tabs button{border:0;background:none;padding:7px 14px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted)}
 nav.tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 main{max-width:1180px;margin:0 auto;padding:24px 20px 70px}
 .head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 .head h1{font-size:28px}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:12px;margin-bottom:22px}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
-.tile b{display:block;font-size:26px;font-family:"Playfair Display",serif}
+.tile b{display:block;font-size:24px;white-space:nowrap;font-family:"Playfair Display",serif}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
 .ag-top{display:flex;gap:12px;align-items:center;margin-bottom:12px}
@@ -62,7 +71,7 @@ main{max-width:1180px;margin:0 auto;padding:24px 20px 70px}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 .empty{background:var(--card);border:1px dashed var(--line);border-radius:var(--r);padding:40px 20px;text-align:center;color:var(--muted)}
 /* fenêtre */
-#modal{position:fixed;inset:0;background:rgba(42,39,35,.42);display:none;align-items:flex-start;justify-content:center;padding:24px 14px;overflow-y:auto;z-index:20}
+#modal{position:fixed;inset:0;background:rgba(20,40,30,.42);display:none;align-items:flex-start;justify-content:center;padding:24px 14px;overflow-y:auto;z-index:20}
 #modal.on{display:flex}
 .box{background:#fff;border-radius:18px;width:100%;max-width:640px;box-shadow:0 30px 80px -30px rgba(0,0,0,.4)}
 .box.wide{max-width:820px}
@@ -90,8 +99,8 @@ pre.log{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:va
 
 <section id="login">
   <form class="login-card" id="login-form">
-    <div class="mono">SC</div>
-    <h1 style="font-size:26px">Cockpit</h1>
+    <img class="mono" src="../assets/sacko-logo-512.png" alt="SACKO CONCEPT">
+    <h1 style="font-size:26px">Cockpit SACKO CONCEPT</h1>
     <p class="muted sm" style="margin:4px 0 20px">Espace réservé à l'administration SACKO CONCEPT.</p>
     <div class="err hide" id="login-err"></div>
     <div class="field"><label class="f" for="l-email">Adresse e-mail</label><input class="input" id="l-email" type="email" autocomplete="username" required></div>
@@ -102,11 +111,13 @@ pre.log{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:va
 
 <div id="app" class="hide">
   <header class="top"><div class="top-in">
-    <div class="brand"><div class="mono">SC</div><span>Cockpit SACKO CONCEPT</span></div>
+    <div class="brand"><img class="mono" src="../assets/sacko-logo-96.png" alt=""><span>Cockpit SACKO CONCEPT</span></div>
     <nav class="tabs" id="tabs">
       <button data-tab="agences" class="on">Agences</button>
+      <button data-tab="paiements">Paiements</button>
       <button data-tab="support">Support <span id="nb-tickets"></span></button>
       <button data-tab="erreurs">Erreurs</button>
+      <button data-tab="reglages">Réglages</button>
     </nav>
     <button class="btn sm" id="logout">Déconnexion</button>
   </div></header>
@@ -138,7 +149,13 @@ const OFFRES={essai:"Essai gratuit",mensuel:"Mensuel",annuel:"Annuel",licence:"L
 const ROLES={dg:"Directeur général",rh:"Ressources humaines",superviseur:"Superviseur",agent:"Agent",client:"Client"};
 const MODULES={planning:"Planning",pointage:"Pointage",conges:"Congés et absences",documents:"Documents RH",messagerie:"Messagerie",paie:"Paie",materiel:"Matériel et stock",facturation:"Facturation",rapports:"Rapports",main_courante:"Main courante",rondes:"Rondes",supervision:"Supervision",espace_client:"Espace client",sos:"Alerte SOS"};
 
-let agences=[],tab="agences";
+let agences=[],tab="agences",filtre={q:"",etat:"",offre:""};
+let reglages={tarif_mensuel:100000,tarif_annuel:null,devise:"F CFA",whatsapp_support:"",message_relance:""};
+const MODES=["Espèces","Mobile Money","Virement bancaire","Carte / Stripe","PayPal","Autre"];
+const fm=n=>Math.round(+n||0).toLocaleString("fr-FR").replace(/[\u202f\u00a0]/g," ")+" "+(reglages.devise||"F CFA");
+const waLien=(tel,msg)=>"https://wa.me/"+String(tel||"").replace(/\D/g,"")+"?text="+encodeURIComponent(msg);
+const relance=a=>(reglages.message_relance||"Bonjour, l'accès de {agence} arrive à échéance le {date}.").replace(/\{agence\}/g,a.nom_agence).replace(/\{date\}/g,fd(a.date_expiration));
+const tarifDe=a=>+a.prix_convenu||(a.type_offre==="annuel"?+reglages.tarif_annuel:+reglages.tarif_mensuel)||0;
 function etat(a){
   if(a.statut_abonnement!=="actif")return{k:"suspendu",l:"Suspendu",c:"p-red"};
   const j=Math.ceil((new Date(a.date_expiration)-Date.now())/864e5);
@@ -157,31 +174,70 @@ $("#login-form").onsubmit=ev=>{ev.preventDefault();busy($("#l-btn"),async()=>{
 async function entrer(){
   const r=await sb.rpc("contexte");
   if(r.error||!r.data||!r.data.connecte||r.data.profil.role!=="super_admin"||!r.data.acces_ouvert){await sb.auth.signOut();return showLogin("Cet espace est réservé à l'administration SACKO CONCEPT.")}
+  const rg=await sb.from("reglages_plateforme").select("*").maybeSingle();if(rg.data)reglages=rg.data;
   $("#login").classList.add("hide");$("#app").classList.remove("hide");await ouvrir("agences");
 }
 $("#logout").onclick=async()=>{await sb.auth.signOut();showLogin()};
 $("#tabs").onclick=e=>{const b=e.target.closest("button[data-tab]");if(b)ouvrir(b.dataset.tab)};
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{await({agences:vAgences,support:vSupport,erreurs:vErreurs}[t])()}catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(e.message)}</div>`}}
+  try{await({agences:vAgences,paiements:vPaiements,support:vSupport,erreurs:vErreurs,reglages:vReglages}[t])()}catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(e.message)}</div>`}}
 
 /* ---------- agences ---------- */
 async function vAgences(){
   agences=must(await sb.rpc("cockpit_resume"))||[];
+  const d=new Date(),debut=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-01";
+  const mois=(must(await sb.from("paiements_abonnement").select("montant").gte("paye_le",debut))||[]).reduce((t,x)=>t+(+x.montant||0),0);
   const n=k=>agences.filter(a=>k.includes(etat(a).k)).length;
-  const tk=agences.reduce((s,a)=>s+(+a.tickets_ouverts||0),0);$("#nb-tickets").textContent=tk?"("+tk+")":"";
-  $("#main").innerHTML=`<div class="head"><div><h1>Agences clientes</h1><p class="muted sm" style="margin:2px 0 0">Créez une agence, gérez son abonnement et coupez l'accès en un clic.</p></div><button class="btn pri" id="new-ag">+ Nouvelle agence</button></div>
-  <div class="tiles"><div class="tile"><b>${agences.length}</b><span class="muted sm">Agences</span></div><div class="tile"><b>${n(["actif","bientot"])}</b><span class="muted sm">Accès ouvert</span></div><div class="tile"><b>${agences.filter(a=>a.type_offre==="essai").length}</b><span class="muted sm">En essai</span></div><div class="tile"><b>${n(["suspendu","expire"])}</b><span class="muted sm">Accès coupé</span></div><div class="tile"><b>${agences.reduce((s,a)=>s+(+a.nb_agents||0),0)}</b><span class="muted sm">Agents gérés</span></div></div>
-  ${agences.length?`<div class="grid">${agences.map(carte).join("")}</div>`:`<div class="empty">Aucune agence pour le moment.<br>Cliquez sur « Nouvelle agence » pour créer la première.</div>`}`;
-  $("#new-ag").onclick=nouvelleAgence;
-  $("#main").querySelectorAll("[data-fiche]").forEach(b=>b.onclick=()=>fiche(b.dataset.fiche));
-  $("#main").querySelectorAll("[data-bascule]").forEach(b=>b.onclick=()=>bascule(b.dataset.bascule,b));
+  const tk=agences.reduce((t,a)=>t+(+a.tickets_ouverts||0),0);$("#nb-tickets").textContent=tk?"("+tk+")":"";
+  $("#main").innerHTML=`<div class="head"><div><h1>Agences clientes</h1><p class="muted sm" style="margin:2px 0 0">Créez une agence, gérez son abonnement et coupez l'accès en un clic.</p></div><div class="actions"><button class="btn" id="csv">Exporter (Excel)</button><button class="btn pri" id="new-ag">+ Nouvelle agence</button></div></div>
+  <div class="tiles"><div class="tile"><b>${agences.length}</b><span class="muted sm">Agences</span></div><div class="tile"><b>${n(["actif","bientot"])}</b><span class="muted sm">Accès ouvert</span></div><div class="tile"><b>${agences.filter(a=>a.type_offre==="essai").length}</b><span class="muted sm">En essai</span></div><div class="tile ${n(["bientot","expire"])?"warn":""}"><b>${n(["bientot","expire"])}</b><span class="muted sm">À relancer</span></div><div class="tile"><b>${n(["suspendu"])}</b><span class="muted sm">Suspendues</span></div><div class="tile"><b>${agences.reduce((t,a)=>t+(+a.nb_agents||0),0)}</b><span class="muted sm">Agents gérés</span></div><div class="tile" style="grid-column:span 2"><b>${fm(mois)}</b><span class="muted sm">Encaissé ce mois</span></div></div>
+  <div class="tools"><input class="input q" id="fq" type="search" placeholder="Rechercher une agence, une ville…" value="${esc(filtre.q)}"><select class="input" id="fe"><option value="">Tous les états</option><option value="actif">Accès ouvert</option><option value="relance">À relancer</option><option value="suspendu">Suspendues</option></select><select class="input" id="fo"><option value="">Toutes les offres</option>${Object.entries(OFFRES).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div>
+  <div id="liste"></div>`;
+  $("#fe").value=filtre.etat;$("#fo").value=filtre.offre;
+  $("#fq").oninput=e=>{filtre.q=e.target.value;listeAgences()};$("#fe").onchange=e=>{filtre.etat=e.target.value;listeAgences()};$("#fo").onchange=e=>{filtre.offre=e.target.value;listeAgences()};
+  $("#new-ag").onclick=nouvelleAgence;$("#csv").onclick=exporter;listeAgences();
+}
+function listeAgences(){
+  const q=slugify(filtre.q);
+  const l=agences.filter(a=>{const k=etat(a).k;
+    if(q&&!slugify([a.nom_agence,a.ville,a.pays,a.email_dg].join(" ")).includes(q))return false;
+    if(filtre.offre&&a.type_offre!==filtre.offre)return false;
+    if(filtre.etat==="actif"&&!["actif","bientot"].includes(k))return false;
+    if(filtre.etat==="relance"&&!["bientot","expire"].includes(k))return false;
+    if(filtre.etat==="suspendu"&&k!=="suspendu")return false;return true});
+  const z=$("#liste");
+  z.innerHTML=l.length?`<div class="grid">${l.map(carte).join("")}</div>`:`<div class="empty">${agences.length?"Aucune agence ne correspond à votre recherche.":"Aucune agence pour le moment.<br>Cliquez sur « Nouvelle agence » pour créer la première."}</div>`;
+  z.querySelectorAll("[data-fiche]").forEach(b=>b.onclick=()=>fiche(b.dataset.fiche));
+  z.querySelectorAll("[data-bascule]").forEach(b=>b.onclick=()=>bascule(b.dataset.bascule,b));
+  z.querySelectorAll("[data-payer]").forEach(b=>b.onclick=()=>paiement(agences.find(x=>x.id===b.dataset.payer),closeModal));
 }
 function carte(a){const e=etat(a);
   return `<div class="card"><div class="ag-top"><div class="logo">${a.logo_url?`<img src="${esc(a.logo_url)}" alt="">`:esc((a.nom_agence||"?").slice(0,2).toUpperCase())}</div><div style="min-width:0"><div class="ag-name">${esc(a.nom_agence)}</div><div class="muted xs">${esc([a.ville,a.pays].filter(Boolean).join(", ")||"—")}</div></div></div>
-  <span class="pill ${e.c}">${e.l}</span> <span class="pill p-blue">${OFFRES[a.type_offre]||esc(a.type_offre)}</span>
-  <div class="kv"><span>Fin de l'accès</span><span>${fd(a.date_expiration)}</span><span>Agents</span><span>${+a.nb_agents} / ${+a.nb_agents_max}</span><span>Sites</span><span>${+a.nb_sites}</span><span>Comptes</span><span>${+a.nb_comptes}</span><span>Dernière activité</span><span>${fdt(a.derniere_activite)}</span></div>
-  <div class="actions"><button class="btn sm pri" data-fiche="${a.id}">Ouvrir la fiche</button>${a.statut_abonnement==="actif"?`<button class="btn sm danger" data-bascule="${a.id}">Suspendre l'accès</button>`:`<button class="btn sm" data-bascule="${a.id}">Réactiver l'accès</button>`}</div></div>`}
+  <span class="pill ${e.c}">${e.l}</span> <span class="pill p-blue">${OFFRES[a.type_offre]||esc(a.type_offre)}</span>${+a.tickets_ouverts?` <span class="pill p-amber">${+a.tickets_ouverts} demande(s)</span>`:""}
+  <div class="kv"><span>Fin de l'accès</span><span>${fd(a.date_expiration)}</span><span>Agents</span><span>${+a.nb_agents} / ${+a.nb_agents_max}</span><span>Sites · comptes</span><span>${+a.nb_sites} · ${+a.nb_comptes}</span><span>Dernière activité</span><span>${fdt(a.derniere_activite)}</span><span>Total payé</span><span>${fm(a.total_paye)}</span><span>Dernier paiement</span><span>${fd(a.dernier_paiement)}</span></div>
+  <div class="actions"><button class="btn sm pri" data-fiche="${a.id}">Ouvrir la fiche</button><button class="btn sm" data-payer="${a.id}">+ Paiement</button>${a.telephone?`<a class="btn sm" href="${esc(waLien(a.telephone,relance(a)))}" target="_blank" rel="noopener">Relancer (WhatsApp)</a>`:""}${a.statut_abonnement==="actif"?`<button class="btn sm danger" data-bascule="${a.id}">Suspendre</button>`:`<button class="btn sm" data-bascule="${a.id}">Réactiver</button>`}</div></div>`}
+function exporter(){
+  const c=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+  const L=[["Agence","Ville","Pays","Téléphone","E-mail","Offre","État","Fin de l'accès","Agents","Agents max","Sites","Total payé","Dernier paiement"]].concat(agences.map(a=>[a.nom_agence,a.ville,a.pays,a.telephone,a.email_dg,OFFRES[a.type_offre],etat(a).l,isoDay(a.date_expiration),a.nb_agents,a.nb_agents_max,a.nb_sites,a.total_paye,a.dernier_paiement||""]));
+  const u=URL.createObjectURL(new Blob(["﻿"+L.map(r=>r.map(c).join(";")).join("\r\n")],{type:"text/csv;charset=utf-8"}));
+  const l=document.createElement("a");l.href=u;l.download="agences-sacko-concept-"+isoDay(Date.now())+".csv";document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast("Fichier téléchargé");
+}
+function paiement(a,retour){
+  const def=a.type_offre==="annuel"?"365":"30";
+  sousFenetre("Enregistrer un paiement · "+esc(a.nom_agence),`<div class="row"><div class="field"><label class="f">Montant reçu (${esc(reglages.devise)})</label><input class="input" id="p-m" type="number" min="1" value="${tarifDe(a)||""}"></div><div class="field"><label class="f">Date du paiement</label><input class="input" id="p-d" type="date" value="${isoDay(Date.now())}"></div></div>
+  <div class="row"><div class="field"><label class="f">Moyen de paiement</label><select class="input" id="p-mode">${MODES.map(x=>`<option>${x}</option>`).join("")}</select></div><div class="field"><label class="f">Prolonger l'accès</label><select class="input" id="p-pro"><option value="0">Ne pas prolonger</option><option value="30">+ 30 jours (mensuel)</option><option value="365">+ 1 an (annuel)</option></select></div></div>
+  <div class="field"><label class="f">Note <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" id="p-n" placeholder="Ex. reçu par notre représentant à Lomé"></div>
+  <p class="muted sm" style="margin:0">Si vous prolongez, l'accès est rouvert automatiquement et une agence en essai passe en offre payante. Accès actuel jusqu'au ${fd(a.date_expiration)}.</p>`,"Enregistrer le paiement",async()=>{
+    const m=+$("#p-m").value,j=+$("#p-pro").value;if(!(m>0)){$("#p-m").focus();throw new Error("Indiquez le montant reçu.")}
+    if(!$("#p-d").value)throw new Error("Indiquez la date du paiement.");
+    let fin=null;if(j){fin=new Date(Math.max(Date.now(),new Date(a.date_expiration).getTime())+j*864e5)}
+    must(await sb.from("paiements_abonnement").insert({agence_id:a.id,montant:m,devise:reglages.devise||"F CFA",mode:$("#p-mode").value,paye_le:$("#p-d").value,periode:fin?"jusqu'au "+fd(fin):null,note:$("#p-n").value.trim()||null}));
+    if(fin){const maj={date_expiration:fin.toISOString(),statut_abonnement:"actif"};if(a.type_offre==="essai"||a.type_offre==="mensuel"||a.type_offre==="annuel")maj.type_offre=j===365?"annuel":"mensuel";must(await sb.from("agences").update(maj).eq("id",a.id))}
+    closeModal();toast(fin?"Paiement enregistré, accès prolongé jusqu'au "+fd(fin):"Paiement enregistré");await ouvrir(tab);
+  },retour);
+  $("#p-pro").value=def;
+}
 function bascule(id,btn){const a=agences.find(x=>x.id===id);const couper=a.statut_abonnement==="actif";
   if(couper){modal("Suspendre "+esc(a.nom_agence),`<p>Tous les utilisateurs de cette agence (direction, superviseurs, agents) seront bloqués <b>immédiatement</b>, sur ordinateur comme sur téléphone.</p><p class="muted sm">Leurs données sont conservées. Vous pourrez réactiver l'accès à tout moment.</p>`,`<button class="btn" id="c-no">Annuler</button><button class="btn pri" id="c-ok" style="background:var(--red);border-color:var(--red)">Suspendre</button>`);
     $("#c-no").onclick=closeModal;$("#c-ok").onclick=()=>busy($("#c-ok"),async()=>{must(await sb.from("agences").update({statut_abonnement:"suspendu"}).eq("id",id));closeModal();toast("Accès suspendu");await vAgences()})}
@@ -236,9 +292,19 @@ async function fiche(id){
   <div class="row"><div class="field"><label class="f">Cotisations sociales (%)</label><input class="input" id="f-cot" type="number" min="0" max="100" step="0.1" value="${+p.taux_cotisations||0}"></div><div class="field"><label class="f">Prime de nuit</label><input class="input" id="f-pn" type="number" min="0" value="${+p.prime_nuit||0}"></div><div class="field"><label class="f">Prime de panier</label><input class="input" id="f-pp" type="number" min="0" value="${+p.prime_panier||0}"></div><div class="field"><label class="f">Devise</label><input class="input" id="f-dev" value="${esc(p.devise||"F CFA")}"></div></div>
   <div class="field"><label class="f">Grades <span class="muted" style="font-weight:400">(un par ligne)</span></label><textarea class="input" id="f-grades">${esc((p.grades||[]).join("\n"))}</textarea></div>
 
+  <div class="sec">Suivi interne <span class="muted" style="text-transform:none;letter-spacing:0;font-weight:500">· invisible pour le client</span></div>
+  <div class="row"><div class="field" style="flex:0 1 220px"><label class="f">Prix convenu (${esc(reglages.devise)})</label><input class="input" id="f-prix" type="number" min="0" value="${a.prix_convenu??""}" placeholder="${tarifDe({type_offre:a.type_offre})||""}"></div><div class="field" style="flex:3 1 260px"><label class="f">Notes privées</label><textarea class="input" id="f-notes" placeholder="Ex. négociation en cours, personne à rappeler, promesses faites…">${esc(a.notes)}</textarea></div></div>
+
+  <div class="sec">Paiements reçus</div>
+  <div id="f-paie"><p class="muted sm">Chargement…</p></div>
+  <button class="btn sm" id="f-add-pay">+ Enregistrer un paiement</button>
+
   <div class="sec">Comptes utilisateurs</div>
   <div id="f-comptes"><p class="muted sm">Chargement…</p></div>
   <button class="btn sm" id="f-add-acc">+ Créer un compte</button>
+
+  <div class="sec">Activité récente</div>
+  <div id="f-journal"><p class="muted sm">Chargement…</p></div>
 
   <div class="sec">Zone sensible</div>
   <button class="btn sm danger" id="f-del">Supprimer cette agence</button>`,
@@ -260,11 +326,23 @@ async function fiche(id){
       grades:$("#f-grades").value.split("\n").map(x=>x.trim()).filter(Boolean),taux_cotisations:+$("#f-cot").value||0,prime_nuit:+$("#f-pn").value||0,prime_panier:+$("#f-pp").value||0,devise:$("#f-dev").value.trim()||"F CFA"};
     const v=s=>$(s).value.trim()||null;
     must(await sb.from("agences").update({nom_agence:nom,raison_sociale:v("#f-rs"),email_dg:v("#f-mail"),telephone:v("#f-tel"),adresse:v("#f-adr"),ville:v("#f-ville"),pays:v("#f-pays"),identifiant_fiscal:v("#f-nif"),logo_url:logoUrl,couleur_principale:$("#f-c1").value,couleur_secondaire:$("#f-c2").value,type_offre:$("#f-offre").value,date_expiration:new Date($("#f-exp").value+"T23:59:59").toISOString(),nb_agents_max:Math.max(1,+$("#f-max").value||1),modules,parametres}).eq("id",id));
+    must(await sb.from("agences_admin").upsert({agence_id:id,prix_convenu:$("#f-prix").value===""?null:+$("#f-prix").value,notes:$("#f-notes").value.trim()||null,updated_at:new Date().toISOString()}));
     closeModal();toast("Fiche enregistrée");await vAgences();
   });
   $("#f-add-acc").onclick=()=>creerCompte(a);
   $("#f-del").onclick=()=>supprimerAgence(a);
-  chargerComptes(id);
+  $("#f-add-pay").onclick=()=>paiement(a,()=>fiche(id));
+  chargerComptes(id);chargerPaiements(id);chargerJournal(id);
+}
+async function chargerPaiements(id){
+  const r=await sb.from("paiements_abonnement").select("id,montant,devise,mode,paye_le,periode,note").eq("agence_id",id).order("paye_le",{ascending:false}).limit(24);
+  const z=$("#f-paie");if(!z)return;if(r.error){z.innerHTML=`<p class="err">${esc(r.error.message)}</p>`;return}
+  z.innerHTML=r.data.length?r.data.map(x=>`<div class="line"><div class="grow"><b>${Math.round(x.montant).toLocaleString("fr-FR")} ${esc(x.devise)}</b> <span class="muted">· ${esc(x.mode)}</span>${x.periode||x.note?`<div class="muted xs">${esc([x.periode,x.note].filter(Boolean).join(" · "))}</div>`:""}</div><span class="muted sm">${fd(x.paye_le)}</span></div>`).join(""):`<p class="muted sm">Aucun paiement enregistré.</p>`;
+}
+async function chargerJournal(id){
+  const r=await sb.from("journal_activite").select("action,created_at").eq("agence_id",id).order("created_at",{ascending:false}).limit(12);
+  const z=$("#f-journal");if(!z)return;
+  z.innerHTML=!r.error&&r.data.length?r.data.map(x=>`<div class="line"><div class="grow">${esc(x.action)}</div><span class="muted sm">${fdt(x.created_at)}</span></div>`).join(""):`<p class="muted sm">Aucune activité enregistrée pour le moment.</p>`;
 }
 async function chargerComptes(id){
   const z=$("#f-comptes");if(!z)return;
@@ -328,6 +406,47 @@ async function vErreurs(){
   if(!agences.length)agences=must(await sb.rpc("cockpit_resume"))||[];
   $("#main").innerHTML=`<div class="head"><div><h1>Erreurs techniques</h1><p class="muted sm" style="margin:2px 0 0">Les 100 dernières erreurs rencontrées par les utilisateurs. Transmettez-les pour correction.</p></div></div>
   ${l.length?l.map(x=>{const ag=agences.find(a=>a.id===x.agence_id);return `<div class="card" style="margin-bottom:10px"><b>${esc(ag?ag.nom_agence:"—")}</b> <span class="muted sm">· ${fdt(x.created_at)}${x.page?" · "+esc(x.page):""}</span><pre class="log">${esc(x.erreur_technique)}</pre></div>`}).join(""):`<div class="empty">Aucune erreur enregistrée. Tout fonctionne.</div>`}`;
+}
+
+/* ---------- paiements ---------- */
+async function vPaiements(){
+  const l=must(await sb.from("paiements_abonnement").select("id,agence_id,montant,devise,mode,paye_le,periode,note").order("paye_le",{ascending:false}).limit(300));
+  if(!agences.length)agences=must(await sb.rpc("cockpit_resume"))||[];
+  const d=new Date(),ym=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"),an=String(d.getFullYear());
+  const som=f=>l.filter(f).reduce((t,x)=>t+(+x.montant||0),0);
+  $("#main").innerHTML=`<div class="head"><div><h1>Paiements</h1><p class="muted sm" style="margin:2px 0 0">Tout l'argent reçu de vos clients pour leurs abonnements.</p></div><button class="btn pri" id="pay-new">+ Enregistrer un paiement</button></div>
+  <div class="tiles"><div class="tile"><b>${fm(som(x=>String(x.paye_le).startsWith(ym)))}</b><span class="muted sm">Ce mois-ci</span></div><div class="tile"><b>${fm(som(x=>String(x.paye_le).startsWith(an)))}</b><span class="muted sm">Cette année</span></div><div class="tile"><b>${fm(som(()=>true))}</b><span class="muted sm">Total encaissé</span></div><div class="tile"><b>${l.length}</b><span class="muted sm">Paiements</span></div></div>
+  ${l.length?`<div class="card">${l.map(x=>{const ag=agences.find(a=>a.id===x.agence_id);return `<div class="line"><div class="grow"><b>${esc(ag?ag.nom_agence:"Agence supprimée")}</b><div class="muted xs">${esc([x.mode,x.periode,x.note].filter(Boolean).join(" · "))}</div></div><b>${Math.round(x.montant).toLocaleString("fr-FR")} ${esc(x.devise)}</b><span class="muted sm" style="width:96px;text-align:right">${fd(x.paye_le)}</span><button class="btn sm danger" data-delpay="${x.id}" title="Supprimer ce paiement">×</button></div>`}).join("")}</div>`:`<div class="empty">Aucun paiement enregistré pour le moment.</div>`}`;
+  $("#pay-new").onclick=()=>{if(!agences.length)return toast("Créez d'abord une agence.",true);
+    modal("Pour quelle agence ?",`<div class="field"><label class="f">Agence</label><select class="input" id="pa-ag">${agences.map(a=>`<option value="${a.id}">${esc(a.nom_agence)}</option>`).join("")}</select></div>`,`<button class="btn" id="pa-no">Annuler</button><button class="btn pri" id="pa-ok">Continuer</button>`);
+    $("#pa-no").onclick=closeModal;$("#pa-ok").onclick=()=>paiement(agences.find(a=>a.id===$("#pa-ag").value),closeModal)};
+  $("#main").querySelectorAll("[data-delpay]").forEach(b=>b.onclick=()=>{
+    modal("Supprimer ce paiement ?",`<p>Le paiement sera retiré de vos comptes. La date de fin d'accès de l'agence ne change pas.</p>`,`<button class="btn" id="c-no">Annuler</button><button class="btn pri" id="c-ok" style="background:var(--red);border-color:var(--red)">Supprimer</button>`);
+    $("#c-no").onclick=closeModal;$("#c-ok").onclick=()=>busy($("#c-ok"),async()=>{must(await sb.from("paiements_abonnement").delete().eq("id",b.dataset.delpay));closeModal();toast("Paiement supprimé");await vPaiements()})});
+}
+
+/* ---------- réglages ---------- */
+async function vReglages(){
+  const r=reglages;
+  $("#main").innerHTML=`<div class="head"><div><h1>Réglages</h1><p class="muted sm" style="margin:2px 0 0">Vos tarifs, votre numéro de support et votre mot de passe.</p></div></div>
+  <div class="card" style="margin-bottom:14px"><div class="sec">Mes tarifs</div>
+  <div class="row"><div class="field"><label class="f">Abonnement mensuel</label><input class="input" id="r-tm" type="number" min="0" value="${+r.tarif_mensuel||0}"></div><div class="field"><label class="f">Abonnement annuel</label><input class="input" id="r-ta" type="number" min="0" value="${r.tarif_annuel??""}" placeholder="À définir"></div><div class="field"><label class="f">Devise</label><input class="input" id="r-dev" value="${esc(r.devise||"F CFA")}"></div></div>
+  <p class="muted sm" style="margin:0 0 4px">Ces montants sont proposés par défaut quand vous enregistrez un paiement. Le prix convenu dans la fiche d'une agence est prioritaire.</p>
+  <div class="sec">Support et relances</div>
+  <div class="field"><label class="f">Votre numéro WhatsApp de support <span class="muted" style="font-weight:400">(avec l'indicatif, ex. +229…)</span></label><input class="input" id="r-wa" value="${esc(r.whatsapp_support)}"></div>
+  <div class="field"><label class="f">Message de relance <span class="muted" style="font-weight:400">· {agence} et {date} sont remplacés automatiquement</span></label><textarea class="input" id="r-msg">${esc(r.message_relance)}</textarea></div>
+  <button class="btn pri" id="r-ok">Enregistrer les réglages</button></div>
+  <div class="card"><div class="sec">Mon mot de passe</div>
+  <div class="row"><div class="field"><label class="f">Nouveau mot de passe (8 caractères minimum)</label><input class="input" id="r-p1" type="password" autocomplete="new-password"></div><div class="field"><label class="f">Confirmez-le</label><input class="input" id="r-p2" type="password" autocomplete="new-password"></div></div>
+  <button class="btn" id="r-pok">Changer mon mot de passe</button></div>`;
+  $("#r-ok").onclick=()=>busy($("#r-ok"),async()=>{
+    const v={id:true,tarif_mensuel:+$("#r-tm").value||0,tarif_annuel:$("#r-ta").value===""?null:+$("#r-ta").value,devise:$("#r-dev").value.trim()||"F CFA",whatsapp_support:$("#r-wa").value.trim()||null,message_relance:$("#r-msg").value.trim()||reglages.message_relance,updated_at:new Date().toISOString()};
+    must(await sb.from("reglages_plateforme").upsert(v));reglages={...reglages,...v};toast("Réglages enregistrés")});
+  $("#r-pok").onclick=()=>busy($("#r-pok"),async()=>{
+    const a=$("#r-p1").value;if(a.length<8)throw new Error("Le mot de passe doit contenir au moins 8 caractères.");
+    if(a!==$("#r-p2").value)throw new Error("Les deux mots de passe ne sont pas identiques.");
+    const r2=await sb.auth.updateUser({password:a});if(r2.error)throw new Error(r2.error.message);
+    $("#r-p1").value=$("#r-p2").value="";toast("Mot de passe changé")});
 }
 
 /* ---------- démarrage ---------- */
