@@ -101,6 +101,8 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 .doc .sig{display:flex;justify-content:space-between;gap:20px;margin-top:30px;font-size:13px}
 .doc h4{margin:14px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--p)}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;padding:0 5px;margin-left:4px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}.tbl th{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}.tbl td.r,.tbl th.r{text-align:right;white-space:nowrap}.tbl tr.click{cursor:pointer}.tbl tr.click:hover td{background:var(--bg)}
+.scroll{overflow-x:auto}.tot{display:flex;justify-content:space-between;font-weight:700;font-size:17px;border-top:2px solid var(--p);margin-top:8px;padding-top:10px}
 @media print{body>*:not(#modal){display:none!important}#modal{position:static;display:block;background:none;padding:0}.box{box-shadow:none;max-width:none}.box-h,.box-f{display:none}.box-b{padding:0}}
 @media(max-width:560px){.head h1{font-size:21px}.week{grid-template-columns:repeat(7,minmax(40px,1fr));overflow-x:auto}.brand small{display:none}}
 </style>
@@ -262,9 +264,9 @@ async function entrer(){
   if(!ctx.acces_ouvert)return bloquer(ctx.motif_blocage);
   $("#hd-moi").textContent=moi.nom_complet+" · "+(moi.fonction||ROLES[moi.role]||moi.role);
   ecran("app");majAvatar();$("#hd-av").onclick=maPhoto;
-  const T=estDirection()?[["accueil","Accueil"],["planning","Planning"],["pointage","Pointage"],["conges","Congés"],["documents","Documents"],["messages","Messages"],["agents","Agents"],["sites","Sites"],["comptes","Comptes"],["support","Support"]]
+  const T=estDirection()?[["accueil","Accueil"],["planning","Planning"],["pointage","Pointage"],["conges","Congés"],["documents","Documents"],["messages","Messages"],["paie","Paie"],["materiel","Matériel"],["agents","Agents"],["sites","Sites"],["comptes","Comptes"],...(moi.role==="dg"?[["reglages","Réglages"]]:[]),["support","Support"]]
     :moi.role==="superviseur"?[["pointage","Pointage"],["planning","Planning"]]
-    :moi.role==="agent"?[["accueil","Pointer"],["monplanning","Planning"],["mesconges","Congés"],["mesdocs","Documents"],["mesmsg","Messages"]]:[["accueil","Accueil"]];
+    :moi.role==="agent"?[["accueil","Pointer"],["monplanning","Planning"],["mesconges","Congés"],["mesdocs","Documents"],["mesmsg","Messages"],["mapaie","Paie"],["monmat","Matériel"]]:[["accueil","Accueil"]];
   $("#tabs").innerHTML=T.map(([k,l])=>`<button data-tab="${k}">${l}</button>`).join("");
   await ouvrir(T[0][0]);
 }
@@ -285,7 +287,7 @@ async function charger(){
 }
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
+  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
@@ -743,6 +745,146 @@ async function vMesMessages(){await chargerMonAgent();
 async function nouveautesAgent(){await chargerMonAgent();
   const [d,m,lec]=await Promise.all([sb.from("documents_rh").select("id").eq("agent_id",monAgent.id).is("lu_le",null).then(must),sb.from("messages").select("id").then(must),sb.from("message_lectures").select("message_id").eq("agent_id",monAgent.id).then(must)]);
   return {docs:d.length,msg:m.filter(x=>!lec.some(l=>l.message_id===x.id)).length}}
+
+/* ---------- paie ---------- */
+const MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const fmo=ym=>MOIS[+ym.slice(5,7)-1]+" "+ym.slice(0,4);
+const dev=()=>esc((ag.parametres&&ag.parametres.devise)||"F CFA");
+const fm=n=>Math.round(+n||0).toLocaleString("fr-FR").replace(/[  ]/g," ")+" "+dev();
+const finMois=ym=>iso(new Date(+ym.slice(0,4),+ym.slice(5,7),0));
+function calcPaie(a,ym,abs,avs){const p=ag.parametres||{},base=+a.salaire_base||0,fin=new Date(finMois(ym)+"T12:00:00");
+  const years=a.date_embauche?Math.max(0,Math.floor((fin-new Date(a.date_embauche+"T12:00:00"))/3.15576e10)):0;
+  const anc=p.anciennete!==false&&years>=2?Math.round(base*Math.min(years,25)/100):0;
+  const nuit=a.poste==="N"?+p.prime_nuit||0:0,panier=+p.prime_panier||0,resp=+((p.primes_grade||{})[a.grade])||0;
+  const absNJ=abs.filter(x=>x.agent_id===a.id&&!x.justifiee).length,ret=Math.round(base/26*absNJ);
+  const brut=Math.max(0,base+anc+nuit+panier+resp-ret),taux=+p.taux_cotisations||0,cot=Math.round(Math.max(0,brut-panier)*taux/100);
+  const av=avs.filter(x=>x.agent_id===a.id).reduce((t,x)=>t+(+x.montant||0),0);
+  return {periode:ym,base,anc,years,nuit,panier,resp,absNJ,ret,brut,taux,cot,av,net:brut-cot-av,grade:a.grade,site:siteNom(a.site_id),matricule:a.matricule,nom:nomAg(a),cnss:a.num_securite_sociale||""}}
+function bulletinHTML(d){const L=(l,v,neg)=>v?`<tr><td>${l}</td><td class="r">${neg?"− ":""}${fm(v)}</td></tr>`:"";
+  return `<div class="doc"><div class="doc-h">${ag.logo_url?`<img src="${esc(ag.logo_url)}" alt="">`:""}<div><b>${esc(ag.nom_agence)}</b><div class="muted xs">${esc([ag.raison_sociale,ag.adresse,ag.ville,ag.pays].filter(Boolean).join(" · "))}</div><div class="muted xs">${esc([ag.telephone,ag.identifiant_fiscal].filter(Boolean).join(" · "))}</div></div></div>
+  <div class="doc-t">BULLETIN DE PAIE · ${esc(fmo(d.periode).toUpperCase())}</div>
+  <dl><dt>Salarié</dt><dd>${esc(d.nom)} · ${esc(d.matricule)}</dd><dt>Emploi</dt><dd>${esc(d.grade)}${d.site?" · "+esc(d.site):""}</dd><dt>Ancienneté</dt><dd>${d.years} an(s)</dd><dt>N° sécurité sociale</dt><dd>${esc(d.cnss||"—")}</dd></dl>
+  <table class="tbl"><thead><tr><th>Élément</th><th class="r">Montant</th></tr></thead><tbody>${L("Salaire de base",d.base)}${L("Prime d'ancienneté",d.anc)}${L("Prime de nuit",d.nuit)}${L("Prime de panier",d.panier)}${L("Prime de responsabilité",d.resp)}${L("Retenue pour absence(s) non justifiée(s) · "+d.absNJ+" j",d.ret,true)}
+  <tr><td><b>Salaire brut</b></td><td class="r"><b>${fm(d.brut)}</b></td></tr>${L("Cotisations sociales salariales · "+String(d.taux).replace(".",",")+" %",d.cot,true)}${L("Avance(s) sur salaire",d.av,true)}</tbody></table>
+  <div class="tot"><span>NET À PAYER</span><span>${fm(d.net)}</span></div>
+  <p class="muted xs" style="margin-top:14px">Mode de paiement : ${esc((ag.parametres&&ag.parametres.mode_paiement)||"espèces")}. Bulletin généré par le logiciel de gestion de ${esc(ag.nom_agence)}.</p>
+  <div class="sig"><div><b>L'Employeur</b><br><span class="muted xs">Signature et cachet</span></div><div style="text-align:right"><b>Le Salarié</b><br><span class="muted xs">Reçu la somme ci-dessus, signature</span></div></div></div>`}
+function voirBulletin(d){modal("Bulletin de paie · "+esc(d.nom),bulletinHTML(d),`<button class="btn" id="bp-no">Fermer</button><button class="btn pri" id="bp-pr">Imprimer / PDF</button>`);$("#bp-no").onclick=closeModal;$("#bp-pr").onclick=()=>window.print()}
+let moisP=null;
+async function vPaie(){moisP=moisP||auj().slice(0,7);const ym=moisP,m1=ym+"-01",m2=finMois(ym);
+  const [pa,ab,av]=await Promise.all([sb.from("paies").select("*").eq("mois",m1).then(must),sb.from("absences").select("*").gte("date_absence",m1).lte("date_absence",m2).then(must),sb.from("avances").select("*").order("created_at",{ascending:false}).limit(300).then(must)]);
+  const avM=av.filter(x=>x.mois===m1&&x.statut==="Accordée"),valide=pa.length>0;
+  const lignes=valide?pa.map(x=>({id:x.agent_id,d:{...x.detail,brut:+x.brut,net:+x.net}})).sort((a,b)=>a.d.nom.localeCompare(b.d.nom))
+    :agents.filter(a=>a.statut!=="Sorti").map(a=>({id:a.id,d:calcPaie(a,ym,ab,avM)})).sort((a,b)=>a.d.nom.localeCompare(b.d.nom));
+  const tot=k=>lignes.reduce((t,l)=>t+(+l.d[k]||0),0),att=av.filter(x=>x.statut==="En attente");
+  $("#main").innerHTML=`<div class="head"><div><h1>Paie · ${esc(fmo(ym))}</h1><p class="muted sm" style="margin:2px 0 0">${valide?`Paie validée le ${fdt(pa[0].valide_le)}. Les agents voient leur bulletin sur leur téléphone.`:"Calcul automatique à partir du salaire de base, des primes, des absences non justifiées et des avances. Vérifiez, puis validez."}</p></div>
+  <div class="actions"><input class="input" type="month" id="py-m" value="${ym}" style="width:auto"><button class="btn" id="py-csv">Exporter (Excel)</button>${valide?(moi.role==="dg"?'<button class="btn danger" id="py-ann">Annuler la validation</button>':""):`<button class="btn pri" id="py-val" ${lignes.length?"":"disabled"}>Valider la paie</button>`}</div></div>
+  <div class="tiles"><div class="tile"><b>${fm(tot("brut"))}</b><span class="muted sm">Masse salariale brute</span></div><div class="tile"><b>${fm(tot("cot"))}</b><span class="muted sm">Cotisations (${String(+(ag.parametres.taux_cotisations||0)).replace(".",",")} %)</span></div><div class="tile"><b>${fm(tot("av"))}</b><span class="muted sm">Avances retenues</span></div><div class="tile"><b class="ok-t">${fm(tot("net"))}</b><span class="muted sm">Net à payer · ${lignes.length} agent(s)</span></div></div>
+  ${!(+ag.parametres.taux_cotisations)?`<div class="idbox sm">Le taux de cotisations sociales est à 0 %. ${moi.role==="dg"?'Réglez-le dans l\'onglet « Réglages » quand il sera confirmé.':"La direction peut le régler dans « Réglages »."}</div>`:""}
+  ${lignes.length?`<div class="card scroll"><table class="tbl"><thead><tr><th>Agent</th><th class="r">Base</th><th class="r">Primes</th><th class="r">Retenues</th><th class="r">Net</th></tr></thead><tbody>${lignes.map(l=>{const d=l.d;return `<tr class="click" data-bul="${l.id}"><td><b>${esc(d.nom)}</b><div class="muted xs">${esc(d.matricule)} · ${esc(d.grade)}</div></td><td class="r">${fm(d.base)}</td><td class="r">${fm(d.anc+d.nuit+d.panier+d.resp)}</td><td class="r">${fm(d.ret+d.cot+d.av)}</td><td class="r"><b>${fm(d.net)}</b></td></tr>`}).join("")}</tbody></table></div>`:`<div class="empty">Aucun agent à payer.</div>`}
+  <div class="card"><div class="actions" style="justify-content:space-between"><h2 style="margin:0">Avances sur salaire</h2><button class="btn sm pri" id="av-new">+ Accorder une avance</button></div>
+  ${att.length?`<p class="sm" style="margin:10px 0 4px"><b>Demandes des agents</b></p>${att.map(x=>`<div class="line"><div class="grow"><b>${esc(nomAg(AG_(x.agent_id)))}</b><div class="muted xs">${fm(x.montant)} · à retenir en ${esc(fmo(x.mois.slice(0,7)))}${x.motif?" · "+esc(x.motif):""}</div></div><button class="btn sm pri" data-avok="${x.id}">Accorder</button><button class="btn sm danger" data-avko="${x.id}">Refuser</button></div>`).join("")}`:""}
+  ${av.filter(x=>x.statut==="Accordée").slice(0,20).map(x=>`<div class="line"><div class="grow">${esc(nomAg(AG_(x.agent_id)))}<div class="muted xs">${fm(x.montant)} · retenue en ${esc(fmo(x.mois.slice(0,7)))}${x.motif?" · "+esc(x.motif):""}</div></div><span class="pill p-green">Accordée</span></div>`).join("")||(att.length?"":'<p class="muted sm" style="margin:8px 0 0">Aucune avance.</p>')}</div>`;
+  $("#py-m").onchange=e=>{if(e.target.value){moisP=e.target.value;vPaie().catch(x=>toast(traduire(x.message),true))}};
+  $("#main").querySelectorAll("[data-bul]").forEach(t=>t.onclick=()=>voirBulletin(lignes.find(l=>l.id===t.dataset.bul).d));
+  $("#py-csv").onclick=()=>{const c=v=>'"'+String(v??"").replace(/"/g,'""')+'"',L=[["Matricule","Agent","Grade","Base","Ancienneté","Nuit","Panier","Responsabilité","Retenue absences","Brut","Cotisations","Avances","Net"]].concat(lignes.map(({d})=>[d.matricule,d.nom,d.grade,d.base,d.anc,d.nuit,d.panier,d.resp,d.ret,d.brut,d.cot,d.av,d.net]));
+    const u=URL.createObjectURL(new Blob(["﻿"+L.map(r=>r.map(c).join(";")).join("\r\n")],{type:"text/csv;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download="paie-"+ag.slug+"-"+ym+".csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)};
+  const val=$("#py-val");if(val)val.onclick=()=>confirmerSimple("Valider la paie de "+esc(fmo(ym))+" ?","Les montants seront figés et chaque agent pourra voir et télécharger son bulletin depuis son téléphone.","Valider la paie",async()=>{
+    const now=new Date().toISOString();must(await sb.from("paies").upsert(lignes.map(l=>({agent_id:l.id,mois:m1,detail:l.d,brut:l.d.brut,retenues:l.d.ret+l.d.cot+l.d.av,net:l.d.net,valide_le:now,valide_par:moi.id})),{onConflict:"agent_id,mois"}));
+    toast("Paie validée");await vPaie()});
+  const ann=$("#py-ann");if(ann)ann.onclick=()=>confirmerSimple("Annuler la validation ?","Les bulletins de "+esc(fmo(ym))+" ne seront plus visibles par les agents, et la paie sera recalculée.","Annuler la validation",async()=>{must(await sb.from("paies").delete().eq("mois",m1));toast("Validation annulée");await vPaie()});
+  $("#av-new").onclick=()=>formAvance(null,async d=>{must(await sb.from("avances").insert({...d,statut:"Accordée"}));toast("Avance enregistrée");await vPaie()});
+  const Q=(sel,f)=>$("#main").querySelectorAll(sel).forEach(b=>b.onclick=()=>f(b));
+  Q("[data-avok]",b=>busy(b,async()=>{must(await sb.from("avances").update({statut:"Accordée"}).eq("id",b.dataset.avok));toast("Avance accordée");await vPaie()}));
+  Q("[data-avko]",b=>busy(b,async()=>{must(await sb.from("avances").update({statut:"Refusée"}).eq("id",b.dataset.avko));toast("Avance refusée");await vPaie()}));
+}
+function formAvance(agentFixe,envoyer){const ym=auj().slice(0,7);
+  modal(agentFixe?"Demander une avance":"Accorder une avance",`${agentFixe?"":`<div class="field"><label class="f">Agent</label><select class="input" id="av-a">${agents.filter(a=>a.statut==="Actif").map(a=>`<option value="${a.id}">${esc(nomAg(a))}</option>`).join("")}</select></div>`}
+  <div class="row"><div class="field"><label class="f">Montant (${dev()})</label><input class="input" type="number" min="1" id="av-m"></div><div class="field"><label class="f">À retenir sur la paie de</label><input class="input" type="month" id="av-p" value="${ym}"></div></div>
+  <div class="field"><label class="f">Motif <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" id="av-x"></div>`,`<button class="btn" id="av-no">Annuler</button><button class="btn pri" id="av-ok">${agentFixe?"Envoyer la demande":"Enregistrer"}</button>`);
+  $("#av-no").onclick=closeModal;
+  $("#av-ok").onclick=()=>busy($("#av-ok"),async()=>{const m=+$("#av-m").value;if(!(m>0)){$("#av-m").focus();throw new Error("Indiquez le montant.")}if(!$("#av-p").value)throw new Error("Indiquez le mois de retenue.");
+    await envoyer({agent_id:agentFixe||$("#av-a").value,montant:m,mois:$("#av-p").value+"-01",motif:$("#av-x").value.trim()||null});closeModal()});
+}
+async function vMaPaie(){await chargerMonAgent();
+  const [pa,av]=await Promise.all([sb.from("paies").select("*").eq("agent_id",monAgent.id).order("mois",{ascending:false}).limit(24).then(must),sb.from("avances").select("*").eq("agent_id",monAgent.id).order("created_at",{ascending:false}).limit(20).then(must)]);
+  $("#main").innerHTML=`<div class="head"><div><h1>Ma paie</h1><p class="muted sm" style="margin:2px 0 0">Vos bulletins apparaissent ici dès que la direction valide la paie du mois.</p></div><button class="btn pri" id="ma-av">Demander une avance</button></div>
+  <div class="card"><h2>Mes bulletins</h2>${pa.map(x=>`<div class="line click" data-mb="${x.id}"><div class="grow"><b class="n">${esc(fmo(x.mois.slice(0,7)).replace(/^./,c=>c.toUpperCase()))}</b></div><b>${fm(x.net)}</b></div>`).join("")||'<p class="muted sm" style="margin:0">Aucun bulletin pour le moment.</p>'}</div>
+  <div class="card"><h2>Mes avances</h2>${av.map(x=>`<div class="line"><div class="grow">${fm(x.montant)}<div class="muted xs">retenue en ${esc(fmo(x.mois.slice(0,7)))}${x.motif?" · "+esc(x.motif):""}</div></div><span class="pill ${x.statut==="Accordée"?"p-green":x.statut==="Refusée"?"p-red":"p-amber"}">${esc(x.statut)}</span></div>`).join("")||'<p class="muted sm" style="margin:0">Aucune avance.</p>'}</div>`;
+  $("#main").querySelectorAll("[data-mb]").forEach(t=>t.onclick=()=>{const x=pa.find(y=>y.id===t.dataset.mb);voirBulletin({...x.detail,brut:+x.brut,net:+x.net})});
+  $("#ma-av").onclick=()=>formAvance(monAgent.id,async d=>{must(await sb.from("avances").insert({...d,statut:"En attente"}));toast("Demande envoyée");await vMaPaie()});
+}
+
+/* ---------- matériel ---------- */
+async function vMateriel(){
+  const [ar,mv,de]=await Promise.all([sb.from("stock_articles").select("*").order("nom").then(must),sb.from("stock_mouvements").select("*").order("created_at",{ascending:false}).limit(60).then(must),sb.from("demandes_materiel").select("*").order("created_at",{ascending:false}).limit(60).then(must)]);
+  const nomA=id=>(ar.find(x=>x.id===id)||{}).nom||"Article",att=de.filter(x=>x.statut==="En attente"),bas=ar.filter(x=>x.quantite<=x.seuil);
+  $("#main").innerHTML=`<div class="head"><div><h1>Matériel</h1><p class="muted sm" style="margin:2px 0 0">Tenues, radios, torches… Le stock se met à jour à chaque entrée et chaque dotation.</p></div><div class="actions"><button class="btn" id="mt-art">+ Article</button><button class="btn" id="mt-in" ${ar.length?"":"disabled"}>Entrée de stock</button><button class="btn pri" id="mt-dot" ${ar.length?"":"disabled"}>Doter un agent</button></div></div>
+  <div class="tiles"><div class="tile"><b>${ar.length}</b><span class="muted sm">Articles</span></div><div class="tile"><b class="${bas.length?"ko-t":""}">${bas.length}</b><span class="muted sm">Sous le seuil d'alerte</span></div><div class="tile"><b>${fm(ar.reduce((t,x)=>t+x.quantite*x.prix_unitaire,0))}</b><span class="muted sm">Valeur du stock</span></div><div class="tile"><b class="${att.length?"wa-t":""}">${att.length}</b><span class="muted sm">Demandes d'agents</span></div></div>
+  ${att.length?`<div class="card"><h2>Demandes des agents</h2>${att.map(x=>`<div class="line"><div class="grow"><b>${esc(nomAg(AG_(x.agent_id)))}</b><div class="muted xs">${esc(nomA(x.article_id))} · ${fdt(x.created_at)}${x.motif?" · "+esc(x.motif):""}</div></div><button class="btn sm pri" data-dok="${x.id}">Accorder</button><button class="btn sm danger" data-dko="${x.id}">Refuser</button></div>`).join("")}</div>`:""}
+  ${ar.length?`<div class="card scroll"><table class="tbl"><thead><tr><th>Article</th><th class="r">En stock</th><th class="r">Seuil</th><th class="r">Prix unitaire</th></tr></thead><tbody>${ar.map(x=>`<tr class="click" data-art="${x.id}"><td><b>${esc(x.nom)}</b><div class="muted xs">${esc(x.categorie||"")}</div></td><td class="r ${x.quantite<=x.seuil?"ko-t":""}"><b>${x.quantite}</b></td><td class="r">${x.seuil}</td><td class="r">${fm(x.prix_unitaire)}</td></tr>`).join("")}</tbody></table></div>`:`<div class="empty">Aucun article. Ajoutez vos tenues, radios, torches…</div>`}
+  ${mv.length?`<div class="card"><h2>Derniers mouvements</h2>${mv.map(x=>`<div class="line"><div class="grow"><b>${esc(x.type)}</b> · ${esc(nomA(x.article_id))} × ${x.quantite}<div class="muted xs">${fdt(x.created_at)}${x.agent_id?" · "+esc(nomAg(AG_(x.agent_id))):""}${x.fournisseur?" · "+esc(x.fournisseur):""}${x.note?" · "+esc(x.note):""}</div></div></div>`).join("")}</div>`:""}`;
+  $("#mt-art").onclick=()=>formArticle();
+  $("#main").querySelectorAll("[data-art]").forEach(t=>t.onclick=()=>formArticle(ar.find(x=>x.id===t.dataset.art)));
+  $("#mt-in").onclick=()=>mouvement("Entrée",ar);$("#mt-dot").onclick=()=>mouvement("Dotation",ar);
+  const Q=(sel,f)=>$("#main").querySelectorAll(sel).forEach(b=>b.onclick=()=>f(b));
+  Q("[data-dok]",b=>busy(b,async()=>{const x=de.find(y=>y.id===b.dataset.dok);if(!x.article_id)throw new Error("Article inconnu : faites la dotation à la main.");
+    must(await sb.from("stock_mouvements").insert({article_id:x.article_id,type:"Dotation",quantite:1,agent_id:x.agent_id,note:"Demande de l'agent"}));
+    must(await sb.from("demandes_materiel").update({statut:"Accordée"}).eq("id",x.id));toast("Matériel remis");await vMateriel()}));
+  Q("[data-dko]",b=>busy(b,async()=>{must(await sb.from("demandes_materiel").update({statut:"Refusée"}).eq("id",b.dataset.dko));toast("Demande refusée");await vMateriel()}));
+}
+function formArticle(x){const n=!x;x=x||{seuil:0,prix_unitaire:0};
+  modal(n?"Nouvel article":esc(x.nom),`<div class="row"><div class="field"><label class="f">Nom</label><input class="input" id="ar-n" value="${esc(x.nom)}" placeholder="Ex. Tenue complète"></div><div class="field"><label class="f">Catégorie</label><input class="input" id="ar-c" value="${esc(x.categorie)}" placeholder="Tenue, équipement…"></div></div>
+  <div class="row">${n?'<div class="field"><label class="f">Quantité en stock</label><input class="input" type="number" min="0" id="ar-q" value="0"></div>':""}<div class="field"><label class="f">Seuil d'alerte</label><input class="input" type="number" min="0" id="ar-s" value="${+x.seuil}"></div><div class="field"><label class="f">Prix unitaire (${dev()})</label><input class="input" type="number" min="0" id="ar-p" value="${+x.prix_unitaire}"></div></div>
+  ${n?"":`<p class="muted sm" style="margin:0">En stock : <b>${x.quantite}</b>. Pour changer la quantité, utilisez « Entrée de stock » ou une dotation.</p>`}`,
+  `${n?"":'<button class="btn danger" id="ar-del" style="margin-right:auto">Supprimer</button>'}<button class="btn" id="ar-no">Annuler</button><button class="btn pri" id="ar-ok">Enregistrer</button>`);
+  $("#ar-no").onclick=closeModal;
+  $("#ar-ok").onclick=()=>busy($("#ar-ok"),async()=>{const nom=$("#ar-n").value.trim();if(nom.length<2){$("#ar-n").focus();throw new Error("Indiquez le nom de l'article.")}
+    const d={nom,categorie:$("#ar-c").value.trim()||null,seuil:Math.max(0,+$("#ar-s").value||0),prix_unitaire:Math.max(0,+$("#ar-p").value||0)};
+    if(n){const q=Math.max(0,+$("#ar-q").value||0),r=await sb.from("stock_articles").insert({...d,quantite:0}).select("id").single();if(r.error)throw new Error(/stock_articles_agence_id_nom_key/.test(r.error.message)?"Un article porte déjà ce nom.":r.error.message);
+      if(q)must(await sb.from("stock_mouvements").insert({article_id:r.data.id,type:"Entrée",quantite:q,prix_unitaire:d.prix_unitaire,note:"Stock initial"}))}
+    else must(await sb.from("stock_articles").update(d).eq("id",x.id));
+    closeModal();toast(n?"Article ajouté":"Article mis à jour");await vMateriel()});
+  const del=$("#ar-del");if(del)del.onclick=()=>busy(del,async()=>{must(await sb.from("stock_articles").delete().eq("id",x.id));closeModal();toast("Article supprimé");await vMateriel()});
+}
+function mouvement(type,ar){const dot=type==="Dotation";
+  modal(dot?"Doter un agent":"Entrée de stock",`<div class="row"><div class="field"><label class="f">Article</label><select class="input" id="mv-a">${ar.map(x=>`<option value="${x.id}">${esc(x.nom)} · ${x.quantite} en stock</option>`).join("")}</select></div><div class="field" style="flex:0 1 140px"><label class="f">Quantité</label><input class="input" type="number" min="1" id="mv-q" value="1"></div></div>
+  ${dot?`<div class="row"><div class="field"><label class="f">Agent</label><select class="input" id="mv-g">${agents.filter(a=>a.statut==="Actif").map(a=>`<option value="${a.id}">${esc(nomAg(a))}</option>`).join("")}</select></div><div class="field"><label class="f">Type</label><select class="input" id="mv-t"><option>Dotation</option><option>Retour</option><option>Perte</option></select></div></div>`
+    :`<div class="row"><div class="field"><label class="f">Fournisseur</label><input class="input" id="mv-f"></div><div class="field"><label class="f">Prix unitaire (${dev()})</label><input class="input" type="number" min="0" id="mv-p"></div></div>`}
+  <div class="field"><label class="f">Note <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" id="mv-n"></div>`,`<button class="btn" id="mv-no">Annuler</button><button class="btn pri" id="mv-ok">Enregistrer</button>`);
+  $("#mv-no").onclick=closeModal;
+  $("#mv-ok").onclick=()=>busy($("#mv-ok"),async()=>{const q=+$("#mv-q").value;if(!(q>0)){$("#mv-q").focus();throw new Error("Indiquez la quantité.")}
+    const d={article_id:$("#mv-a").value,quantite:Math.round(q),note:$("#mv-n").value.trim()||null};
+    if(dot)Object.assign(d,{type:$("#mv-t").value,agent_id:$("#mv-g").value});else Object.assign(d,{type:"Entrée",fournisseur:$("#mv-f").value.trim()||null,prix_unitaire:$("#mv-p").value===""?null:+$("#mv-p").value});
+    must(await sb.from("stock_mouvements").insert(d));closeModal();toast("Mouvement enregistré");await vMateriel()});
+}
+async function vMonMateriel(){await chargerMonAgent();
+  const [ar,mv,de]=await Promise.all([sb.from("stock_articles").select("id,nom,categorie").order("nom").then(must),sb.from("stock_mouvements").select("*").eq("agent_id",monAgent.id).order("created_at",{ascending:false}).limit(40).then(must),sb.from("demandes_materiel").select("*").eq("agent_id",monAgent.id).order("created_at",{ascending:false}).limit(20).then(must)]);
+  const nomA=id=>(ar.find(x=>x.id===id)||{}).nom||"Article";
+  $("#main").innerHTML=`<div class="head"><div><h1>Mon matériel</h1><p class="muted sm" style="margin:2px 0 0">Le matériel qui vous a été remis, et vos demandes.</p></div><button class="btn pri" id="mm-new" ${ar.length?"":"disabled"}>Demander du matériel</button></div>
+  <div class="card"><h2>Matériel reçu</h2>${mv.map(x=>`<div class="line"><div class="grow"><b>${esc(nomA(x.article_id))}</b> × ${x.quantite}<div class="muted xs">${esc(x.type)} · ${fdt(x.created_at)}</div></div></div>`).join("")||'<p class="muted sm" style="margin:0">Rien pour le moment.</p>'}</div>
+  <div class="card"><h2>Mes demandes</h2>${de.map(x=>`<div class="line"><div class="grow">${esc(nomA(x.article_id))}<div class="muted xs">${fdt(x.created_at)}${x.motif?" · "+esc(x.motif):""}</div></div><span class="pill ${x.statut==="Accordée"?"p-green":x.statut==="Refusée"?"p-red":"p-amber"}">${esc(x.statut)}</span></div>`).join("")||'<p class="muted sm" style="margin:0">Aucune demande.</p>'}</div>`;
+  $("#mm-new").onclick=()=>{modal("Demander du matériel",`<div class="field"><label class="f">Article</label><select class="input" id="dm-a">${ar.map(x=>`<option value="${x.id}">${esc(x.nom)}</option>`).join("")}</select></div><div class="field"><label class="f">Motif</label><input class="input" id="dm-m" placeholder="Ex. tenue déchirée, torche en panne"></div>`,`<button class="btn" id="dm-no">Annuler</button><button class="btn pri" id="dm-ok">Envoyer</button>`);
+    $("#dm-no").onclick=closeModal;$("#dm-ok").onclick=()=>busy($("#dm-ok"),async()=>{must(await sb.from("demandes_materiel").insert({agent_id:monAgent.id,article_id:$("#dm-a").value,motif:$("#dm-m").value.trim()||null,statut:"En attente"}));closeModal();toast("Demande envoyée");await vMonMateriel()})};
+}
+
+/* ---------- réglages de l'agence (dirigeant) ---------- */
+async function vReglages(){const p=ag.parametres||{},J=POSTE("J"),N=POSTE("N"),grades=p.grades||[],pg=p.primes_grade||{};
+  $("#main").innerHTML=`<div class="head"><div><h1>Réglages de l'agence</h1><p class="muted sm" style="margin:2px 0 0">Horaires, primes et cotisations utilisés par le planning, le pointage et la paie.</p></div></div>
+  <div class="card"><h2>Horaires des postes</h2><div class="row"><div class="field"><label class="f">Jour · début</label><input class="input" type="time" id="rg-jd" value="${J.debut}"></div><div class="field"><label class="f">Jour · fin</label><input class="input" type="time" id="rg-jf" value="${J.fin}"></div><div class="field"><label class="f">Nuit · début</label><input class="input" type="time" id="rg-nd" value="${N.debut}"></div><div class="field"><label class="f">Nuit · fin</label><input class="input" type="time" id="rg-nf" value="${N.fin}"></div></div>
+  <div class="field" style="max-width:260px"><label class="f">Tolérance avant retard (minutes)</label><input class="input" type="number" min="0" max="120" id="rg-tol" value="${TOL()}"></div></div>
+  <div class="card"><h2>Paie</h2><div class="row"><div class="field"><label class="f">Prime de nuit (par mois)</label><input class="input" type="number" min="0" id="rg-pn" value="${+p.prime_nuit||0}"></div><div class="field"><label class="f">Prime de panier (par mois)</label><input class="input" type="number" min="0" id="rg-pp" value="${+p.prime_panier||0}"></div><div class="field"><label class="f">Cotisations sociales salariales (%)</label><input class="input" type="number" min="0" max="50" step="0.1" id="rg-cot" value="${+p.taux_cotisations||0}"></div><div class="field"><label class="f">Mode de paiement</label><input class="input" id="rg-mp" value="${esc(p.mode_paiement||"espèces")}"></div></div>
+  <label style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><input type="checkbox" id="rg-anc" ${p.anciennete!==false?"checked":""}> Prime d'ancienneté automatique (1 % du salaire de base par année, à partir de 2 ans, plafonnée à 25 %)</label>
+  <p class="f" style="font-weight:600;font-size:13px;margin:0 0 6px">Prime de responsabilité par grade (par mois)</p><div class="row">${grades.map((g,i)=>`<div class="field"><label class="f" style="font-weight:500">${esc(g)}</label><input class="input" type="number" min="0" data-pg="${i}" value="${+pg[g]||0}"></div>`).join("")}</div></div>
+  <div class="card"><h2>Grades</h2><div class="field"><label class="f">Un grade par ligne</label><textarea class="input" id="rg-gr">${esc(grades.join("\n"))}</textarea></div></div>
+  <button class="btn pri" id="rg-ok">Enregistrer les réglages</button>`;
+  $("#rg-ok").onclick=()=>busy($("#rg-ok"),async()=>{const gr=$("#rg-gr").value.split("\n").map(x=>x.trim()).filter(Boolean);if(!gr.length)throw new Error("Indiquez au moins un grade.");
+    const primes={};grades.forEach((g,i)=>{const v=+$(`[data-pg="${i}"]`).value||0;if(v)primes[g]=v});
+    const autres=(p.postes||[]).filter(x=>x.code!=="J"&&x.code!=="N");
+    const n={postes:[{code:"J",libelle:"Jour",debut:$("#rg-jd").value||J.debut,fin:$("#rg-jf").value||J.fin},{code:"N",libelle:"Nuit",debut:$("#rg-nd").value||N.debut,fin:$("#rg-nf").value||N.fin},...autres],
+      tolerance_retard:Math.max(0,Math.min(120,+$("#rg-tol").value||0)),prime_nuit:Math.max(0,+$("#rg-pn").value||0),prime_panier:Math.max(0,+$("#rg-pp").value||0),taux_cotisations:Math.max(0,Math.min(50,+$("#rg-cot").value||0)),mode_paiement:$("#rg-mp").value.trim()||"espèces",anciennete:$("#rg-anc").checked,primes_grade:primes,grades:gr};
+    ag.parametres=must(await sb.rpc("maj_parametres",{p:n}));toast("Réglages enregistrés");await vReglages()});
+}
 
 /* ---------- journal des erreurs + démarrage ---------- */
 let nbErr=0;
