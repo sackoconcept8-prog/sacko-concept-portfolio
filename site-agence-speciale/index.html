@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Agence Spéciale — Maquette du site web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0d0d0f; --ink:#17171a; --mute:#5d5f66; --line:#e9e4d8; --paper:#ffffff; --ivory:#faf7f0;
+  --gold:#c9982f; --gold2:#e8c466; --gold-deep:#8f6a17; --red:#d2232a;
+  --grad:linear-gradient(120deg,#8f6a17 0%,#d9ad45 45%,#f3d98a 60%,#b8862b 100%);
+  --r:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{font-family:Manrope,system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1200px;margin:0 auto;padding:0 22px}
+h1,h2,h3,.disp{font-family:"Barlow Condensed",Impact,sans-serif;text-transform:uppercase;line-height:.98;letter-spacing:.005em;font-weight:700}
+.gold{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:16px}
+.eyebrow::before{content:"";width:34px;height:2px;background:var(--grad)}
+
+.ribbon{background:#fff8e3;color:#6d4e12;font-size:12.5px;text-align:center;padding:7px 14px;border-bottom:1px solid #f0e0b4}
+.top{background:var(--black);color:#d9d4c6;font-size:13px}
+.top .wrap{display:flex;justify-content:space-between;gap:16px;padding-top:8px;padding-bottom:8px;flex-wrap:wrap}
+.top b{color:var(--gold2);font-weight:600}
+header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:78px;gap:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{height:62px;width:auto}
+.brand b{font-family:"Barlow Condensed";font-size:25px;letter-spacing:.04em;text-transform:uppercase;line-height:1;display:block}
+.brand small{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-deep);font-weight:700}
+nav{display:flex;gap:28px;font-size:14.5px;font-weight:600}
+nav a{position:relative;padding:6px 0}
+nav a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--grad);transition:.25s}
+nav a:hover::after{width:100%}
+.actions{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 24px;border-radius:999px;font-weight:700;font-size:15px;border:1.5px solid transparent;cursor:pointer;font-family:inherit;transition:.2s;white-space:nowrap}
+.btn svg{width:18px;height:18px}
+.btn-gold{background:var(--grad);color:#141005;box-shadow:0 10px 26px -12px rgba(201,152,47,.9)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 30px -12px rgba(201,152,47,.95)}
+.btn-dark{background:var(--black);color:#fff}
+.btn-dark:hover{background:#000;transform:translateY(-2px)}
+.btn-line{border-color:var(--ink);background:transparent;color:var(--ink)}
+.btn-line:hover{background:var(--ink);color:#fff}
+.bar .btn{padding:10px 18px;font-size:14px}
+
+/* HERO */
+.hero{position:relative;overflow:hidden;background:
+  radial-gradient(900px 500px at 88% 10%,#fbefd0 0%,rgba(251,239,208,0) 60%),
+  linear-gradient(180deg,#fffdf8 0%,#fff 100%);padding:64px 0 72px}
+.hero::before{content:"";position:absolute;right:-180px;top:-120px;width:620px;height:620px;border:1px solid #efdcae;border-radius:50%}
+.hero::after{content:"";position:absolute;right:-80px;top:-20px;width:420px;height:420px;border:1px solid #f3e6c3;border-radius:50%}
+.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+h1{font-size:clamp(46px,7.4vw,96px);margin-bottom:22px}
+.lead{font-size:18.5px;color:var(--mute);max-width:560px;margin-bottom:30px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:34px}
+.trust{display:grid;grid-template-columns:repeat(3,auto);gap:26px;justify-content:start;border-top:1px solid var(--line);padding-top:22px}
+.trust div{font-size:13.5px;color:var(--mute);line-height:1.35}
+.trust b{display:block;font-family:"Barlow Condensed";font-size:24px;text-transform:uppercase;color:var(--ink);letter-spacing:.02em}
+.visual{position:relative;justify-self:center;width:min(100%,430px)}
+.photo{position:relative;border-radius:26px;overflow:hidden;aspect-ratio:4/5;box-shadow:0 40px 80px -40px rgba(13,13,15,.55)}
+.photo img{width:100%;height:100%;object-fit:cover;object-position:18% 30%}
+.visual::before{content:"";position:absolute;inset:18px -18px -18px 18px;border-radius:26px;border:2px solid var(--gold);z-index:-1}
+.float{position:absolute;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 16px;box-shadow:0 20px 40px -24px rgba(13,13,15,.45);display:flex;gap:12px;align-items:center;font-size:13px;line-height:1.3}
+.float b{display:block;font-size:14.5px}
+.float span{color:var(--mute)}
+.f1{left:-26px;bottom:44px}
+.f2{right:-22px;top:34px}
+.dot{width:10px;height:10px;border-radius:50%;background:#22a45d;box-shadow:0 0 0 5px rgba(34,164,93,.18);flex:none}
+.sh{width:38px;height:38px;border-radius:10px;background:var(--black);display:grid;place-items:center;color:var(--gold2);flex:none}
+.sh svg{width:20px;height:20px}
+
+/* MARQUEE */
+.marq{background:var(--black);color:var(--gold2);overflow:hidden;padding:16px 0;border-top:2px solid var(--gold);border-bottom:2px solid var(--gold)}
+.marq div{display:flex;gap:44px;white-space:nowrap;width:max-content;animation:mq 34s linear infinite;font-family:"Barlow Condensed";font-size:21px;letter-spacing:.14em;text-transform:uppercase}
+.marq span::after{content:"◆";margin-left:44px;color:#6b5a2c;font-size:12px;vertical-align:middle}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+section{padding:88px 0}
+.head{max-width:720px;margin-bottom:46px}
+h2{font-size:clamp(36px,5vw,62px);margin-bottom:14px}
+.head p{color:var(--mute);font-size:17.5px}
+.ivory{background:var(--ivory)}
+
+/* SERVICES */
+.svc{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.s{position:relative;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:30px 26px 28px;overflow:hidden;transition:.3s}
+.s::before{content:"";position:absolute;left:0;top:0;height:4px;width:100%;background:var(--grad);transform:scaleX(0);transform-origin:left;transition:.35s}
+.s:hover{transform:translateY(-6px);box-shadow:0 30px 60px -36px rgba(13,13,15,.45);border-color:#e2d3aa}
+.s:hover::before{transform:scaleX(1)}
+.s .n{position:absolute;right:22px;top:16px;font-family:"Barlow Condensed";font-size:54px;font-weight:700;color:#f3ecdb;line-height:1}
+.ico{width:56px;height:56px;border-radius:16px;background:var(--black);color:var(--gold2);display:grid;place-items:center;margin-bottom:22px}
+.ico svg{width:27px;height:27px}
+.s h3{font-size:25px;margin-bottom:10px;letter-spacing:.02em}
+.s p{font-size:15px;color:var(--mute);margin-bottom:16px}
+.s a{font-weight:700;font-size:14px;color:var(--gold-deep)}
+
+/* WHY */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.feat{display:grid;gap:22px;margin-top:8px}
+.fi{display:flex;gap:16px}
+.fi .k{flex:none;width:46px;height:46px;border-radius:50%;border:1.5px solid var(--gold);display:grid;place-items:center;font-family:"Barlow Condensed";font-weight:700;font-size:19px;color:var(--gold-deep);background:#fff}
+.fi h3{font-size:21px;margin-bottom:4px;letter-spacing:.02em}
+.fi p{font-size:15px;color:var(--mute)}
+.about{background:#fff;border:1px solid var(--line);border-radius:26px;padding:36px;position:relative;box-shadow:0 30px 60px -44px rgba(13,13,15,.5)}
+.about img{width:150px;margin:-6px auto 12px}
+.about h3{font-size:30px;text-align:center;margin-bottom:14px}
+.about p{color:var(--mute);margin-bottom:14px;font-size:15.5px}
+.vals{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.vals span{border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-weight:700;font-size:14px;display:flex;gap:9px;align-items:center}
+.vals span::before{content:"";width:8px;height:8px;background:var(--grad);transform:rotate(45deg);flex:none}
+.founder{border-top:1px solid var(--line);padding-top:18px;font-size:13.5px;color:var(--mute)}
+.founder b{display:block;font-family:"Barlow Condensed";font-size:22px;text-transform:uppercase;color:var(--ink);letter-spacing:.03em}
+
+/* ESPACE CLIENT */
+.digital{background:
+  radial-gradient(700px 420px at 12% 20%,#fbefd0 0%,rgba(251,239,208,0) 62%),var(--ivory)}
+.dgrid{display:grid;grid-template-columns:.85fr 1.15fr;gap:60px;align-items:center}
+.phone{width:300px;max-width:100%;margin:0 auto;background:var(--black);border-radius:42px;padding:11px;box-shadow:0 50px 90px -46px rgba(13,13,15,.75);position:relative}
+.phone::before{content:"";position:absolute;top:20px;left:50%;transform:translateX(-50%);width:84px;height:20px;background:var(--black);border-radius:20px;z-index:2}
+.screen{background:#fff;border-radius:32px;overflow:hidden;padding:46px 16px 18px;font-size:13px}
+.hello{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.hello b{font-size:16px;display:block}
+.hello span{color:var(--mute);font-size:12px}
+.hello img{width:38px}
+.site{background:var(--black);color:#fff;border-radius:18px;padding:14px;margin-bottom:12px}
+.site small{color:var(--gold2);letter-spacing:.1em;text-transform:uppercase;font-size:10px;font-weight:700}
+.site b{display:block;font-size:15px;margin:2px 0 10px}
+.site .st{display:flex;align-items:center;gap:8px;font-size:12px;color:#d7d7d7}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.tile{border:1px solid var(--line);border-radius:14px;padding:12px 10px;font-weight:700;font-size:12px;line-height:1.25}
+.tile i{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#fbf2da;color:var(--gold-deep);margin-bottom:8px;font-style:normal}
+.tile i svg{width:16px;height:16px}
+.tile.go{grid-column:1/-1;background:var(--grad);border:0;text-align:center;padding:13px;font-size:13px;color:#141005}
+.cap{text-align:center;font-size:12.5px;color:var(--mute);margin-top:14px}
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:26px 0 30px}
+.d{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+.d h3{font-size:20px;margin-bottom:5px;letter-spacing:.02em;display:flex;gap:10px;align-items:center}
+.d h3 svg{width:20px;height:20px;color:var(--gold-deep);flex:none}
+.d p{font-size:14.5px;color:var(--mute)}
+
+/* PROCESS */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;counter-reset:st;border:1px solid var(--line);border-radius:24px;overflow:hidden;background:#fff}
+.st4{padding:32px 26px;border-right:1px solid var(--line);position:relative}
+.st4:last-child{border-right:0}
+.st4::before{counter-increment:st;content:"0" counter(st);font-family:"Barlow Condensed";font-weight:700;font-size:58px;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:block;margin-bottom:14px}
+.st4 h3{font-size:23px;margin-bottom:8px}
+.st4 p{font-size:14.5px;color:var(--mute)}
+
+/* SECTEURS */
+.sect{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.sec{border:1px solid var(--line);border-radius:16px;padding:22px 18px;background:#fff;font-weight:700;font-size:15px;display:flex;gap:12px;align-items:center;transition:.25s}
+.sec:hover{background:var(--black);color:#fff;border-color:var(--black)}
+.sec svg{width:24px;height:24px;color:var(--gold);flex:none}
+
+/* FAQ */
+.faq{max-width:860px;margin:0 auto;display:grid;gap:12px}
+details{border:1px solid var(--line);border-radius:16px;background:#fff;padding:0 22px}
+summary{cursor:pointer;list-style:none;padding:20px 0;font-weight:700;font-size:16.5px;display:flex;justify-content:space-between;gap:16px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:"Barlow Condensed";font-size:30px;color:var(--gold-deep);line-height:1;transition:.2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{padding:0 0 20px;color:var(--mute);font-size:15.5px}
+
+/* CONTACT */
+.cgrid{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:start}
+.ci{display:flex;gap:16px;align-items:center;padding:18px 20px;border:1px solid var(--line);border-radius:16px;background:#fff;margin-bottom:12px}
+.ci b{display:block;font-size:17px;word-break:break-word}
+.ci span{font-size:13px;color:var(--mute)}
+.ci .ico{margin:0;width:48px;height:48px;border-radius:14px;flex:none}
+.panel{background:#fff;border:1px solid var(--line);border-radius:26px;padding:30px;box-shadow:0 40px 70px -50px rgba(13,13,15,.55)}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--ivory);border-radius:999px;padding:5px;margin-bottom:22px}
+.tabs button{border:0;background:transparent;font:inherit;font-weight:700;font-size:14px;padding:11px;border-radius:999px;cursor:pointer;color:var(--mute)}
+.tabs button.on{background:var(--black);color:#fff}
+form{display:grid;gap:14px}
+label{font-size:13px;font-weight:700;display:grid;gap:6px}
+input,select,textarea{font:inherit;font-weight:500;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,152,47,.16)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.note{display:none;background:#fff8e3;border:1px solid #f0e0b4;color:#6d4e12;border-radius:12px;padding:12px 14px;font-size:14px}
+.hide{display:none}
+
+footer{background:var(--black);color:#b9b5aa;padding:60px 0 100px;font-size:14.5px}
+.fg{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;margin-bottom:38px}
+.flogo{display:flex;gap:14px;align-items:center;margin-bottom:16px}
+.flogo img{width:74px;border-radius:14px;background:#fff;padding:5px}
+.flogo b{font-family:"Barlow Condensed";font-size:28px;color:#fff;text-transform:uppercase;letter-spacing:.04em;line-height:1;display:block}
+.flogo small{color:var(--gold2);letter-spacing:.14em;text-transform:uppercase;font-size:11px;font-weight:700}
+footer h4{font-family:"Barlow Condensed";font-size:19px;color:#fff;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+footer li{list-style:none;margin-bottom:8px}
+footer a:hover{color:var(--gold2)}
+.copy{border-top:1px solid #2a2a2e;padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:13px}
+
+.mbar{display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:40;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px;gap:6px;box-shadow:0 20px 40px -18px rgba(13,13,15,.5)}
+.mbar a{flex:1;padding:12px 10px;font-size:14px}
+
+.wa{position:fixed;right:18px;bottom:22px;z-index:41;width:58px;height:58px;border-radius:50%;background:#25D366;color:#fff;display:grid;place-items:center;box-shadow:0 16px 30px -12px rgba(37,211,102,.9);transition:.2s}
+.wa:hover{transform:scale(1.070)}
+.wa svg{width:32px;height:32px}
+@media(max-width:620px){.wa{bottom:84px;right:14px;width:52px;height:52px}}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.marq div{animation:none}}
+
+@media(max-width:1000px){
+  nav{display:none}
+  .hero-grid,.split,.dgrid,.cgrid{grid-template-columns:1fr;gap:44px}
+  .svc{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .st4:nth-child(2){border-right:0}
+  .st4:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .sect{grid-template-columns:1fr 1fr}
+  .fg{grid-template-columns:1fr 1fr}
+  section{padding:64px 0}
+}
+@media(max-width:620px){
+  .top .wrap{justify-content:center;text-align:center}
+  .top .hid{display:none}
+  .bar{height:68px}
+  .brand img{height:52px}
+  .brand b{font-size:21px;white-space:nowrap}
+  .brand small{display:none}
+  .actions .btn-line{display:none}
+  .actions .btn{padding:9px 14px;font-size:13px}
+  .hero{padding:40px 0 56px}
+  .trust{grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .trust b{font-size:19px}
+  .visual{width:86%}
+  .f1{left:-18px}.f2{right:-14px}
+  .svc,.dl,.row,.steps,.fg,.vals{grid-template-columns:1fr}
+  .st4{border-right:0;border-bottom:1px solid var(--line)}
+  .st4:last-child{border-bottom:0}
+  .sect{grid-template-columns:1fr}
+  .about,.panel{padding:24px}
+  .mbar{display:flex}
+}
+</style>
+</head>
+<body>
+
+<div class="ribbon">Maquette proposée par SACKO CONCEPT pour l'Agence Spéciale — version de présentation, pas encore en ligne.</div>
+
+<div class="top">
+  <div class="wrap">
+    <span>Libreville, Gabon <span class="hid">· Sécurité des biens et des personnes</span></span>
+    <span><b>+241 66 64 01 43</b> · <b>077 53 40 15</b></span>
+  </div>
+</div>
+
+<header>
+  <div class="wrap bar">
+    <a href="#accueil" class="brand">
+      <img src="img/logo-small.jpg" alt="Logo Agence Spéciale">
+      <span><b>Agence Spéciale</b><small>Votre sécurité, notre priorité</small></span>
+    </a>
+    <nav>
+      <a href="#services">Services</a>
+      <a href="#agence">L'agence</a>
+      <a href="#espace-client">Espace client</a>
+      <a href="#methode">Méthode</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="actions">
+      <a href="#espace-client" class="btn btn-line">Espace client</a>
+      <a href="#contact" class="btn btn-gold">Devis gratuit</a>
+    </div>
+  </div>
+</header>
+
+<main id="accueil">
+
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div class="rv">
+      <span class="eyebrow">Agence de sécurité privée · Gabon</span>
+      <h1>Votre sécurité,<br><span class="gold">notre priorité.</span></h1>
+      <p class="lead">L'Agence Spéciale protège vos biens, vos sites et vos proches avec des agents formés, encadrés et suivis en temps réel. Une agence sérieuse, équipée d'outils modernes.</p>
+      <div class="cta">
+        <a href="#contact" class="btn btn-gold">Demander un devis gratuit
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a href="tel:+24166640143" class="btn btn-dark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.500 1.500a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>
+          +241 66 64 01 43</a>
+      </div>
+      <div class="trust">
+        <div><b>Agents formés</b>et encadrés sur site</div>
+        <div><b>Suivi digital</b>pointage et rapports</div>
+        <div><b>Devis rapide</b>adapté à votre site</div>
+      </div>
+    </div>
+    <div class="visual rv">
+      <div class="photo"><img src="img/agent.jpg" alt="Agent de l'Agence Spéciale en tenue"></div>
+      <div class="float f2"><div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.400 8.300 8 9.800 4.600-1.500 8-4.800 8-9.800V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div><div><b>Site sécurisé</b><span>Dispositif sur mesure</span></div></div>
+      <div class="float f1"><i class="dot"></i><div><b>Agent en poste</b><span>Présence confirmée</span></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="marq" aria-hidden="true"><div>
+  <span>Surveillance des propriétés</span><span>Sécurité des biens et des personnes</span><span>Sécurité privée</span><span>Enquêtes</span><span>Formations</span><span>Assistance personnelle</span>
+  <span>Surveillance des propriétés</span><span>Sécurité des biens et des personnes</span><span>Sécurité privée</span><span>Enquêtes</span><span>Formations</span><span>Assistance personnelle</span>
+</div></div>
+
+<section id="services">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Nos services</span>
+      <h2>Une protection <span class="gold">complète</span></h2>
+      <p>Entreprises, institutions ou particuliers : un dispositif pensé pour votre site et vos risques.</p>
+    </div>
+    <div class="svc">
+      <article class="s rv"><span class="n">01</span>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.400 8.300 8 9.800 4.600-1.500 8-4.800 8-9.800V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3>Sécurité des biens et des personnes</h3>
+        <p>Gardiennage de vos locaux et protection de vos équipes, de jour comme de nuit.</p>
+        <a href="#contact">Demander un devis →</a></article>
+      <article class="s rv"><span class="n">02</span>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h13l3 3v5H3z"/><circle cx="10" cy="12" r="2.200"/><path d="M19 12h2"/></svg></div>
+        <h3>Surveillance des propriétés</h3>
+        <p>Contrôle des accès, rondes et surveillance de vos résidences, terrains et bâtiments.</p>
+        <a href="#contact">Demander un devis →</a></article>
+      <article class="s rv"><span class="n">03</span>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+        <h3>Sécurité privée</h3>
+        <p>Des agents dédiés à votre commerce, votre événement ou votre domicile.</p>
+        <a href="#contact">Demander un devis →</a></article>
+      <article class="s rv"><span class="n">04</span>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.500"/><path d="m20 20-4.300-4.300"/></svg></div>
+        <h3>Enquêtes</h3>
+        <p>Des investigations menées avec méthode, dans la plus stricte confidentialité.</p>
+        <a href="#contact">Nous consulter →</a></article>
+      <article class="s rv"><span class="n">05</span>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-5 9 5-9 5-9-5Z"/><path d="M7 11.500V16c1.400 1.300 3.100 2 5 2s3.600-.700 5-2v-4.500"/></svg></div>
+        <h3>Formations</h3>
+        <p>Formation des agents et sensibilisation de vos équipes aux réflexes de sécurité.</p>
+        <a href="#contact">Nous consulter →</a></article>
+      <article class="s rv"><span class="n">06</span>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.500"/><path d="M5 20c.800-3.600 3.600-5.500 7-5.500s6.200 1.900 7 5.500"/></svg></div>
+        <h3>Assistance personnelle</h3>
+        <p>Un accompagnement sur mesure pour vos déplacements et vos besoins particuliers.</p>
+        <a href="#contact">Nous consulter →</a></article>
+    </div>
+  </div>
+</section>
+
+<section id="agence" class="ivory">
+  <div class="wrap split">
+    <div class="rv">
+      <span class="eyebrow">Pourquoi l'Agence Spéciale</span>
+      <h2>La rigueur d'une <span class="gold">grande agence</span></h2>
+      <div class="feat">
+        <div class="fi"><div class="k">1</div><div><h3>Des agents sélectionnés et formés</h3><p>Tenue, discipline et savoir-être : chaque agent représente aussi votre image.</p></div></div>
+        <div class="fi"><div class="k">2</div><div><h3>Un encadrement permanent</h3><p>Des superviseurs contrôlent les postes et interviennent dès qu'un écart est constaté.</p></div></div>
+        <div class="fi"><div class="k">3</div><div><h3>Une gestion 100 % numérique</h3><p>Pointages, plannings et incidents sont enregistrés dans notre logiciel de gestion.</p></div></div>
+        <div class="fi"><div class="k">4</div><div><h3>Des comptes rendus au client</h3><p>Vous savez ce qui se passe sur votre site grâce à des rapports réguliers.</p></div></div>
+      </div>
+    </div>
+    <div class="about rv">
+      <img src="img/logo.jpg" alt="Emblème de l'Agence Spéciale">
+      <h3>L'Agence Spéciale (AS)</h3>
+      <p>Basée à Libreville, l'Agence Spéciale est spécialisée dans la sécurité des biens et des personnes, les enquêtes, la formation et l'assistance personnelle.</p>
+      <div class="vals"><span>Discrétion</span><span>Rigueur</span><span>Réactivité</span><span>Loyauté</span></div>
+      <div class="founder"><b>M. Bondobari Bernard Sylvain</b>Fondateur de l'Agence Spéciale</div>
+    </div>
+  </div>
+</section>
+
+<section id="espace-client" class="digital">
+  <div class="wrap dgrid">
+    <div class="rv">
+      <div class="phone">
+        <div class="screen">
+          <div class="hello"><div><span>Bonjour,</span><b>Espace client</b></div><img src="img/logo-small.jpg" alt=""></div>
+          <div class="site"><small>Votre site</small><b>Siège — Libreville</b><div class="st"><i class="dot"></i>Agents en poste · pointage confirmé</div></div>
+          <div class="tiles">
+            <div class="tile"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg></i>Rapports du mois</div>
+            <div class="tile"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></i>Factures et paiement</div>
+            <div class="tile"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></i>Réclamation ou suggestion</div>
+            <div class="tile"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.700 5.600 6.100.900-4.400 4.300 1 6.100L12 17l-5.400 2.900 1-6.100L3.200 9.500l6.100-.900z"/></svg></i>Noter mes agents</div>
+            <div class="tile go">+ Commander un agent</div>
+          </div>
+        </div>
+      </div>
+      <p class="cap">Aperçu de l'espace client — illustration</p>
+    </div>
+    <div class="rv">
+      <span class="eyebrow">Espace client en ligne</span>
+      <h2>Votre sécurité, <span class="gold">pilotée depuis votre téléphone</span></h2>
+      <p style="color:var(--mute);font-size:17.5px">Chaque client de l'Agence Spéciale dispose d'un espace personnel sécurisé. Vous commandez, vous suivez et vous réglez vos prestations en quelques clics, sans vous déplacer.</p>
+      <div class="dl">
+        <div class="d"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Commander</h3><p>Demandez un agent ou un renfort pour un site ou un événement.</p></div>
+        <div class="d"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.500"/><path d="M12 7.500V12l3 2"/></svg>Suivre</h3><p>Consultez la présence des agents et les rapports de votre site.</p></div>
+        <div class="d"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>Vous exprimer</h3><p>Envoyez une réclamation, une recommandation ou félicitez un agent.</p></div>
+        <div class="d"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>Régler</h3><p>Retrouvez vos factures et payez-les en ligne en toute simplicité.</p></div>
+      </div>
+      <div class="cta" style="margin:0">
+        <a href="#contact" class="btn btn-dark">Accéder à mon espace client</a>
+        <a href="#contact" class="btn btn-line">Devenir client</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="methode">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Notre méthode</span>
+      <h2>Du premier appel <span class="gold">au suivi quotidien</span></h2>
+      <p>Une démarche claire, pour une prise en charge rapide de votre site.</p>
+    </div>
+    <div class="steps rv">
+      <div class="st4"><h3>Échange</h3><p>Vous nous présentez votre besoin par téléphone ou via le formulaire.</p></div>
+      <div class="st4"><h3>Étude du site</h3><p>Nous évaluons les lieux et les risques, puis vous remettons un devis.</p></div>
+      <div class="st4"><h3>Déploiement</h3><p>Les agents sont affectés, briefés sur vos consignes et mis en poste.</p></div>
+      <div class="st4"><h3>Suivi</h3><p>Contrôles, pointages et rapports : vous gardez la visibilité sur la prestation.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="ivory" id="secteurs">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Secteurs d'intervention</span>
+      <h2>Nous sécurisons <span class="gold">vos espaces</span></h2>
+    </div>
+    <div class="sect rv">
+      <div class="sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5l8-2v18M12 9l8 2v10M3 21h18"/></svg>Entreprises et bureaux</div>
+      <div class="sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9 5 4h14l1 5M4 9v11h16V9M4 9h16M9 20v-6h6v6"/></svg>Commerces et boutiques</div>
+      <div class="sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l6 4v-4l6 4V5h6v16z"/></svg>Sites industriels et entrepôts</div>
+      <div class="sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M6 20V10l6-5 6 5v10M10 20v-5h4v5"/></svg>Résidences et domiciles</div>
+      <div class="sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M5 20l2-12h10l2 12M9 8V4h6v4"/></svg>Chantiers</div>
+      <div class="sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-5 9 5-9 5-9-5Z"/><path d="M7 11.500V16c1.400 1.300 3.100 2 5 2s3.600-.700 5-2v-4.500"/></svg>Établissements scolaires</div>
+      <div class="sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V8h18v12M3 14h18M7 8V5h10v3"/></svg>Hôtels et restaurants</div>
+      <div class="sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.700 5.600 6.100.900-4.400 4.300 1 6.100L12 17l-5.400 2.900 1-6.100L3.200 9.500l6.100-.900z"/></svg>Événements</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="head rv" style="margin-left:auto;margin-right:auto;text-align:center">
+      <h2>Questions <span class="gold">fréquentes</span></h2>
+    </div>
+    <div class="faq rv">
+      <details open><summary>Comment obtenir un devis ?</summary><p>Remplissez le formulaire ou appelez-nous. Après un échange sur votre site et vos horaires, nous vous transmettons une proposition adaptée.</p></details>
+      <details><summary>Travaillez-vous aussi pour les particuliers ?</summary><p>Oui. Nous intervenons pour les entreprises comme pour les particuliers : domicile, propriété, événement familial ou déplacement.</p></details>
+      <details><summary>Comment savoir si l'agent est bien à son poste ?</summary><p>Les présences sont pointées et contrôlées par nos superviseurs. Vous pouvez les consulter dans votre espace client et dans vos rapports.</p></details>
+      <details><summary>Que faire si je ne suis pas satisfait d'un agent ?</summary><p>Signalez-le depuis votre espace client ou par téléphone. Votre demande est enregistrée et traitée par la direction.</p></details>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="ivory">
+  <div class="wrap cgrid">
+    <div class="rv">
+      <span class="eyebrow">Contact</span>
+      <h2>Parlons de <span class="gold">votre sécurité</span></h2>
+      <p style="color:var(--mute);font-size:17px;margin-bottom:26px">Décrivez votre besoin : nous vous rappelons pour étudier votre site et établir un devis gratuit.</p>
+      <a class="ci" href="tel:+24166640143"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.500 1.500a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg></div><div><b>+241 66 64 01 43</b><span>ou 077 53 40 15</span></div></a>
+      <a class="ci" href="https://wa.me/24166640143"><div class="ico" style="background:#25D366;color:#fff"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.600 15.100L2 22l5-1.300A10 10 0 1 0 12 2Zm0 18.200a8.200 8.200 0 0 1-4.200-1.150l-.300-.180-2.950.770.790-2.880-.200-.300A8.200 8.200 0 1 1 12 20.200Zm4.500-6.150c-.250-.120-1.460-.720-1.680-.800-.230-.080-.390-.120-.560.120-.160.250-.640.800-.780.970-.140.160-.290.180-.530.060a6.700 6.700 0 0 1-1.980-1.220 7.400 7.400 0 0 1-1.370-1.700c-.140-.250 0-.380.110-.500.110-.110.250-.290.370-.430.120-.140.160-.250.250-.410.080-.160.040-.310-.020-.430-.060-.120-.560-1.340-.760-1.830-.200-.480-.400-.420-.560-.420h-.470a.900.900 0 0 0-.660.310 2.760 2.760 0 0 0-.860 2.050c0 1.210.880 2.380 1 2.540.120.160 1.730 2.640 4.190 3.700.590.250 1.040.400 1.400.520.590.190 1.120.160 1.540.100.470-.070 1.460-.600 1.660-1.170.200-.580.200-1.070.140-1.170-.060-.110-.220-.170-.470-.290Z"/></svg></div><div><b>WhatsApp</b><span>Écrivez-nous au +241 66 64 01 43</span></div></a>
+      <a class="ci" href="mailto:agencespecialesecurite@gmail.com"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></div><div><b>agencespecialesecurite@gmail.com</b><span>Réponse rapide par e-mail</span></div></a>
+      <div class="ci"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.200 7-11.500A7 7 0 0 0 5 9.500C5 14.800 12 21 12 21Z"/><circle cx="12" cy="9.500" r="2.500"/></svg></div><div><b>Libreville, Gabon</b><span>Interventions à Libreville et environs</span></div></div>
+    </div>
+    <div class="panel rv">
+      <div class="tabs"><button type="button" class="on" data-t="devis">Demande de devis</button><button type="button" data-t="cand">Candidature agent</button></div>
+      <form id="devis">
+        <div class="row"><label>Nom complet<input required autocomplete="name"></label><label>Téléphone<input required type="tel" autocomplete="tel"></label></div>
+        <label>Entreprise (facultatif)<input></label>
+        <div class="row">
+          <label>Service souhaité<select><option>Sécurité des biens et des personnes</option><option>Surveillance des propriétés</option><option>Sécurité privée</option><option>Enquêtes</option><option>Formations</option><option>Assistance personnelle</option></select></label>
+          <label>Type de site<select><option>Entreprise / bureau</option><option>Commerce</option><option>Site industriel</option><option>Résidence</option><option>Événement</option><option>Autre</option></select></label>
+        </div>
+        <label>Votre besoin<textarea rows="4" placeholder="Lieu, nombre d'agents souhaité, horaires…"></textarea></label>
+        <button class="btn btn-gold" type="submit">Envoyer ma demande</button>
+        <div class="note" role="status">Maquette : à la mise en ligne, chaque demande arrivera directement à l'agence et dans son logiciel de gestion.</div>
+      </form>
+      <form id="cand" class="hide">
+        <div class="row"><label>Nom complet<input required autocomplete="name"></label><label>Téléphone<input required type="tel" autocomplete="tel"></label></div>
+        <div class="row"><label>Ville / quartier<input></label><label>Expérience en sécurité<select><option>Aucune</option><option>Moins de 2 ans</option><option>2 à 5 ans</option><option>Plus de 5 ans</option></select></label></div>
+        <label>Présentez-vous en quelques lignes<textarea rows="4"></textarea></label>
+        <button class="btn btn-dark" type="submit">Envoyer ma candidature</button>
+        <div class="note" role="status">Maquette : à la mise en ligne, les candidatures arriveront directement dans l'espace RH de l'agence.</div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fg">
+      <div>
+        <div class="flogo"><img src="img/logo-small.jpg" alt=""><span><b>Agence Spéciale</b><small>Votre sécurité, notre priorité</small></span></div>
+        <p>Sécurité des biens et des personnes, surveillance des propriétés, enquêtes, formations et assistance personnelle.</p>
+      </div>
+      <div><h4>Navigation</h4><ul><li><a href="#services">Services</a></li><li><a href="#agence">L'agence</a></li><li><a href="#espace-client">Espace client</a></li><li><a href="#contact">Devis et recrutement</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li>+241 66 64 01 43</li><li>077 53 40 15</li><li>agencespecialesecurite@gmail.com</li><li>Libreville, Gabon</li></ul></div>
+    </div>
+    <div class="copy"><span>© 2026 Agence Spéciale (AS). Tous droits réservés.</span><span>Maquette réalisée par SACKO CONCEPT</span></div>
+  </div>
+</footer>
+
+<a class="wa" href="https://wa.me/24166640143" aria-label="Nous écrire sur WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.600 15.100L2 22l5-1.300A10 10 0 1 0 12 2Zm0 18.200a8.200 8.200 0 0 1-4.200-1.150l-.300-.180-2.950.770.790-2.880-.200-.300A8.200 8.200 0 1 1 12 20.200Zm4.500-6.150c-.250-.120-1.460-.720-1.680-.800-.230-.080-.390-.120-.560.120-.160.250-.640.800-.780.970-.140.160-.290.180-.530.060a6.700 6.700 0 0 1-1.980-1.220 7.400 7.400 0 0 1-1.370-1.700c-.140-.250 0-.380.110-.500.110-.110.250-.290.370-.430.120-.140.160-.250.250-.410.080-.160.040-.310-.020-.430-.060-.120-.560-1.340-.760-1.830-.200-.480-.400-.420-.560-.420h-.470a.900.900 0 0 0-.660.310 2.760 2.760 0 0 0-.860 2.050c0 1.210.880 2.380 1 2.540.120.160 1.730 2.640 4.190 3.700.590.250 1.040.400 1.400.520.590.190 1.120.160 1.540.100.470-.070 1.460-.600 1.660-1.170.200-.580.200-1.070.140-1.170-.060-.110-.220-.170-.470-.290Z"/></svg></a>
+<div class="mbar"><a class="btn btn-dark" href="tel:+24166640143">Appeler</a><a class="btn btn-gold" href="#contact">Devis gratuit</a></div>
+
+<script>
+(function(){
+  var els=[].slice.call(document.querySelectorAll('.rv'));
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
+    els.forEach(function(el){io.observe(el);});
+    setTimeout(function(){els.forEach(function(el){el.classList.add('in');});},2500);
+  }else{els.forEach(function(el){el.classList.add('in');});}
+  var tabs=document.querySelectorAll('.tabs button');
+  tabs.forEach(function(b){b.addEventListener('click',function(){
+    tabs.forEach(function(x){x.classList.remove('on');});b.classList.add('on');
+    document.getElementById('devis').classList.toggle('hide',b.dataset.t!=='devis');
+    document.getElementById('cand').classList.toggle('hide',b.dataset.t!=='cand');
+  });});
+  document.querySelectorAll('form').forEach(function(f){f.addEventListener('submit',function(e){e.preventDefault();f.querySelector('.note').style.display='block';});});
+})();
+</script>
+</body>
+</html>
