@@ -204,6 +204,36 @@ footer a:hover{color:var(--gold2)}
 .wa:hover{transform:scale(1.070)}
 .wa svg{width:32px;height:32px}
 @media(max-width:620px){.wa{bottom:84px;right:14px;width:52px;height:52px}}
+.demo{border:1px solid var(--line);border-radius:26px;background:#fff;overflow:hidden;box-shadow:0 40px 80px -56px rgba(13,13,15,.6)}
+.dtop{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;background:var(--black);color:#fff;padding:14px 22px;font-weight:700;font-size:14px}
+.dtop span{display:flex;gap:10px;align-items:center}
+.dtop em{font-style:normal;font-weight:600;font-size:12px;color:var(--gold2);border:1px solid #5b4a1c;border-radius:999px;padding:4px 10px}
+.dtabs{display:flex;gap:6px;padding:14px 16px 0;overflow-x:auto;border-bottom:1px solid var(--line)}
+.dtabs button{border:0;background:transparent;font:inherit;font-weight:700;font-size:14.5px;padding:12px 16px;cursor:pointer;color:var(--mute);border-bottom:3px solid transparent;white-space:nowrap}
+.dtabs button.on{color:var(--ink);border-bottom-color:var(--gold)}
+.dpane{padding:22px}
+.drow,.inc,.tl div{display:grid;grid-template-columns:1.1fr 1.6fr 1fr auto;gap:12px;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;font-size:14.5px}
+.drow span,.inc span,.tl span{color:var(--mute)}
+.inc{grid-template-columns:1fr auto}.inc span{display:block;font-size:13px}
+.tl div{grid-template-columns:70px 1fr auto}
+em.ok,em.wait{font-style:normal;font-weight:700;font-size:12.5px;border-radius:999px;padding:5px 12px;white-space:nowrap}
+em.ok{background:#e6f6ec;color:#167a43}em.wait{background:#fbf2da;color:var(--gold-deep)}
+.dnote{font-size:14px;color:var(--mute);margin-top:14px}
+.rep{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+.bars{display:flex;gap:16px;align-items:flex-end;height:180px;border:1px solid var(--line);border-radius:14px;padding:18px}
+.bars div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:8px}
+.bars i{width:100%;max-width:54px;border-radius:8px 8px 0 0;background:var(--grad)}
+.bars span{font-size:12px;color:var(--mute)}
+.best{background:var(--black);color:#fff;border-radius:14px;padding:22px;display:flex;flex-direction:column;justify-content:center}
+.best small{color:var(--gold2);letter-spacing:.14em;text-transform:uppercase;font-weight:700;font-size:11px}
+.best b{font-family:"Barlow Condensed";font-size:34px;text-transform:uppercase}
+.best span{color:#c9c9c9;font-size:14px}
+.avis{border:1px solid var(--line);border-radius:14px;padding:22px}
+.stars{color:var(--gold);font-size:28px;letter-spacing:4px;margin-bottom:8px}
+.avis p{color:var(--mute);margin-bottom:14px}
+.chipsd{display:flex;flex-wrap:wrap;gap:8px}.chipsd span{border:1px solid var(--line);border-radius:999px;padding:9px 14px;font-weight:700;font-size:13.5px}
+.dcta{display:flex;flex-wrap:wrap;gap:12px;padding:0 22px 24px}
+@media(max-width:620px){.drow{grid-template-columns:1fr auto}.drow span{grid-column:1;font-size:13px}.drow em{grid-row:1;grid-column:2}.rep{grid-template-columns:1fr}.dpane{padding:16px}.dcta{padding:0 16px 20px}}
 .rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
 .rv.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.marq div{animation:none}}
@@ -263,7 +293,7 @@ footer a:hover{color:var(--gold2)}
       <a href="#services">Services</a>
       <a href="#agence">L'agence</a>
       <a href="#espace-client">Espace client</a>
-      <a href="#methode">Méthode</a>
+      <a href="#demo">Démonstration</a>
       <a href="#contact">Contact</a>
     </nav>
     <div class="actions">
@@ -353,12 +383,13 @@ footer a:hover{color:var(--gold2)}
   <div class="wrap split">
     <div class="rv">
       <span class="eyebrow">Pourquoi l'Agence Spéciale</span>
-      <h2>La rigueur d'une <span class="gold">grande agence</span></h2>
+      <h2>Une sécurité que vous pouvez <span class="gold">vérifier</span></h2>
+      <p style="color:var(--mute);font-size:17.5px;margin-bottom:26px">Chez nous, la présence d'un agent ne se promet pas : elle se prouve. Chaque prise de poste, chaque ronde et chaque incident est enregistré, et vous y avez accès.</p>
       <div class="feat">
-        <div class="fi"><div class="k">1</div><div><h3>Des agents sélectionnés et formés</h3><p>Tenue, discipline et savoir-être : chaque agent représente aussi votre image.</p></div></div>
-        <div class="fi"><div class="k">2</div><div><h3>Un encadrement permanent</h3><p>Des superviseurs contrôlent les postes et interviennent dès qu'un écart est constaté.</p></div></div>
-        <div class="fi"><div class="k">3</div><div><h3>Une gestion 100 % numérique</h3><p>Pointages, plannings et incidents sont enregistrés dans notre logiciel de gestion.</p></div></div>
-        <div class="fi"><div class="k">4</div><div><h3>Des comptes rendus au client</h3><p>Vous savez ce qui se passe sur votre site grâce à des rapports réguliers.</p></div></div>
+        <div class="fi"><div class="k">1</div><div><h3>Pointage à chaque prise de poste</h3><p>L'arrivée et le départ de chaque agent sont enregistrés. Vous savez qui est sur votre site, et depuis quand.</p></div></div>
+        <div class="fi"><div class="k">2</div><div><h3>Rondes tracées</h3><p>Les rondes sont horodatées, point de contrôle par point de contrôle.</p></div></div>
+        <div class="fi"><div class="k">3</div><div><h3>Incidents suivis jusqu'au bout</h3><p>Chaque incident est signalé, pris en charge par un superviseur, puis clôturé.</p></div></div>
+        <div class="fi"><div class="k">4</div><div><h3>Rapport mensuel et agent du mois</h3><p>Vous recevez le bilan de la prestation, et nous distinguons nos meilleurs agents.</p></div></div>
       </div>
     </div>
     <div class="about rv">
@@ -407,7 +438,50 @@ footer a:hover{color:var(--gold2)}
   </div>
 </section>
 
-<section id="methode">
+<section id="demo">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Démonstration</span>
+      <h2>Voyez comment vous <span class="gold">suivez vos agents</span></h2>
+      <p>Voici ce que nos clients voient dans leur espace. Touchez les onglets pour explorer.</p>
+    </div>
+    <div class="demo rv">
+      <div class="dtop"><span><i class="dot"></i> Espace client · Siège — Libreville</span><em>Démonstration · données d'exemple</em></div>
+      <div class="dtabs" role="tablist">
+        <button class="on" data-d="d1">Présence</button><button data-d="d2">Rondes</button><button data-d="d3">Incidents</button><button data-d="d4">Rapport</button><button data-d="d5">Votre avis</button>
+      </div>
+      <div class="dpane" id="d1">
+        <div class="drow"><b>Agent 1</b><span>Poste Entrée principale</span><span>Arrivée 06:58</span><em class="ok">En poste</em></div>
+        <div class="drow"><b>Agent 2</b><span>Poste Parking</span><span>Arrivée 07:02</span><em class="ok">En poste</em></div>
+        <div class="drow"><b>Agent 3</b><span>Poste Entrepôt</span><span>Relève à 18:00</span><em class="wait">Prévu</em></div>
+        <p class="dnote">Vous voyez en direct qui est en poste sur votre site.</p>
+      </div>
+      <div class="dpane hide" id="d2">
+        <div class="tl"><div><b>08:00</b><span>Entrée principale</span><em class="ok">Contrôlé</em></div><div><b>08:12</b><span>Parking</span><em class="ok">Contrôlé</em></div><div><b>08:25</b><span>Entrepôt</span><em class="ok">Contrôlé</em></div><div><b>08:40</b><span>Clôture arrière</span><em class="ok">Contrôlé</em></div><div><b>10:00</b><span>Prochaine ronde</span><em class="wait">À venir</em></div></div>
+        <p class="dnote">Chaque point de contrôle est validé avec son heure de passage.</p>
+      </div>
+      <div class="dpane hide" id="d3">
+        <div class="inc"><div><b>Véhicule inconnu stationné devant l'entrée</b><span>Signalé à 21:14 · pris en charge par le superviseur</span></div><em class="ok">Clôturé</em></div>
+        <div class="inc"><div><b>Éclairage en panne côté parking</b><span>Signalé à 19:30 · transmis au client</span></div><em class="wait">En cours</em></div>
+        <p class="dnote">Rien ne se perd : chaque incident garde sa trace et son suivi.</p>
+      </div>
+      <div class="dpane hide" id="d4">
+        <div class="rep">
+          <div class="bars"><div><i style="height:92%"></i><span>Sem. 1</span></div><div><i style="height:96%"></i><span>Sem. 2</span></div><div><i style="height:88%"></i><span>Sem. 3</span></div><div><i style="height:98%"></i><span>Sem. 4</span></div></div>
+          <div class="best"><small>Agent du mois</small><b>Agent 2</b><span>Ponctualité et rondes complètes</span></div>
+        </div>
+        <p class="dnote">Chaque mois, un bilan clair : présences, rondes, incidents et agent du mois.</p>
+      </div>
+      <div class="dpane hide" id="d5">
+        <div class="avis"><div class="stars" aria-label="Note">★★★★★</div><p>Notez la prestation, félicitez un agent ou envoyez une réclamation : la direction la reçoit et vous répond.</p><div class="chipsd"><span>Noter un agent</span><span>Faire une suggestion</span><span>Envoyer une réclamation</span></div></div>
+        <p class="dnote">Votre avis compte : il est enregistré et traité par la direction.</p>
+      </div>
+      <div class="dcta"><a href="#contact" class="btn btn-gold">Demander une démonstration</a><a href="#contact" class="btn btn-line">Commander un agent</a></div>
+    </div>
+  </div>
+</section>
+
+<section id="methode" class="ivory">
   <div class="wrap">
     <div class="head rv">
       <span class="eyebrow">Notre méthode</span>
@@ -423,7 +497,7 @@ footer a:hover{color:var(--gold2)}
   </div>
 </section>
 
-<section class="ivory" id="secteurs">
+<section id="secteurs">
   <div class="wrap">
     <div class="head rv">
       <span class="eyebrow">Secteurs d'intervention</span>
@@ -523,6 +597,8 @@ footer a:hover{color:var(--gold2)}
     document.getElementById('devis').classList.toggle('hide',b.dataset.t!=='devis');
     document.getElementById('cand').classList.toggle('hide',b.dataset.t!=='cand');
   });});
+  var dt=document.querySelectorAll('.dtabs button');
+  dt.forEach(function(b){b.addEventListener('click',function(){dt.forEach(function(x){x.classList.remove('on');});b.classList.add('on');document.querySelectorAll('.dpane').forEach(function(p){p.classList.toggle('hide',p.id!==b.dataset.d);});});});
   document.querySelectorAll('form').forEach(function(f){f.addEventListener('submit',function(e){e.preventDefault();f.querySelector('.note').style.display='block';});});
 })();
 </script>
