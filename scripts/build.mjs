@@ -43,6 +43,8 @@ await cp(join(root,'securipro'),join(out,'securipro'), {recursive:true});
 await cp(join(root,'btppro'),join(out,'btppro'), {recursive:true});
 await cp(join(root,'cgsp'),join(out,'cgsp'), {recursive:true});
 await cp(join(root,'agence-speciale'),join(out,'agence-speciale'), {recursive:true});
+await cp(join(root,'site-agence-speciale'),join(out,'site-agence-speciale'), {recursive:true});
+for (const file of ['site-agence-speciale/index.html','site-agence-speciale/img/logo.jpg','site-agence-speciale/img/logo-small.jpg','site-agence-speciale/img/agent.jpg']) await readFile(join(out,file));
 await cp(join(root,'cockpit'),join(out,'cockpit'), {recursive:true});
 await readFile(join(out,'cockpit/index.html'));
 await cp(join(root,'espace'),join(out,'espace'), {recursive:true});
