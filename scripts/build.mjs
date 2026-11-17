@@ -24,6 +24,7 @@ await copyFile(join(root,'.nojekyll'),join(out,'.nojekyll'));
 await cp(join(root,'nova-clean-benin'),join(out,'nova-clean-benin'), {recursive:true});
 await cp(join(root,'pack-nettoyage'),join(out,'pack-nettoyage'), {recursive:true});
 await cp(join(root,'produits'),join(out,'produits'), {recursive:true});
+await cp(join(root,'portfolio'),join(out,'portfolio'), {recursive:true});
 await cp(join(root,'branding-immobilier'),join(out,'branding-immobilier'), {recursive:true});
 await cp(join(root,'somaf'),join(out,'somaf'), {recursive:true});
 await cp(join(root,'somaf-livraison'),join(out,'somaf-livraison'), {recursive:true});
