@@ -51,6 +51,7 @@ await readFile(join(out,'cockpit/index.html'));
 await cp(join(root,'espace'),join(out,'espace'), {recursive:true});
 await readFile(join(out,'espace/index.html'));
 for (const file of ['agence-speciale/index.html','agence-speciale/logo-as-96.png','agence-speciale/logo-as-256.png','agence-speciale/icon-192.png']) await readFile(join(out,file));
+await cp(join(root,'devis-securipro'),join(out,'devis-securipro'), {recursive:true});
 await cp(join(root,'fiche-client'),join(out,'fiche-client'), {recursive:true});
 await cp(join(root,'verification'),join(out,'verification'), {recursive:true});
 await readFile(join(out,'fiche-client/index.html'));
