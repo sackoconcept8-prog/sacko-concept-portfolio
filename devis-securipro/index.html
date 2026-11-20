@@ -165,13 +165,17 @@ async function makePdf(data,q,pk,ref,now){
   const height=drawQuote(false);
   const compact=height>277;
   const contentBottom=compact?drawQuote(true):height;
-  const scale=Math.min(1,267/(contentBottom-10));
+  const scale=Math.min(1,258/(contentBottom-10));
   doc=new window.jspdf.jsPDF({compress:true});
   const pt=doc.internal.scaleFactor;
   doc.saveGraphicsState();
   doc.setCurrentTransformationMatrix(new doc.Matrix(scale,0,0,scale,105*(1-scale)*pt,(doc.internal.pageSize.getHeight()-10)*(1-scale)*pt));
   drawQuote(compact,scale);
   doc.restoreGraphicsState();
+  fill(left,270,width,9,"#EFF3F9");
+  txt("Pour préparer votre version de test,",left+2,276,9,false,ink);
+  txt("remplissez le formulaire de configuration.",left+55,276,9,true,blue);
+  doc.link(left,270,width,9,{url:"https://www.sackoconcept.com/configuration-securipro.html"});
   const pages=doc.getNumberOfPages();
   for(let i=1;i<=pages;i++){doc.setPage(i);fill(left,281,width,.2,rule);txt("SACKO CONCEPT LLC · Albuquerque, NM, États-Unis · EIN 35-2950833",left,286,7.1,true,muted);txt("+1 505 464 2331 · contact@sackoconcept.com · www.sackoconcept.com",left,290,7.1,false,muted);txt(i+" / "+pages,right,288,7.5,false,muted,"right")}
   doc.setProperties({title:"Devis "+ref,author:"SACKO CONCEPT"});return doc.output("blob");
