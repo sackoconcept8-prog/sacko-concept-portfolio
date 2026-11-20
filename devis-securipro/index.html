@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mon devis SécuriPro · SACKO CONCEPT</title><meta name="robots" content="noindex"><link rel="icon" href="../assets/sacko-logo-96.png"><script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script><script src="../sacko-config.js"></script>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mon devis SécuriPro · SACKO CONCEPT</title><meta name="robots" content="noindex"><link rel="icon" href="../assets/sacko-logo-96.png"><script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script><script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script><script src="../sacko-config.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f6f7f3;color:#183b32;font:16px/1.55 system-ui,sans-serif}header{background:white;border-bottom:1px solid #dbe1da}header div,main{max-width:1000px;margin:auto;padding:18px 24px}header div{display:flex;align-items:center;gap:12px;font-weight:700}header img{width:36px}main{padding-block:32px}h1{font:normal clamp(2.3rem,6vw,3.7rem)/1.12 Georgia,serif;margin:.1em 0}h2{font:normal 1.55rem Georgia,serif;margin:0 0 16px}form{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,34%);gap:20px;align-items:start}section,aside{background:white;border:1px solid #dce3dd;border-radius:14px;padding:22px;margin-bottom:16px}aside{position:sticky;top:16px;border-top:4px solid #b89b64}label{display:block;margin:12px 0}input:not([type=checkbox]),select,textarea{display:block;width:100%;padding:11px;border:1px solid #9daea5;border-radius:7px;font:inherit;color:inherit;background:white}input[type=checkbox]{width:18px;height:18px;accent-color:#174c3d;vertical-align:middle}.choice{padding:8px 0;border-bottom:1px solid #edf1ed}.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}ul{padding-left:1.3em}button,.download{font:inherit;font-weight:650;background:#174c3d;color:white;border:0;border-radius:8px;padding:12px 16px;cursor:pointer;text-decoration:none;display:block;text-align:center;width:100%}button:disabled{opacity:.65}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #ad8949}small{display:block;color:#52665e}output{display:block;font-size:1.65rem;font-weight:700}#lines p{display:flex;justify-content:space-between;gap:8px;font-size:.95rem}#lines span{white-space:nowrap}[hidden]{display:none!important}@media(max-width:720px){form,.pair{display:block}aside{position:static}main{padding:22px 14px}section,aside{padding:18px}.mobile{position:sticky;top:0;background:#174c3d;color:white;padding:8px 14px;z-index:1}}@media(min-width:721px){.mobile{display:none}}
 </style></head><body><header><div><img src="../assets/sacko-logo-96.png" alt="">SACKO CONCEPT</div></header><div class="mobile">Votre total · <b id="mobileTotal"></b></div><main><h1>Mon devis SécuriPro</h1><p>Choisissez votre formule et vos options pour obtenir votre tarif et télécharger votre devis.</p><form id="form"><div><section><h2>Votre agence</h2><label>Nom de l’entreprise *<input name="entreprise" required maxlength="120" autocomplete="organization"></label><div class="pair"><label>Votre nom *<input name="nom" required maxlength="100" autocomplete="name"></label><label>Fonction<input name="fonction" maxlength="80" autocomplete="organization-title"></label></div><label>E-mail professionnel *<input name="email" type="email" required maxlength="180" autocomplete="email"></label><div class="pair"><label>Téléphone / WhatsApp<input name="whatsapp" type="tel" maxlength="40" autocomplete="tel"></label><label>Pays<input name="pays" maxlength="80" autocomplete="country-name"></label></div><label>Quels besoins souhaitez-vous couvrir ?<textarea name="besoins" maxlength="600" rows="2" placeholder="Ex. suivre les rondes et préparer la paie"></textarea></label></section><section><h2>Votre formule</h2><label>Formule SécuriPro<select name="pack"></select></label><ul id="included"></ul></section><section><h2>Vos options</h2><div id="options"></div></section></div><aside><h2>Votre devis</h2><div id="lines"></div><hr><small>Total</small><output id="total" aria-live="polite"></output><p id="offer"></p><p id="terms"></p><small>En validant, vous transmettez vos coordonnées et une copie du devis à SACKO CONCEPT.</small><p><button id="submit">Obtenir mon devis PDF</button></p><a hidden id="download" class="download">Télécharger mon PDF</a><p id="status" role="status"></p></aside></form></main><script>
@@ -67,30 +67,79 @@ for(const [id,p] of Object.entries(PACKS))fields.pack.add(new Option(p.nom,id));
 fields.pack.value="complet";selection();render();
 form.addEventListener("input",invalidate);
 form.addEventListener("change",e=>{invalidate();if(e.target===fields.pack)selection();render()});
-function makePdf(data,q,pk,ref,now){
-  if(!window.jspdf)throw Error("Le module PDF ne s’est pas chargé. Vérifiez votre connexion et rechargez la page.");
-  const doc=new window.jspdf.jsPDF();let y=24;
-  function line(t,size=11,bold=false){
-    doc.setFont("helvetica",bold?"bold":"normal");doc.setFontSize(size);
-    const clean=String(t).replace(/[\u202f\u00a0]/g," ").replace(/[’‘]/g,"'").replace(/[œ]/g,"oe").replace(/[\r\n\t]+/g," ");
-    for(const row of doc.splitTextToSize(clean,170)){
-      if(y>276){doc.addPage();y=24}doc.text(row,20,y);y+=size*.48+2;
-    }
+
+const STAMP=`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><path id="cp" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"/></defs><g fill="none" stroke="#1D4FA8"><circle cx="100" cy="100" r="96" stroke-width="4"/><circle cx="100" cy="100" r="88" stroke-width="1.5"/><circle cx="100" cy="100" r="56" stroke-width="1.5"/></g><text fill="#1D4FA8" font-family="Inter,Arial" font-size="13.2" font-weight="800" letter-spacing="1.2"><textPath href="#cp">SACKO CONCEPT • ABOMEY-CALAVI • RCCM RB/ABC/24 A 100536 •</textPath></text><text x="100" y="94" text-anchor="middle" fill="#1D4FA8" font-family="Inter,Arial" font-size="17" font-weight="800">SACKO</text><text x="100" y="113" text-anchor="middle" fill="#1D4FA8" font-family="Inter,Arial" font-size="12" font-weight="700" letter-spacing="1">CONCEPT</text><text x="100" y="131" text-anchor="middle" fill="#1D4FA8" font-family="Inter,Arial" font-size="8.5" font-weight="700" letter-spacing=".8">DEVIS OFFICIEL</text></svg>`;
+async function pdfImage(src,width){
+  const image=new Image();image.src=src;await image.decode();
+  const canvas=document.createElement("canvas");canvas.width=canvas.height=width;
+  canvas.getContext("2d").drawImage(image,0,0,width,width);return canvas.toDataURL("image/png");
+}
+async function makePdf(data,q,pk,ref,now){
+  if(!window.jspdf || !window.qrcode)throw Error("Rechargez la page pour télécharger le module PDF.");
+  const [logo,stamp]=await Promise.all([
+    pdfImage("../assets/sacko-logo-96.png",96),
+    pdfImage("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(STAMP),320)
+  ]);
+  const doc=new window.jspdf.jsPDF({compress:true});
+  const blue="#205CC1",ink="#192A40",muted="#495A6C",rule="#D9DFE8",white="#FFFFFF";
+  const date=now.toLocaleDateString("fr-FR");
+  const valid=new Date(now);valid.setDate(valid.getDate()+30);
+  const until=q.promo?new Date(Math.min(+valid,+new Date(offerEnd+"T23:59:59+01:00"))):valid;
+  const clean=x=>String(x).replace(/[\u202f\u00a0]/g," ").replace(/[’‘]/g,"'").replace(/œ/g,"oe").replace(/[\r\n\t]+/g," ");
+  function font(size,bold=false,color=ink){doc.setFont("helvetica",bold?"bold":"normal");doc.setFontSize(size);doc.setTextColor(color)}
+  function txt(t,x,y,size=9,bold=false,color=ink,align="left"){font(size,bold,color);doc.text(clean(t),x,y,{align})}
+  function wrap(t,w,size=9,bold=false){font(size,bold);return doc.splitTextToSize(clean(t),w)}
+  function border(x,y,w,h){doc.setDrawColor(rule);doc.setLineWidth(.18);doc.roundedRect(x,y,w,h,2,2)}
+  function fill(x,y,w,h,color){doc.setFillColor(color);doc.rect(x,y,w,h,"F")}
+  function cardRows(entries,w){return entries.filter(a=>a[0]).flatMap(([value,bold])=>wrap(value,w,9,bold).map(v=>[v,bold]))}
+  function card(title,rows,x,top,w,h){border(x,top,w,h);txt(title,x+3,top+5.2,7.4,true,muted);rows.forEach(([t,b],i)=>txt(t,x+3,top+10.2+i*4.05,9,b))}
+  const left=14,right=196,width=182;
+  let y=0;
+  function pageHeader(first){
+    doc.addImage(logo,"PNG",left,12,12,12);
+    txt("SACKO CONCEPT",29,17.5,13,true);txt("STUDIO DIGITAL & SOLUTIONS MÉTIER",29,22.2,7.3,false,muted);
+    txt("DEVIS",right,18,21,true,blue,"right");txt("N° "+ref,right,24,8.5,true,muted,"right");
+    if(first){txt("Date : "+date,right,28.5,8.5,false,muted,"right");txt("Valable jusqu'au "+until.toLocaleDateString("fr-FR"),right,33,8.5,false,muted,"right");txt("Présenté par Hawa Sacko",right,37.5,8.5,false,muted,"right")}
+    y=first?41:29;fill(left,y,width,.48,blue);y+=4;
   }
-  doc.setTextColor(23,76,61);line("SACKO CONCEPT",14,true);line("Devis SécuriPro",25,true);
-  const valid=new Date(now);valid.setDate(valid.getDate()+30);const until=q.promo?new Date(Math.min(+valid,+new Date(offerEnd+"T23:59:59+01:00"))):valid;
-  line(ref+"  |  "+now.toLocaleDateString("fr-FR")+"  |  Valable jusqu'au "+until.toLocaleDateString("fr-FR"),10);
-  y+=4;line(data.entreprise,14,true);line([data.nom,data.fonction].filter(Boolean).join(" · "));line([data.email,data.whatsapp,data.pays].filter(Boolean).join(" · "));
-  if(data.besoins)line("Vos besoins : "+data.besoins);
-  y+=4;line("Détail du devis",14,true);q.items.forEach(i=>line(i.label+" : "+money(i.amount)));
-  if(q.promo)line("Remise de fin d'année incluse : "+money(prices[pk].n-prices[pk].p));
-  line("Total : "+money(q.total),16,true);
-  line("Acompte à la signature (40 %, arrondi) : "+money(q.deposit));line("Solde à la réception : "+money(q.total-q.deposit));
-  y+=4;line("Inclus dans votre formule",13,true);PACKS[pk].inc.forEach(t=>line("- "+t));
-  line("Mise en service : 4 à 6 semaines après l'acompte. Garantie de 3 mois après la mise en service.",10);
-  line("Licence d'utilisation non exclusive. SécuriPro reste la propriété de SACKO CONCEPT.",10);
-  line("SACKO CONCEPT · contact@sackoconcept.com · +229 01 57 23 63 73",10,true);
-  return doc.output("blob");
+  function fit(h){if(y+h>276){doc.addPage();pageHeader(false);return true}return false}
+  pageHeader(true);
+  const issuer=cardRows([["SACKO CONCEPT LLC",true],["8206 Louisiana Blvd NE, Ste A 8694"],["Albuquerque, NM 87113, États-Unis"],["EIN 35-2950833"],["+1 505 464 2331 · contact@sackoconcept.com"]],83);
+  const client=cardRows([[data.entreprise,true],[data.pays],[[data.nom,data.fonction].filter(Boolean).join(" · ")],[data.whatsapp],[data.email]],83);
+  const cardsH=13+Math.max(issuer.length,client.length)*4.05;
+  card("ÉMETTEUR",issuer,left,y,89.5,cardsH);card("CLIENT",client,106.5,y,89.5,cardsH);y+=cardsH+3;
+  function tableHead(){fill(left,y,width,7,"#EFF3F9");txt("DÉSIGNATION",left+2,y+4.9,7.6,true,muted);txt("VOTRE PRIX",right-2,y+4.9,7.6,true,muted,"right");y+=7}
+  function row(label,amount,bold=false,detail=""){
+    const lines=wrap(label,126,9,bold),desc=detail?wrap(detail,126,8):[];
+    const h=3.7*lines.length+3.45*desc.length+2.4;
+    if(fit(h))tableHead();
+    lines.forEach((l,i)=>txt(l,left+2,y+4.6+3.7*i,9,bold));
+    desc.forEach((l,i)=>txt(l,left+2,y+4.6+3.7*lines.length+3.45*i,8,false,muted));
+    txt(amount,right-2,y+4.6,9,false,ink,"right");y+=h;fill(left,y-.2,width,.16,rule);
+  }
+  tableHead();row(q.items[0].label,money(q.items[0].amount),true,PACKS[pk].tag);
+  for(const included of PACKS[pk].inc)row(included,"Inclus");
+  for(const item of q.items.slice(1))row(item.label,money(item.amount),true);
+  if(q.promo)row("Économie sur le tarif catalogue",money(prices[pk].n-prices[pk].p));
+  fit(26);fill(left,y,width,8.2,blue);txt("TOTAL DU DEVIS",left+2,y+5.6,10,true,white);txt(money(q.total),right-2,y+5.6,11,true,white,"right");y+=8.2;
+  row("Acompte à la signature (40 %, arrondi)",money(q.deposit));row("Solde à la réception",money(q.total-q.deposit));y+=3;
+  const inc=cardRows([["• Personnalisation à vos couleurs et à votre nom."],["• Import de vos agents, sites et clients."],["• Création des accès utilisateurs."],["• Formation de vos équipes."]],83);
+  const cond=cardRows([["• Mise en service sous 4 à 6 semaines après l'acompte."],["• Garantie de 3 mois après la mise en service."],["• Licence d'utilisation non exclusive. SécuriPro reste la propriété de SACKO CONCEPT."]],83);
+  const detailsH=13+Math.max(inc.length,cond.length)*4.05;
+  fit(detailsH);card("CE QUI EST COMPRIS",inc,left,y,89.5,detailsH);card("CONDITIONS",cond,106.5,y,89.5,detailsH);y+=detailsH+3;
+  if(data.besoins){const notes=cardRows([[data.besoins]],width-6),h=13+notes.length*4.05;fit(h);card("VOS BESOINS",notes,left,y,width,h);y+=h+3}
+  fit(36);border(left,y,51,36);border(67,y,58,36);border(127,y,69,36);
+  txt("Bon pour accord · le client",17,y+6,8.8,true);txt("Date, signature et cachet",17,y+11,8,false,muted);
+  txt("SACKO CONCEPT",70,y+6,8.8,true);txt("Hawa Sacko, fondatrice",70,y+11,8,false,muted);
+  doc.addImage(stamp,"PNG",99,y+11,23,23);
+  const url="mailto:contact@sackoconcept.com?subject="+encodeURIComponent("Vérification du devis "+ref);
+  const qr=qrcode(0,"M");qr.addData(url);qr.make();const count=qr.getModuleCount(),unit=24/(count+8);
+  doc.setFillColor(0);for(let a=0;a<count;a++)for(let b=0;b<count;b++)if(qr.isDark(a,b))doc.rect(128+(b+4)*unit,y+6+(a+4)*unit,unit+.018,unit+.018,"F");
+  doc.link(128,y+6,24,24,{url});txt("Vérifier ce devis",153,y+12,8.5,true);
+  txt("Scannez pour contacter",153,y+17,7.7);txt("SACKO CONCEPT avec",153,y+21,7.7);txt("la référence du devis.",153,y+25,7.7);
+  const pages=doc.getNumberOfPages();
+  for(let i=1;i<=pages;i++){doc.setPage(i);fill(left,281,width,.2,rule);txt("SACKO CONCEPT LLC · Albuquerque, NM, États-Unis · EIN 35-2950833",left,286,7.1,true,muted);txt("+1 505 464 2331 · contact@sackoconcept.com · www.sackoconcept.com",left,290,7.1,false,muted);txt(i+" / "+pages,right,288,7.5,false,muted,"right")}
+  doc.setProperties({title:"Devis "+ref,author:"SACKO CONCEPT"});return doc.output("blob");
 }
 function encode(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(",")[1]);r.onerror=reject;r.readAsDataURL(blob)})}
 form.addEventListener("submit",async e=>{
@@ -100,7 +149,7 @@ form.addEventListener("submit",async e=>{
   try{
     if(!cached){
       const now=new Date(),ref="SC-"+now.getFullYear()+"-"+crypto.randomUUID().slice(0,13).replace("-","").toUpperCase();
-      const blob=makePdf(data,q,pk,ref,now),name="Devis-"+ref+".pdf";
+      const blob=await makePdf(data,q,pk,ref,now),name="Devis-"+ref+".pdf";
       const payload={type:"devis",nom:data.nom,email:data.email,entreprise:data.entreprise,whatsapp:data.whatsapp,pays:data.pays,application:"SécuriPro",secteur:"Sécurité privée",formule:PACKS[pk].nom,devise:"F CFA",source:"Devis SécuriPro en ligne",consent:"oui",besoins:[ref,money(q.total),data.besoins].filter(Boolean).join(" · "),fichiers:[{name,type:"application/pdf",data:await encode(blob)}]};
       cached={blob,name,payload};link=URL.createObjectURL(blob);
       Object.assign(el("download"),{href:link,download:name,hidden:false});
