@@ -39,7 +39,7 @@ function quote(pack,ids,now=new Date()){
   const items=[{label:PACKS[pack].nom,amount:prices[pack][promo?"p":"n"]}];
   for(const opt of OPTS.filter(opt=>opt.p.includes(pack)&&ids.includes(opt.id)))items.push({label:opt.nom,amount:opt.prix});
   const total=items.reduce((sum,item)=>sum+item.amount,0);
-  return {items,total,deposit:Math.round(total*.4/5000)*5000,promo};
+  return {items,total,promo};
 }
 const current=()=>quote(fields.pack.value,[...form.querySelectorAll("input[name=option]:checked")].map(x=>x.value));
 function selection(){
@@ -61,7 +61,7 @@ function render(){
   el("total").textContent=el("mobileTotal").textContent=money(q.total);
   el("lines").replaceChildren(...q.items.map(i=>{const p=document.createElement("p"),v=document.createElement("span");v.textContent=money(i.amount);p.append(i.label,v);return p}));
   el("offer").textContent=q.promo?"Offre jusqu’au 31 décembre 2026 · Économie de "+money(prices[fields.pack.value].n-prices[fields.pack.value].p):"";
-  el("terms").textContent="Acompte à la signature : "+money(q.deposit)+" (40 %, arrondi). Solde à la réception : "+money(q.total-q.deposit)+".";
+  el("terms").textContent="Aucun paiement à la signature. Vous testez le logiciel, puis vous validez sa conformité. Le montant de "+money(q.total)+" est payable après votre validation. Les instructions de règlement vous seront communiquées à ce moment-là.";
 }
 for(const [id,p] of Object.entries(PACKS))fields.pack.add(new Option(p.nom,id));
 fields.pack.value="complet";selection();render();
@@ -123,9 +123,9 @@ async function makePdf(data,q,pk,ref,now){
   for(const item of q.items.slice(1))row(item.label,money(item.amount),true);
   if(q.promo)row("Économie sur le tarif catalogue",money(prices[pk].n-prices[pk].p));
   fill(left,y,width,8.2,blue);txt("TOTAL DU DEVIS",left+2,y+5.6,10,true,white);txt(money(q.total),right-2,y+5.6,11,true,white,"right");y+=8.2;
-  row("Acompte à la signature (40 %, arrondi)",money(q.deposit));row("Solde à la réception",money(q.total-q.deposit));y+=3;
+  row("À la signature du devis",money(0));row("À régler après vos tests et votre validation",money(q.total));y+=3;
   const inc=cardRows([["• Personnalisation à vos couleurs et à votre nom."],["• Import de vos agents, sites et clients."],["• Création des accès utilisateurs."],["• Formation de vos équipes."]],83);
-  const cond=cardRows([["• Mise en service sous 4 à 6 semaines après l'acompte."],["• Garantie de 3 mois après la mise en service."],["• Licence d'utilisation non exclusive. SécuriPro reste la propriété de SACKO CONCEPT."]],83);
+  const cond=cardRows([["• Délai prévisionnel de préparation : 4 à 6 semaines. Tests avant paiement."],["• Après validation et encaissement : licence et clés d’activation sur clé USB et par téléchargement. Code source selon la formule."],["• Garantie de 3 mois après la mise en service."],["• Licence d'utilisation non exclusive. SécuriPro reste la propriété de SACKO CONCEPT."]],83);
   const detailsH=13+Math.max(inc.length,cond.length)*4.05;
   card("CE QUI EST COMPRIS",inc,left,y,89.5,detailsH);card("CONDITIONS",cond,106.5,y,89.5,detailsH);y+=detailsH+3;
   if(data.besoins){const notes=cardRows([[data.besoins]],width-6),h=13+notes.length*4.05;card("VOS BESOINS",notes,left,y,width,h);y+=h+3}
