@@ -49,6 +49,8 @@ for (const file of ['site-agence-speciale/index.html','site-agence-speciale/img/
 await cp(join(root,'cockpit'),join(out,'cockpit'), {recursive:true});
 await readFile(join(out,'cockpit/index.html'));
 await cp(join(root,'espace'),join(out,'espace'), {recursive:true});
+await cp(join(root,'cdk-group'),join(out,'cdk-group'), {recursive:true});
+for (const file of ['cdk-group/index.html','cdk-group/logo-cdk-96.png','cdk-group/logo-cdk-512.png']) await readFile(join(out,file));
 await readFile(join(out,'espace/index.html'));
 for (const file of ['agence-speciale/index.html','agence-speciale/logo-as-96.png','agence-speciale/logo-as-256.png','agence-speciale/icon-192.png']) await readFile(join(out,file));
 await cp(join(root,'devis-securipro'),join(out,'devis-securipro'), {recursive:true});
