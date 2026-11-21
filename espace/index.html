@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Espace de gestion</title>
-<link rel="icon" id="fav" href="../assets/sacko-logo-vert-96.png">
+<link rel="icon" id="fav" href="data:,">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -168,7 +168,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 
 <section id="login" class="center">
   <form class="login-card" id="login-form">
-    <img class="biglogo" id="lg-logo" src="../assets/sacko-logo-vert-512.png" alt="">
+    <img class="biglogo" id="lg-logo" alt="" style="visibility:hidden">
     <h1 id="lg-nom" style="font-size:24px">Espace de gestion</h1>
     <p class="muted sm" id="lg-sous" style="margin:4px 0 20px">Connectez-vous pour accéder à votre espace.</p>
     <div class="err hide" id="login-err"></div>
@@ -182,7 +182,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 
 <section id="bloque" class="center hide">
   <div class="login-card">
-    <img class="biglogo" id="bl-logo" src="../assets/sacko-logo-vert-512.png" alt="">
+    <img class="biglogo" id="bl-logo" alt="" style="visibility:hidden">
     <h1 id="bl-titre" style="font-size:22px"></h1>
     <p class="muted" id="bl-texte" style="margin:10px 0 18px"></p>
     <div class="actions" style="justify-content:center"><a class="btn pri hide" id="bl-wa" target="_blank" rel="noopener">Contacter le support (WhatsApp)</a><button class="btn" id="bl-out">Se déconnecter</button></div>
@@ -192,7 +192,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 
 <div id="app" class="hide">
   <header class="top"><div class="top-in">
-    <div class="brand"><img id="hd-logo" src="../assets/sacko-logo-vert-96.png" alt=""><div style="min-width:0"><span id="hd-nom"></span><small id="hd-moi"></small></div></div>
+    <div class="brand"><img id="hd-logo" alt="" style="visibility:hidden"><div style="min-width:0"><span id="hd-nom"></span><small id="hd-moi"></small></div></div>
     <button class="btn sm hide" id="menu-btn" aria-label="Menu">☰ Menu</button>
     <nav class="tabs" id="tabs"></nav>
     <button class="avbtn" id="hd-av" title="Mon profil et mon mot de passe" aria-label="Mon profil"></button>
@@ -204,6 +204,21 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 <div id="modal"><div class="box" id="box"></div></div>
 <div id="toast"></div>
 
+<script>
+/* Logo de l'agence affiché tout de suite (mémorisé à la visite précédente) : plus de logo SACKO CONCEPT qui apparaît avant celui du client. */
+const LOGO_DEFAUT="../assets/sacko-logo-vert-512.png";
+function montrerLogo(u){["lg-logo","bl-logo","hd-logo"].forEach(i=>{const e=document.getElementById(i);if(e){e.src=u;e.style.visibility="visible"}});const f=document.getElementById("fav");if(f)f.href=u}
+function marqueMemo(sl){try{return JSON.parse(localStorage.getItem("espace-marque-"+sl)||"null")}catch(_){return null}}
+(function(){let sl=(new URLSearchParams(location.search).get("a")||"").toLowerCase().replace(/[^a-z0-9-]/g,"");try{if(!sl)sl=localStorage.getItem("espace-slug")||""}catch(_){}
+  const m=sl?marqueMemo(sl):null;
+  if(m){if(m.logo_url)montrerLogo(m.logo_url);if(/^#[0-9a-f]{6}$/i.test(m.couleur||"")){document.documentElement.style.setProperty("--p",m.couleur);document.documentElement.style.setProperty("--p-l",m.couleur+"1c")}
+    if(m.nom){document.getElementById("lg-nom").textContent=m.nom;document.getElementById("hd-nom").textContent=m.nom;document.title=m.nom+" · Espace de gestion"}
+    if(m.sous)document.getElementById("lg-sous").textContent=m.sous}
+  else if(!sl)montrerLogo(LOGO_DEFAUT);
+  /* sécurité : si l'agence ne répond pas, on affiche quand même un logo */
+  setTimeout(()=>{const e=document.getElementById("lg-logo");if(e&&e.style.visibility==="hidden")montrerLogo(LOGO_DEFAUT)},5000);
+})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SB_URL="https://bwiihwrdgnaqfbizudpx.supabase.co";
@@ -303,9 +318,10 @@ const siteNom=id=>(sites.find(s=>s.id===id)||{}).nom||"Sans affectation";
 
 function habiller(a){if(!a)return;
   const r=document.documentElement.style;if(/^#[0-9a-f]{6}$/i.test(a.couleur_principale||"")){r.setProperty("--p",a.couleur_principale);r.setProperty("--p-l",a.couleur_principale+"1c")}
-  if(a.logo_url){["#lg-logo","#bl-logo","#hd-logo"].forEach(s=>$(s).src=a.logo_url);$("#fav").href=a.logo_url}
+  if(a.logo_url)montrerLogo(a.logo_url);else montrerLogo(LOGO_DEFAUT);
   const nom=a.nom||a.nom_agence;if(nom){$("#lg-nom").textContent=nom;$("#hd-nom").textContent=nom;document.title=nom+" · Espace de gestion"}
   if(a.devise||a.raison_sociale)$("#lg-sous").textContent=a.devise||a.raison_sociale;
+  const sl=a.slug||slug;if(sl){try{localStorage.setItem("espace-marque-"+sl,JSON.stringify({logo_url:a.logo_url||"",couleur:a.couleur_principale||"",nom:nom||"",sous:a.devise||a.raison_sociale||""}))}catch(_){}}
 }
 function ecran(id){["login","bloque","app"].forEach(x=>$("#"+x).classList.toggle("hide",x!==id))}
 function showLogin(msg){ecran("login");const e=$("#login-err");e.textContent=msg||"";e.classList.toggle("hide",!msg)}
@@ -832,7 +848,7 @@ async function verifierCarte(id){
   ecran("bloque");$("#bl-out").classList.add("hide");$("#bl-wa").classList.add("hide");$("#bl-titre").textContent="Vérification…";$("#bl-texte").textContent="";
   const r=await sb.rpc("verifier_carte",{p_id:id});const c=r.data;
   if(r.error||!c){$("#bl-titre").textContent="Carte inconnue";$("#bl-texte").textContent="Ce code ne correspond à aucune carte professionnelle enregistrée.";return}
-  if(c.logo_url){$("#bl-logo").src=c.logo_url}
+  if(c.logo_url){const e=$("#bl-logo");e.src=c.logo_url;e.style.visibility="visible"}
   $("#bl-titre").innerHTML=c.valide?'<span style="color:var(--green)">✓ Carte valide</span>':'<span style="color:var(--red)">✗ Carte non valide</span>';
   $("#bl-texte").innerHTML=`<b>${esc([c.prenom,c.nom].filter(Boolean).join(" "))}</b><br>${esc(c.fonction||"")} · matricule ${esc(c.matricule)}<br>${esc(c.agence)}${c.valide_jusqu_au?"<br>Valable jusqu'au "+fd(c.valide_jusqu_au):""}${c.valide?"":"<br><br>Cette personne ne fait plus partie du personnel actif, ou sa carte a expiré."}`;
 }
@@ -1557,6 +1573,7 @@ window.addEventListener("unhandledrejection",e=>noterErreur("Promesse : "+((e.re
   const verif=new URLSearchParams(location.search).get("verif");
   if(verif&&/^[0-9a-f-]{36}$/i.test(verif))return verifierCarte(verif).catch(()=>{$("#bl-titre").textContent="Vérification impossible";$("#bl-texte").textContent="Vérifiez votre connexion Internet."});
   if(slug){try{const r=await sb.rpc("agence_publique",{p_slug:slug});if(r.data)habiller(r.data)}catch(_){}}
+  if($("#lg-logo").style.visibility==="hidden")montrerLogo(LOGO_DEFAUT);
   const {data}=await sb.auth.getSession();if(data&&data.session)await entrer();else showLogin();
 })();
 </script>

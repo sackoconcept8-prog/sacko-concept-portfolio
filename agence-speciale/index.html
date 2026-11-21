@@ -7,8 +7,8 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="description" content="Logiciel de gestion de Agence Spéciale : sites, agents, planning, pointage géolocalisé, main courante, paie, facturation et espace client.">
 <meta name="theme-color" content="#F5F7FB">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="logo-as2-192.png">
+<link rel="apple-touch-icon" href="logo-as2-192.png">
 <link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;Agence Spéciale&quot;,&quot;short_name&quot;:&quot;Agence Spéciale&quot;,&quot;start_url&quot;:&quot;./&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23F5F7FB&quot;,&quot;theme_color&quot;:&quot;%23F5F7FB&quot;}">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
@@ -163,7 +163,7 @@ tbody tr:last-child td{border-bottom:0}
 .notif.on{display:block}
 /* document imprimable */
 .doc{font-size:13.5px;color:#111;position:relative;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.doc::before{content:"";position:absolute;inset:0;background:url(logo-as-256.png) center 55%/210px no-repeat;opacity:.06;pointer-events:none}
+.doc::before{content:"";position:absolute;inset:0;background:url(logo-as2-256.png) center 55%/210px no-repeat;opacity:.06;pointer-events:none}
 .doc::after{content:"AGENCE SPÉCIALE · Société de sécurité et gardiennage";display:block;margin-top:24px;padding-top:10px;border-top:1px solid #D5DAE3;text-align:center;font-size:11px;letter-spacing:.08em;color:#5E6B80}
 .doc .dhd{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:3px solid #1B1E24;box-shadow:0 3px 0 #E3B21A;padding-bottom:14px;margin-bottom:19px}
 .doc .dhd img{width:66px}
@@ -296,12 +296,12 @@ tbody tr:last-child td{border-bottom:0}
 <body>
 
 <!-- ===== Écran d'ouverture ===== -->
-<div id="splash" aria-hidden="true"><div class="sp-stage"><div class="sp-ring"></div><div class="sp-ring r2"></div><div class="sp-glow"></div><img class="sp-logo" src="logo-as-256.png" alt=""></div><div class="sp-name">Agence Spéciale</div><div class="sp-sub">Société de sécurité et gardiennage</div><div class="sp-bar"><i></i></div></div>
+<div id="splash" aria-hidden="true"><div class="sp-stage"><div class="sp-ring"></div><div class="sp-ring r2"></div><div class="sp-glow"></div><img class="sp-logo" src="logo-as2-256.png" alt=""></div><div class="sp-name">Agence Spéciale</div><div class="sp-sub">Société de sécurité et gardiennage</div><div class="sp-bar"><i></i></div></div>
 
 <!-- ===== Choix de l'espace ===== -->
 <section id="login">
   <div class="brand">
-    <img src="logo-as-256.png" alt="Logo Agence Spéciale">
+    <img src="logo-as2-256.png" alt="Logo Agence Spéciale">
     <div class="xs muted" style="letter-spacing:.12em;text-transform:uppercase;font-weight:700">Société de sécurité et gardiennage</div>
     <h1>Logiciel de gestion Agence Spéciale</h1>
     <p class="muted" style="margin:0;max-width:560px">Sites, agents, planning jour et nuit, pointage géolocalisé, main courante, paie, facturation et espace client. Tout votre métier dans un seul logiciel.</p>
@@ -460,7 +460,7 @@ function badges(){
 }
 function renderSide(){
   const b=badges();
-  $("#side").innerHTML=`<div class="logo"><img src="logo-as-96.png" alt=""><div><b>Agence Spéciale</b><span>${role==="client"?"Espace client":role==="rh"?"RH et exploitation":"Direction générale"}</span></div></div>
+  $("#side").innerHTML=`<div class="logo"><img src="logo-as2-96.png" alt=""><div><b>Agence Spéciale</b><span>${role==="client"?"Espace client":role==="rh"?"RH et exploitation":"Direction générale"}</span></div></div>
   ${NAV[role].map(([t,items])=>`<div class="nav-t">${t}</div><nav class="nav">${items.map(([k,i,l])=>`<a data-v="${k}" class="${view===k?"on":""}">${ic(i)}<span>${l}</span>${b[k]?`<span class="bdg">${b[k]}</span>`:""}</a>`).join("")}</nav>`).join("")}
   <div class="foot"><a class="back-link" id="switch">${ic("logout")} Changer d'espace</a><div style="margin-top:10px">Logiciel conçu par <a href="../" target="_blank" rel="noopener" style="color:var(--muted)">SACKO CONCEPT</a></div></div>`;
   $$("#side .nav a").forEach(a=>a.onclick=()=>{view=a.dataset.v;$("#side").classList.remove("on");$("#ovl").classList.remove("on");render()});
@@ -851,7 +851,7 @@ function cpImg(file,max,png){return new Promise((res,rej)=>{const fr=new FileRea
 const cpLoadImg=src=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=src});
 function cpRR(x,X,Y,W,H,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+W,Y,X+W,Y+H,r);x.arcTo(X+W,Y+H,X,Y+H,r);x.arcTo(X,Y+H,X,Y,r);x.arcTo(X,Y,X+W,Y,r);x.closePath()}
 function cpFit(x,t,max,size,w,fam){let s=size;do{x.font=`${w} ${s}px ${fam}`;if(x.measureText(t).width<=max)break;s-=2}while(s>16);return s}
-async function cpLogo(x,X,Y,Z){try{const im=await cpLoadImg(S.settings.logo||"logo-as-256.png");const k=Math.min(Z/im.width,Z/im.height);x.drawImage(im,X+(Z-im.width*k)/2,Y+(Z-im.height*k)/2,im.width*k,im.height*k)}catch(e){}}
+async function cpLogo(x,X,Y,Z){try{const im=await cpLoadImg(S.settings.logo||"logo-as2-256.png");const k=Math.min(Z/im.width,Z/im.height);x.drawImage(im,X+(Z-im.width*k)/2,Y+(Z-im.height*k)/2,im.width*k,im.height*k)}catch(e){}}
 function cpQR(x,text,X,Y,size){const q=qrcode(0,"M");q.addData(text);q.make();const n=q.getModuleCount(),m=2,c=size/(n+m*2);x.fillStyle="#fff";x.fillRect(X,Y,size,size);x.fillStyle="#0F1B2D";for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))x.fillRect(Math.floor(X+(k+m)*c),Math.floor(Y+(r+m)*c),Math.ceil(c),Math.ceil(c))}
 async function cpCanvases(a){try{await document.fonts.ready}catch(e){}
  const W=1011,H=638,D='Sora,sans-serif',B='Inter,sans-serif',BL="#1D5FD1",F="#0F1B2D",M="#5E6B80";const aff=a.site?SI(a.site).name:a.grade==="Superviseur"?"Tous les sites":"Agent volant";
@@ -1001,7 +1001,7 @@ function vPaie(){
   <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Agent</th><th>Base</th><th>Ancienneté</th><th>Prime de nuit</th><th>Panier</th><th>Resp.</th><th>Retenue absences</th><th>CNSS</th><th>Avance</th><th>Net</th><th></th></tr></thead><tbody>${rows.map(({a,p})=>`<tr><td><div class="row">${av(a.name)}<div><div class="b">${esc(a.name)}</div><div class="xs muted">${a.grade}</div></div></div></td><td>${fcfa(p.base)}</td><td>${p.anc?fcfa(p.anc):"—"}</td><td>${p.night?fcfa(p.night):"—"}</td><td>${fcfa(p.meal)}</td><td>${p.resp?fcfa(p.resp):"—"}</td><td style="color:${p.ret?"var(--red)":"inherit"}">${p.ret?"− "+fcfa(p.ret):"—"}</td><td>− ${fcfa(p.cnss)}</td><td>${p.adv?"− "+fcfa(p.adv):"—"}</td><td class="b">${fcfa(p.net)}</td><td><button class="btn sm" data-bul="${a.id}">${ic("file")} Bulletin</button></td></tr>`).join("")}</tbody></table></div></div>`;
 }
 afterRender.paie=()=>{$$("[data-bul]").forEach(b=>b.onclick=()=>bulletin(b.dataset.bul));$("#pVal").onclick=()=>{S.payValidated=true;save();toast("Paie validée · bulletins disponibles dans l'application des agents");render()};$("#pExp").onclick=()=>{const rows=[["Matricule","Nom","Base","Ancienneté","Prime nuit","Panier","Responsabilité","Retenue","CNSS","Avance","Net"]].concat(S.agents.map(a=>{const p=payOf(a);return [a.mat,a.name,p.base,p.anc,p.night,p.meal,p.resp,p.ret,p.cnss,p.adv,p.net]}));const csv="﻿"+rows.map(r=>r.join(";")).join("\n");const u=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));const l=document.createElement("a");l.href=u;l.download="paie-agence-speciale.csv";l.click();toast("Paie exportée")}};
-function docHead(title,date){return `<div class="doc"><div class="dhd"><div class="row"><img src="logo-as-96.png" alt=""><div><b style="font-size:15px">${esc(S.settings.name)}</b><div class="xs">${esc(S.settings.full)}</div><div class="xs">${esc([S.settings.addr,S.settings.phone,S.settings.email].filter(Boolean).join(" · "))}</div><div class="xs">${esc(S.settings.ifu)}</div></div></div><div style="text-align:right"><b style="font-size:16px;color:var(--blue)">${title}</b><div class="xs">${S.settings.city?esc(S.settings.city)+", le":"Le"} ${fd(date)} ${date.slice(0,4)}</div></div></div>`}
+function docHead(title,date){return `<div class="doc"><div class="dhd"><div class="row"><img src="logo-as2-96.png" alt=""><div><b style="font-size:15px">${esc(S.settings.name)}</b><div class="xs">${esc(S.settings.full)}</div><div class="xs">${esc([S.settings.addr,S.settings.phone,S.settings.email].filter(Boolean).join(" · "))}</div><div class="xs">${esc(S.settings.ifu)}</div></div></div><div style="text-align:right"><b style="font-size:16px;color:var(--blue)">${title}</b><div class="xs">${S.settings.city?esc(S.settings.city)+", le":"Le"} ${fd(date)} ${date.slice(0,4)}</div></div></div>`}
 function bulletin(id,mo=0){
   const a=A(id),p=payOf(a);const d=new Date(S.day+"T12:00:00");d.setMonth(d.getMonth()-mo);const per=MOIS[d.getMonth()]+" "+d.getFullYear();
   const L=(l,v,neg)=>v?`<tr><td>${l}</td><td style="text-align:right">${neg?"− ":""}${fcfa(v)}</td></tr>`:"";
@@ -1313,7 +1313,7 @@ afterRender.reglages=()=>{
 function vCDash(){
   const s=SI(CS());const h=siteHealth(s);const inc=S.incidents.filter(i=>i.site===s.id);const rd=S.rounds.filter(r=>r.site===s.id&&r.date===addDays(S.day,-1));
   const inv=S.invoices.filter(i=>i.site===s.id);const due=inv.filter(i=>i.status!=="Payée");
-  return `<div class="cl-hero"><img src="logo-as-96.png" alt="" style="width:54px"><div class="grow"><div class="xs muted b" style="letter-spacing:.06em;text-transform:uppercase">Espace client Agence Spéciale</div><h2 style="font-size:23px">Bonjour ${esc(s.contact)}</h2><div class="muted sm">${esc(s.name)} · ${esc(s.loc)} · client depuis ${MOIS[new Date(s.since).getMonth()]} ${s.since.slice(0,4)}</div></div><div class="row wrapf"><button class="btn" data-goto="cmsg">${ic("msg")} Écrire à l'agence</button><button class="btn pri" data-goto="corder">${ic("cart")} Commander un service</button></div></div>
+  return `<div class="cl-hero"><img src="logo-as2-96.png" alt="" style="width:54px"><div class="grow"><div class="xs muted b" style="letter-spacing:.06em;text-transform:uppercase">Espace client Agence Spéciale</div><h2 style="font-size:23px">Bonjour ${esc(s.contact)}</h2><div class="muted sm">${esc(s.name)} · ${esc(s.loc)} · client depuis ${MOIS[new Date(s.since).getMonth()]} ${s.since.slice(0,4)}</div></div><div class="row wrapf"><button class="btn" data-goto="cmsg">${ic("msg")} Écrire à l'agence</button><button class="btn pri" data-goto="corder">${ic("cart")} Commander un service</button></div></div>
   <div class="kpis k4">${kpi("Agents sur votre site",`${h.team.length}<span class="muted" style="font-size:16px"> / ${h.need}</span>`,"Relève de "+SHIFTS[curShift()].l.toLowerCase()+" en cours","shield","var(--green)")}${kpi("Rondes cette nuit",rd.length,rd.reduce((a,r)=>a+r.done,0)+" points contrôlés","route")}${kpi("Incidents (30 jours)",inc.length,inc.filter(i=>i.status==="En cours").length+" en cours","book","var(--amber)")}${kpi("Factures à régler",due.length,due.length?fcfa(due.reduce((a,i)=>a+i.amount,0)):"Vous êtes à jour","file",due.length?"var(--red)":"var(--green)")}</div>
   <div class="grid2e"><div class="card"><div class="ch"><h3>Votre équipe en ce moment</h3><span class="pill p-green">${ic("check")} Site couvert</span></div><div class="list">${h.team.map(id=>{const pu=h.pun.find(x=>x.agent===id);return `<div class="li">${av(A(id).name)}<div class="grow"><div class="sm b">${esc(A(id).name)}</div><div class="xs muted">${A(id).grade} · ${pu?"arrivé à "+pu.in+", sur site":"prise de poste prévue à "+SHIFTS[curShift()].start}</div></div><span class="pill ${pu?"p-green":"p-grey"}">${pu?"En poste":"Attendu"}</span></div>`}).join("")}</div></div>
   <div class="card"><div class="ch"><h3>Derniers événements sur votre site</h3><button class="btn sm ghost" data-goto="creport">Rapports</button></div><div class="list">${inc.slice(0,4).map(i=>`<div class="li"><span style="color:var(--amber)">${ic("alert")}</span><div class="grow"><div class="sm b">${esc(i.type)}</div><div class="xs muted">${fd(i.date)} à ${i.time} · ${esc(i.txt.slice(0,70))}…</div></div></div>`).join("")||`<div class="pad sm muted">Aucun événement signalé. Tout est calme ✅</div>`}</div></div></div>`;
@@ -1355,7 +1355,7 @@ function phoneRender(){
   const a=demoAgent(),s=SI(a.site);const sd=today();
   const pu=S.punches.find(x=>x.agent===a.id&&x.date===sd&&x.shift===a.shift);
   const T={home:pHome,round:pRound,inc:pInc,plan:pPlan,me:pMe,msg:pMsg,late:pLate,mat:pMat,docs:pDocs,pay:pPay}[ptab];const unread=myMsgs(a).filter(m=>!m.read[a.id]).length;
-  $("#pw").innerHTML=`<div class="ph-head"><img src="logo-as-96.png" alt=""><div class="grow"><b style="font-family:var(--display)">Agence Spéciale · Agent</b><div class="xs muted">${esc(a.mat)}</div></div><button class="iconbtn" id="pMsgs" title="Messages">${ic("bell")}${unread?`<span class="n">${unread}</span>`:""}</button><button class="iconbtn" id="pBack" title="Changer d'espace">${ic("logout")}</button></div>`+T(a,s,pu);
+  $("#pw").innerHTML=`<div class="ph-head"><img src="logo-as2-96.png" alt=""><div class="grow"><b style="font-family:var(--display)">Agence Spéciale · Agent</b><div class="xs muted">${esc(a.mat)}</div></div><button class="iconbtn" id="pMsgs" title="Messages">${ic("bell")}${unread?`<span class="n">${unread}</span>`:""}</button><button class="iconbtn" id="pBack" title="Changer d'espace">${ic("logout")}</button></div>`+T(a,s,pu);
   const pc=S.pchecks.find(c=>c.res.some(r=>r.agent===a.id&&!r.ok));
   if(pc)$("#pw").insertAdjacentHTML("afterbegin",`<div style="position:sticky;top:0;z-index:40;padding:12px 16px 0"><div class="card pad" style="border:2px solid var(--blue);background:#F4F8FF"><b>${ic("moon")} Contrôle de présence</b><p class="sm" style="margin:4px 0 10px">La direction vérifie que les agents de nuit sont éveillés. Confirmez maintenant.</p><button class="btn pri" style="width:100%;padding:13px" id="pc-ok">${ic("check")} Je suis à mon poste, éveillé</button></div></div>`);
   const sosOn=S.sos.find(x=>x.agent===a.id&&x.status!=="Clôturée");
@@ -1506,7 +1506,7 @@ function supRender(){
   const sp=supUser();const sd=curShiftDate(),p=planFor(sd);const sh=curShift();
   const T={home:sHome,visit:sVisit,alerts:sAlerts,report:sReport,team:sTeam}[stab];
   const nAl=S.sos.filter(x=>x.status!=="Clôturée").length+p._holes.length;
-  $("#pw").innerHTML=`<div class="ph-head"><img src="logo-as-96.png" alt=""><div class="grow"><b style="font-family:var(--display)">Agence Spéciale · Superviseur</b><div class="xs muted">${esc(sp.name)} · ${sp.mat}</div></div><button class="iconbtn" id="sBack">${ic("logout")}</button></div>`+sosBannerPhone()+T(sp,p,sd,sh);
+  $("#pw").innerHTML=`<div class="ph-head"><img src="logo-as2-96.png" alt=""><div class="grow"><b style="font-family:var(--display)">Agence Spéciale · Superviseur</b><div class="xs muted">${esc(sp.name)} · ${sp.mat}</div></div><button class="iconbtn" id="sBack">${ic("logout")}</button></div>`+sosBannerPhone()+T(sp,p,sd,sh);
   $("#tabbar").innerHTML=[["home","route","Tournée"],["visit","shield","Visite"],["alerts","alert","Alertes"],["report","file","Rapport"],["team","users","Équipe"]].map(([k,i,l])=>`<button class="${stab===k?"on":""}" data-st="${k}" style="position:relative">${ic(i)}${l}${k==="alerts"&&nAl?`<span style="position:absolute;top:0;right:22%;background:var(--red);color:#fff;font-size:10px;border-radius:99px;padding:0 5px">${nAl}</span>`:""}</button>`).join("");
   $$("#tabbar [data-st]").forEach(b=>b.onclick=()=>{stab=b.dataset.st;supRender();window.scrollTo(0,0)});
   $("#sBack").onclick=()=>{location.hash="";showLogin()};
@@ -1570,7 +1570,7 @@ function showLogin(){const sf=document.getElementById("sosFab");if(sf)sf.style.d
 function phoneGate(title,msg,opts,cur,cb){
   $("#login").style.display="none";$("#app").style.display="none";$("#phone").style.display="block";$("#tabbar").innerHTML="";
   const sf=document.getElementById("sosFab");if(sf)sf.style.display="none";
-  $("#pw").innerHTML=`<div class="ph-head"><img src="logo-as-96.png" alt=""><div class="grow"><b style="font-family:var(--display)">Agence Spéciale</b><div class="xs muted">${esc(title)}</div></div><button class="iconbtn" id="gBack" title="Changer d'espace">${ic("logout")}</button></div><div class="ph-sec" style="padding-top:18px"><h2 style="font-size:21px">${esc(title)}</h2><p class="sm muted" style="margin:6px 0 16px">${esc(msg)}</p>${opts.length?`<div class="field"><select class="input" id="gSel">${opts.map(([id,l])=>`<option value="${id}" ${id===cur?"selected":""}>${esc(l)}</option>`).join("")}</select></div><button class="btn pri" id="gOk" style="width:100%;padding:12px">Continuer</button>`:""}</div>`;
+  $("#pw").innerHTML=`<div class="ph-head"><img src="logo-as2-96.png" alt=""><div class="grow"><b style="font-family:var(--display)">Agence Spéciale</b><div class="xs muted">${esc(title)}</div></div><button class="iconbtn" id="gBack" title="Changer d'espace">${ic("logout")}</button></div><div class="ph-sec" style="padding-top:18px"><h2 style="font-size:21px">${esc(title)}</h2><p class="sm muted" style="margin:6px 0 16px">${esc(msg)}</p>${opts.length?`<div class="field"><select class="input" id="gSel">${opts.map(([id,l])=>`<option value="${id}" ${id===cur?"selected":""}>${esc(l)}</option>`).join("")}</select></div><button class="btn pri" id="gOk" style="width:100%;padding:12px">Continuer</button>`:""}</div>`;
   $("#gBack").onclick=()=>{role=null;history.replaceState(null,"",location.pathname);showLogin()};
   if(opts.length)$("#gOk").onclick=()=>cb($("#gSel").value);
 }
