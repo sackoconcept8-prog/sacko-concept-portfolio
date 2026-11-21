@@ -216,7 +216,7 @@ const fd=d=>d?new Date(d).toLocaleDateString("fr-FR",{day:"numeric",month:"short
 const fdt=d=>d?new Date(d).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"—";
 const slugify=t=>String(t||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
 const JOURS=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
-const ROLES={dg:"Direction (accès complet)",rh:"Ressources humaines",superviseur:"Superviseur",agent:"Agent",client:"Client"};
+const ROLES={dg:"Direction (rapports et pilotage)",rh:"Ressources humaines / Superviseur général",superviseur:"Superviseur",commercial:"Directeur commercial (clients)",agent:"Agent",client:"Client"};
 const titre=c=>c.fonction?esc(c.fonction):(ROLES[c.role]||esc(c.role));
 let tT;function toast(m,bad){const t=$("#toast");t.textContent=m;t.className="on"+(bad?" bad":"");clearTimeout(tT);tT=setTimeout(()=>t.className="",3400)}
 function modal(title,body,foot){$("#box").innerHTML=`<div class="box-h"><h2>${title}</h2><button class="x" id="m-x" aria-label="Fermer">×</button></div><div class="box-b">${body}</div>${foot?`<div class="box-f">${foot}</div>`:""}`;$("#modal").classList.add("on");$("#m-x").onclick=closeModal;$("#modal").scrollTop=0}
@@ -293,6 +293,10 @@ let slug=(new URLSearchParams(location.search).get("a")||"").toLowerCase().repla
 try{if(!slug)slug=localStorage.getItem("espace-slug")||""}catch(_){}
 let ctx=null,ag=null,moi=null,sites=[],agents=[],comptes=[],tab="accueil",fAg={q:"",site:"",statut:"Actif"};
 const estDirection=()=>moi&&(moi.role==="dg"||moi.role==="rh");
+/* superviseur général : compte RH relié à une fiche agent → espace Supervision + espace RH */
+const estSupGeneral=()=>moi&&moi.role_reel==="rh"&&!!moi.agent_id;
+const estCommercial=()=>moi&&moi.role==="commercial";
+let dgGardeRH=true;
 const estEncadrement=()=>estDirection()||(moi&&moi.role==="superviseur");
 const emailAgent=mat=>slugify(mat)+"@"+ag.slug+".agents.sackoconcept.com";
 const siteNom=id=>(sites.find(s=>s.id===id)||{}).nom||"Sans affectation";
@@ -334,9 +338,14 @@ async function entrer(){
   if(!ctx.acces_ouvert)return bloquer(ctx.motif_blocage);
   $("#hd-moi").textContent=moi.nom_complet+" · "+(moi.fonction||ROLES[moi.role]||moi.role);
   ecran("app");majAvatar();$("#hd-av").onclick=maPhoto;
-  if(moi.role==="rh")espace="rh";else if(moi.role==="dg"){try{espace=localStorage.getItem("espace-"+moi.id)==="rh"?"rh":"direction"}catch(_){espace="direction"}}
-  const G=estDirection()?menuDirection():null;
-  const T=G?G.flatMap(g=>g[1]):moi.role==="superviseur"?[["pointage","Pointage"],["visites","Visites et notes"],["rapport","Mon rapport"],["equipe","Mes agents"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"]]
+  moi.role_reel=moi.role;espace="direction";
+  if(moi.role==="dg"){try{const q=await sb.from("profiles").select("id").eq("role","rh").eq("est_actif",true).limit(1);dgGardeRH=!(q.data||[]).length}catch(_){dgGardeRH=true}
+    try{espace=dgGardeRH&&localStorage.getItem("espace-"+moi.id)==="rh"?"rh":"direction"}catch(_){}}
+  else if(moi.role==="rh"){if(estSupGeneral()){try{espace=localStorage.getItem("espace-"+moi.id)==="rh"?"rh":"supervision"}catch(_){espace="supervision"}}else espace="rh"}
+  else if(moi.role==="commercial")espace="commercial";
+  appliquerEspace();
+  const G=estDirection()||estSupGeneral()||estCommercial()?menuDirection():null;
+  const T=G?G.flatMap(g=>g[1]):moi.role==="superviseur"?MENU_SUP
     :moi.role==="agent"?[["accueil","Accueil"],["monplanning","Planning"],["mesdemandes","Demandes"],["mesdocs","Documents"],["mesmsg","Messages"],["mapaie","Paie"]]
     :moi.role==="client"?[["client","Mon site"],["cl-incidents","Incidents"],["cl-factures","Factures"],["cl-demandes","Demandes"]]:[["accueil","Accueil"]];
   $("#layout").classList.toggle("avec",!!G);$("#side").classList.toggle("hide",!G);$("#tabs").classList.toggle("hide",!!G);$("#menu-btn").classList.toggle("hide",!G);
@@ -349,17 +358,24 @@ async function entrer(){
   if(moi.role==="agent")envoyerFile();
 }
 let espace="direction";
+/* le superviseur général travaille en « superviseur » dans l'espace Supervision et en « rh » dans l'espace RH (ses droits réels restent ceux du RH) */
+function appliquerEspace(){if(estSupGeneral())moi.role=espace==="supervision"?"superviseur":"rh"}
+const MENU_SUP=[["pointage","Pointage"],["visites","Visites et notes"],["rapport","Mon rapport"],["equipe","Mes agents"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"]];
 function menuDirection(){
+  if(espace==="supervision")return [["Supervision",MENU_SUP]];
+  if(espace==="commercial")return [["Clients",[["sites","Sites clients"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["support","Support"]]]];
   if(espace==="rh")return [["",[["accueil","Tableau de bord RH"]]],["Personnel",[["agents","Agents"],["conges","Congés"],["documents","Documents RH"],["messages","Messages"],["paie","Paie"],["materiel","Matériel"]]],
     ["Suivi",[["planning","Planning"],["pointage","Pointage"]]],["Aide",[["support","Support"]]]];
   return [["",[["accueil","Tableau de bord"]]],["Opérations",[["planning","Planning"],["pointage","Pointage"],["incidents","Main courante"],["rondes","Rondes"],["supervision","Supervision"]]],
     ["Clients",[["sites","Sites"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["comptes","Comptes"],["reglages","Réglages"],["support","Support"]]]];
 }
 function dessinerMenu(G){
-  const sw=moi.role==="dg"?`<div class="esp"><button data-esp="direction" class="${espace==="direction"?"on":""}">Direction</button><button data-esp="rh" class="${espace==="rh"?"on":""}">Espace RH</button></div>`:`<div class="grp" style="margin-top:4px">Espace RH</div>`;
+  const sw=moi.role_reel==="dg"&&dgGardeRH?`<div class="esp"><button data-esp="direction" class="${espace==="direction"?"on":""}">Direction</button><button data-esp="rh" class="${espace==="rh"?"on":""}">Espace RH</button></div>`
+    :estSupGeneral()?`<div class="esp"><button data-esp="supervision" class="${espace==="supervision"?"on":""}">Supervision</button><button data-esp="rh" class="${espace==="rh"?"on":""}">Espace RH</button></div>`
+    :`<div class="grp" style="margin-top:4px">${moi.role_reel==="dg"?"Direction":moi.role_reel==="commercial"?"Direction commerciale":"Espace RH"}</div>`;
   $("#side").innerHTML=sw+G.map(([g,l])=>(g?`<div class="grp">${g}</div>`:"")+l.map(([k,x])=>`<button data-tab="${k}">${x}<span class="badge hide" data-b="${k}"></span></button>`).join("")).join("");
-  $("#side").querySelectorAll("[data-esp]").forEach(b=>b.onclick=e=>{e.stopPropagation();if(espace===b.dataset.esp)return;espace=b.dataset.esp;try{localStorage.setItem("espace-"+moi.id,espace)}catch(_){}
-    const mob=getComputedStyle($("#menu-btn")).display!=="none";dessinerMenu(menuDirection());ouvrir("accueil").then(()=>{if(mob)menu(true)});verifierAlertes().catch(()=>{})});
+  $("#side").querySelectorAll("[data-esp]").forEach(b=>b.onclick=e=>{e.stopPropagation();if(espace===b.dataset.esp)return;espace=b.dataset.esp;try{localStorage.setItem("espace-"+moi.id,espace)}catch(_){}appliquerEspace();
+    const mob=getComputedStyle($("#menu-btn")).display!=="none";const M=menuDirection();dessinerMenu(M);ouvrir(M[0][1][0][0]).then(()=>{if(mob)menu(true)});verifierAlertes().catch(()=>{})});
 }
 async function bloquer(motif){
   const M={suspendu:["Accès suspendu","L'accès de votre agence à ce logiciel est suspendu. Vos données sont conservées. Contactez SACKO CONCEPT pour le rétablir."],
@@ -379,9 +395,10 @@ async function charger(){
   const [s,a,c]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.from("agents").select("*").order("nom"),sb.from("profiles").select("id,nom_complet,role,fonction,photo_url,agent_id,site_id,est_actif,derniere_connexion").order("created_at")]);
   sites=must(s);agents=must(a);comptes=must(c);
 }
+async function chargerCommercial(){const [s,a]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.rpc("agents_noms")]);sites=must(s);agents=must(a).sort((x,y)=>String(x.nom).localeCompare(String(y.nom)));comptes=[]}
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button,#side button[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));menu(false);window.scrollTo(0,0);
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estEncadrement())await charger();await({accueil:moi.role==="agent"?vAgentAccueil:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
+  try{if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();await({accueil:moi.role==="agent"?vAgentAccueil:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
@@ -552,13 +569,13 @@ async function appel(body){
 
 /* ---------- comptes de l'équipe ---------- */
 function vComptes(){
-  const eq=comptes.filter(c=>c.role!=="agent"),creables=moi.role==="dg"?["rh","superviseur","client"]:["superviseur","client"];
+  const eq=comptes.filter(c=>c.role!=="agent"),creables=moi.role_reel==="dg"?["rh","superviseur","commercial","client"]:["superviseur","client"];
   $("#main").innerHTML=`<div class="head"><div><h1>Comptes de l'équipe</h1><p class="muted sm" style="margin:2px 0 0">Direction, ressources humaines et superviseurs. Les accès des agents se créent depuis leur fiche.</p></div><button class="btn pri" id="c-new">+ Nouveau compte</button></div>
   <div class="card">${eq.map(c=>{const gerable=creables.includes(c.role);return `<div class="line">${avatar(c)}<div class="grow"><b>${esc(c.nom_complet)}</b>${c.id===moi.id?' <span class="muted sm">(vous)</span>':""}<div class="muted xs">${titre(c)}${c.fonction?" · accès "+ROLES[c.role].toLowerCase():""} · dernière connexion : ${fdt(c.derniere_connexion)}</div></div><span class="pill ${c.est_actif?"p-green":"p-grey"}">${c.est_actif?"Actif":"Désactivé"}</span>${gerable?`<button class="btn sm" data-mdp="${c.id}">Nouveau mot de passe</button><button class="btn sm ${c.est_actif?"danger":""}" data-act="${c.id}" data-val="${c.est_actif?0:1}">${c.est_actif?"Désactiver":"Réactiver"}</button>`:""}</div>`}).join("")}</div>`;
   $("#c-new").onclick=()=>{
     modal("Nouveau compte",`<div class="row"><div class="field"><label class="f">Niveau d'accès</label><select class="input" id="k-role">${creables.map(k=>`<option value="${k}">${k==="client"?"Client (voit son site)":ROLES[k]}</option>`).join("")}</select></div><div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div></div>
     <div class="field hide" id="k-sb"><label class="f">Site du client</label><select class="input" id="k-site">${sites.map(x=>`<option value="${x.id}">${esc(x.nom)}</option>`).join("")}</select></div>
-    <div class="field"><label class="f">Fonction affichée <span class="muted" style="font-weight:400">(ex. CEO, Directeur général, DRH)</span></label><input class="input" id="k-fonc" maxlength="60"></div>
+    <div class="field"><label class="f">Fonction affichée <span class="muted" style="font-weight:400">(ex. Superviseur général, Directeur commercial, Superviseur)</span></label><input class="input" id="k-fonc" maxlength="60"></div>
     <div class="field"><label class="f">Adresse e-mail (sert d'identifiant)</label><input class="input" id="k-mail" type="email" autocomplete="off"></div>
     <div class="field"><label class="f">Mot de passe provisoire (8 caractères minimum)</label><input class="input" id="k-mdp" type="text" autocomplete="off"></div>`,`<button class="btn" id="k-no">Annuler</button><button class="btn pri" id="k-ok">Créer le compte</button>`);
     $("#k-no").onclick=closeModal;$("#k-ok").onclick=()=>busy($("#k-ok"),async()=>{const rl=$("#k-role").value;if(rl==="client"&&!sites.length)throw new Error("Créez d'abord le site du client.");await appel({action:"creer",role:rl,site_id:rl==="client"?$("#k-site").value:null,fonction:$("#k-fonc").value,nom_complet:$("#k-nom").value,email:$("#k-mail").value,mot_de_passe:$("#k-mdp").value});closeModal();toast("Compte créé");await ouvrir("comptes")});
