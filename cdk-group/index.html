@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>CDK GROUP · Plateforme de gestion du groupe</title>
+<link rel="icon" href="logo-cdk-96.png">
+<link rel="apple-touch-icon" href="logo-cdk-192.png">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--p:#1f6fe5;--p-l:#e8f1fe;--v:#4b1d52;--v-l:#f3e9f4;--bg:#f5f7fb;--card:#fff;--ink:#16202e;--muted:#64708a;--line:#e3e8f0;--green:#16884f;--green-l:#e3f4ea;--red:#c23b3b;--red-l:#fbe9e9;--amber:#b06e0c;--amber-l:#fdf2df;--r:16px;--display:Poppins,Inter,sans-serif}
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.2}h1{font-size:25px}h2{font-size:17px;margin-bottom:12px}h3{font-size:15px}
+.muted{color:var(--muted)}.sm{font-size:13px}.xs{font-size:12px}.b{font-weight:700}.hide{display:none!important}.grow{flex:1;min-width:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font:600 14px Inter,sans-serif;color:var(--ink);cursor:pointer;text-decoration:none}
+.btn:hover{border-color:var(--p)}.btn.pri{background:var(--p);border-color:var(--p);color:#fff}.btn.pri:hover{filter:brightness(.93)}.btn.sm{padding:6px 10px;font-size:13px}
+.btn.ok{color:var(--green)}.btn.ko{color:var(--red)}
+.input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:14px Inter,sans-serif;background:#fff;color:var(--ink)}textarea.input{min-height:90px;resize:vertical}
+.field{margin-bottom:12px;flex:1 1 180px}.f{display:block;font-weight:600;font-size:13px;margin-bottom:5px}.row{display:flex;gap:12px;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.p-green{background:var(--green-l);color:var(--green)}.p-red{background:var(--red-l);color:var(--red)}.p-amber{background:var(--amber-l);color:var(--amber)}.p-blue{background:var(--p-l);color:var(--p)}.p-grey{background:#eef1f5;color:var(--muted)}.p-violet{background:var(--v-l);color:var(--v)}
+.ribbon{background:linear-gradient(90deg,var(--p),var(--v));color:#fff;text-align:center;font-size:12.5px;padding:7px 12px;font-weight:600}
+/* accueil */
+#login{min-height:100vh;padding:28px 18px 50px;max-width:1180px;margin:0 auto}
+.brand-top{text-align:center;margin:10px 0 26px}.brand-top img{width:118px;height:118px;object-fit:contain}
+.brand-top h1{font-size:30px;margin-top:6px}.brand-top p{max-width:640px;margin:8px auto 0}
+.sec-t{font:700 12px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:26px 0 12px;display:flex;align-items:center;gap:12px}.sec-t:after{content:"";flex:1;height:1px;background:var(--line)}
+.esp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.esp{border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:16px;text-align:left;cursor:pointer;font:inherit;color:inherit;display:flex;gap:12px;align-items:flex-start;transition:.15s}
+.esp:hover{border-color:var(--p);transform:translateY(-2px);box-shadow:0 10px 26px rgba(31,111,229,.1)}
+.ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex:none}
+.esp b{display:block;font-family:var(--display);font-size:14.5px}.esp .grow>span{font-size:12.5px;color:var(--muted)}.esp .ico{font-size:21px}
+/* app */
+.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.top-in{display:flex;align-items:center;gap:12px;padding:10px 18px}
+.top-in img{width:40px;height:40px;object-fit:contain}.who b{display:block;font-family:var(--display);font-size:14px}.who span{font-size:12px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 61px)}
+#side{background:#fff;border-right:1px solid var(--line);padding:14px 10px}
+#side .grp{font:700 11px Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 10px 6px}
+#side button{display:flex;align-items:center;gap:9px;width:100%;border:0;background:none;padding:9px 12px;border-radius:10px;font:500 14px Inter;color:var(--ink);cursor:pointer;text-align:left}
+#side button:hover{background:var(--bg)}#side button.on{background:var(--p-l);color:var(--p);font-weight:700}
+#side .bdg{margin-left:auto;background:var(--red);color:#fff;border-radius:999px;font-size:11px;padding:1px 7px}
+main{padding:24px;max-width:1200px;width:100%}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:16px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px}.tile b{display:block;font:800 24px var(--display)}.tile.click{cursor:pointer}.tile.click:hover{border-color:var(--p)}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.dcard{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;cursor:pointer}.dcard:hover{border-color:var(--p)}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:13px;margin-top:10px}.kv span:nth-child(even){font-weight:700;text-align:right}
+.line{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}.line:last-child{border-bottom:0}.line.click{cursor:pointer}
+.bar{height:8px;background:#edf1f7;border-radius:99px;overflow:hidden;min-width:90px}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--p),var(--v))}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}.tbl th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:8px;border-bottom:1px solid var(--line)}.tbl td{padding:10px 8px;border-bottom:1px solid var(--line)}
+.scroll{overflow-x:auto}
+.comment{background:var(--bg);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:13px}
+.idbox{background:var(--p-l);border:1px solid #cfe0fb;border-radius:12px;padding:12px 14px;margin-bottom:16px}
+.empty{text-align:center;padding:36px 16px;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:var(--r)}
+#modal{position:fixed;inset:0;background:rgba(16,24,40,.38);display:none;align-items:flex-start;justify-content:center;padding:40px 14px;z-index:50;overflow-y:auto}#modal.on{display:flex}
+.box{background:#fff;border-radius:18px;width:min(620px,100%);box-shadow:0 20px 60px rgba(16,24,40,.25)}
+.box-h{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}.box-b{padding:18px}.box-f{display:flex;justify-content:flex-end;gap:8px;padding:14px 18px;border-top:1px solid var(--line)}
+.x{border:0;background:none;font-size:24px;cursor:pointer;color:var(--muted)}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-weight:500;opacity:0;pointer-events:none;transition:.25s;z-index:60}#toast.on{opacity:1}
+#menu-btn{display:none}
+@media(max-width:860px){.layout{grid-template-columns:1fr}#side{position:fixed;inset:61px 0 0 0;z-index:30;display:none;overflow-y:auto}#side.open{display:block}#menu-btn{display:inline-flex}main{padding:16px}.who span{display:none}}
+</style>
+</head>
+<body>
+<div class="ribbon">Démonstration · Plateforme de gestion CDK GROUP — données d'exemple, aucune donnée réelle</div>
+
+<section id="login">
+  <div class="brand-top"><img src="logo-cdk-512.png" alt="CDK GROUP"><h1>Plateforme de gestion du groupe</h1>
+  <p class="muted">Chaque poste a son espace : la Présidence pilote tout le groupe, chaque département rend compte de son activité, et les conseillers éclairent les décisions.</p></div>
+  <div id="espaces"></div>
+  <p class="muted xs" style="text-align:center;margin-top:30px"><button class="btn sm" id="reset">Réinitialiser la démonstration</button></p>
+</section>
+
+<div id="app" class="hide">
+  <header class="top"><div class="top-in"><button class="btn sm" id="menu-btn">☰</button><img src="logo-cdk-96.png" alt=""><div class="who grow"><b id="who-poste"></b><span id="who-dept"></span></div><button class="btn sm" id="switch">Changer d'espace</button></div></header>
+  <div class="layout"><aside id="side"></aside><main id="main"></main></div>
+</div>
+<div id="modal"><div class="box" id="box"></div></div>
+<div id="toast"></div>
+
+<script>
+/* ================= Données de la démonstration ================= */
+const DEPTS=[
+ {id:"secu",nom:"CDK Sécurité",ico:"🛡️",c:"#1f6fe5",poste:"Responsable CDK Sécurité",kpis:[["agents","Agents en poste"],["sites","Sites sécurisés"],["incidents","Incidents"],["ponctualite","Ponctualité (%)"]]},
+ {id:"tour",nom:"Tourisme & Partenariats",ico:"🌍",c:"#0f8f7a",poste:"Chargé(e) des partenariats et du Tourisme",kpis:[["visiteurs","Visiteurs accueillis"],["circuits","Circuits vendus"],["partenaires","Nouveaux partenaires"],["ca","Chiffre d'affaires (F CFA)"]]},
+ {id:"mari",nom:"Services Maritimes",ico:"⚓",c:"#2357a8",poste:"Responsable Services Maritimes",kpis:[["navires","Navires traités"],["escales","Escales"],["conteneurs","Conteneurs manutentionnés"],["ca","Chiffre d'affaires (F CFA)"]]},
+ {id:"hali",nom:"Halieutique",ico:"🐟",c:"#0b7fa6",poste:"Responsable Halieutique",kpis:[["tonnes","Tonnes débarquées"],["pirogues","Pirogues suivies"],["ventes","Ventes (F CFA)"],["pertes","Pertes (%)"]]},
+ {id:"comm",nom:"Communication & Événementiel",ico:"📣",c:"#b2457f",poste:"Responsable Communication & Événementiel",kpis:[["evenements","Événements organisés"],["publications","Publications"],["abonnes","Nouveaux abonnés"],["presse","Retombées presse"]]},
+ {id:"rest",nom:"Restauration & Services généraux",ico:"🍽️",c:"#c0741a",poste:"Responsable Restauration et Services généraux",kpis:[["couverts","Couverts servis"],["prestations","Prestations traiteur"],["stock","Ruptures de stock"],["satisfaction","Satisfaction (%)"]]},
+ {id:"soc",nom:"Social",ico:"🤝",c:"#6b3fa0",poste:"Responsable Social",kpis:[["dossiers","Dossiers traités"],["beneficiaires","Bénéficiaires"],["actions","Actions menées"],["budget","Budget engagé (F CFA)"]]},
+ {id:"mob",nom:"Mobilité, Transport & Immobilier",ico:"🚚",c:"#3d6b2c",poste:"Responsable Mobilité, Transport et Immobilier",kpis:[["courses","Courses / livraisons"],["vehicules","Véhicules en service"],["biens","Biens loués"],["loyers","Loyers encaissés (F CFA)"]]}
+];
+const DIRECTION=[
+ {id:"pres",poste:"Président Fondateur",ico:"👑",c:"#4b1d52",desc:"Vue de tout le groupe, validations, tâches et décisions."},
+ {id:"dop",poste:"Directeur des Opérations",ico:"🧭",c:"#1f6fe5",desc:"Suit les départements, donne son avis et prépare les décisions."}
+];
+const CONSEIL=[
+ {id:"jur",poste:"Conseiller juridique",ico:"⚖️",c:"#5a6475",desc:"Lit les rapports et conseille le Président sur la conformité."},
+ {id:"pp",poste:"Porte-parole",ico:"🎙️",c:"#b2457f",desc:"Lit les rapports, conseille le Président et prépare la communication officielle."}
+];
+const KEY="cdk-group-demo-v1";
+const iso=d=>d.toISOString().slice(0,10);const today=new Date();const J=n=>{const d=new Date(today);d.setDate(d.getDate()+n);return iso(d)};
+const MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const moisCourant=MOIS[today.getMonth()]+" "+today.getFullYear(),moisPrec=MOIS[(today.getMonth()+11)%12]+" "+(today.getMonth()?today.getFullYear():today.getFullYear()-1);
+function seed(){
+  const val={secu:{agents:42,sites:11,incidents:3,ponctualite:94},tour:{visiteurs:860,circuits:37,partenaires:4,ca:12500000},mari:{navires:28,escales:31,conteneurs:1240,ca:48300000},hali:{tonnes:62,pirogues:45,ventes:18900000,pertes:6},comm:{evenements:5,publications:48,abonnes:1320,presse:9},rest:{couverts:4120,prestations:14,stock:2,satisfaction:91},soc:{dossiers:76,beneficiaires:310,actions:12,budget:6400000},mob:{courses:540,vehicules:18,biens:23,loyers:9750000}};
+  const r=[];let n=1;
+  DEPTS.forEach(d=>{const v=val[d.id];const prev={};Object.keys(v).forEach(k=>prev[k]=Math.round(v[k]*(0.85+Math.random()*0.2)));
+    r.push({id:"r"+n++,dept:d.id,periode:moisPrec,date:J(-20),titre:"Rapport mensuel · "+moisPrec,kpis:prev,texte:"Activité conforme aux objectifs. Points d'attention signalés en réunion de direction.",statut:"Lu",comments:[{de:"pres",t:"Bon travail. Maintenez le rythme.",date:J(-18)}]});
+    r.push({id:"r"+n++,dept:d.id,periode:moisCourant,date:J(-2),titre:"Rapport mensuel · "+moisCourant,kpis:v,texte:{secu:"Deux sites supplémentaires couverts. Trois incidents mineurs gérés sans suite. Besoin de 4 agents de plus pour le port.",tour:"Hausse des visiteurs liée aux circuits côtiers. Deux partenariats hôteliers signés.",mari:"Activité soutenue au port. Retard d'une escale à cause de la météo.",hali:"Bonne saison. Les pertes restent élevées faute de chambre froide.",comm:"Lancement de la campagne de fin d'année. Couverture presse en hausse.",rest:"Deux ruptures de stock sur les boissons. Satisfaction stable.",soc:"Campagne de soutien scolaire réalisée. Budget presque entièrement engagé.",mob:"Deux véhicules en panne. Taux d'occupation des biens à 92 %."}[d.id],statut:"Soumis",comments:[]})});
+  return {
+    rapports:r,
+    demandes:[
+      {id:"d1",dept:"hali",type:"Investissement",objet:"Achat d'une chambre froide pour réduire les pertes",montant:7500000,date:J(-3),statut:"En attente",avisDop:"Favorable : retour sur investissement en moins d'un an.",decision:""},
+      {id:"d2",dept:"secu",type:"Recrutement",objet:"Recruter 4 agents pour le site du port",montant:1600000,date:J(-2),statut:"En attente",avisDop:"",decision:""},
+      {id:"d3",dept:"mob",type:"Matériel",objet:"Réparation de deux véhicules de livraison",montant:850000,date:J(-6),statut:"Validée",avisDop:"Urgent.",decision:"Accordé. Choisir le garage le moins cher sur 3 devis."},
+      {id:"d4",dept:"comm",type:"Budget",objet:"Budget de la soirée partenaires de fin d'année",montant:3200000,date:J(-1),statut:"En attente",avisDop:"",decision:""},
+      {id:"d5",dept:"rest",type:"Autorisation",objet:"Nouveau fournisseur de boissons",montant:0,date:J(-9),statut:"Refusée",avisDop:"",decision:"Garder le fournisseur actuel jusqu'à la fin du contrat."}
+    ],
+    taches:[
+      {id:"t1",dept:"secu",titre:"Présenter le plan de couverture du nouveau site portuaire",echeance:J(5),prio:"Haute",av:40,de:"pres"},
+      {id:"t2",dept:"tour",titre:"Signer 3 nouveaux partenariats hôteliers",echeance:J(20),prio:"Normale",av:66,de:"pres"},
+      {id:"t3",dept:"mari",titre:"Réduire le délai moyen d'escale",echeance:J(-2),prio:"Haute",av:50,de:"dop"},
+      {id:"t4",dept:"hali",titre:"Étude de prix pour une chambre froide",echeance:J(3),prio:"Normale",av:100,de:"dop"},
+      {id:"t5",dept:"comm",titre:"Plan de communication de fin d'année",echeance:J(7),prio:"Haute",av:70,de:"pres"},
+      {id:"t6",dept:"soc",titre:"Bilan de la campagne de soutien scolaire",echeance:J(-1),prio:"Normale",av:30,de:"dop"},
+      {id:"t7",dept:"mob",titre:"Inventaire des biens immobiliers loués",echeance:J(12),prio:"Basse",av:10,de:"pres"},
+      {id:"t8",dept:"rest",titre:"Mettre en place un suivi des stocks",echeance:J(9),prio:"Normale",av:25,de:"dop"}
+    ],
+    personnel:DEPTS.flatMap((d,i)=>Array.from({length:3+i%3},(_,k)=>({id:d.id+"p"+k,dept:d.id,mat:"CDK-"+String(100+i*10+k),poste:["Agent","Assistant(e)","Chargé(e) de mission","Technicien(ne)","Superviseur"][k%5],contrat:k%2?"CDD":"CDI",statut:k===2?"En congé":"Actif"}))),
+    avis:[{id:"a1",de:"jur",rapport:null,objet:"Contrats des nouveaux partenaires hôteliers",texte:"Prévoir une clause de résiliation et une clause de confidentialité avant signature.",date:J(-4),statut:"Lu",reponse:"D'accord, transmettez un modèle au département Tourisme."}],
+    seen:{}
+  };
+}
+let D;try{D=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!D)D=seed();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}};
+
+/* ================= Outils ================= */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fd=s=>s?new Date(s+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"}):"—";
+const nf=n=>Number(n||0).toLocaleString("fr-FR");
+const uid=()=>Math.random().toString(36).slice(2,9);
+const DP=id=>DEPTS.find(d=>d.id===id)||{};
+const POSTE=r=>{const a=[...DIRECTION,...CONSEIL].find(x=>x.id===r);return a?a.poste:(DP(r).poste||r)};
+let tT;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(tT);tT=setTimeout(()=>t.classList.remove("on"),2600)}
+function modal(t,b,f){$("#box").innerHTML=`<div class="box-h"><h3 class="grow">${t}</h3><button class="x" id="mx">×</button></div><div class="box-b">${b}</div>${f?`<div class="box-f">${f}</div>`:""}`;$("#modal").classList.add("on");$("#mx").onclick=close}
+function close(){$("#modal").classList.remove("on")}
+$("#modal").onclick=e=>{if(e.target.id==="modal")close()};
+const ST={"En attente":"p-amber",Validée:"p-green",Refusée:"p-red",Soumis:"p-blue",Lu:"p-grey",Commenté:"p-violet"};
+const retard=t=>t.av<100&&t.echeance<iso(today);
+
+/* ================= Choix de l'espace ================= */
+function accueil(){
+  const card=(id,ico,c,t,s)=>`<button class="esp" data-go="${id}"><span class="ico" style="background:${c}18;color:${c}">${ico}</span><span class="grow"><b>${esc(t)}</b><span>${esc(s)}</span></span></button>`;
+  $("#espaces").innerHTML=`<div class="sec-t">Présidence et direction</div><div class="esp-grid">${DIRECTION.map(x=>card(x.id,x.ico,x.c,x.poste,x.desc)).join("")}</div>
+  <div class="sec-t">Conseil</div><div class="esp-grid">${CONSEIL.map(x=>card(x.id,x.ico,x.c,x.poste,x.desc)).join("")}</div>
+  <div class="sec-t">Départements</div><div class="esp-grid">${DEPTS.map(d=>card(d.id,d.ico,d.c,d.poste,d.nom+" · rapports, demandes, tâches, personnel")).join("")}</div>`;
+  $$("[data-go]").forEach(b=>b.onclick=()=>entrer(b.dataset.go));
+}
+$("#reset").onclick=()=>{if(confirm("Effacer les modifications et revenir aux données d'exemple ?")){D=seed();save();toast("Démonstration réinitialisée")}};
+
+/* ================= Espaces ================= */
+let role=null,tab="";
+const estDir=()=>role==="pres"||role==="dop",estCons=()=>role==="jur"||role==="pp",estDept=()=>!!DEPTS.find(d=>d.id===role);
+function menu(){
+  if(estDir())return [["Pilotage",[["dash","🏠 Vue du groupe"],["depts","🏢 Départements"],["rapports","📄 Rapports reçus"],["demandes","✅ Demandes à "+(role==="pres"?"valider":"examiner")],["taches","🎯 Tâches et objectifs"],["avis","💡 Avis des conseillers"]]]];
+  if(estCons())return [["Mon espace",[["cdash","🏠 Accueil"],["rapports","📄 Rapports soumis"],["mesavis","💡 Mes avis au Président"]]]];
+  return [["Mon département",[["ddash","🏠 Tableau de bord"],["drap","📄 Mes rapports"],["ddem","✅ Mes demandes"],["dtach","🎯 Mes tâches"],["dpers","👥 Personnel"]]]];
+}
+function badges(){const b={};
+  if(estDir()){b.rapports=D.rapports.filter(r=>r.statut==="Soumis").length;b.demandes=D.demandes.filter(d=>d.statut==="En attente"&&(role==="pres"||!d.avisDop)).length;b.taches=D.taches.filter(retard).length;b.avis=D.avis.filter(a=>a.statut==="Nouveau").length}
+  if(estDept()){b.dtach=D.taches.filter(t=>t.dept===role&&t.av<100).length;b.drap=D.rapports.filter(r=>r.dept===role&&r.comments.length&&!D.seen[r.id+role]).length}
+  return b}
+function entrer(r){role=r;$("#login").classList.add("hide");$("#app").classList.remove("hide");
+  $("#who-poste").textContent=POSTE(r);$("#who-dept").textContent=estDept()?DP(r).nom:estCons()?"Conseil · CDK GROUP":"Direction · CDK GROUP";
+  ouvrir(menu()[0][1][0][0])}
+$("#switch").onclick=()=>{role=null;$("#app").classList.add("hide");$("#login").classList.remove("hide");window.scrollTo(0,0)};
+$("#menu-btn").onclick=()=>$("#side").classList.toggle("open");
+function dessinerMenu(){const b=badges();$("#side").innerHTML=menu().map(([g,l])=>`<div class="grp">${g}</div>`+l.map(([k,t])=>`<button data-t="${k}" class="${tab===k?"on":""}">${t}${b[k]?`<span class="bdg">${b[k]}</span>`:""}</button>`).join("")).join("");
+  $$("#side [data-t]").forEach(x=>x.onclick=()=>{$("#side").classList.remove("open");ouvrir(x.dataset.t)})}
+function ouvrir(t,arg){tab=t;dessinerMenu();window.scrollTo(0,0);
+  ({dash:vDash,depts:vDepts,rapports:vRapports,demandes:vDemandes,taches:vTaches,avis:vAvisDir,cdash:vCDash,mesavis:vMesAvis,ddash:vDDash,drap:vDRap,ddem:vDDem,dtach:vDTach,dpers:vDPers,dept:vDept}[t])(arg);
+  $$("#main [data-go]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go,b.dataset.arg));
+  $$("#main [data-rap]").forEach(b=>b.onclick=()=>lireRapport(b.dataset.rap));
+  $$("#main [data-dem]").forEach(b=>b.onclick=()=>ficheDemande(b.dataset.dem));}
+const head=(t,s,a="")=>`<div class="head"><div><h1>${t}</h1>${s?`<p class="muted sm" style="margin:4px 0 0">${s}</p>`:""}</div><div class="row">${a}</div></div>`;
+const dernier=dep=>D.rapports.filter(r=>r.dept===dep).sort((a,b)=>b.date.localeCompare(a.date))[0];
+const rapLigne=r=>`<div class="line click" data-rap="${r.id}"><span class="ico" style="width:36px;height:36px;font-size:17px;background:${DP(r.dept).c}18">${DP(r.dept).ico}</span><div class="grow"><b>${esc(r.titre)}</b><div class="muted xs">${esc(DP(r.dept).nom)} · envoyé le ${fd(r.date)}${r.comments.length?" · "+r.comments.length+" commentaire(s)":""}</div></div><span class="pill ${ST[r.statut]}">${r.statut}</span></div>`;
+const demLigne=d=>`<div class="line click" data-dem="${d.id}"><span class="ico" style="width:36px;height:36px;font-size:17px;background:${DP(d.dept).c}18">${DP(d.dept).ico}</span><div class="grow"><b>${esc(d.objet)}</b><div class="muted xs">${esc(DP(d.dept).nom)} · ${esc(d.type)}${d.montant?" · "+nf(d.montant)+" F CFA":""} · ${fd(d.date)}${d.avisDop?" · avis du Directeur des Opérations donné":""}</div></div><span class="pill ${ST[d.statut]}">${d.statut}</span></div>`;
+const tacLigne=(t,edit)=>`<div class="line"><div class="grow" style="min-width:200px"><b>${esc(t.titre)}</b><div class="muted xs">${esc(DP(t.dept).nom)} · pour le ${fd(t.echeance)} · priorité ${t.prio.toLowerCase()} · fixée par ${t.de==="pres"?"le Président":"le Directeur des Opérations"}</div></div><div style="width:150px"><div class="bar"><i style="width:${t.av}%"></i></div><div class="xs muted" style="margin-top:3px">${t.av} %</div></div>${retard(t)?'<span class="pill p-red">En retard</span>':t.av>=100?'<span class="pill p-green">Terminée</span>':'<span class="pill p-blue">En cours</span>'}${edit?`<button class="btn sm" data-av="${t.id}">Mettre à jour</button>`:""}</div>`;
+
+/* ---------- Présidence & Direction ---------- */
+function vDash(){
+  const att=D.demandes.filter(d=>d.statut==="En attente"),nl=D.rapports.filter(r=>r.statut==="Soumis"),ret=D.taches.filter(retard);
+  const montant=att.reduce((t,d)=>t+(+d.montant||0),0);
+  $("#main").innerHTML=head(role==="pres"?"Vue du groupe":"Suivi des opérations",`CDK GROUP · ${DEPTS.length} départements · ${moisCourant}`,`<button class="btn pri" id="nt">+ Nouvelle tâche</button>`)+
+  `<div class="tiles"><div class="tile click" data-go="rapports"><b style="color:var(--p)">${nl.length}</b><span class="muted sm">Rapports à lire</span></div><div class="tile click" data-go="demandes"><b style="color:var(--amber)">${att.length}</b><span class="muted sm">Demandes en attente · ${nf(montant)} F CFA</span></div><div class="tile click" data-go="taches"><b style="color:${ret.length?"var(--red)":"var(--green)"}">${ret.length}</b><span class="muted sm">Tâches en retard</span></div><div class="tile"><b>${D.personnel.filter(p=>p.statut==="Actif").length}</b><span class="muted sm">Employés actifs (démo)</span></div></div>
+  <div class="card"><h2>Les départements ce mois-ci</h2><div class="dgrid">${DEPTS.map(d=>{const r=dernier(d.id),t=D.taches.filter(x=>x.dept===d.id),av=t.length?Math.round(t.reduce((a,x)=>a+x.av,0)/t.length):0;
+    return `<div class="dcard" data-go="dept" data-arg="${d.id}"><div class="row" style="align-items:center;gap:10px"><span class="ico" style="background:${d.c}18;color:${d.c}">${d.ico}</span><div class="grow"><b class="b">${esc(d.nom)}</b><div class="xs muted">${r&&r.statut==="Soumis"?'<span class="pill p-blue">Nouveau rapport</span>':"Rapport lu"}</div></div></div>
+    <div class="kv">${d.kpis.slice(0,3).map(([k,l])=>`<span class="muted">${l}</span><span>${r?nf(r.kpis[k]):"—"}</span>`).join("")}<span class="muted">Avancement des tâches</span><span>${av} %</span></div></div>`}).join("")}</div></div>
+  <div class="row" style="align-items:flex-start"><div class="card grow" style="flex:1 1 360px"><h2>Demandes en attente</h2>${att.map(demLigne).join("")||'<p class="muted sm">Aucune demande en attente.</p>'}</div>
+  <div class="card grow" style="flex:1 1 360px"><h2>Derniers rapports</h2>${[...D.rapports].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5).map(rapLigne).join("")}</div></div>`;
+  $("#nt").onclick=()=>nouvelleTache()}
+function vDepts(){$("#main").innerHTML=head("Départements","Cliquez sur un département pour voir son rapport, ses demandes, ses tâches et son personnel.")+`<div class="dgrid">${DEPTS.map(d=>`<div class="dcard" data-go="dept" data-arg="${d.id}"><div class="row" style="align-items:center;gap:10px"><span class="ico" style="background:${d.c}18;color:${d.c}">${d.ico}</span><div class="grow"><b class="b">${esc(d.nom)}</b><div class="xs muted">${esc(d.poste)}</div></div></div><div class="kv"><span class="muted">Personnel</span><span>${D.personnel.filter(p=>p.dept===d.id).length}</span><span class="muted">Demandes en attente</span><span>${D.demandes.filter(x=>x.dept===d.id&&x.statut==="En attente").length}</span><span class="muted">Tâches ouvertes</span><span>${D.taches.filter(x=>x.dept===d.id&&x.av<100).length}</span></div></div>`).join("")}</div>`}
+function vDept(id){const d=DP(id),r=D.rapports.filter(x=>x.dept===id).sort((a,b)=>b.date.localeCompare(a.date)),last=r[0];
+  $("#main").innerHTML=head(`${d.ico} ${esc(d.nom)}`,esc(d.poste),`<button class="btn" data-go="depts">← Tous les départements</button><button class="btn pri" id="nt">+ Tâche pour ce département</button>`)+
+  `<div class="tiles">${d.kpis.map(([k,l])=>`<div class="tile"><b>${last?nf(last.kpis[k]):"—"}</b><span class="muted sm">${l}</span></div>`).join("")}</div>
+  <div class="card"><h2>Rapports</h2>${r.map(rapLigne).join("")||'<p class="muted sm">Aucun rapport.</p>'}</div>
+  <div class="card"><h2>Demandes</h2>${D.demandes.filter(x=>x.dept===id).map(demLigne).join("")||'<p class="muted sm">Aucune demande.</p>'}</div>
+  <div class="card"><h2>Tâches et objectifs</h2>${D.taches.filter(x=>x.dept===id).map(t=>tacLigne(t)).join("")||'<p class="muted sm">Aucune tâche.</p>'}</div>
+  ${persoCard(id,false)}`;
+  $("#nt").onclick=()=>nouvelleTache(id)}
+function vRapports(){const l=[...D.rapports].sort((a,b)=>(a.statut==="Soumis"?0:1)-(b.statut==="Soumis"?0:1)||b.date.localeCompare(a.date));
+  $("#main").innerHTML=head(estCons()?"Rapports soumis au Président":"Rapports reçus",estCons()?"Lisez les rapports des départements et adressez votre avis au Président.":"Les rapports mensuels envoyés par chaque département.")+`<div class="card">${l.map(rapLigne).join("")}</div>`}
+function lireRapport(id){const r=D.rapports.find(x=>x.id===id),d=DP(r.dept);
+  if(estDir()&&r.statut==="Soumis"){r.statut="Lu";save();dessinerMenu()}
+  if(estDept()){D.seen[r.id+role]=1;save()}
+  const peutCom=estDir();
+  modal(`${d.ico} ${esc(r.titre)}`,`<p class="muted sm" style="margin-top:0">${esc(d.nom)} · ${esc(d.poste)} · envoyé le ${fd(r.date)}</p>
+  <table class="tbl">${d.kpis.map(([k,l])=>`<tr><td>${l}</td><td style="text-align:right"><b>${nf(r.kpis[k])}</b></td></tr>`).join("")}</table>
+  <p style="white-space:pre-wrap;margin:14px 0">${esc(r.texte)}</p>
+  ${r.comments.map(c=>`<div class="comment"><b>${esc(POSTE(c.de))}</b> · ${fd(c.date)}<br>${esc(c.t)}</div>`).join("")}
+  ${peutCom?`<div class="field" style="margin-top:12px"><label class="f">Votre commentaire au département</label><textarea class="input" id="rc"></textarea></div>`:""}`,
+  peutCom?`<button class="btn" id="rn">Fermer</button><button class="btn pri" id="rk">Envoyer le commentaire</button>`:estCons()?`<button class="btn" id="rn">Fermer</button><button class="btn pri" id="ra">💡 Donner mon avis au Président</button>`:`<button class="btn" id="rn">Fermer</button>`);
+  $("#rn").onclick=close;
+  if(peutCom)$("#rk").onclick=()=>{const t=$("#rc").value.trim();if(!t)return toast("Écrivez votre commentaire");r.comments.push({de:role,t,date:iso(today)});r.statut="Commenté";save();close();toast("Commentaire envoyé au département");ouvrir(tab,r.dept)};
+  if(estCons())$("#ra").onclick=()=>formAvis(r.id)}
+function vDemandes(){const l=[...D.demandes].sort((a,b)=>(a.statut==="En attente"?0:1)-(b.statut==="En attente"?0:1)||b.date.localeCompare(a.date));
+  $("#main").innerHTML=head(role==="pres"?"Demandes à valider":"Demandes à examiner",role==="pres"?"Budget, investissements, recrutements, matériel et autorisations envoyés par les départements. Le Directeur des Opérations donne d'abord son avis.":"Donnez votre avis avant la décision du Président.")+`<div class="card">${l.map(demLigne).join("")}</div>`}
+function ficheDemande(id){const d=D.demandes.find(x=>x.id===id),dp=DP(d.dept),ouverte=d.statut==="En attente";
+  modal(`${dp.ico} ${esc(d.objet)}`,`<p class="muted sm" style="margin-top:0">${esc(dp.nom)} · ${esc(d.type)} · ${fd(d.date)}</p>${d.montant?`<p style="font-size:20px;font-weight:800;margin:6px 0">${nf(d.montant)} F CFA</p>`:""}<span class="pill ${ST[d.statut]}">${d.statut}</span>
+  ${d.avisDop?`<div class="comment"><b>Avis du Directeur des Opérations</b><br>${esc(d.avisDop)}</div>`:""}${d.decision?`<div class="comment"><b>Décision du Président</b><br>${esc(d.decision)}</div>`:""}
+  ${ouverte&&role==="dop"?`<div class="field" style="margin-top:12px"><label class="f">Votre avis</label><textarea class="input" id="dv">${esc(d.avisDop)}</textarea></div>`:""}
+  ${ouverte&&role==="pres"?`<div class="field" style="margin-top:12px"><label class="f">Votre décision (message au département)</label><textarea class="input" id="dv"></textarea></div>`:""}`,
+  ouverte&&role==="pres"?`<button class="btn ko" id="dr">Refuser</button><button class="btn pri" id="dk">Valider</button>`:ouverte&&role==="dop"?`<button class="btn" id="dn">Fermer</button><button class="btn pri" id="da">Enregistrer mon avis</button>`:`<button class="btn" id="dn">Fermer</button>`);
+  const dn=$("#dn");if(dn)dn.onclick=close;
+  if($("#da"))$("#da").onclick=()=>{d.avisDop=$("#dv").value.trim();save();close();toast("Avis transmis au Président");ouvrir(tab,d.dept)};
+  const dec=st=>{d.statut=st;d.decision=$("#dv").value.trim()||(st==="Validée"?"Accordé.":"Non accordé.");save();close();toast("Demande "+st.toLowerCase());ouvrir(tab,d.dept)};
+  if($("#dk")){$("#dk").onclick=()=>dec("Validée");$("#dr").onclick=()=>dec("Refusée")}}
+function vTaches(){const l=[...D.taches].sort((a,b)=>retard(b)-retard(a)||a.echeance.localeCompare(b.echeance));
+  $("#main").innerHTML=head("Tâches et objectifs","Fixez des objectifs à chaque département et suivez leur avancement.",`<button class="btn pri" id="nt">+ Nouvelle tâche</button>`)+`<div class="card">${l.map(t=>tacLigne(t)).join("")}</div>`;$("#nt").onclick=()=>nouvelleTache()}
+function nouvelleTache(dep){modal("Nouvelle tâche",`<div class="field"><label class="f">Département</label><select class="input" id="td">${DEPTS.map(d=>`<option value="${d.id}" ${d.id===dep?"selected":""}>${d.ico} ${esc(d.nom)}</option>`).join("")}</select></div><div class="field"><label class="f">Tâche ou objectif</label><input class="input" id="tt" placeholder="Ex. Augmenter le nombre de visiteurs de 10 %"></div><div class="row"><div class="field"><label class="f">Échéance</label><input class="input" type="date" id="te" value="${J(14)}"></div><div class="field"><label class="f">Priorité</label><select class="input" id="tp"><option>Normale</option><option>Haute</option><option>Basse</option></select></div></div>`,`<button class="btn" id="tn">Annuler</button><button class="btn pri" id="tk">Envoyer au département</button>`);
+  $("#tn").onclick=close;$("#tk").onclick=()=>{const t=$("#tt").value.trim();if(!t)return toast("Écrivez la tâche");D.taches.unshift({id:uid(),dept:$("#td").value,titre:t,echeance:$("#te").value||J(14),prio:$("#tp").value,av:0,de:role});save();close();toast("Tâche envoyée");ouvrir(tab,dep)}}
+function vAvisDir(){const l=[...D.avis].sort((a,b)=>b.date.localeCompare(a.date));l.forEach(a=>{if(a.statut==="Nouveau"&&role==="pres")a.statut="Lu"});save();
+  $("#main").innerHTML=head("Avis des conseillers","Recommandations du Conseiller juridique et de la Porte-parole à partir des rapports.")+(l.map(a=>carteAvis(a,role==="pres")).join("")||'<div class="empty">Aucun avis pour le moment.</div>');
+  $$("[data-rep]").forEach(b=>b.onclick=()=>{const a=D.avis.find(x=>x.id===b.dataset.rep);modal("Répondre au conseiller",`<textarea class="input" id="rp">${esc(a.reponse||"")}</textarea>`,`<button class="btn" id="rn">Annuler</button><button class="btn pri" id="rk">Envoyer</button>`);$("#rn").onclick=close;$("#rk").onclick=()=>{a.reponse=$("#rp").value.trim();a.statut="Répondu";save();close();toast("Réponse envoyée");ouvrir("avis")}})}
+const carteAvis=(a,rep)=>{const r=a.rapport?D.rapports.find(x=>x.id===a.rapport):null;return `<div class="card"><div class="row" style="justify-content:space-between;align-items:flex-start"><div class="grow"><b>${esc(a.objet)}</b><div class="muted xs">${esc(POSTE(a.de))} · ${fd(a.date)}${r?" · sur : "+esc(DP(r.dept).nom+" — "+r.titre):""}</div></div><span class="pill ${a.statut==="Répondu"?"p-green":a.statut==="Nouveau"?"p-amber":"p-grey"}">${a.statut}</span></div><p style="white-space:pre-wrap;margin:10px 0 0">${esc(a.texte)}</p>${a.reponse?`<div class="comment"><b>Réponse du Président</b><br>${esc(a.reponse)}</div>`:""}${rep?`<div class="row" style="margin-top:10px"><button class="btn sm" data-rep="${a.id}">Répondre</button></div>`:""}</div>`};
+
+/* ---------- Conseil ---------- */
+function vCDash(){const mes=D.avis.filter(a=>a.de===role),nl=D.rapports.filter(r=>r.date>=J(-7));
+  $("#main").innerHTML=head(`Espace ${POSTE(role).toLowerCase()}`,CONSEIL.find(x=>x.id===role).desc,`<button class="btn pri" id="na">+ Nouvel avis</button>`)+
+  `<div class="tiles"><div class="tile click" data-go="rapports"><b>${nl.length}</b><span class="muted sm">Rapports des 7 derniers jours</span></div><div class="tile click" data-go="mesavis"><b>${mes.length}</b><span class="muted sm">Avis envoyés</span></div><div class="tile click" data-go="mesavis"><b style="color:var(--green)">${mes.filter(a=>a.statut==="Répondu").length}</b><span class="muted sm">Réponses du Président</span></div></div>
+  <div class="idbox sm">Votre espace est en consultation : vous lisez les rapports soumis au Président et vous lui adressez vos recommandations. Les données financières détaillées et le personnel ne sont pas visibles ici.</div>
+  <div class="card"><h2>Rapports récents</h2>${nl.map(rapLigne).join("")}</div>`;$("#na").onclick=()=>formAvis(null)}
+function formAvis(rid){modal("Avis au Président",`<div class="field"><label class="f">Rapport concerné</label><select class="input" id="ar"><option value="">— Avis général —</option>${D.rapports.map(r=>`<option value="${r.id}" ${r.id===rid?"selected":""}>${esc(DP(r.dept).nom+" · "+r.titre)}</option>`).join("")}</select></div><div class="field"><label class="f">Objet</label><input class="input" id="ao"></div><div class="field"><label class="f">Votre analyse et votre recommandation</label><textarea class="input" id="at" rows="6"></textarea></div>`,`<button class="btn" id="an">Annuler</button><button class="btn pri" id="ak">Envoyer au Président</button>`);
+  $("#an").onclick=close;$("#ak").onclick=()=>{const o=$("#ao").value.trim(),t=$("#at").value.trim();if(!o||!t)return toast("Écrivez l'objet et votre avis");D.avis.unshift({id:uid(),de:role,rapport:$("#ar").value||null,objet:o,texte:t,date:iso(today),statut:"Nouveau",reponse:""});save();close();toast("Avis envoyé au Président");ouvrir("mesavis")}}
+function vMesAvis(){const l=D.avis.filter(a=>a.de===role);$("#main").innerHTML=head("Mes avis au Président","",`<button class="btn pri" id="na">+ Nouvel avis</button>`)+(l.map(a=>carteAvis(a,false)).join("")||'<div class="empty">Aucun avis envoyé.</div>');$("#na").onclick=()=>formAvis(null)}
+
+/* ---------- Départements ---------- */
+function vDDash(){const d=DP(role),r=dernier(role),t=D.taches.filter(x=>x.dept===role&&x.av<100),dm=D.demandes.filter(x=>x.dept===role);
+  $("#main").innerHTML=head(`${d.ico} ${esc(d.nom)}`,`Espace du ${esc(d.poste.toLowerCase())}`,`<button class="btn" id="nd">+ Demande</button><button class="btn pri" id="nr">+ Rapport du mois</button>`)+
+  `<div class="tiles">${d.kpis.map(([k,l])=>`<div class="tile"><b>${r?nf(r.kpis[k]):"—"}</b><span class="muted sm">${l}</span></div>`).join("")}</div>
+  ${role==="secu"?`<div class="idbox sm"><b>Module sécurité intégré</b> : agents, sites clients, planning jour/nuit, pointage géolocalisé, rondes, main courante, alertes SOS, cartes professionnelles et paie des agents. Les chiffres ci-dessus remontent automatiquement dans la vue du Président.</div>`:""}
+  <div class="row" style="align-items:flex-start"><div class="card grow" style="flex:1 1 360px"><h2>Tâches fixées par la direction</h2>${t.map(x=>tacLigne(x,true)).join("")||'<p class="muted sm">Aucune tâche en cours.</p>'}</div>
+  <div class="card grow" style="flex:1 1 360px"><h2>Mes demandes</h2>${dm.map(demLigne).join("")||'<p class="muted sm">Aucune demande.</p>'}</div></div>`;
+  $("#nr").onclick=nouveauRapport;$("#nd").onclick=nouvelleDemande;liaisonAv()}
+function liaisonAv(){$$("[data-av]").forEach(b=>b.onclick=()=>{const t=D.taches.find(x=>x.id===b.dataset.av);modal("Avancement de la tâche",`<p class="muted" style="margin-top:0">${esc(t.titre)}</p><input type="range" min="0" max="100" step="5" value="${t.av}" id="ar" style="width:100%"><p style="text-align:center;font-size:22px;font-weight:800;margin:6px 0" id="arv">${t.av} %</p>`,`<button class="btn" id="an">Annuler</button><button class="btn pri" id="ak">Enregistrer</button>`);
+  $("#ar").oninput=e=>$("#arv").textContent=e.target.value+" %";$("#an").onclick=close;$("#ak").onclick=()=>{t.av=+$("#ar").value;save();close();toast("Avancement enregistré");ouvrir(tab)}})}
+function vDRap(){$("#main").innerHTML=head("Mes rapports","Envoyez chaque mois votre rapport au Président. Il peut le commenter.",`<button class="btn pri" id="nr">+ Nouveau rapport</button>`)+`<div class="card">${D.rapports.filter(r=>r.dept===role).sort((a,b)=>b.date.localeCompare(a.date)).map(rapLigne).join("")||'<p class="muted sm">Aucun rapport.</p>'}</div>`;$("#nr").onclick=nouveauRapport}
+function nouveauRapport(){const d=DP(role);modal("Rapport mensuel · "+moisCourant,`<div class="row">${d.kpis.map(([k,l])=>`<div class="field"><label class="f">${l}</label><input class="input" type="number" min="0" data-k="${k}"></div>`).join("")}</div><div class="field"><label class="f">Commentaire : faits marquants, difficultés, besoins</label><textarea class="input" id="rt" rows="5"></textarea></div>`,`<button class="btn" id="rn">Annuler</button><button class="btn pri" id="rk">Envoyer au Président</button>`);
+  $("#rn").onclick=close;$("#rk").onclick=()=>{const k={};$$("[data-k]").forEach(i=>k[i.dataset.k]=+i.value||0);D.rapports.unshift({id:uid(),dept:role,periode:moisCourant,date:iso(today),titre:"Rapport mensuel · "+moisCourant,kpis:k,texte:$("#rt").value.trim()||"—",statut:"Soumis",comments:[]});save();close();toast("Rapport envoyé au Président");ouvrir("drap")}}
+function vDDem(){$("#main").innerHTML=head("Mes demandes","Budget, investissement, recrutement, matériel ou autorisation : la demande passe par le Directeur des Opérations, puis le Président décide.",`<button class="btn pri" id="nd">+ Nouvelle demande</button>`)+`<div class="card">${D.demandes.filter(x=>x.dept===role).map(demLigne).join("")||'<p class="muted sm">Aucune demande.</p>'}</div>`;$("#nd").onclick=nouvelleDemande}
+function nouvelleDemande(){modal("Nouvelle demande",`<div class="row"><div class="field"><label class="f">Type</label><select class="input" id="dt"><option>Budget</option><option>Investissement</option><option>Recrutement</option><option>Matériel</option><option>Autorisation</option></select></div><div class="field"><label class="f">Montant (F CFA)</label><input class="input" type="number" min="0" id="dm"></div></div><div class="field"><label class="f">Objet</label><input class="input" id="do"></div>`,`<button class="btn" id="dn">Annuler</button><button class="btn pri" id="dk">Envoyer</button>`);
+  $("#dn").onclick=close;$("#dk").onclick=()=>{const o=$("#do").value.trim();if(!o)return toast("Écrivez l'objet de la demande");D.demandes.unshift({id:uid(),dept:role,type:$("#dt").value,objet:o,montant:+$("#dm").value||0,date:iso(today),statut:"En attente",avisDop:"",decision:""});save();close();toast("Demande envoyée");ouvrir("ddem")}}
+function vDTach(){$("#main").innerHTML=head("Mes tâches","Les objectifs fixés par le Président et le Directeur des Opérations. Mettez à jour l'avancement.")+`<div class="card">${D.taches.filter(t=>t.dept===role).map(t=>tacLigne(t,true)).join("")||'<p class="muted sm">Aucune tâche.</p>'}</div>`;liaisonAv()}
+function persoCard(dep,edit){const l=D.personnel.filter(p=>p.dept===dep);return `<div class="card scroll"><div class="row" style="justify-content:space-between;align-items:center;margin-bottom:8px"><h2 style="margin:0">Personnel (${l.length})</h2>${edit?'<button class="btn sm pri" id="np">+ Ajouter</button>':""}</div><table class="tbl"><thead><tr><th>Matricule</th><th>Poste</th><th>Contrat</th><th>Statut</th></tr></thead><tbody>${l.map(p=>`<tr><td>${esc(p.mat)}</td><td>${esc(p.poste)}</td><td>${esc(p.contrat)}</td><td><span class="pill ${p.statut==="Actif"?"p-green":"p-amber"}">${esc(p.statut)}</span></td></tr>`).join("")}</tbody></table><p class="muted xs" style="margin:8px 0 0">Démonstration : les noms et les photos seront ajoutés avec les vraies données du groupe.</p></div>`}
+function vDPers(){$("#main").innerHTML=head("Personnel du département","")+persoCard(role,true);
+  $("#np").onclick=()=>{modal("Ajouter un employé",`<div class="row"><div class="field"><label class="f">Matricule</label><input class="input" id="pm" value="CDK-${Math.floor(500+Math.random()*400)}"></div><div class="field"><label class="f">Poste</label><input class="input" id="pp"></div></div><div class="field"><label class="f">Contrat</label><select class="input" id="pc"><option>CDI</option><option>CDD</option><option>Stage</option><option>Prestataire</option></select></div>`,`<button class="btn" id="pn">Annuler</button><button class="btn pri" id="pk">Ajouter</button>`);
+    $("#pn").onclick=close;$("#pk").onclick=()=>{const p=$("#pp").value.trim();if(!p)return toast("Indiquez le poste");D.personnel.push({id:uid(),dept:role,mat:$("#pm").value.trim(),poste:p,contrat:$("#pc").value,statut:"Actif"});save();close();toast("Employé ajouté");ouvrir("dpers")}}}
+
+accueil();
+</script>
+</body>
+</html>
