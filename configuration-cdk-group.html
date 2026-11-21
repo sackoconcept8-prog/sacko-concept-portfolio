@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CDK GROUP · Configuration de votre plateforme de gestion</title>
+<meta name="description" content="Fiche de configuration de la plateforme de gestion CDK GROUP : départements, modules, accès et image.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="sacko-apps.css">
+<link rel="icon" href="cdk-group/logo-cdk-96.png">
+<meta name="robots" content="noindex">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+.lab{display:block;font-weight:500;font-size:14px;margin-bottom:8px}.hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+.colors{display:flex;gap:16px;flex-wrap:wrap;align-items:center}.colors label{display:flex;align-items:center;gap:10px;font-size:14px}.colors input[type=color]{width:52px;height:40px;padding:2px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.drop.small{padding:16px}.drop.done{border-style:solid;border-color:#2F7D52;background:#F1F8F3}.drop.done b{color:#1F5A3A}.dl{display:inline-flex;gap:8px;align-items:center;font-weight:600}
+.cobrand{display:flex;align-items:center;gap:14px;margin-bottom:14px}.cobrand img{width:64px;height:64px;border-radius:14px;background:#fff;border:1px solid var(--line);object-fit:contain;padding:4px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.card-opt{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;display:flex;flex-direction:column;gap:8px;transition:border-color .15s,background .15s}
+.card-opt.on{border-color:#4b1d52;background:#FBF7FC}
+.card-opt>label{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer}.card-opt>label b{display:block;font-size:14.5px}.card-opt>label small{color:var(--muted);font-size:12.5px;line-height:1.35}
+.card-opt .sub{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card-opt .sub input,.card-opt .sub select{width:100%;box-sizing:border-box;font:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:#FFF4D6;color:#8A5A00;margin-left:4px;vertical-align:1px}
+.tag.inc{background:#E8F5EC;color:#1F5A3A}
+.ico{font-size:18px;line-height:1}
+.card-opt>label input[type=checkbox]{width:18px!important;height:18px;min-width:18px;flex:0 0 18px;margin:2px 0 0;padding:0}
+.note{background:#F6F8FC;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="logo" href="cdk-group/"><img src="cdk-group/logo-cdk-96.png" alt="" width="38" height="38"><b>CDK GROUP</b></a>
+    <div class="navcta"><a class="btn btn-ghost hide-sm" href="cdk-group/">Voir la démo</a><a class="btn btn-gold" href="#cfg">Remplir la fiche</a></div>
+  </div>
+</nav>
+<header class="pagehead"><div class="wrap">
+  <div class="cobrand"><img src="cdk-group/logo-cdk-192.png" alt="CDK GROUP"><div class="eyebrow" style="margin:0">CDK GROUP · Mise en place de la plateforme</div></div>
+  <h1>Configuration de votre plateforme de gestion</h1>
+  <p>Cette fiche nous permet de finaliser la plateforme du groupe : les départements à activer, les postes de chacun, les modules supplémentaires (commercial, comptabilité, stock…) et les accès. Comptez 10 à 15 minutes. Vous pouvez laisser vide ce que vous ne savez pas encore, nous le compléterons ensemble.</p>
+</div></header>
+
+<section style="padding-top:24px"><div class="wrap"><div class="form-wrap">
+<form class="qform" id="cfg" novalidate>
+
+  <fieldset>
+    <legend>1. Le groupe</legend>
+    <div class="f"><label for="entreprise">Nom du groupe <i>*</i></label><input id="entreprise" name="entreprise" type="text" required value="CDK GROUP" autocomplete="organization"></div>
+    <div class="f"><label for="raison">Raison sociale complète</label><input id="raison" name="raison" type="text"></div>
+    <div class="f full"><span class="lab">Forme juridique</span><div class="opts"><label><input type="radio" name="forme" value="SARL"> SARL</label><label><input type="radio" name="forme" value="SA"> SA</label><label><input type="radio" name="forme" value="SAS / SASU"> SAS / SASU</label><label><input type="radio" name="forme" value="Holding avec filiales"> Holding avec filiales</label><label><input type="radio" name="forme" value="Autre"> Autre</label></div></div>
+    <div class="f full"><span class="lab">Les départements sont-ils des sociétés séparées ?</span><div class="opts"><label><input type="radio" name="structure" value="Une seule société, plusieurs départements"> Une seule société, plusieurs départements</label><label><input type="radio" name="structure" value="Plusieurs sociétés (filiales)"> Plusieurs sociétés (filiales)</label><label><input type="radio" name="structure" value="Mixte"> Un peu des deux</label></div><div class="hint">Utile pour savoir si chaque département a ses propres documents (factures, bulletins de paie) avec son propre numéro fiscal.</div></div>
+    <div class="f"><label for="pays">Pays et ville du siège <i>*</i></label><input id="pays" name="pays" type="text" required placeholder="Ex. : Gabon, Libreville"></div>
+    <div class="f"><label for="adresse">Adresse du siège</label><input id="adresse" name="adresse" type="text"></div>
+    <div class="f"><label for="tel">Téléphone du groupe <i>*</i></label><input id="tel" name="tel" type="tel" required placeholder="Avec l'indicatif du pays"></div>
+    <div class="f"><label for="email">E-mail du groupe <i>*</i></label><input id="email" name="email" type="email" required autocomplete="email"></div>
+    <div class="f"><label for="ifu">N° d'identification fiscale (NIF, IFU…)</label><input id="ifu" name="ifu" type="text"></div>
+    <div class="f"><label for="rccm">N° RCCM ou équivalent</label><input id="rccm" name="rccm" type="text"></div>
+    <div class="f"><label for="cnss">N° de sécurité sociale employeur</label><input id="cnss" name="cnss" type="text"></div>
+    <div class="f"><label for="web">Site web ou page Facebook</label><input id="web" name="web" type="text" placeholder="Facultatif"></div>
+    <div class="f full"><label for="pays_activite">Pays ou villes où le groupe est présent</label><input id="pays_activite" name="pays_activite" type="text" placeholder="Ex. : Libreville, Port-Gentil, Owendo"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>2. Les départements à activer</legend>
+    <p class="hint" style="margin:0 0 12px">Chaque département a son propre logiciel et ses propres postes, sans gêner les autres. Les chiffres remontent automatiquement chez le Président. Décochez ceux à ne pas activer pour l'instant.</p>
+    <div class="f full"><div class="cards" id="depts"></div></div>
+    <div class="f full"><label for="autre_dept">Un autre département à ajouter ?</label><input id="autre_dept" name="autre_dept" type="text" placeholder="Ex. : BTP, Agriculture, Import-export…"></div>
+    <div class="f full"><span class="lab">Ordre de mise en service</span><div class="opts"><label><input type="radio" name="ordre" value="Tous les départements en même temps"> Tous en même temps</label><label><input type="radio" name="ordre" value="CDK Sécurité d'abord, puis les autres" checked> CDK Sécurité d'abord, puis les autres</label><label><input type="radio" name="ordre" value="À discuter"> À discuter</label></div></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>3. Modules supplémentaires</legend>
+    <p class="hint" style="margin:0 0 12px">En plus des logiciels des départements, vous pouvez ajouter des modules communs au groupe. Cochez ceux qui vous intéressent et indiquez pour quels départements. Les modules en option font l'objet d'un devis.</p>
+    <div class="f full"><div class="cards" id="modules"></div></div>
+    <div class="f full"><label for="autre_module">Un autre module ou une fonction qui vous manque ?</label><textarea id="autre_module" name="autre_module" placeholder="Décrivez simplement ce que vous voulez faire, ex. : suivre les loyers de nos bâtiments, gérer les contrats des partenaires hôteliers…"></textarea></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>4. Direction, conseil et responsables</legend>
+    <div class="f"><label for="pres">Président Fondateur <i>*</i></label><input id="pres" name="pres" type="text" required placeholder="Prénom et nom"></div>
+    <div class="f"><label for="pres_tel">WhatsApp du Président</label><input id="pres_tel" name="pres_tel" type="tel"></div>
+    <div class="f"><label for="pres_email">E-mail du Président</label><input id="pres_email" name="pres_email" type="email"></div>
+    <div class="f"><label for="dop">Directeur des Opérations</label><input id="dop" name="dop" type="text"></div>
+    <div class="f"><label for="dop_contact">Contact du Directeur des Opérations</label><input id="dop_contact" name="dop_contact" type="text" placeholder="WhatsApp ou e-mail"></div>
+    <div class="f"><label for="jur">Conseiller juridique</label><input id="jur" name="jur" type="text"></div>
+    <div class="f"><label for="pp">Porte-parole</label><input id="pp" name="pp" type="text"></div>
+    <div class="f"><label for="rh">Responsable RH du groupe</label><input id="rh" name="rh" type="text"></div>
+    <div class="f"><label for="compta">Responsable comptabilité / finances</label><input id="compta" name="compta" type="text"></div>
+    <div class="f"><label for="dircom">Directeur commercial</label><input id="dircom" name="dircom" type="text" placeholder="Si vous ajoutez le module Commercial"></div>
+    <div class="f full"><label for="autres_postes">Autres postes de direction ou de conseil</label><input id="autres_postes" name="autres_postes" type="text" placeholder="Ex. : Secrétaire général, Auditeur interne…"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>5. Accès et confidentialité</legend>
+    <div class="f full"><span class="lab">Qui peut voir les chiffres de tous les départements ?</span><div class="opts"><label><input type="checkbox" name="voit_tout" value="Président"  checked> Président</label><label><input type="checkbox" name="voit_tout" value="Directeur des Opérations" checked> Directeur des Opérations</label><label><input type="checkbox" name="voit_tout" value="Conseillers (rapports seulement)" checked> Conseillers (rapports seulement)</label><label><input type="checkbox" name="voit_tout" value="Comptabilité"> Comptabilité</label></div></div>
+    <div class="f full"><span class="lab">Validation des demandes (budget, achats, recrutements)</span><div class="opts"><label><input type="radio" name="validation" value="Avis du Directeur des Opérations, puis décision du Président" checked> Avis du Directeur des Opérations, puis décision du Président</label><label><input type="radio" name="validation" value="Le Président valide directement"> Le Président valide directement</label><label><input type="radio" name="validation" value="Seuil de montant à définir"> Selon un seuil de montant</label></div></div>
+    <div class="f"><label for="seuil">Seuil de montant (si besoin)</label><input id="seuil" name="seuil" type="text" placeholder="Ex. : au-delà de 500 000 F CFA"></div>
+    <div class="f"><label for="nb_users">Nombre total d'utilisateurs prévus</label><select id="nb_users" name="nb_users" class="input"><option value="">Choisir</option><option>Moins de 20</option><option>20 à 50</option><option>51 à 150</option><option>151 à 500</option><option>Plus de 500</option></select></div>
+    <div class="f full"><span class="lab">Où voulez-vous utiliser la plateforme ?</span><div class="opts"><label><input type="checkbox" name="support" value="Ordinateur (navigateur)" checked> Ordinateur</label><label><input type="checkbox" name="support" value="Téléphone Android" checked> Android</label><label><input type="checkbox" name="support" value="iPhone"> iPhone</label><label><input type="checkbox" name="support" value="Tablette"> Tablette</label></div></div>
+    <div class="f full"><span class="lab">Nom de domaine</span><div class="opts"><label><input type="radio" name="domaine" value="Nous avons déjà un nom de domaine"> Nous avons déjà un nom de domaine</label><label><input type="radio" name="domaine" value="Nous voulons que vous l'achetiez pour nous"> Achetez-le pour nous</label><label><input type="radio" name="domaine" value="À discuter"> À discuter</label></div></div>
+    <div class="f"><label for="domaine_nom">Nom de domaine souhaité ou existant</label><input id="domaine_nom" name="domaine_nom" type="text" placeholder="Ex. : cdkgroup.com"></div>
+    <div class="f"><span class="lab">Langues de la plateforme</span><div class="opts"><label><input type="checkbox" name="langues" value="Français" checked> Français</label><label><input type="checkbox" name="langues" value="Anglais"> Anglais</label></div></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>6. Image du groupe</legend>
+    <div class="f full"><span class="lab">Logo du groupe</span><div class="note">Nous avons déjà le logo CDK GROUP utilisé dans la démo. Déposez-en une version de meilleure qualité si vous en avez une.</div></div>
+    <div class="f full"><div class="drop small" data-up="logo" data-label="Logo du groupe" tabindex="0" role="button" aria-label="Logo du groupe"><b>Choisir un fichier</b> ou le glisser ici<br><small>PNG ou JPG, idéalement sur fond transparent</small></div><input type="file" data-for="logo" accept="image/*" hidden><ul class="filelist" data-list="logo"></ul></div>
+    <div class="f full"><span class="lab">Logos des départements ou filiales (facultatif)</span><div class="drop small" data-up="logos_dept" data-label="Logos des départements" tabindex="0" role="button" aria-label="Logos des départements"><b>Choisir des fichiers</b> ou les glisser ici<br><small>Ex. : logo CDK Sécurité. Nommez chaque fichier avec le nom du département</small></div><input type="file" data-for="logos_dept" accept="image/*" multiple hidden><ul class="filelist" data-list="logos_dept"></ul></div>
+    <div class="f full"><span class="lab">Couleurs du groupe</span><div class="colors"><label><input type="color" name="couleur1" value="#4B1D52"> Couleur principale</label><label><input type="color" name="couleur2" value="#C9A227"> Couleur secondaire</label></div><div class="hint">Pas sûr ? Laissez tel quel, nous reprendrons les couleurs du logo.</div></div>
+    <div class="f full"><span class="lab">Cachet du groupe (facultatif)</span><div class="drop small" data-up="cachet" data-label="Cachet" tabindex="0" role="button" aria-label="Cachet"><b>Choisir un fichier</b> ou le glisser ici<br><small>Photo ou scan, pour les documents officiels</small></div><input type="file" data-for="cachet" accept="image/*,.pdf" multiple hidden><ul class="filelist" data-list="cachet"></ul></div>
+    <div class="f full"><span class="lab">Signature du Président (facultatif)</span><div class="drop small" data-up="signature" data-label="Signature" tabindex="0" role="button" aria-label="Signature"><b>Choisir un fichier</b> ou le glisser ici<br><small>Sur fond blanc</small></div><input type="file" data-for="signature" accept="image/*,.pdf" hidden><ul class="filelist" data-list="signature"></ul></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>7. CDK Sécurité en détail</legend>
+    <p class="hint" style="margin:0 0 10px">Le département Sécurité démarre en premier : ces informations servent à régler le pointage, les rondes et la paie des agents.</p>
+    <div class="f full"><span class="lab">Nombre d'agents</span><div class="opts"><label><input type="radio" name="sec_agents" value="1 à 50"> 1 à 50</label><label><input type="radio" name="sec_agents" value="51 à 100"> 51 à 100</label><label><input type="radio" name="sec_agents" value="101 à 200"> 101 à 200</label><label><input type="radio" name="sec_agents" value="Plus de 200"> Plus de 200</label></div></div>
+    <div class="f full"><span class="lab">Nombre de sites gardés</span><div class="opts"><label><input type="radio" name="sec_sites" value="1 à 5"> 1 à 5</label><label><input type="radio" name="sec_sites" value="6 à 20"> 6 à 20</label><label><input type="radio" name="sec_sites" value="21 à 50"> 21 à 50</label><label><input type="radio" name="sec_sites" value="Plus de 50"> Plus de 50</label></div></div>
+    <div class="f"><label for="sec_jour">Horaires du poste de jour</label><input id="sec_jour" name="sec_jour" type="text" placeholder="Ex. : 07h00 – 19h00"></div>
+    <div class="f"><label for="sec_nuit">Horaires du poste de nuit</label><input id="sec_nuit" name="sec_nuit" type="text" placeholder="Ex. : 19h00 – 07h00"></div>
+    <div class="f full"><span class="lab">Grades utilisés</span><div class="opts"><label><input type="checkbox" name="sec_grades" value="Agent de sécurité"> Agent de sécurité</label><label><input type="checkbox" name="sec_grades" value="Chef de poste"> Chef de poste</label><label><input type="checkbox" name="sec_grades" value="Superviseur"> Superviseur</label><label><input type="checkbox" name="sec_grades" value="Maître-chien"> Maître-chien</label><label><input type="checkbox" name="sec_grades" value="Agent volant"> Agent volant</label></div></div>
+    <div class="f full"><span class="lab">Pointage souhaité</span><div class="opts"><label><input type="checkbox" name="sec_pointage" value="Application sur le téléphone de l'agent"> Téléphone de l'agent</label><label><input type="checkbox" name="sec_pointage" value="Téléphone borne au poste"> Téléphone borne au poste</label><label><input type="checkbox" name="sec_pointage" value="Pointeuse faciale"> Pointeuse faciale</label><label><input type="checkbox" name="sec_pointage" value="À discuter"> À discuter</label></div></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>8. Paie et documents</legend>
+    <div class="f full"><span class="lab">Paiement des salaires</span><div class="opts"><label><input type="checkbox" name="paie" value="Espèces"> Espèces</label><label><input type="checkbox" name="paie" value="Virement bancaire"> Virement bancaire</label><label><input type="checkbox" name="paie" value="Mobile Money"> Mobile Money</label></div></div>
+    <div class="f full"><span class="lab">Facture normalisée ou électronique exigée par les impôts</span><div class="opts"><label><input type="radio" name="mecef" value="Oui, nous l'utilisons"> Oui, nous l'utilisons</label><label><input type="radio" name="mecef" value="Pas encore"> Pas encore</label><label><input type="radio" name="mecef" value="Je ne sais pas"> Je ne sais pas</label></div></div>
+    <div class="f full"><span class="lab">Vos modèles de documents</span><p class="hint" style="margin:0 0 6px">Pas de modèle ? Nous utilisons nos modèles professionnels, à votre nom et à votre logo, adaptés au droit du travail de votre pays.</p><div id="docs"></div></div>
+    <div class="f full"><span class="lab">Liste du personnel par département (recommandé)</span><p class="hint" style="margin:0 0 10px">Une simple liste suffit : nom, poste, département, téléphone. Excel, photo ou PDF. Vous pourrez aussi l'envoyer plus tard.</p><div class="drop small" data-up="excel" data-label="Liste du personnel" tabindex="0" role="button" aria-label="Liste du personnel"><b>Choisir un fichier</b> ou le glisser ici<br><small>Excel, CSV, PDF ou photo</small></div><input type="file" data-for="excel" accept=".xlsx,.xls,.csv,.pdf,image/*" multiple hidden><ul class="filelist" data-list="excel"></ul></div>
+    <div class="f full"><span class="lab">Autres documents utiles (facultatif)</span><div class="drop small" data-up="autres" data-label="Autres documents" tabindex="0" role="button" aria-label="Autres documents"><b>Choisir un fichier</b> ou le glisser ici<br><small>Organigramme, statuts, rapport type, liste des clients…</small></div><input type="file" data-for="autres" accept=".pdf,.doc,.docx,.xlsx,.xls,image/*" multiple hidden><ul class="filelist" data-list="autres"></ul></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>9. Pour finir</legend>
+    <div class="f full"><span class="lab">Formation des équipes</span><div class="opts"><label><input type="checkbox" name="formation" value="Direction" checked> Direction</label><label><input type="checkbox" name="formation" value="Responsables de département" checked> Responsables de département</label><label><input type="checkbox" name="formation" value="Équipes terrain"> Équipes terrain</label></div><div class="hint">Par appel vidéo avec partage d'écran, plus un guide PDF par poste.</div></div>
+    <div class="f full"><label for="besoins">Vos besoins ou exigences particulières</label><textarea id="besoins" name="besoins_txt" placeholder="Ex. : rapport hebdomadaire au Président, alerte en cas de dépense importante…"></textarea></div>
+    <div class="f"><label for="demarrage">Date souhaitée de démarrage</label><input id="demarrage" name="demarrage" type="date"></div>
+    <div class="f"><label for="nom">Votre nom (personne qui remplit) <i>*</i></label><input id="nom" name="nom" type="text" required autocomplete="name"></div>
+    <div class="f"><label for="fonction">Votre fonction</label><input id="fonction" name="fonction" type="text"></div>
+    <div class="f"><label for="whatsapp">Votre WhatsApp <i>*</i></label><input id="whatsapp" name="whatsapp" type="tel" required placeholder="Avec l'indicatif du pays" autocomplete="tel"></div>
+  </fieldset>
+
+  <label class="consent"><input type="checkbox" id="consent" name="consent" required> <span>J'autorise l'utilisation de ces informations uniquement pour configurer la plateforme de CDK GROUP. Elles restent confidentielles. <i style="color:#C2410C;font-style:normal">*</i></span></label>
+  <div class="submit-row"><button class="btn btn-gold" type="submit" id="send">Envoyer la fiche</button><span class="msg" id="msg" aria-live="polite"></span></div>
+</form>
+
+<aside class="side-card">
+  <h3>Comment ça se passe</h3>
+  <ol><li><b>Vous remplissez</b> cette fiche : départements, modules, responsables.</li><li><b>Nous configurons</b> la plateforme à l'image de CDK GROUP, département par département.</li><li><b>Nous vous envoyons un devis</b> pour les modules en option, puis vos accès.</li><li><b>Nous formons</b> la direction et chaque responsable.</li></ol>
+  <p style="color:var(--muted);font-size:14px"><a href="cdk-group/">Revoir la démo</a> · Une question ? contact@sackoconcept.com</p>
+</aside>
+</div></div></section>
+
+<footer><div class="wrap"><div class="legal"><span>Plateforme réalisée pour CDK GROUP</span><span><a href="confidentialite.html">Confidentialité</a></span></div></div></footer>
+
+<script src="sacko-config.js"></script>
+<script src="sacko-track.js" defer></script>
+<script>
+/* ---------- Départements ---------- */
+const DEPTS=[
+ ["secu","🛡️","CDK Sécurité","Superviseurs, chefs de poste, agents"],
+ ["tour","🌍","Tourisme & Partenariats","Agents de réservation, guides"],
+ ["mari","⚓","Services Maritimes","Agents d'escale, chefs d'équipe, pointeurs"],
+ ["hali","🐟","Halieutique","Collecteurs, vendeurs, chambre froide"],
+ ["comm","📣","Communication & Événementiel","Chargés de communication et d'événements"],
+ ["rest","🍽️","Restauration & Services généraux","Chef cuisinier, cuisiniers, serveurs, magasinier"],
+ ["soc","🤝","Social","Travailleurs sociaux, accueil"],
+ ["mob","🚚","Mobilité, Transport & Immobilier","Chauffeurs, gestionnaire de parc, gestionnaire immobilier"]
+];
+/* ---------- Modules supplémentaires ---------- */
+const MODS=[
+ ["commercial","💼","Commercial & clients","Prospects, clients, devis, factures, relances et objectifs des commerciaux",false],
+ ["compta","📊","Comptabilité & finances","Recettes, dépenses, caisse, budget par département, trésorerie du groupe",false],
+ ["rh","👥","RH & paie du groupe","Dossiers du personnel, contrats, congés, bulletins de paie, sanctions",true],
+ ["stock","📦","Stock & achats","Matériel, magasins, bons de commande, fournisseurs, inventaires",false],
+ ["parc","🚗","Parc automobile","Véhicules, carburant, entretien, assurances, chauffeurs",false],
+ ["immo","🏢","Gestion immobilière","Biens, locataires, loyers, quittances, impayés",false],
+ ["projets","🎯","Projets & tâches","Objectifs fixés par la direction, suivi d'avancement, échéances",true],
+ ["courrier","🗂️","Courrier & archives","Courrier entrant et sortant, documents numérisés, recherche rapide",false],
+ ["juridique","⚖️","Juridique & contrats","Contrats partenaires, échéances, avis du conseiller juridique",false],
+ ["clients","🎧","Espace client & réclamations","Les clients du groupe commandent, suivent et donnent leur avis en ligne",false],
+ ["site","🌐","Site web relié","Site du groupe dont les demandes arrivent directement dans la plateforme",false],
+ ["messagerie","💬","Messagerie interne & annonces","Notes de service, annonces du Président, discussions par équipe",false]
+];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const EFF='<option value="">Effectif</option><option>1 à 10</option><option>11 à 30</option><option>31 à 100</option><option>Plus de 100</option>';
+document.getElementById("depts").innerHTML=DEPTS.map(([id,ico,nom,eq])=>`<div class="card-opt on"><label><input type="checkbox" name="depts" value="${esc(nom)}" data-card checked><span><b><span class="ico">${ico}</span> ${esc(nom)}</b><small>${esc(eq)}</small></span></label><div class="sub"><input name="resp_${id}" placeholder="Responsable" aria-label="Responsable ${esc(nom)}"><select name="eff_${id}" aria-label="Effectif ${esc(nom)}">${EFF}</select></div></div>`).join("");
+const DOPT=DEPTS.map(d=>`<option>${esc(d[2])}</option>`).join("");
+document.getElementById("modules").innerHTML=MODS.map(([id,ico,nom,desc,inc])=>`<div class="card-opt"><label><input type="checkbox" name="modules" value="${esc(nom)}" data-card><span><b><span class="ico">${ico}</span> ${esc(nom)} <span class="tag ${inc?"inc":""}">${inc?"Inclus":"Option"}</span></b><small>${esc(desc)}</small></span></label><div class="sub" hidden style="grid-template-columns:1fr"><select name="mod_${id}" aria-label="Pour quels départements : ${esc(nom)}"><option value="Tout le groupe">Pour tout le groupe</option>${DOPT}<option value="Plusieurs départements (à préciser)">Plusieurs départements (à préciser)</option></select></div></div>`).join("");
+document.querySelectorAll("[data-card]").forEach(cb=>{const c=cb.closest(".card-opt"),s=c.querySelector(".sub");const up=()=>{c.classList.toggle("on",cb.checked);if(s&&c.closest("#modules"))s.hidden=!cb.checked};cb.addEventListener("change",up);up()});
+/* ---------- Documents ---------- */
+const DOCS=["Bulletin de paie","Contrat de travail","Fiche de poste","Attestation de travail","Règlement intérieur","Rapport mensuel de département","Facture et devis","Note de service"];
+document.getElementById("docs").innerHTML=DOCS.map((d,i)=>`<div style="display:flex;flex-direction:column;gap:6px;padding:10px 0;border-bottom:1px solid var(--line)"><b style="font-size:14px">${esc(d)}</b><div class="opts"><label><input type="radio" name="doc_${i}" value="J'envoie le mien"> J'envoie le mien</label><label><input type="radio" name="doc_${i}" value="Modèle standard (inclus)" checked> Modèle standard (inclus)</label><label><input type="radio" name="doc_${i}" value="Modèle personnalisé (option)"> Personnalisé pour nous (option)</label></div></div>`).join("");
+
+/* ---------- Fichiers ---------- */
+const SCRIPT_URL=window.SACKO_SCRIPT_URL||"COLLER";const MAX=15*1024*1024;
+const f=document.getElementById("cfg"),msg=document.getElementById("msg"),send=document.getElementById("send");
+const UP={};
+function size(n){return n>1048576?(n/1048576).toFixed(1)+" Mo":Math.max(1,Math.round(n/1024))+" Ko"}
+function total(){return Object.values(UP).flat().reduce((a,b)=>a+b.size,0)}
+document.querySelectorAll("[data-up]").forEach(d=>{const k=d.dataset.up,inp=document.querySelector('input[data-for="'+k+'"]'),ul=document.querySelector('[data-list="'+k+'"]');UP[k]=[];
+ const draw=()=>{ul.innerHTML="";UP[k].forEach((x,i)=>{const li=document.createElement("li");li.innerHTML="<span></span><button type='button'>Retirer</button>";li.firstChild.textContent=x.name+" · "+size(x.size);li.lastChild.onclick=()=>{UP[k].splice(i,1);draw()};ul.appendChild(li)});d.classList.toggle("done",UP[k].length>0)};
+ const add=fl=>{const arr=[...fl];if(!inp.multiple){UP[k]=arr.slice(0,1)}else{UP[k].push(...arr)}if(total()>MAX){msg.className="msg err";msg.textContent="Les fichiers dépassent 15 Mo au total. Retirez-en un ou envoyez-le par WhatsApp."}else msg.textContent="";draw()};
+ d.onclick=()=>inp.click();d.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();inp.click()}};inp.onchange=()=>{add(inp.files);inp.value=""};
+ ["dragover","dragenter"].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.add("over")}));["dragleave","drop"].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.remove("over")}));d.addEventListener("drop",e=>add(e.dataTransfer.files));
+});
+function b64(file){return new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=ko;r.readAsDataURL(file)})}
+
+/* ---------- Envoi ---------- */
+const LABELS={raison:"Raison sociale",forme:"Forme juridique",structure:"Structure",pays:"Siège",adresse:"Adresse",tel:"Téléphone",email:"E-mail",ifu:"Identifiant fiscal",rccm:"RCCM",cnss:"Sécurité sociale employeur",web:"Site web",pays_activite:"Présence",
+ depts:"Départements activés",autre_dept:"Autre département",ordre:"Ordre de mise en service",modules:"Modules demandés",autre_module:"Autre module / besoin",
+ pres:"Président Fondateur",pres_tel:"WhatsApp Président",pres_email:"E-mail Président",dop:"Directeur des Opérations",dop_contact:"Contact DOP",jur:"Conseiller juridique",pp:"Porte-parole",rh:"RH groupe",compta:"Comptabilité",dircom:"Directeur commercial",autres_postes:"Autres postes",
+ voit_tout:"Voient tous les chiffres",validation:"Validation des demandes",seuil:"Seuil",nb_users:"Utilisateurs prévus",support:"Supports",domaine:"Nom de domaine",domaine_nom:"Domaine",langues:"Langues",couleur1:"Couleur principale",couleur2:"Couleur secondaire",
+ sec_agents:"Sécurité · agents",sec_sites:"Sécurité · sites",sec_jour:"Sécurité · poste de jour",sec_nuit:"Sécurité · poste de nuit",sec_grades:"Sécurité · grades",sec_pointage:"Sécurité · pointage",
+ paie:"Paiement des salaires",mecef:"Facture normalisée",formation:"Formation",besoins_txt:"Besoins particuliers",demarrage:"Démarrage souhaité",fonction:"Fonction du déclarant"};
+f.addEventListener("submit",async e=>{
+ e.preventDefault();msg.className="msg";
+ if(!f.checkValidity()){const bad=f.querySelector(":invalid");msg.className="msg err";msg.textContent="Remplissez les champs marqués d'une étoile.";bad&&bad.focus();return}
+ if(total()>MAX){msg.className="msg err";msg.textContent="Les fichiers dépassent 15 Mo au total.";return}
+ const fd=new FormData(f),vals={};for(const [k,v] of fd.entries()){if(k==="consent"||!String(v).trim())continue;vals[k]=vals[k]?vals[k]+", "+v:v}
+ const lines=Object.keys(LABELS).filter(k=>vals[k]).map(k=>"• "+LABELS[k]+" : "+vals[k]);
+ lines.push("— Responsables par département —");DEPTS.forEach(([id,,nom])=>{const r=vals["resp_"+id],n=vals["eff_"+id];if(r||n)lines.push("• "+nom+" : "+(r||"?")+(n?" ("+n+")":""))});
+ lines.push("— Modules : pour qui —");MODS.forEach(([id,,nom])=>{if((vals.modules||"").includes(nom)&&vals["mod_"+id])lines.push("• "+nom+" : "+vals["mod_"+id])});
+ DOCS.forEach((d,i)=>{if(vals["doc_"+i])lines.push("• Document « "+d+" » : "+vals["doc_"+i])});
+ const data={type:"client",entreprise:vals.entreprise,nom:vals.nom,email:vals.email,whatsapp:vals.whatsapp,application:"CDK GROUP · Plateforme multi-départements",demande:"Configuration de la plateforme (fiche de démarrage)",urgence:"Normale (sous 48 h)",besoins:"FICHE DE CONFIGURATION CDK GROUP\n"+lines.join("\n")};
+ send.disabled=true;send.textContent="Envoi en cours…";
+ try{
+  const PFX={logo:"LOGO",logos_dept:"LOGO DEPT",cachet:"CACHET",signature:"SIGNATURE",excel:"PERSONNEL",autres:"DOC"};
+  const all=[];for(const k in UP)UP[k].forEach(x=>all.push([PFX[k]+" - "+x.name,x]));
+  data.fichiers=await Promise.all(all.map(async([n,x])=>({name:n,type:x.type||"application/octet-stream",data:await b64(x)})));
+  if(SCRIPT_URL.startsWith("COLLER"))throw new Error("config");
+  await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)});
+  f.innerHTML='<div class="done"><div class="ok">✓</div><h2 style="font-size:28px">Fiche bien reçue</h2><p style="color:var(--muted);max-width:46ch">Merci ! Nous préparons la plateforme de CDK GROUP et vous contactons sur WhatsApp sous 48 heures avec le devis des modules choisis.</p></div>';
+  window.scrollTo({top:0,behavior:"smooth"});
+ }catch(err){send.disabled=false;send.textContent="Envoyer la fiche";msg.className="msg err";msg.textContent=err.message==="config"?"Le formulaire n'est pas encore relié. Écrivez-nous à contact@sackoconcept.com.":"L'envoi n'a pas abouti. Vérifiez votre connexion et réessayez, ou écrivez-nous à contact@sackoconcept.com."}
+});
+</script>
+</body>
+</html>
