@@ -12,6 +12,18 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Mon agence">
 <link rel="apple-touch-icon" id="apple-ic" href="../assets/sacko-logo-vert-192.png">
+<script>
+/* Application installable au nom de l'agence : icône et nom de l'agence sur l'écran d'accueil ou le bureau */
+const APPS_AGENCES={"agence-speciale":{nom:"Agence Spéciale",ios:"/agence-speciale/logo-as2-ios-180.png"}};
+(function(){let sl=(new URLSearchParams(location.search).get("a")||"").toLowerCase().replace(/[^a-z0-9-]/g,"");try{if(!sl)sl=localStorage.getItem("espace-slug")||""}catch(_){}
+  const A=APPS_AGENCES[sl];if(!A)return;
+  document.querySelector('link[rel="manifest"]').href="manifest-"+sl+".webmanifest";
+  document.getElementById("apple-ic").href=A.ios;
+  document.querySelector('meta[name="apple-mobile-web-app-title"]').content=A.nom;
+  window.__appNom=A.nom;
+})();
+window.__invite=null;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();window.__invite=e;if(window.proposerInstallation)window.proposerInstallation()});
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -81,6 +93,9 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 .box-h h2{font-size:19px}.box-b{padding:18px 20px}
 .box-f{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--line);flex-wrap:wrap}
 .x{border:1px solid var(--line);background:#fff;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:18px;line-height:1}
+#installer{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:min(440px,calc(100% - 24px));background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(16,24,40,.16);padding:14px;display:flex;gap:12px;align-items:flex-start;z-index:60}
+#installer img{width:52px;height:52px;object-fit:contain;flex:none;border-radius:12px;background:#fff;border:1px solid var(--line);padding:3px}
+#installer b{display:block;font-size:15px;margin-bottom:2px}#installer p{margin:0 0 10px;font-size:13px;color:var(--muted)}
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;max-width:90vw}
 #toast.on{opacity:1}#toast.bad{background:var(--red)}
 .daybar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.daybar input{width:auto}
@@ -202,6 +217,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 </div>
 
 <div id="modal"><div class="box" id="box"></div></div>
+<div id="installer" class="hide" role="dialog" aria-label="Installer l'application"><img id="in-logo" alt=""><div style="flex:1;min-width:0"><b id="in-titre">Installer l'application</b><p id="in-texte"></p><div class="actions" style="gap:8px"><button class="btn pri sm" id="in-ok">Installer</button><button class="btn sm" id="in-non">Plus tard</button></div></div></div>
 <div id="toast"></div>
 
 <script>
@@ -1442,6 +1458,24 @@ function demarrerPWA(){if(!("serviceWorker" in navigator)||location.protocol!=="
 if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").then(r=>{swReg=r}).catch(()=>{});
 const b64u=s=>{const p="=".repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))};
 const estIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent),estInstallee=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+/* bandeau « Installer l'application » : Android / ordinateur (bouton direct), iPhone (marche à suivre) */
+function proposerInstallation(){
+  if(estInstallee())return;try{if(+localStorage.getItem("install-plus-tard")>Date.now())return}catch(_){}
+  const ios=estIOS()&&/safari/i.test(navigator.userAgent)&&!/crios|fxios/i.test(navigator.userAgent),inv=window.__invite;
+  if(!ios&&!inv)return;
+  const nom=window.__appNom||(ag&&(ag.nom||ag.nom_agence))||$("#lg-nom").textContent||"de votre agence",lg=$("#lg-logo");
+  $("#in-logo").src=lg&&lg.style.visibility!=="hidden"&&lg.src?lg.src:LOGO_DEFAUT;
+  $("#in-titre").textContent="Installer l'application "+nom;
+  const mob=/android|iphone|ipad|ipod/i.test(navigator.userAgent);
+  $("#in-texte").innerHTML=ios?"Touchez le bouton <b>Partager</b> (le carré avec une flèche) en bas de l'écran, puis <b>« Sur l'écran d'accueil »</b>. L'icône de votre agence apparaîtra sur votre téléphone."
+    :"L'icône de votre agence s'ajoute "+(mob?"sur l'écran d'accueil de votre téléphone":"sur le bureau de votre ordinateur")+". Le logiciel s'ouvre ensuite d'un seul geste, comme une vraie application.";
+  $("#in-ok").classList.toggle("hide",ios);$("#in-non").textContent=ios?"J'ai compris":"Plus tard";
+  $("#installer").classList.remove("hide")}
+window.proposerInstallation=proposerInstallation;
+$("#in-ok").onclick=async()=>{const e=window.__invite;if(!e)return;$("#installer").classList.add("hide");e.prompt();try{const r=await e.userChoice;if(r&&r.outcome==="accepted")toast("Application installée")}catch(_){}window.__invite=null};
+$("#in-non").onclick=()=>{$("#installer").classList.add("hide");try{localStorage.setItem("install-plus-tard",String(Date.now()+3*864e5))}catch(_){}};
+window.addEventListener("appinstalled",()=>$("#installer").classList.add("hide"));
+setTimeout(proposerInstallation,2500);
 async function etatNotifs(){if(!("Notification" in window)||!("serviceWorker" in navigator)||!("PushManager" in window))return estIOS()&&!estInstallee()?"ios":"impossible";
   if(Notification.permission==="denied")return "refuse";
   try{const r=swReg||await navigator.serviceWorker.getRegistration();const sub=r&&await r.pushManager.getSubscription();return sub&&Notification.permission==="granted"?"actif":"inactif"}catch(_){return "inactif"}}

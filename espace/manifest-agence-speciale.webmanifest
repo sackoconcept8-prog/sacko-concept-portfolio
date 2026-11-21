@@ -1,0 +1,17 @@
+{
+  "id": "/espace/?a=agence-speciale",
+  "name": "Agence Spéciale",
+  "short_name": "Agence Spéciale",
+  "description": "Logiciel de gestion de l'Agence Spéciale : pointage, planning, main courante et alertes.",
+  "start_url": "/espace/?a=agence-speciale",
+  "scope": "/espace/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "lang": "fr",
+  "icons": [
+    { "src": "/agence-speciale/logo-as2-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/agence-speciale/logo-as2-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/agence-speciale/logo-as2-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
