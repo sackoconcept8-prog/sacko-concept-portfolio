@@ -1,5 +1,5 @@
 /* Service worker de l'espace de gestion : fonctionnement sans réseau et notifications. */
-const VERSION = "espace-v8";
+const VERSION = "espace-v9";
 const COQUILLE = ["./", "./index.html", "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"];
 
 self.addEventListener("install", e => {
