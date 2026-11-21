@@ -137,6 +137,12 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 .ech{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.ech:last-child{border-bottom:0}
 .ech .d{flex:0 0 auto;font-weight:700;font-size:13px;border-radius:8px;padding:3px 8px}
 #voile{position:fixed;inset:0;background:rgba(20,30,45,.35);z-index:14}
+#tech-bar{background:#fff7e6;border-bottom:1px solid #f1d9a6;color:#6b4a0f;font-size:13px}
+#tech-bar .in{max-width:1400px;margin:0 auto;padding:8px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#tech-bar select{max-width:340px;padding:6px 10px;font-size:13px}
+.tech-ag{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;text-align:left}
+.tech-ag img{width:46px;height:46px;object-fit:contain;border-radius:10px;border:1px solid var(--line);background:#fff;padding:2px;flex:none}
+.tech-ag .ini{width:46px;height:46px;border-radius:10px;background:var(--p-l);color:var(--p);display:grid;place-items:center;font-weight:800;flex:none}
 #sos-bar{background:var(--red);color:#fff;padding:12px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-weight:600}
 #sos-bar .btn{background:#fff;color:var(--red);border-color:#fff}
 .seg{display:inline-flex;gap:4px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:16px;max-width:100%;overflow-x:auto}
@@ -205,7 +211,20 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
   </div>
 </section>
 
+<section id="tech" class="center hide">
+  <div class="login-card" style="max-width:560px">
+    <img class="biglogo" src="../assets/sacko-logo-vert-512.png" alt="">
+    <h1 style="font-size:23px">Espace technicien</h1>
+    <p class="muted sm" id="tc-qui" style="margin:4px 0 16px"></p>
+    <div class="field"><label class="f" for="tc-motif">Motif de l'intervention <span class="muted" style="font-weight:400">(facultatif, gardé dans le journal)</span></label><input class="input" id="tc-motif" placeholder="Ex. le client ne voit pas ses factures"></div>
+    <div id="tc-liste"><p class="muted sm">Chargement des agences…</p></div>
+    <button class="btn" id="tc-out" style="margin-top:6px">Se déconnecter</button>
+    <div class="by">Chaque ouverture et chaque affichage sont enregistrés dans le journal SACKO CONCEPT.</div>
+  </div>
+</section>
+
 <div id="app" class="hide">
+  <div id="tech-bar" class="hide"></div>
   <header class="top"><div class="top-in">
     <div class="brand"><img id="hd-logo" alt="" style="visibility:hidden"><div style="min-width:0"><span id="hd-nom"></span><small id="hd-moi"></small></div></div>
     <button class="btn sm hide" id="menu-btn" aria-label="Menu">☰ Menu</button>
@@ -339,7 +358,7 @@ function habiller(a){if(!a)return;
   if(a.devise||a.raison_sociale)$("#lg-sous").textContent=a.devise||a.raison_sociale;
   const sl=a.slug||slug;if(sl){try{localStorage.setItem("espace-marque-"+sl,JSON.stringify({logo_url:a.logo_url||"",couleur:a.couleur_principale||"",nom:nom||"",sous:a.devise||a.raison_sociale||""}))}catch(_){}}
 }
-function ecran(id){["login","bloque","app"].forEach(x=>$("#"+x).classList.toggle("hide",x!==id))}
+function ecran(id){["login","bloque","app","tech"].forEach(x=>$("#"+x).classList.toggle("hide",x!==id))}
 function showLogin(msg){ecran("login");const e=$("#login-err");e.textContent=msg||"";e.classList.toggle("hide",!msg)}
 
 /* ---------- connexion ---------- */
@@ -357,15 +376,16 @@ function demarrerHorsLigne(){let sn=null;try{sn=JSON.parse(localStorage.getItem(
   $("#layout").classList.remove("avec");$("#side").classList.add("hide");$("#tabs").classList.remove("hide");$("#menu-btn").classList.add("hide");
   $("#tabs").innerHTML=`<button data-tab="accueil" class="on">Accueil</button>`;tab="accueil";afficherHorsLigne();
   window.addEventListener("online",()=>location.reload(),{once:true})}
-async function sortir(msg){clearInterval(veille);try{const r=swReg||await navigator.serviceWorker.getRegistration();const sub=r&&await r.pushManager.getSubscription();if(sub)await sb.from("push_abonnements").delete().eq("endpoint",sub.endpoint)}catch(_){}await sb.auth.signOut();ctx=ag=moi=null;showLogin(msg)}
+async function sortir(msg){clearInterval(veille);if(modeTech){try{await sb.rpc("fermer_session_technicien")}catch(_){}modeTech=false}$("#tech-bar").classList.add("hide");try{const r=swReg||await navigator.serviceWorker.getRegistration();const sub=r&&await r.pushManager.getSubscription();if(sub)await sb.from("push_abonnements").delete().eq("endpoint",sub.endpoint)}catch(_){}await sb.auth.signOut();ctx=ag=moi=null;showLogin(msg)}
 $("#logout").onclick=()=>sortir();$("#bl-out").onclick=()=>sortir();
 async function entrer(){
   let r;try{r=await sb.rpc("contexte")}catch(e){r={error:e}}
   if(r.error&&horsReseau(r.error))return demarrerHorsLigne();
   if(r.error||!r.data||!r.data.connecte)return sortir("Compte non reconnu. Contactez votre responsable.");
-  ctx=r.data;moi=ctx.profil;ag=ctx.agence;
-  if(moi.role==="super_admin")return sortir("Ce compte est celui de l'administration. Utilisez le cockpit SACKO CONCEPT.");
-  if(slug&&ag&&ag.slug!==slug)return sortir("Ce compte n'appartient pas à cette agence.");
+  ctx=r.data;moi=ctx.profil;ag=ctx.agence;clearInterval(veille);$("#tech-bar").classList.add("hide");
+  modeTech=["super_admin","technicien"].includes(ctx.role_reel);
+  if(modeTech&&!ctx.technicien)return ecranTechnicien();
+  if(!modeTech&&slug&&ag&&ag.slug!==slug)return sortir("Ce compte n'appartient pas à cette agence.");
   if(ag){slug=ag.slug;try{localStorage.setItem("espace-slug",slug)}catch(_){}habiller(ag)}
   if(!ctx.acces_ouvert)return bloquer(ctx.motif_blocage);
   $("#hd-moi").textContent=moi.nom_complet+" · "+(moi.fonction||ROLES[moi.role]||moi.role);
@@ -387,7 +407,34 @@ async function entrer(){
   const voulu=new URLSearchParams(location.search).get("t");
   await ouvrir(voulu&&T.some(x=>x[0]===voulu)?voulu:T[0][0]);
   demarrerVeille();demarrerPWA();
-  if(moi.role==="agent")envoyerFile();
+  if(moi.role==="agent"&&!modeTech)envoyerFile();
+  if(modeTech)barreTechnicien();
+}
+/* ---------- espace technicien ---------- */
+let modeTech=false;
+const lectureSeuleTech=()=>modeTech&&moi&&["agent","client"].includes(moi.role);
+{const _from=sb.from.bind(sb);sb.from=t=>{const q=_from(t);if(lectureSeuleTech())["insert","update","upsert","delete"].forEach(m=>{q[m]=()=>{throw new Error("Mode technicien : l'interface de ce compte est affichée en consultation seulement.")}});return q}}
+async function ecranTechnicien(){
+  ecran("tech");montrerLogo(LOGO_DEFAUT);document.title="Espace technicien · SACKO CONCEPT";
+  $("#tc-qui").textContent="Connecté : "+(ctx.technicien_nom||"")+(ctx.role_reel==="super_admin"?" · administration":" · technicien")+". Choisissez l'agence à ouvrir.";
+  $("#tc-out").onclick=()=>sortir();
+  let l=[];try{l=must(await sb.rpc("technicien_agences"))||[]}catch(e){$("#tc-liste").innerHTML=`<div class="err">${esc(traduire(e.message))}</div>`;return}
+  l.sort((a,b)=>(b.slug===slug)-(a.slug===slug));
+  const etatAg=a=>a.statut_abonnement!=="actif"?["Suspendue","p-red"]:new Date(a.date_expiration)<=new Date()?["Accès expiré","p-amber"]:["Accès ouvert","p-green"];
+  $("#tc-liste").innerHTML=l.length?l.map(a=>{const e=etatAg(a);return `<div class="tech-ag">${a.logo_url?`<img src="${esc(a.logo_url)}" alt="">`:`<span class="ini">${esc((a.nom_agence||"?").slice(0,2).toUpperCase())}</span>`}<div class="grow" style="min-width:0"><b>${esc(a.nom_agence)}</b><div class="muted xs">${esc(a.ville||"")} <span class="pill ${e[1]}">${e[0]}</span></div></div><button class="btn pri sm" data-tc="${a.id}">Ouvrir</button></div>`}).join(""):'<p class="muted">Aucune agence pour le moment.</p>';
+  $("#tc-liste").querySelectorAll("[data-tc]").forEach(b=>b.onclick=()=>busy(b,async()=>{must(await sb.rpc("ouvrir_session_technicien",{p_agence:b.dataset.tc,p_motif:$("#tc-motif").value||null}));await entrer()}));
+}
+async function barreTechnicien(){
+  const bar=$("#tech-bar");let c=[];try{c=must(await sb.rpc("technicien_comptes"))||[]}catch(_){}
+  const RL={dg:"Direction",commercial:"Directeur commercial",rh:"RH / Superviseur général",superviseur:"Superviseur",client:"Client",agent:"Agent"};
+  const grp={};c.forEach(x=>(grp[x.role]=grp[x.role]||[]).push(x));
+  bar.innerHTML=`<div class="in"><b>🛠 Mode technicien</b><span>${esc(ag?ag.nom_agence:"")}</span><span class="grow"></span><label for="tb-vue" class="sm">Interface affichée :</label>
+  <select class="input" id="tb-vue"><option value="">Direction (vue complète)</option>${Object.keys(RL).filter(k=>grp[k]).map(k=>`<optgroup label="${RL[k]}">${grp[k].map(x=>`<option value="${x.id}" ${ctx.vu===x.id?"selected":""}>${esc(x.nom_complet)}${x.fonction?" · "+esc(x.fonction):""}${x.est_actif?"":" (désactivé)"}</option>`).join("")}</optgroup>`).join("")}</select>
+  ${lectureSeuleTech()?'<span class="pill p-amber">Consultation seulement</span>':""}<button class="btn sm" id="tb-ag">Changer d'agence</button><button class="btn sm" id="tb-fin">Fermer la session</button></div>`;
+  bar.classList.remove("hide");
+  $("#tb-vue").onchange=e=>busy(null,async()=>{must(await sb.rpc("voir_comme",{p_profil:e.target.value||null}));history.replaceState(null,"",location.pathname+"?a="+ag.slug);await entrer()});
+  const fin=async()=>{must(await sb.rpc("fermer_session_technicien"));bar.classList.add("hide");await entrer()};
+  $("#tb-ag").onclick=()=>busy($("#tb-ag"),fin);$("#tb-fin").onclick=()=>busy($("#tb-fin"),fin);
 }
 let espace="direction";
 /* le superviseur général travaille en « superviseur » dans l'espace Supervision et en « rh » dans l'espace RH (ses droits réels restent ceux du RH) */
@@ -778,7 +825,7 @@ async function vAgentAccueil(){
   const dep=$("#ag-dep");if(dep)dep.onclick=()=>busy(dep,async()=>{const h=new Date().toISOString();
     try{must(await sb.from("pointages").update({heure_depart:h}).eq("id",ouvert.id));toast("Départ enregistré");await vAgentAccueil()}
     catch(e){if(!horsReseau(e))throw e;mettreEnFile({k:"dep",pid:ouvert.id,ds:ouvert.date_service,poste:ouvert.poste,h});await afficherHorsLigne()}});
-  try{localStorage.setItem("sp-snap",JSON.stringify({uid:moi.id,ag,moi,monAgent:{id:monAgent.id,prenom:monAgent.prenom,nom:monAgent.nom,matricule:monAgent.matricule,grade:monAgent.grade},
+  if(!modeTech)try{localStorage.setItem("sp-snap",JSON.stringify({uid:moi.id,ag,moi,monAgent:{id:monAgent.id,prenom:monAgent.prenom,nom:monAgent.nom,matricule:monAgent.matricule,grade:monAgent.grade},
     vise:vise?{ds:vise.ds,poste:vise.poste,site_id:vise.site_id}:null,site:vise?S(vise.site_id):null,ouvert:ouvert?{id:ouvert.id,heure_arrivee:ouvert.heure_arrivee,date_service:ouvert.date_service,poste:ouvert.poste,site:S(ouvert.site_id).nom}:null,fait:!!fait,at:Date.now()}))}catch(_){}
   if(lireFile().length){const b=document.createElement("div");b.className="hl-bar";b.textContent="Envoi des pointages faits sans réseau…";$("#main .head").after(b);envoyerFile()}
 }
@@ -1485,7 +1532,7 @@ async function activerNotifs(){const perm=await Notification.requestPermission()
   let sub=await r.pushManager.getSubscription();if(!sub)sub=await r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(k)});
   const j=sub.toJSON();must(await sb.rpc("enregistrer_push",{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth}));
   toast("Notifications activées sur ce téléphone")}
-async function carteNotifs(z){if(!z||!estEncadrement())return;const e=await etatNotifs();if(e==="actif"||e==="impossible")return;
+async function carteNotifs(z){if(!z||!estEncadrement()||modeTech)return;const e=await etatNotifs();if(e==="actif"||e==="impossible")return;
   const txt={inactif:"Recevez les alertes SOS et les incidents graves sur ce téléphone, même quand l'application est fermée.",refuse:"Les notifications sont bloquées sur ce téléphone. Autorisez-les dans les réglages du navigateur, pour ce site.",
     ios:"Sur iPhone, ajoutez d'abord l'application à l'écran d'accueil (bouton Partager, puis « Sur l'écran d'accueil »), ouvrez-la depuis l'icône, puis activez les alertes ici."}[e];
   z.innerHTML=`<div class="card" style="border-color:var(--red)"><h2>🔔 Alertes SOS sur ce téléphone</h2><p class="muted sm" style="margin:4px 0 10px">${txt}</p>${e==="inactif"?`<button class="btn pri" id="nt-on">Activer les alertes</button>`:""}</div>`;

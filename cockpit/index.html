@@ -120,6 +120,7 @@ pre.log{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:va
       <button data-tab="paiements">Paiements</button>
       <button data-tab="support">Support <span id="nb-tickets"></span></button>
       <button data-tab="erreurs">Erreurs</button>
+      <button data-tab="techniciens">Techniciens</button>
       <button data-tab="reglages">Réglages</button>
     </nav>
     <button class="btn sm" id="logout">Déconnexion</button>
@@ -185,9 +186,16 @@ $("#login-form").onsubmit=ev=>{ev.preventDefault();busy($("#l-btn"),async()=>{
   if(error)return showLogin("E-mail ou mot de passe incorrect.");
   $("#l-pass").value="";await entrer();
 })};
+let moiId=null;
 async function entrer(){
   const r=await sb.rpc("contexte");
+  /* une session technicien est ouverte : le cockpit attend qu'elle soit fermée */
+  if(!r.error&&r.data&&r.data.connecte&&r.data.role_reel==="super_admin"&&r.data.technicien){
+    $("#app").classList.add("hide");$("#login").classList.remove("hide");
+    $("#login-form").innerHTML=`<img class="mono" src="../assets/sacko-logo-vert-512.png" alt=""><h1 style="font-size:23px">Session technicien en cours</h1><p class="muted" style="margin:6px 0 18px">Vous êtes dans l'espace de <b>${esc(r.data.agence?r.data.agence.nom_agence:"une agence")}</b>. Fermez cette session pour revenir au cockpit.</p><div class="actions" style="justify-content:center"><a class="btn" href="../espace/?a=${esc(r.data.agence?r.data.agence.slug:"")}">Retourner dans l'espace</a><button type="button" class="btn pri" id="ts-fin">Fermer la session et ouvrir le cockpit</button></div>`;
+    $("#ts-fin").onclick=()=>busy($("#ts-fin"),async()=>{must(await sb.rpc("fermer_session_technicien"));location.reload()});return}
   if(r.error||!r.data||!r.data.connecte||r.data.profil.role!=="super_admin"||!r.data.acces_ouvert){await sb.auth.signOut();return showLogin("Cet espace est réservé à l'administration SACKO CONCEPT.")}
+  moiId=r.data.profil.id;
   const rg=await sb.from("reglages_plateforme").select("*").maybeSingle();if(rg.data)reglages=rg.data;
   $("#login").classList.add("hide");$("#app").classList.remove("hide");await ouvrir("agences");
 }
@@ -195,7 +203,7 @@ $("#logout").onclick=async()=>{await sb.auth.signOut();showLogin()};
 $("#tabs").onclick=e=>{const b=e.target.closest("button[data-tab]");if(b)ouvrir(b.dataset.tab)};
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{await({agences:vAgences,paiements:vPaiements,support:vSupport,erreurs:vErreurs,reglages:vReglages}[t])()}catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(e.message)}</div>`}}
+  try{await({agences:vAgences,paiements:vPaiements,support:vSupport,erreurs:vErreurs,reglages:vReglages,techniciens:vTechniciens}[t])()}catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(e.message)}</div>`}}
 
 /* ---------- agences ---------- */
 async function vAgences(){
@@ -285,7 +293,7 @@ async function fiche(id){
   <div class="field" style="margin:0 0 14px"><label class="f">Lien de connexion à envoyer au client</label><div class="row" style="gap:8px;flex-wrap:nowrap"><input class="input" id="f-lien" readonly value="https://www.sackoconcept.com/espace/?a=${esc(a.slug)}"><button class="btn" id="f-copie" type="button">Copier</button></div></div>
   <label class="f">Comptes utilisateurs</label>
   <div id="f-comptes"><p class="muted sm">Chargement…</p></div>
-  <button class="btn pri" id="f-add-acc">+ Créer un compte</button>
+  <div class="actions"><button class="btn pri" id="f-add-acc">+ Créer un compte</button><button class="btn" id="f-tech" type="button">🛠 Ouvrir l'espace technicien</button></div>
   <div class="field" style="margin:16px 0 0"><label class="f">Importer les données du client</label><p class="muted sm" style="margin:0 0 8px">Sites, agents et matériel, à partir du fichier Excel rempli par le client. Les lignes déjà présentes sont mises à jour, rien n'est supprimé.</p>
   <div class="actions"><label class="btn" style="cursor:pointer">Choisir le fichier Excel<input type="file" id="f-xls" accept=".xlsx,.xls" hidden></label><a class="btn" href="../assets/SecuriPro-Donnees-a-remplir.xlsx" download>Télécharger le modèle vierge</a></div></div>
 
@@ -349,6 +357,7 @@ async function fiche(id){
     closeModal();toast("Fiche enregistrée");await vAgences();
   });
   $("#f-add-acc").onclick=()=>creerCompte(a);
+  $("#f-tech").onclick=()=>busy($("#f-tech"),async()=>{must(await sb.rpc("ouvrir_session_technicien",{p_agence:a.id,p_motif:"Depuis le cockpit"}));location.href="../espace/?a="+encodeURIComponent(a.slug)});
   $("#f-xls").onchange=e=>{const f=e.target.files[0];if(f)importerExcel(a,f)};
   $("#f-del").onclick=()=>supprimerAgence(a);
   $("#f-add-pay").onclick=()=>paiement(a,()=>fiche(id));
@@ -477,6 +486,22 @@ async function vSupport(){
 }
 
 /* ---------- erreurs ---------- */
+/* ---------- techniciens ---------- */
+async function vTechniciens(){
+  if(!agences.length)agences=must(await sb.rpc("cockpit_resume"))||[];
+  const [t,j]=await Promise.all([sb.from("profiles").select("id,nom_complet,est_actif,derniere_connexion,created_at").eq("role","technicien").order("created_at").then(must),
+    sb.from("journal_technicien").select("technicien_id,agence_id,action,detail,created_at").order("created_at",{ascending:false}).limit(60).then(must)]);
+  const qui=id=>id===moiId?"Vous":((t.find(x=>x.id===id)||{}).nom_complet||"—"),agN=id=>(agences.find(a=>a.id===id)||{}).nom_agence||"—";
+  const ACT={ouverture:"a ouvert l'espace",fermeture:"a fermé la session",affichage:"a affiché l'interface de"};
+  $("#main").innerHTML=`<div class="head"><div><h1>Techniciens</h1><p class="muted sm" style="margin:2px 0 0">Le technicien se connecte sur <b>sackoconcept.com/espace</b> avec son e-mail. Il choisit une agence et voit l'interface de n'importe quel compte (direction, RH, superviseurs, commercial, agents, clients). Il n'a pas accès au cockpit, aux abonnements ni aux paiements.</p></div><button class="btn pri" id="t-new">+ Nouveau technicien</button></div>
+  <div class="card">${t.length?t.map(c=>`<div class="acc"><div class="grow"><b>${esc(c.nom_complet)}</b><div class="muted xs">Technicien · dernière connexion : ${fdt(c.derniere_connexion)}</div></div><span class="pill ${c.est_actif?"p-green":"p-grey"}">${c.est_actif?"Actif":"Désactivé"}</span><button class="btn sm" data-tmdp="${c.id}" data-nom="${esc(c.nom_complet)}">Nouveau mot de passe</button><button class="btn sm" data-tact="${c.id}" data-val="${c.est_actif?0:1}">${c.est_actif?"Désactiver":"Réactiver"}</button></div>`).join(""):'<p class="muted sm" style="margin:0">Aucun technicien pour le moment.</p>'}</div>
+  <div class="card"><h2 style="font-size:17px;margin:0 0 10px">Journal des interventions</h2>${j.length?j.map(x=>`<div class="line"><div class="grow"><b>${esc(qui(x.technicien_id))}</b> ${ACT[x.action]||esc(x.action)} ${x.action==="affichage"?`<b>${esc((x.detail||{}).compte||"")}</b> ·`:""} ${esc(agN(x.agence_id))}${x.action==="ouverture"&&x.detail&&x.detail.motif?` <span class="muted">· ${esc(x.detail.motif)}</span>`:""}</div><span class="muted sm">${fdt(x.created_at)}</span></div>`).join(""):'<p class="muted sm" style="margin:0">Aucune intervention enregistrée.</p>'}</div>`;
+  $("#t-new").onclick=()=>{modal("Nouveau technicien",`<div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div><div class="field"><label class="f">Adresse e-mail (sert d'identifiant)</label><input class="input" id="k-mail" type="email" autocomplete="off"></div><div class="field"><label class="f">Mot de passe provisoire (8 caractères minimum)</label><input class="input" id="k-mdp" type="text" autocomplete="off"></div><p class="muted sm" style="margin:0">Transmettez-lui l'adresse <b>sackoconcept.com/espace</b>, son e-mail et ce mot de passe.</p>`,`<button class="btn" id="k-no">Annuler</button><button class="btn pri" id="k-ok">Créer le compte</button>`);
+    $("#k-no").onclick=closeModal;$("#k-ok").onclick=()=>busy($("#k-ok"),async()=>{await appel({action:"creer",role:"technicien",nom_complet:$("#k-nom").value,email:$("#k-mail").value,mot_de_passe:$("#k-mdp").value,fonction:"Technicien SACKO CONCEPT"});closeModal();toast("Technicien créé");await vTechniciens()})};
+  $("#main").querySelectorAll("[data-tact]").forEach(b=>b.onclick=()=>busy(b,async()=>{await appel({action:"activer",user_id:b.dataset.tact,est_actif:b.dataset.val==="1"});toast(b.dataset.val==="1"?"Compte réactivé":"Compte désactivé");await vTechniciens()}));
+  $("#main").querySelectorAll("[data-tmdp]").forEach(b=>b.onclick=()=>{modal("Nouveau mot de passe · "+esc(b.dataset.nom),`<div class="field"><label class="f">Nouveau mot de passe (8 caractères minimum)</label><input class="input" id="k-mdp" type="text" autocomplete="off"></div>`,`<button class="btn" id="k-no">Annuler</button><button class="btn pri" id="k-ok">Changer</button>`);
+    $("#k-no").onclick=closeModal;$("#k-ok").onclick=()=>busy($("#k-ok"),async()=>{await appel({action:"mot_de_passe",user_id:b.dataset.tmdp,mot_de_passe:$("#k-mdp").value});closeModal();toast("Mot de passe changé")})});
+}
 async function vErreurs(){
   const l=must(await sb.from("logs_erreurs").select("id,agence_id,page,erreur_technique,created_at").order("created_at",{ascending:false}).limit(100));
   if(!agences.length)agences=must(await sb.rpc("cockpit_resume"))||[];
