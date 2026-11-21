@@ -266,7 +266,7 @@ const fd=d=>d?new Date(d).toLocaleDateString("fr-FR",{day:"numeric",month:"short
 const fdt=d=>d?new Date(d).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"—";
 const slugify=t=>String(t||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
 const JOURS=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
-const ROLES={dg:"Direction (rapports et pilotage)",rh:"Ressources humaines / Superviseur général",superviseur:"Superviseur",commercial:"Directeur commercial (clients)",agent:"Agent",client:"Client"};
+const ROLES={dg:"Direction (rapports et pilotage)",rh:"Ressources humaines / Superviseur général",superviseur:"Superviseur",commercial:"Directeur commercial (clients)",conseiller:"Conseiller (consultation de la direction)",agent:"Agent",client:"Client"};
 const titre=c=>c.fonction?esc(c.fonction):(ROLES[c.role]||esc(c.role));
 let tT;function toast(m,bad){const t=$("#toast");t.textContent=m;t.className="on"+(bad?" bad":"");clearTimeout(tT);tT=setTimeout(()=>t.className="",3400)}
 function modal(title,body,foot){$("#box").innerHTML=`<div class="box-h"><h2>${title}</h2><button class="x" id="m-x" aria-label="Fermer">×</button></div><div class="box-b">${body}</div>${foot?`<div class="box-f">${foot}</div>`:""}`;$("#modal").classList.add("on");$("#m-x").onclick=closeModal;$("#modal").scrollTop=0}
@@ -346,6 +346,7 @@ const estDirection=()=>moi&&(moi.role==="dg"||moi.role==="rh");
 /* superviseur général : compte RH relié à une fiche agent → espace Supervision + espace RH */
 const estSupGeneral=()=>moi&&moi.role_reel==="rh"&&!!moi.agent_id;
 const estCommercial=()=>moi&&moi.role==="commercial";
+const estConseiller=()=>moi&&moi.role_reel==="conseiller";
 let dgGardeRH=true;
 const estEncadrement=()=>estDirection()||(moi&&moi.role==="superviseur");
 const emailAgent=mat=>slugify(mat)+"@"+ag.slug+".agents.sackoconcept.com";
@@ -395,6 +396,7 @@ async function entrer(){
     try{espace=dgGardeRH&&localStorage.getItem("espace-"+moi.id)==="rh"?"rh":"direction"}catch(_){}}
   else if(moi.role==="rh"){if(estSupGeneral()){try{espace=localStorage.getItem("espace-"+moi.id)==="rh"?"rh":"supervision"}catch(_){espace="supervision"}}else espace="rh"}
   else if(moi.role==="commercial")espace="commercial";
+  else if(moi.role==="conseiller")moi.role="dg"; /* le conseiller voit l'interface de la direction, en consultation seulement */
   appliquerEspace();
   const G=estDirection()||estSupGeneral()||estCommercial()?menuDirection():null;
   const T=G?G.flatMap(g=>g[1]):moi.role==="superviseur"?MENU_SUP
@@ -412,8 +414,8 @@ async function entrer(){
 }
 /* ---------- espace technicien ---------- */
 let modeTech=false;
-const lectureSeuleTech=()=>modeTech&&moi&&["agent","client"].includes(moi.role);
-{const _from=sb.from.bind(sb);sb.from=t=>{const q=_from(t);if(lectureSeuleTech())["insert","update","upsert","delete"].forEach(m=>{q[m]=()=>{throw new Error("Mode technicien : l'interface de ce compte est affichée en consultation seulement.")}});return q}}
+const lectureSeuleTech=()=>(modeTech&&moi&&["agent","client"].includes(moi.role))||estConseiller();
+{const _from=sb.from.bind(sb);sb.from=t=>{const q=_from(t);if(lectureSeuleTech())["insert","update","upsert","delete"].forEach(m=>{q[m]=()=>{throw new Error(estConseiller()?"Espace conseiller : consultation seulement. Transmettez votre remarque au CEO.":"Mode technicien : l'interface de ce compte est affichée en consultation seulement.")}});return q}}
 async function ecranTechnicien(){
   ecran("tech");montrerLogo(LOGO_DEFAUT);document.title="Espace technicien · SACKO CONCEPT";
   $("#tc-qui").textContent="Connecté : "+(ctx.technicien_nom||"")+(ctx.role_reel==="super_admin"?" · administration":" · technicien")+". Choisissez l'agence à ouvrir.";
@@ -426,7 +428,7 @@ async function ecranTechnicien(){
 }
 async function barreTechnicien(){
   const bar=$("#tech-bar");let c=[];try{c=must(await sb.rpc("technicien_comptes"))||[]}catch(_){}
-  const RL={dg:"Direction",commercial:"Directeur commercial",rh:"RH / Superviseur général",superviseur:"Superviseur",client:"Client",agent:"Agent"};
+  const RL={dg:"Direction",conseiller:"Conseiller",commercial:"Directeur commercial",rh:"RH / Superviseur général",superviseur:"Superviseur",client:"Client",agent:"Agent"};
   const grp={};c.forEach(x=>(grp[x.role]=grp[x.role]||[]).push(x));
   bar.innerHTML=`<div class="in"><b>🛠 Mode technicien</b><span>${esc(ag?ag.nom_agence:"")}</span><span class="grow"></span><label for="tb-vue" class="sm">Interface affichée :</label>
   <select class="input" id="tb-vue"><option value="">Direction (vue complète)</option>${Object.keys(RL).filter(k=>grp[k]).map(k=>`<optgroup label="${RL[k]}">${grp[k].map(x=>`<option value="${x.id}" ${ctx.vu===x.id?"selected":""}>${esc(x.nom_complet)}${x.fonction?" · "+esc(x.fonction):""}${x.est_actif?"":" (désactivé)"}</option>`).join("")}</optgroup>`).join("")}</select>
@@ -441,6 +443,9 @@ let espace="direction";
 function appliquerEspace(){if(estSupGeneral())moi.role=espace==="supervision"?"superviseur":"rh"}
 const MENU_SUP=[["pointage","Pointage"],["visites","Visites et notes"],["rapport","Mon rapport"],["equipe","Mes agents"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"]];
 function menuDirection(){
+  if(estConseiller())return menuDirectionBase().map(([g,l])=>[g,l.filter(([k])=>!["comptes","reglages"].includes(k))]).filter(([g,l])=>l.length);
+  return menuDirectionBase()}
+function menuDirectionBase(){
   if(espace==="supervision")return [["Supervision",MENU_SUP]];
   if(espace==="commercial")return [["Clients",[["sites","Sites clients"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["support","Support"]]]];
   if(espace==="rh")return [["",[["accueil","Tableau de bord RH"]]],["Personnel",[["agents","Agents"],["conges","Congés"],["documents","Documents RH"],["messages","Messages"],["paie","Paie"],["materiel","Matériel"]]],
@@ -451,7 +456,7 @@ function menuDirection(){
 function dessinerMenu(G){
   const sw=moi.role_reel==="dg"&&dgGardeRH?`<div class="esp"><button data-esp="direction" class="${espace==="direction"?"on":""}">Direction</button><button data-esp="rh" class="${espace==="rh"?"on":""}">Espace RH</button></div>`
     :estSupGeneral()?`<div class="esp"><button data-esp="supervision" class="${espace==="supervision"?"on":""}">Supervision</button><button data-esp="rh" class="${espace==="rh"?"on":""}">Espace RH</button></div>`
-    :`<div class="grp" style="margin-top:4px">${moi.role_reel==="dg"?"Direction":moi.role_reel==="commercial"?"Direction commerciale":"Espace RH"}</div>`;
+    :`<div class="grp" style="margin-top:4px">${estConseiller()?"Espace conseiller · consultation":moi.role_reel==="dg"?"Direction":moi.role_reel==="commercial"?"Direction commerciale":"Espace RH"}</div>`;
   $("#side").innerHTML=sw+G.map(([g,l])=>(g?`<div class="grp">${g}</div>`:"")+l.map(([k,x])=>`<button data-tab="${k}">${x}<span class="badge hide" data-b="${k}"></span></button>`).join("")).join("");
   $("#side").querySelectorAll("[data-esp]").forEach(b=>b.onclick=e=>{e.stopPropagation();if(espace===b.dataset.esp)return;espace=b.dataset.esp;try{localStorage.setItem("espace-"+moi.id,espace)}catch(_){}appliquerEspace();
     const mob=getComputedStyle($("#menu-btn")).display!=="none";const M=menuDirection();dessinerMenu(M);ouvrir(M[0][1][0][0]).then(()=>{if(mob)menu(true)});verifierAlertes().catch(()=>{})});
@@ -477,7 +482,7 @@ async function charger(){
 async function chargerCommercial(){const [s,a]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.rpc("agents_noms")]);sites=must(s);agents=must(a).sort((x,y)=>String(x.nom).localeCompare(String(y.nom)));comptes=[]}
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button,#side button[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));menu(false);window.scrollTo(0,0);
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();await({accueil:moi.role==="agent"?vAgentAccueil:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
+  try{if(estConseiller())await chargerCommercial();else if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();await({accueil:moi.role==="agent"?vAgentAccueil:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
@@ -513,7 +518,8 @@ async function vAccueil(){
   <div class="tiles"><div class="tile"><b>${actifs} / ${+ag.nb_agents_max}</b><span class="muted sm">Agents actifs</span></div><div class="tile"><b>${sites.filter(s=>s.actif).length}</b><span class="muted sm">Sites clients</span></div><div class="tile"><b>${avecCompte}</b><span class="muted sm">Agents avec accès</span></div><div class="tile"><b>${fd(ag.date_expiration)}</b><span class="muted sm">Fin de l'accès${j<=7?` · <span style="color:var(--amber)">dans ${Math.max(j,0)} j</span>`:""}</span></div></div>
   <div class="card" id="jour-bloc"><h2>Aujourd'hui</h2><p class="muted sm" style="margin:0">Chargement…</p></div>
   <div id="notif-z"></div><div id="ech-z"></div>
-  <div class="card"><h2>Pour bien démarrer</h2><ul class="steps">${et.map(([ok,l,t])=>`<li><span class="dot ${ok?"ok":""}">${ok?"✓":""}</span><span style="flex:1">${l}</span>${ok?"":`<button class="btn sm" data-go="${t}">Commencer</button>`}</li>`).join("")}</ul></div>`;
+  ${estConseiller()?`<div class="idbox sm">Espace conseiller : vous voyez tout le pilotage de l'agence (opérations, clients, factures, rapports) en consultation. Rien ne peut être modifié depuis ce compte.</div>`:""}
+  <div class="card ${estConseiller()?"hide":""}"><h2>Pour bien démarrer</h2><ul class="steps">${et.map(([ok,l,t])=>`<li><span class="dot ${ok?"ok":""}">${ok?"✓":""}</span><span style="flex:1">${l}</span>${ok?"":`<button class="btn sm" data-go="${t}">Commencer</button>`}</li>`).join("")}</ul></div>`;
   $("#main").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go));
   carteNotifs($("#notif-z"));echeances().then(l=>{const z=$("#ech-z");if(z&&l.length){z.innerHTML=carteEcheances(l);brancherEcheances()}}).catch(()=>{});
   try{const ds=auj(),P=await chargerPlanning(ajout(ds,-1),ds),po=must(await sb.from("pointages").select("*").eq("date_service",ds));
@@ -1532,7 +1538,7 @@ async function activerNotifs(){const perm=await Notification.requestPermission()
   let sub=await r.pushManager.getSubscription();if(!sub)sub=await r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(k)});
   const j=sub.toJSON();must(await sb.rpc("enregistrer_push",{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth}));
   toast("Notifications activées sur ce téléphone")}
-async function carteNotifs(z){if(!z||!estEncadrement()||modeTech)return;const e=await etatNotifs();if(e==="actif"||e==="impossible")return;
+async function carteNotifs(z){if(!z||!estEncadrement()||modeTech||estConseiller())return;const e=await etatNotifs();if(e==="actif"||e==="impossible")return;
   const txt={inactif:"Recevez les alertes SOS et les incidents graves sur ce téléphone, même quand l'application est fermée.",refuse:"Les notifications sont bloquées sur ce téléphone. Autorisez-les dans les réglages du navigateur, pour ce site.",
     ios:"Sur iPhone, ajoutez d'abord l'application à l'écran d'accueil (bouton Partager, puis « Sur l'écran d'accueil »), ouvrez-la depuis l'icône, puis activez les alertes ici."}[e];
   z.innerHTML=`<div class="card" style="border-color:var(--red)"><h2>🔔 Alertes SOS sur ce téléphone</h2><p class="muted sm" style="margin:4px 0 10px">${txt}</p>${e==="inactif"?`<button class="btn pri" id="nt-on">Activer les alertes</button>`:""}</div>`;
