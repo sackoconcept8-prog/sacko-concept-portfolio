@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
+<meta name="agence-slug" content=""><!-- rempli sur le nom de domaine propre d'une agence -->
 <title>Espace de gestion</title>
 <link rel="icon" id="fav" href="data:,">
 <link rel="manifest" href="manifest.webmanifest">
@@ -15,7 +16,7 @@
 <script>
 /* Application installable au nom de l'agence : icône et nom de l'agence sur l'écran d'accueil ou le bureau */
 const APPS_AGENCES={"agence-speciale":{nom:"Agence Spéciale",ios:"/agence-speciale/logo-as2-ios-180.png"}};
-(function(){let sl=(new URLSearchParams(location.search).get("a")||"").toLowerCase().replace(/[^a-z0-9-]/g,"");try{if(!sl)sl=localStorage.getItem("espace-slug")||""}catch(_){}
+(function(){let sl=(new URLSearchParams(location.search).get("a")||document.querySelector('meta[name="agence-slug"]').content||"").toLowerCase().replace(/[^a-z0-9-]/g,"");try{if(!sl)sl=localStorage.getItem("espace-slug")||""}catch(_){}
   const A=APPS_AGENCES[sl];if(!A)return;
   document.querySelector('link[rel="manifest"]').href="manifest-"+sl+".webmanifest";
   document.getElementById("apple-ic").href=A.ios;
@@ -198,7 +199,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
     <div class="field"><label class="f" for="l-pass">Mot de passe</label><div style="display:flex;gap:8px"><input class="input" id="l-pass" type="password" autocomplete="current-password" required><button type="button" class="btn" id="l-voir" style="flex:none">Afficher</button></div></div>
     <button class="btn pri" id="l-btn" style="width:100%;padding:12px">Se connecter</button>
     <button type="button" class="lien" id="l-oubli">Mot de passe oublié ?</button>
-    <div class="by">Logiciel conçu par SACKO CONCEPT</div>
+    <div class="by">Espace de gestion sécurisé</div>
   </form>
 </section>
 
@@ -208,7 +209,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
     <h1 id="bl-titre" style="font-size:22px"></h1>
     <p class="muted" id="bl-texte" style="margin:10px 0 18px"></p>
     <div class="actions" style="justify-content:center"><a class="btn pri hide" id="bl-wa" target="_blank" rel="noopener">Contacter le support (WhatsApp)</a><button class="btn" id="bl-out">Se déconnecter</button></div>
-    <div class="by">Logiciel conçu par SACKO CONCEPT</div>
+    <div class="by">Espace de gestion sécurisé</div>
   </div>
 </section>
 
@@ -245,7 +246,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 const LOGO_DEFAUT="../assets/sacko-logo-vert-512.png";
 function montrerLogo(u){["lg-logo","bl-logo","hd-logo"].forEach(i=>{const e=document.getElementById(i);if(e){e.src=u;e.style.visibility="visible"}});const f=document.getElementById("fav");if(f)f.href=u}
 function marqueMemo(sl){try{return JSON.parse(localStorage.getItem("espace-marque-"+sl)||"null")}catch(_){return null}}
-(function(){let sl=(new URLSearchParams(location.search).get("a")||"").toLowerCase().replace(/[^a-z0-9-]/g,"");try{if(!sl)sl=localStorage.getItem("espace-slug")||""}catch(_){}
+(function(){let sl=(new URLSearchParams(location.search).get("a")||document.querySelector('meta[name="agence-slug"]').content||"").toLowerCase().replace(/[^a-z0-9-]/g,"");try{if(!sl)sl=localStorage.getItem("espace-slug")||""}catch(_){}
   const m=sl?marqueMemo(sl):null;
   if(m){if(m.logo_url)montrerLogo(m.logo_url);if(/^#[0-9a-f]{6}$/i.test(m.couleur||"")){document.documentElement.style.setProperty("--p",m.couleur);document.documentElement.style.setProperty("--p-l",m.couleur+"1c")}
     if(m.nom){document.getElementById("lg-nom").textContent=m.nom;document.getElementById("hd-nom").textContent=m.nom;document.title=m.nom+" · Espace de gestion"}
@@ -273,7 +274,7 @@ let tT;function toast(m,bad){const t=$("#toast");t.textContent=m;t.className="on
 function modal(title,body,foot){$("#box").innerHTML=`<div class="box-h"><h2>${title}</h2><button class="x" id="m-x" aria-label="Fermer">×</button></div><div class="box-b">${body}</div>${foot?`<div class="box-f">${foot}</div>`:""}`;$("#modal").classList.add("on");$("#m-x").onclick=closeModal;$("#modal").scrollTop=0}
 function closeModal(){$("#modal").classList.remove("on");$("#box").innerHTML=""}
 function traduire(m){m=String(m||"");
-  if(/Nombre maximum d'agents/.test(m))return m+" Contactez SACKO CONCEPT pour augmenter votre offre.";
+  if(/Nombre maximum d'agents/.test(m))return m+" Contactez le support pour augmenter votre offre.";
   if(/agents_agence_id_matricule_key/.test(m))return "Ce matricule est déjà utilisé par un autre agent.";
   if(/sites_agence_id_nom_key/.test(m))return "Un site porte déjà ce nom.";
   if(/row-level security|permission denied/i.test(m))return "Action non autorisée. Votre accès est peut-être suspendu ou expiré.";
@@ -340,7 +341,7 @@ function affectations(ds,P,liste){const dow=dowOf(ds),out=[];
   return out}
 
 /* ---------- état ---------- */
-let slug=(new URLSearchParams(location.search).get("a")||"").toLowerCase().replace(/[^a-z0-9-]/g,"");
+let slug=(new URLSearchParams(location.search).get("a")||document.querySelector('meta[name="agence-slug"]').content||"").toLowerCase().replace(/[^a-z0-9-]/g,"");
 try{if(!slug)slug=localStorage.getItem("espace-slug")||""}catch(_){}
 let ctx=null,ag=null,moi=null,sites=[],agents=[],comptes=[],tab="accueil",fAg={q:"",site:"",statut:"Actif"};
 const estDirection=()=>moi&&(moi.role==="dg"||moi.role==="rh");
@@ -513,7 +514,7 @@ function dessinerMenu(G){
     const mob=getComputedStyle($("#menu-btn")).display!=="none";const M=menuDirection();dessinerMenu(M);ouvrir(M[0][1][0][0]).then(()=>{if(mob)menu(true)});verifierAlertes().catch(()=>{})});
 }
 async function bloquer(motif){
-  const M={suspendu:["Accès suspendu","L'accès de votre agence à ce logiciel est suspendu. Vos données sont conservées. Contactez SACKO CONCEPT pour le rétablir."],
+  const M={suspendu:["Accès suspendu","L'accès de votre agence à ce logiciel est suspendu. Vos données sont conservées. Contactez le support pour le rétablir."],
     expire:["Période d'accès terminée","La période d'accès de votre agence est arrivée à son terme. Vos données sont conservées. Renouvelez votre abonnement pour continuer."],
     compte_desactive:["Compte désactivé","Votre compte a été désactivé. Contactez votre responsable."]}[motif]||["Accès indisponible","Contactez votre responsable."];
   $("#bl-titre").textContent=M[0];$("#bl-texte").textContent=M[1];ecran("bloque");
@@ -725,10 +726,10 @@ function vComptes(){
 async function vSupport(){
   const t=must(await sb.from("support_tickets").select("id,page_concernee,message,statut,reponse,created_at").order("created_at",{ascending:false}).limit(50));
   const wa=await waSupport(),ST={nouveau:["Envoyée","p-amber"],en_cours:["En cours de traitement","p-main"],resolu:["Résolue","p-green"]};
-  $("#main").innerHTML=`<div class="head"><div><h1>Support</h1><p class="muted sm" style="margin:2px 0 0">Une question, un problème ? Écrivez à SACKO CONCEPT.</p></div>${wa?`<a class="btn" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${encodeURIComponent("Bonjour, je suis "+moi.nom_complet+" ("+ag.nom_agence+"). ")}">Écrire sur WhatsApp</a>`:""}</div>
+  $("#main").innerHTML=`<div class="head"><div><h1>Support</h1><p class="muted sm" style="margin:2px 0 0">Une question, un problème ? Écrivez au support technique.</p></div>${wa?`<a class="btn" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${encodeURIComponent("Bonjour, je suis "+moi.nom_complet+" ("+ag.nom_agence+"). ")}">Écrire sur WhatsApp</a>`:""}</div>
   <div class="card"><div class="row"><div class="field"><label class="f">Partie concernée</label><select class="input" id="t-page"><option>Agents</option><option>Sites</option><option>Comptes et accès</option><option>Abonnement</option><option>Autre</option></select></div></div>
   <div class="field"><label class="f">Votre message</label><textarea class="input" id="t-msg" placeholder="Décrivez ce qui se passe, le plus simplement possible."></textarea></div><button class="btn pri" id="t-ok">Envoyer la demande</button></div>
-  ${t.length?`<div class="card"><h2>Vos demandes</h2>${t.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><div class="muted xs">${fdt(x.created_at)}${x.page_concernee?" · "+esc(x.page_concernee):""}</div><div style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(x.message)}</div>${x.reponse?`<div class="idbox" style="margin:8px 0 0;white-space:pre-wrap"><b>Réponse de SACKO CONCEPT :</b><br>${esc(x.reponse)}</div>`:""}</div><span class="pill ${ST[x.statut][1]}">${ST[x.statut][0]}</span></div>`).join("")}</div>`:""}`;
+  ${t.length?`<div class="card"><h2>Vos demandes</h2>${t.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><div class="muted xs">${fdt(x.created_at)}${x.page_concernee?" · "+esc(x.page_concernee):""}</div><div style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(x.message)}</div>${x.reponse?`<div class="idbox" style="margin:8px 0 0;white-space:pre-wrap"><b>Réponse du support :</b><br>${esc(x.reponse)}</div>`:""}</div><span class="pill ${ST[x.statut][1]}">${ST[x.statut][0]}</span></div>`).join("")}</div>`:""}`;
   $("#t-ok").onclick=()=>busy($("#t-ok"),async()=>{const m=$("#t-msg").value.trim();if(m.length<3){$("#t-msg").focus();throw new Error("Écrivez votre message.")}
     must(await sb.from("support_tickets").insert({page_concernee:$("#t-page").value,message:m}));toast("Demande envoyée");await ouvrir("support")});
 }
@@ -1603,9 +1604,9 @@ $("#l-oubli").onclick=async()=>{const id=$("#l-id").value.trim(),mail=id.include
   modal("Mot de passe oublié",`<p style="margin-top:0">Pour votre sécurité, un nouveau mot de passe ne peut être donné que par une personne de votre agence.</p>
   <div class="idbox"><b>Agent :</b> demandez à votre superviseur ou à la direction. Ils vous donnent un nouveau mot de passe en une minute et vous l'envoient par WhatsApp.</div>
   <div class="idbox"><b>Superviseur, RH :</b> demandez à la direction (menu Comptes, « Nouveau mot de passe »).</div>
-  <div class="idbox"><b>Direction :</b> demandez à un autre responsable de l'agence, ou contactez SACKO CONCEPT.</div>
+  <div class="idbox"><b>Direction :</b> demandez à un autre responsable de l'agence, ou contactez le support.</div>
   <p class="muted sm" style="margin:0">Une fois connecté, changez ce mot de passe en touchant vos initiales, en haut de l'écran.</p>`,
-  `<button class="btn" id="ob-ok">Fermer</button>${wa&&(mail||!id)?`<a class="btn pri" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${msg}">Contacter SACKO CONCEPT</a>`:""}`);
+  `<button class="btn" id="ob-ok">Fermer</button>${wa&&(mail||!id)?`<a class="btn pri" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${msg}">Contacter le support</a>`:""}`);
   $("#ob-ok").onclick=closeModal};
 
 /* ---------- superviseur : mes agents ---------- */
