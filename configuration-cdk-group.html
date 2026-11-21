@@ -78,10 +78,12 @@
   </fieldset>
 
   <fieldset>
-    <legend>4. Direction, conseil et responsables</legend>
-    <div class="f"><label for="pres">Président Fondateur <i>*</i></label><input id="pres" name="pres" type="text" required placeholder="Prénom et nom"></div>
-    <div class="f"><label for="pres_tel">WhatsApp du Président</label><input id="pres_tel" name="pres_tel" type="tel"></div>
-    <div class="f"><label for="pres_email">E-mail du Président</label><input id="pres_email" name="pres_email" type="email"></div>
+    <legend>4. Personne en charge et responsables</legend>
+    <div class="f full"><p class="hint" style="margin:0">La personne en charge du projet est notre contact principal : elle reçoit les accès, valide la configuration et organise la formation.</p></div>
+    <div class="f"><label for="pres">Personne en charge du projet <i>*</i></label><input id="pres" name="pres" type="text" required placeholder="Prénom et nom"></div>
+    <div class="f"><label for="pres_fonction">Sa fonction</label><input id="pres_fonction" name="pres_fonction" type="text" placeholder="Ex. : Directeur des Opérations"></div>
+    <div class="f"><label for="pres_tel">Son WhatsApp <i>*</i></label><input id="pres_tel" name="pres_tel" type="tel" required placeholder="Avec l'indicatif du pays"></div>
+    <div class="f"><label for="pres_email">Son e-mail</label><input id="pres_email" name="pres_email" type="email"></div>
     <div class="f"><label for="dop">Directeur des Opérations</label><input id="dop" name="dop" type="text"></div>
     <div class="f"><label for="dop_contact">Contact du Directeur des Opérations</label><input id="dop_contact" name="dop_contact" type="text" placeholder="WhatsApp ou e-mail"></div>
     <div class="f"><label for="jur">Conseiller juridique</label><input id="jur" name="jur" type="text"></div>
@@ -111,7 +113,7 @@
     <div class="f full"><span class="lab">Logos des départements ou filiales (facultatif)</span><div class="drop small" data-up="logos_dept" data-label="Logos des départements" tabindex="0" role="button" aria-label="Logos des départements"><b>Choisir des fichiers</b> ou les glisser ici<br><small>Ex. : logo CDK Sécurité. Nommez chaque fichier avec le nom du département</small></div><input type="file" data-for="logos_dept" accept="image/*" multiple hidden><ul class="filelist" data-list="logos_dept"></ul></div>
     <div class="f full"><span class="lab">Couleurs du groupe</span><div class="colors"><label><input type="color" name="couleur1" value="#4B1D52"> Couleur principale</label><label><input type="color" name="couleur2" value="#C9A227"> Couleur secondaire</label></div><div class="hint">Pas sûr ? Laissez tel quel, nous reprendrons les couleurs du logo.</div></div>
     <div class="f full"><span class="lab">Cachet du groupe (facultatif)</span><div class="drop small" data-up="cachet" data-label="Cachet" tabindex="0" role="button" aria-label="Cachet"><b>Choisir un fichier</b> ou le glisser ici<br><small>Photo ou scan, pour les documents officiels</small></div><input type="file" data-for="cachet" accept="image/*,.pdf" multiple hidden><ul class="filelist" data-list="cachet"></ul></div>
-    <div class="f full"><span class="lab">Signature du Président (facultatif)</span><div class="drop small" data-up="signature" data-label="Signature" tabindex="0" role="button" aria-label="Signature"><b>Choisir un fichier</b> ou le glisser ici<br><small>Sur fond blanc</small></div><input type="file" data-for="signature" accept="image/*,.pdf" hidden><ul class="filelist" data-list="signature"></ul></div>
+    <div class="f full"><span class="lab">Signature du dirigeant (facultatif)</span><div class="drop small" data-up="signature" data-label="Signature" tabindex="0" role="button" aria-label="Signature"><b>Choisir un fichier</b> ou le glisser ici<br><small>Sur fond blanc</small></div><input type="file" data-for="signature" accept="image/*,.pdf" hidden><ul class="filelist" data-list="signature"></ul></div>
   </fieldset>
 
   <fieldset>
@@ -213,7 +215,7 @@ function b64(file){return new Promise((ok,ko)=>{const r=new FileReader();r.onloa
 /* ---------- Envoi ---------- */
 const LABELS={raison:"Raison sociale",forme:"Forme juridique",structure:"Structure",pays:"Siège",adresse:"Adresse",tel:"Téléphone",email:"E-mail",ifu:"Identifiant fiscal",rccm:"RCCM",cnss:"Sécurité sociale employeur",web:"Site web",pays_activite:"Présence",
  depts:"Départements activés",autre_dept:"Autre département",ordre:"Ordre de mise en service",modules:"Modules demandés",autre_module:"Autre module / besoin",
- pres:"Président Fondateur",pres_tel:"WhatsApp Président",pres_email:"E-mail Président",dop:"Directeur des Opérations",dop_contact:"Contact DOP",jur:"Conseiller juridique",pp:"Porte-parole",rh:"RH groupe",compta:"Comptabilité",dircom:"Directeur commercial",autres_postes:"Autres postes",
+ pres:"Personne en charge",pres_fonction:"Fonction",pres_tel:"WhatsApp responsable",pres_email:"E-mail responsable",dop:"Directeur des Opérations",dop_contact:"Contact DOP",jur:"Conseiller juridique",pp:"Porte-parole",rh:"RH groupe",compta:"Comptabilité",dircom:"Directeur commercial",autres_postes:"Autres postes",
  voit_tout:"Voient tous les chiffres",validation:"Validation des demandes",seuil:"Seuil",nb_users:"Utilisateurs prévus",support:"Supports",domaine:"Nom de domaine",domaine_nom:"Domaine",langues:"Langues",couleur1:"Couleur principale",couleur2:"Couleur secondaire",
  sec_agents:"Sécurité · agents",sec_sites:"Sécurité · sites",sec_jour:"Sécurité · poste de jour",sec_nuit:"Sécurité · poste de nuit",sec_grades:"Sécurité · grades",sec_pointage:"Sécurité · pointage",
  paie:"Paiement des salaires",mecef:"Facture normalisée",formation:"Formation",besoins_txt:"Besoins particuliers",demarrage:"Démarrage souhaité",fonction:"Fonction du déclarant"};
