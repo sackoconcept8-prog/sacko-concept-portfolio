@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>CDK GROUP</title>
+<link rel="icon" href="../logo-cdk-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../cdk.css">
+<script src="../secteur.js"></script>
+</head>
+<body>
+<script>
+window.SECTEUR=()=>{
+const eq=genEquipe("res",[["Chef cuisinier",1,"Chef"],["Cuisinier",3,"Cuisinier"],["Serveur / caissier",4,"Serveur"],["Magasinier",1,"Magasinier"]]);
+const id=f=>eq.filter(m=>m.fonction===f).map(m=>m.id),serv=id("Serveur / caissier"),chef=id("Chef cuisinier"),cuis=id("Cuisinier");
+const plats=[["Riz sauce arachide","Plat",2500],["Poisson braisé + attiéké","Plat",3500],["Poulet bicyclette","Plat",4000],["Fufu sauce gombo","Plat",3000],["Salade composée","Entrée",1500],["Brochettes","Entrée",2000],["Jus de bissap","Boisson",500],["Eau minérale","Boisson",400],["Bière locale","Boisson",800],["Fruits de saison","Dessert",1000]];
+const st=["Payée","Payée","Payée","Servie","Prête","En préparation","Nouvelle"];
+return {id:"rest",nom:"Restauration & Services généraux",ico:"🍽️",c:"#c0741a",sous:"Logiciel du restaurant et des services généraux : carte, commandes de la salle à la cuisine, caisse, stock, approvisionnements, traiteur et hygiène.",
+collections:{
+ equipe:colEquipe(["Chef cuisinier","Cuisinier","Serveur / caissier","Magasinier"],eq),
+ carte:{sing:"Plat",ajout:"Nouveau plat",champs:[{k:"nom",l:"Nom",req:1},{k:"cat",l:"Catégorie",type:"select",options:["Entrée","Plat","Dessert","Boisson"]},{k:"prix",l:"Prix",type:"money",req:1},{k:"statut",l:"Disponibilité",type:"select",options:["Disponible","Épuisé"]}],cols:["nom","cat","prix"],statut:ST(["Disponible","Épuisé"],{Disponible:"p-green",Épuisé:"p-red"}),titreDe:r=>r.nom,sousDe:r=>r.cat+" · "+fcfa(r.prix),seed:plats.map(([nom,cat,prix],i)=>({nom,cat,prix,statut:i===3?"Épuisé":"Disponible"}))},
+ commandes:{sing:"Commande",ajout:"Nouvelle commande",champs:[{k:"table",l:"Table / client",req:1},{k:"plats",l:"Plats commandés",type:"textarea",req:1},{k:"couverts",l:"Couverts",type:"number",defaut:2},{k:"montant",l:"Montant",type:"money",req:1},{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"heure",l:"Heure",type:"time",defaut:maintenant},{k:"serveur",l:"Serveur",type:"membre",fonction:"Serveur / caissier",auto:c=>c.moi?c.moi.id:""},{k:"paiement",l:"Paiement",type:"select",options:["—","Espèces","Mobile Money","Carte"]},{k:"statut",l:"Statut",type:"select",options:["Nouvelle","En préparation","Prête","Servie","Payée"]}],cols:["heure","table","plats","montant"],statut:ST(["Nouvelle","En préparation","Prête","Servie","Payée"],{Nouvelle:"p-red","En préparation":"p-amber",Prête:"p-blue",Servie:"p-violet",Payée:"p-green"}),titreDe:r=>r.table+" · "+fcfa(r.montant),sousDe:r=>r.heure+" · "+r.plats,tri:(a,b)=>(b.date+b.heure).localeCompare(a.date+a.heure),
+   seed:st.map((s,i)=>({table:"Table "+(i+1),plats:pick([["2 Poisson braisé + attiéké, 2 Jus de bissap"],["1 Poulet bicyclette, 1 Bière locale"],["3 Riz sauce arachide, 3 Eau minérale"],["2 Brochettes, 2 Salade composée"]],i)[0],couverts:2+i%3,montant:[8000,4800,8700,7000][i%4],date:AUJ,heure:HM(12+Math.floor(i/2),10*i%60),serveur:pick(serv,i),paiement:s==="Payée"?pick(["Espèces","Mobile Money"],i):"—",statut:s}))},
+ stock:{sing:"Article",ajout:"Nouvel article",champs:[{k:"nom",l:"Article",req:1},{k:"unite",l:"Unité"},{k:"qte",l:"Quantité en stock",type:"number"},{k:"seuil",l:"Seuil d'alerte",type:"number"},{k:"statut",l:"État",type:"select",options:["Suffisant","Stock bas","Rupture"]}],cols:["nom","qte","unite","seuil"],statut:ST(["Suffisant","Stock bas","Rupture"],{Suffisant:"p-green","Stock bas":"p-amber",Rupture:"p-red"}),titreDe:r=>r.nom,sousDe:r=>nf(r.qte)+" "+r.unite+" (seuil "+r.seuil+")",
+   seed:[["Riz","kg",120,40],["Poisson frais","kg",18,20],["Poulet","pièce",25,10],["Huile","litre",30,15],["Bissap","kg",4,5],["Eau minérale","bouteille",0,48],["Bière locale","bouteille",96,48],["Gaz de cuisine","bouteille",2,2]].map(([nom,unite,qte,seuil])=>({nom,unite,qte,seuil,statut:qte===0?"Rupture":qte<=seuil?"Stock bas":"Suffisant"}))},
+ appro:{sing:"Approvisionnement",ajout:"Nouvelle demande d'achat",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"article",l:"Article",req:1},{k:"qte",l:"Quantité",type:"number",req:1},{k:"fournisseur",l:"Fournisseur"},{k:"montant",l:"Montant",type:"money"},{k:"statut",l:"Statut",type:"select",options:["Demandé","Validé","Reçu"]}],cols:["date","article","qte","fournisseur","montant"],statut:ST(["Demandé","Validé","Reçu"],{Demandé:"p-amber",Validé:"p-blue",Reçu:"p-green"}),titreDe:r=>r.article+" · "+nf(r.qte),sousDe:r=>(r.fournisseur||"")+" · "+fcfa(r.montant),
+   seed:[{date:AUJ,article:"Eau minérale",qte:96,fournisseur:"Grossiste boissons",montant:38400,statut:"Demandé"},{date:J(-1),article:"Poisson frais",qte:30,fournisseur:"Département Halieutique",montant:105000,statut:"Validé"},{date:J(-4),article:"Riz",qte:100,fournisseur:"Grossiste céréales",montant:55000,statut:"Reçu"}]},
+ traiteur:{sing:"Prestation",ajout:"Nouvelle prestation",champs:[{k:"client",l:"Client / événement",req:1},{k:"date",l:"Date",type:"date",req:1},{k:"couverts",l:"Couverts",type:"number"},{k:"menu",l:"Menu",type:"textarea"},{k:"montant",l:"Montant",type:"money"},{k:"statut",l:"Statut",type:"select",options:["Devis","Confirmée","Réalisée","Annulée"]}],cols:["date","client","couverts","montant"],statut:ST(["Devis","Confirmée","Réalisée","Annulée"],{Devis:"p-amber",Confirmée:"p-blue",Réalisée:"p-green",Annulée:"p-grey"}),titreDe:r=>r.client,sousDe:r=>fd(r.date)+" · "+r.couverts+" couverts",
+   seed:[{client:"Soirée partenaires (Communication)",date:J(9),couverts:120,menu:"Cocktail dînatoire",montant:1800000,statut:"Confirmée"},{client:"Séminaire Services Maritimes",date:J(4),couverts:40,menu:"Pause-café + déjeuner",montant:480000,statut:"Devis"},{client:"Réunion de direction",date:J(-5),couverts:15,menu:"Déjeuner",montant:150000,statut:"Réalisée"}]},
+ hygiene:{sing:"Contrôle d'hygiène",ajout:"Nouveau contrôle",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"controle",l:"Contrôle",type:"select",options:["Température chambre froide","Propreté cuisine","Dates de péremption","Tenue du personnel","Nettoyage salle"]},{k:"resultat",l:"Résultat",type:"select",options:["Conforme","Non conforme"]},{k:"par",l:"Contrôlé par",type:"membre",auto:c=>c.moi?c.moi.id:""},{k:"obs",l:"Observations",type:"textarea"}],cols:["date","controle","resultat","par"],titreDe:r=>r.controle,sousDe:r=>fd(r.date)+" · "+r.resultat,
+   seed:[{date:AUJ,controle:"Température chambre froide",resultat:"Conforme",par:chef[0],obs:"2 °C"},{date:J(-1),controle:"Dates de péremption",resultat:"Non conforme",par:chef[0],obs:"3 yaourts retirés"}]}
+},
+kpisGroupe:D=>({couverts:somme(D.commandes.filter(c=>c.statut==="Payée"||c.statut==="Servie"),"couverts"),prestations:D.traiteur.filter(t=>t.statut!=="Annulée").length,stock:D.stock.filter(s=>s.statut!=="Suffisant").length,satisfaction:91}),
+roles:[
+ {id:"resp",poste:"Responsable Restauration et Services généraux",ico:"🍽️",desc:"Recettes, carte, stock, achats, traiteur et hygiène.",
+  dash:{kpis:D=>{const p=D.commandes.filter(c=>c.date===AUJ&&c.statut==="Payée");return [["Recettes du jour",fcfa(somme(p,"montant")),"var(--green)"],["Commandes du jour",D.commandes.filter(c=>c.date===AUJ).length],["Couverts servis",somme(D.commandes.filter(c=>c.date===AUJ&&["Servie","Payée"].includes(c.statut)),"couverts")],["Articles en alerte",D.stock.filter(s=>s.statut!=="Suffisant").length,"var(--red)"],["Achats à valider",D.appro.filter(a=>a.statut==="Demandé").length,"var(--amber)"],["Prestations à venir",D.traiteur.filter(t=>t.statut==="Confirmée").length]]},
+   listes:[{c:"stock",titre:"Stock en alerte",filtre:r=>r.statut!=="Suffisant"},{c:"appro",titre:"Achats à valider",filtre:r=>r.statut==="Demandé"},{c:"traiteur",titre:"Prestations traiteur",filtre:r=>r.statut!=="Réalisée"}]},
+  menu:[{c:"commandes",l:"🧾 Commandes et caisse"},{c:"carte",l:"📋 Carte",can:["add","edit","del"]},{c:"stock",l:"📦 Stock",can:["add","edit"]},{c:"appro",l:"🚚 Achats",can:["add","edit"],etapes:["Validé"],badge:D=>D.appro.filter(a=>a.statut==="Demandé").length},{c:"traiteur",l:"🎉 Traiteur",can:["add","edit"],etapes:["Confirmée","Réalisée","Annulée"]},{c:"hygiene",l:"🧼 Hygiène",can:["add"]},{c:"equipe",l:"👥 Équipe",can:["add","edit"]}]},
+ {id:"chef",poste:"Chef cuisinier",ico:"👨‍🍳",desc:"Écran cuisine, carte du jour, stock et hygiène.",personne:"Chef cuisinier",
+  dash:{info:"Écran cuisine : les commandes de la salle arrivent ici. Passez-les « En préparation » puis « Prête » ; le serveur est prévenu.",
+   kpis:D=>[["À préparer",D.commandes.filter(c=>c.statut==="Nouvelle").length,"var(--red)"],["En préparation",D.commandes.filter(c=>c.statut==="En préparation").length,"var(--amber)"],["Plats épuisés",D.carte.filter(p=>p.statut==="Épuisé").length],["Stock en alerte",D.stock.filter(s=>s.statut!=="Suffisant").length,"var(--red)"]],
+   actions:[{ico:"🧼",l:"Contrôle d'hygiène",run:c=>c.nouveau("hygiene",{par:c.moi.id},{})},{ico:"🚚",l:"Demander un achat",run:c=>c.nouveau("appro",{statut:"Demandé"},{})}],
+   listes:[{c:"commandes",titre:"Commandes à préparer",filtre:r=>["Nouvelle","En préparation"].includes(r.statut),max:10}]},
+  menu:[{c:"commandes",l:"🔥 Écran cuisine",filtre:r=>["Nouvelle","En préparation","Prête"].includes(r.statut),etapes:["En préparation","Prête"],badge:D=>D.commandes.filter(c=>c.statut==="Nouvelle").length},{c:"carte",l:"📋 Carte du jour",can:["edit"],etapes:["Disponible","Épuisé"]},{c:"stock",l:"📦 Stock",can:["edit"]},{c:"appro",l:"🚚 Demandes d'achat",can:["add"]},{c:"hygiene",l:"🧼 Hygiène",can:["add"]},{c:"equipe",l:"👥 Brigade"}]},
+ {id:"cuis",poste:"Cuisinier",ico:"🍳",desc:"Commandes à préparer et contrôles d'hygiène.",personne:"Cuisinier",
+  dash:{kpis:D=>[["À préparer",D.commandes.filter(c=>c.statut==="Nouvelle").length,"var(--red)"],["En préparation",D.commandes.filter(c=>c.statut==="En préparation").length,"var(--amber)"],["Prêtes à servir",D.commandes.filter(c=>c.statut==="Prête").length,"var(--green)"]],
+   listes:[{c:"commandes",titre:"Commandes à préparer",filtre:r=>["Nouvelle","En préparation"].includes(r.statut),max:10}]},
+  menu:[{c:"commandes",l:"🔥 Écran cuisine",filtre:r=>["Nouvelle","En préparation","Prête"].includes(r.statut),etapes:["En préparation","Prête"]},{c:"hygiene",l:"🧼 Hygiène",can:["add"]}]},
+ {id:"serveur",poste:"Serveur / caissier",ico:"🧾",desc:"Prise de commande, service et encaissement.",personne:"Serveur / caissier",
+  dash:{actions:[{ico:"➕",l:"Nouvelle commande",run:c=>c.nouveau("commandes",{serveur:c.moi.id,statut:"Nouvelle",paiement:"—"},{})}],
+   kpis:(D,c)=>{const m=D.commandes.filter(x=>x.serveur===c.moi.id&&x.date===AUJ);return [["Mes commandes du jour",m.length],["Prêtes à servir",D.commandes.filter(x=>x.statut==="Prête").length,"var(--green)"],["Encaissé aujourd'hui",fcfa(somme(m.filter(x=>x.statut==="Payée"),"montant"))]]},
+   listes:[{c:"commandes",titre:"Prêtes à servir",filtre:r=>r.statut==="Prête"},{c:"commandes",titre:"À encaisser",filtre:r=>r.statut==="Servie"}]},
+  menu:[{c:"commandes",l:"🧾 Commandes",can:["add","edit"],preset:c=>({serveur:c.moi.id,statut:"Nouvelle",paiement:"—"}),etapes:["Servie","Payée"],badge:D=>D.commandes.filter(c=>c.statut==="Prête").length},{c:"carte",l:"📋 Carte"}]},
+ {id:"mag",poste:"Magasinier",ico:"📦",desc:"Stock, entrées et sorties, réception des achats.",personne:"Magasinier",
+  dash:{kpis:D=>[["Articles",D.stock.length],["En alerte",D.stock.filter(s=>s.statut!=="Suffisant").length,"var(--red)"],["Achats à recevoir",D.appro.filter(a=>a.statut==="Validé").length,"var(--amber)"]],
+   listes:[{c:"stock",titre:"Stock en alerte",filtre:r=>r.statut!=="Suffisant"},{c:"appro",titre:"Achats à recevoir",filtre:r=>r.statut==="Validé"}]},
+  menu:[{c:"stock",l:"📦 Stock",can:["add","edit"]},{c:"appro",l:"🚚 Achats",can:["add"],etapes:["Reçu"],apresEtape:(r,e,c)=>{if(e!=="Reçu")return;const s=c.D.stock.find(x=>x.nom.toLowerCase()===String(r.article).toLowerCase());if(s){s.qte=(+s.qte||0)+(+r.qte||0);s.statut=s.qte<=s.seuil?"Stock bas":"Suffisant";c.toast("Stock mis à jour : "+s.nom+" = "+s.qte)}}}]}
+]}};
+</script>
+</body>
+</html>

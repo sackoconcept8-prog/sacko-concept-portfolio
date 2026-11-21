@@ -105,6 +105,10 @@ const CONSEIL=[
  {id:"pp",poste:"Porte-parole",ico:"🎙️",c:"#b2457f",desc:"Lit les rapports, conseille le Président et prépare la communication officielle."}
 ];
 const KEY="cdk-group-demo-v1";
+const DOSSIER={secu:"securite",tour:"tourisme",mari:"maritime",hali:"halieutique",comm:"communication",rest:"restauration",soc:"social",mob:"mobilite"};
+/* chiffres envoyés en direct par le logiciel de chaque département (sinon : dernier rapport) */
+function live(dep){try{const x=JSON.parse(localStorage.getItem("cdk-kpi-"+dep)||"null");return x&&x.kpis}catch(e){return null}}
+const chiffres=(dep,r)=>live(dep)||(r&&r.kpis)||null;
 const iso=d=>d.toISOString().slice(0,10);const today=new Date();const J=n=>{const d=new Date(today);d.setDate(d.getDate()+n);return iso(d)};
 const MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
 const moisCourant=MOIS[today.getMonth()]+" "+today.getFullYear(),moisPrec=MOIS[(today.getMonth()+11)%12]+" "+(today.getMonth()?today.getFullYear():today.getFullYear()-1);
@@ -161,7 +165,8 @@ function accueil(){
   const card=(id,ico,c,t,s)=>`<button class="esp" data-go="${id}"><span class="ico" style="background:${c}18;color:${c}">${ico}</span><span class="grow"><b>${esc(t)}</b><span>${esc(s)}</span></span></button>`;
   $("#espaces").innerHTML=`<div class="sec-t">Présidence et direction</div><div class="esp-grid">${DIRECTION.map(x=>card(x.id,x.ico,x.c,x.poste,x.desc)).join("")}</div>
   <div class="sec-t">Conseil</div><div class="esp-grid">${CONSEIL.map(x=>card(x.id,x.ico,x.c,x.poste,x.desc)).join("")}</div>
-  <div class="sec-t">Départements</div><div class="esp-grid">${DEPTS.map(d=>card(d.id,d.ico,d.c,d.poste,d.nom+" · rapports, demandes, tâches, personnel")).join("")}</div>`;
+  <div class="sec-t">Départements · espace du responsable</div><div class="esp-grid">${DEPTS.map(d=>card(d.id,d.ico,d.c,d.poste,d.nom+" · rapports, demandes, tâches, personnel")).join("")}</div>
+  <div class="sec-t">Logiciels des départements · toutes les équipes</div><div class="esp-grid">${DEPTS.map(d=>`<a class="esp" style="text-decoration:none" href="${DOSSIER[d.id]}/"><span class="ico" style="background:${d.c}18;color:${d.c}">🖥️</span><span class="grow"><b>Logiciel ${esc(d.nom)}</b><span>${{secu:"Responsable, superviseurs, agents",tour:"Responsable, réservations, guides",mari:"Responsable, agents d'escale, chefs d'équipe, pointeurs",hali:"Responsable, collecteurs, vendeurs, chambre froide",comm:"Responsable, communication, événements",rest:"Responsable, chef cuisinier, cuisiniers, serveurs, magasinier",soc:"Responsable, travailleurs sociaux, accueil",mob:"Responsable, chauffeurs, parc, immobilier"}[d.id]}</span></span></a>`).join("")}</div>`;
   $$("[data-go]").forEach(b=>b.onclick=()=>entrer(b.dataset.go));
 }
 $("#reset").onclick=()=>{if(confirm("Effacer les modifications et revenir aux données d'exemple ?")){D=seed();save();toast("Démonstration réinitialisée")}};
@@ -204,14 +209,14 @@ function vDash(){
   `<div class="tiles"><div class="tile click" data-go="rapports"><b style="color:var(--p)">${nl.length}</b><span class="muted sm">Rapports à lire</span></div><div class="tile click" data-go="demandes"><b style="color:var(--amber)">${att.length}</b><span class="muted sm">Demandes en attente · ${nf(montant)} F CFA</span></div><div class="tile click" data-go="taches"><b style="color:${ret.length?"var(--red)":"var(--green)"}">${ret.length}</b><span class="muted sm">Tâches en retard</span></div><div class="tile"><b>${D.personnel.filter(p=>p.statut==="Actif").length}</b><span class="muted sm">Employés actifs (démo)</span></div></div>
   <div class="card"><h2>Les départements ce mois-ci</h2><div class="dgrid">${DEPTS.map(d=>{const r=dernier(d.id),t=D.taches.filter(x=>x.dept===d.id),av=t.length?Math.round(t.reduce((a,x)=>a+x.av,0)/t.length):0;
     return `<div class="dcard" data-go="dept" data-arg="${d.id}"><div class="row" style="align-items:center;gap:10px"><span class="ico" style="background:${d.c}18;color:${d.c}">${d.ico}</span><div class="grow"><b class="b">${esc(d.nom)}</b><div class="xs muted">${r&&r.statut==="Soumis"?'<span class="pill p-blue">Nouveau rapport</span>':"Rapport lu"}</div></div></div>
-    <div class="kv">${d.kpis.slice(0,3).map(([k,l])=>`<span class="muted">${l}</span><span>${r?nf(r.kpis[k]):"—"}</span>`).join("")}<span class="muted">Avancement des tâches</span><span>${av} %</span></div></div>`}).join("")}</div></div>
+    <div class="kv">${d.kpis.slice(0,3).map(([k,l])=>{const c=chiffres(d.id,r);return `<span class="muted">${l}</span><span>${c?nf(c[k]):"—"}</span>`}).join("")}<span class="muted">Avancement des tâches</span><span>${av} %</span></div></div>`}).join("")}</div></div>
   <div class="row" style="align-items:flex-start"><div class="card grow" style="flex:1 1 360px"><h2>Demandes en attente</h2>${att.map(demLigne).join("")||'<p class="muted sm">Aucune demande en attente.</p>'}</div>
   <div class="card grow" style="flex:1 1 360px"><h2>Derniers rapports</h2>${[...D.rapports].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5).map(rapLigne).join("")}</div></div>`;
   $("#nt").onclick=()=>nouvelleTache()}
 function vDepts(){$("#main").innerHTML=head("Départements","Cliquez sur un département pour voir son rapport, ses demandes, ses tâches et son personnel.")+`<div class="dgrid">${DEPTS.map(d=>`<div class="dcard" data-go="dept" data-arg="${d.id}"><div class="row" style="align-items:center;gap:10px"><span class="ico" style="background:${d.c}18;color:${d.c}">${d.ico}</span><div class="grow"><b class="b">${esc(d.nom)}</b><div class="xs muted">${esc(d.poste)}</div></div></div><div class="kv"><span class="muted">Personnel</span><span>${D.personnel.filter(p=>p.dept===d.id).length}</span><span class="muted">Demandes en attente</span><span>${D.demandes.filter(x=>x.dept===d.id&&x.statut==="En attente").length}</span><span class="muted">Tâches ouvertes</span><span>${D.taches.filter(x=>x.dept===d.id&&x.av<100).length}</span></div></div>`).join("")}</div>`}
 function vDept(id){const d=DP(id),r=D.rapports.filter(x=>x.dept===id).sort((a,b)=>b.date.localeCompare(a.date)),last=r[0];
-  $("#main").innerHTML=head(`${d.ico} ${esc(d.nom)}`,esc(d.poste),`<button class="btn" data-go="depts">← Tous les départements</button><button class="btn pri" id="nt">+ Tâche pour ce département</button>`)+
-  `<div class="tiles">${d.kpis.map(([k,l])=>`<div class="tile"><b>${last?nf(last.kpis[k]):"—"}</b><span class="muted sm">${l}</span></div>`).join("")}</div>
+  $("#main").innerHTML=head(`${d.ico} ${esc(d.nom)}`,esc(d.poste),`<button class="btn" data-go="depts">← Tous les départements</button><a class="btn" href="${DOSSIER[id]}/">🖥️ Voir son logiciel</a><button class="btn pri" id="nt">+ Tâche pour ce département</button>`)+
+  `${live(id)?'<div class="idbox sm">📡 Chiffres en direct, envoyés automatiquement par le logiciel du département.</div>':""}<div class="tiles">${d.kpis.map(([k,l])=>{const c=chiffres(id,last);return `<div class="tile"><b>${c?nf(c[k]):"—"}</b><span class="muted sm">${l}</span></div>`}).join("")}</div>
   <div class="card"><h2>Rapports</h2>${r.map(rapLigne).join("")||'<p class="muted sm">Aucun rapport.</p>'}</div>
   <div class="card"><h2>Demandes</h2>${D.demandes.filter(x=>x.dept===id).map(demLigne).join("")||'<p class="muted sm">Aucune demande.</p>'}</div>
   <div class="card"><h2>Tâches et objectifs</h2>${D.taches.filter(x=>x.dept===id).map(t=>tacLigne(t)).join("")||'<p class="muted sm">Aucune tâche.</p>'}</div>
@@ -265,9 +270,10 @@ function vMesAvis(){const l=D.avis.filter(a=>a.de===role);$("#main").innerHTML=h
 
 /* ---------- Départements ---------- */
 function vDDash(){const d=DP(role),r=dernier(role),t=D.taches.filter(x=>x.dept===role&&x.av<100),dm=D.demandes.filter(x=>x.dept===role);
-  $("#main").innerHTML=head(`${d.ico} ${esc(d.nom)}`,`Espace du ${esc(d.poste.toLowerCase())}`,`<button class="btn" id="nd">+ Demande</button><button class="btn pri" id="nr">+ Rapport du mois</button>`)+
-  `<div class="tiles">${d.kpis.map(([k,l])=>`<div class="tile"><b>${r?nf(r.kpis[k]):"—"}</b><span class="muted sm">${l}</span></div>`).join("")}</div>
-  ${role==="secu"?`<div class="idbox sm"><b>Module sécurité intégré</b> : agents, sites clients, planning jour/nuit, pointage géolocalisé, rondes, main courante, alertes SOS, cartes professionnelles et paie des agents. Les chiffres ci-dessus remontent automatiquement dans la vue du Président.</div>`:""}
+  $("#main").innerHTML=head(`${d.ico} ${esc(d.nom)}`,`Espace du ${esc(d.poste.toLowerCase())}`,`<a class="btn pri" href="${DOSSIER[role]}/">🖥️ Ouvrir le logiciel du département</a><button class="btn" id="nd">+ Demande</button><button class="btn" id="nr">+ Rapport du mois</button>`)+
+  `<div class="idbox sm"><b>Logiciel du département :</b> chaque membre de votre équipe a son propre espace (${{secu:"superviseurs, agents",tour:"agents de réservation, guides",mari:"agents d'escale, chefs d'équipe, pointeurs",hali:"collecteurs, vendeurs, chambre froide",comm:"chargés de communication, chargés d'événements",rest:"chef cuisinier, cuisiniers, serveurs, magasinier",soc:"travailleurs sociaux, accueil",mob:"chauffeurs, gestionnaire de parc, gestionnaire immobilier"}[role]}). Les chiffres ci-dessous remontent automatiquement chez le Président.</div>
+  <div class="tiles">${d.kpis.map(([k,l])=>{const c=chiffres(role,r);return `<div class="tile"><b>${c?nf(c[k]):"—"}</b><span class="muted sm">${l}</span></div>`}).join("")}</div>
+  
   <div class="row" style="align-items:flex-start"><div class="card grow" style="flex:1 1 360px"><h2>Tâches fixées par la direction</h2>${t.map(x=>tacLigne(x,true)).join("")||'<p class="muted sm">Aucune tâche en cours.</p>'}</div>
   <div class="card grow" style="flex:1 1 360px"><h2>Mes demandes</h2>${dm.map(demLigne).join("")||'<p class="muted sm">Aucune demande.</p>'}</div></div>`;
   $("#nr").onclick=nouveauRapport;$("#nd").onclick=nouvelleDemande;liaisonAv()}

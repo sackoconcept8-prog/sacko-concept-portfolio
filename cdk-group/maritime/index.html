@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>CDK GROUP</title>
+<link rel="icon" href="../logo-cdk-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../cdk.css">
+<script src="../secteur.js"></script>
+</head>
+<body>
+<script>
+window.SECTEUR=()=>{
+const eq=genEquipe("mar",[["Agent d'escale",2,"Agent d'escale"],["Chef d'équipe manutention",2,"Chef d'équipe"],["Pointeur",3,"Pointeur"],["Docker",6,"Docker"]]);
+const chefs=eq.filter(m=>m.fonction==="Chef d'équipe manutention").map(m=>m.id),agents=eq.filter(m=>m.fonction==="Agent d'escale").map(m=>m.id);
+const esc_=[["e1","MV Atlantic Star","Armateur A",-3,-1,"Quai 2","Partie"],["e2","MV Gulf Trader","Armateur B",-1,1,"Quai 1","À quai"],["e3","MV Lomé Express","Armateur C",0,2,"Quai 3","À quai"],["e4","MV Ocean Pride","Armateur A",2,4,"Quai 2","Annoncée"]];
+return {id:"mari",nom:"Services Maritimes",ico:"⚓",c:"#2357a8",sous:"Logiciel des services maritimes : escales des navires, opérations de chargement et déchargement, suivi des conteneurs, équipes de quai et facturation.",
+collections:{
+ equipe:colEquipe(["Agent d'escale","Chef d'équipe manutention","Pointeur","Docker"],eq),
+ escales:{sing:"Escale",ajout:"Annoncer une escale",champs:[{k:"navire",l:"Navire",req:1},{k:"armateur",l:"Armateur / client"},{k:"arrivee",l:"Arrivée",type:"date"},{k:"depart",l:"Départ prévu",type:"date"},{k:"quai",l:"Quai",type:"select",options:["Quai 1","Quai 2","Quai 3","Rade"]},{k:"agent",l:"Agent d'escale",type:"membre",fonction:"Agent d'escale"},{k:"statut",l:"Statut",type:"select",options:["Annoncée","À quai","Partie"]}],cols:["navire","armateur","arrivee","depart","quai"],statut:ST(["Annoncée","À quai","Partie"],{Annoncée:"p-blue","À quai":"p-amber",Partie:"p-grey"}),titreDe:r=>r.navire,sousDe:r=>r.quai+" · "+fd(r.arrivee)+" → "+fd(r.depart),
+   seed:esc_.map(([id,navire,armateur,a,d,quai,statut],i)=>({id,navire,armateur,arrivee:J(a),depart:J(d),quai,agent:pick(agents,i),statut}))},
+ operations:{sing:"Opération",ajout:"Nouvelle opération",champs:[{k:"escale",l:"Escale",type:"ref",ref:"escales",req:1},{k:"type",l:"Type",type:"select",options:["Déchargement","Chargement","Transbordement"]},{k:"conteneurs",l:"Conteneurs prévus",type:"number"},{k:"faits",l:"Conteneurs traités",type:"number",defaut:0},{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"chef",l:"Chef d'équipe",type:"membre",fonction:"Chef d'équipe manutention"},{k:"statut",l:"Statut",type:"select",options:["Planifiée","En cours","Terminée"]}],cols:["date","escale","type","conteneurs","faits"],statut:ST(["Planifiée","En cours","Terminée"],{Planifiée:"p-blue","En cours":"p-amber",Terminée:"p-green"}),titreDe:r=>r.type+" · "+nomDe("escales",r.escale),sousDe:r=>nf(r.faits)+" / "+nf(r.conteneurs)+" conteneurs",
+   seed:[{escale:"e1",type:"Déchargement",conteneurs:420,faits:420,date:J(-2),chef:chefs[0],statut:"Terminée"},{escale:"e1",type:"Chargement",conteneurs:310,faits:310,date:J(-1),chef:chefs[1],statut:"Terminée"},{escale:"e2",type:"Déchargement",conteneurs:280,faits:190,date:AUJ,chef:chefs[0],statut:"En cours"},{escale:"e3",type:"Déchargement",conteneurs:350,faits:0,date:J(1),chef:chefs[1],statut:"Planifiée"}]},
+ conteneurs:{sing:"Conteneur",ajout:"Enregistrer un conteneur",champs:[{k:"numero",l:"Numéro",req:1},{k:"escale",l:"Escale",type:"ref",ref:"escales"},{k:"taille",l:"Taille",type:"select",options:["20 pieds","40 pieds","40 pieds HC"]},{k:"sens",l:"Sens",type:"select",options:["Import","Export"]},{k:"emplacement",l:"Emplacement sur parc"},{k:"statut",l:"Statut",type:"select",options:["À décharger","Sur parc","Contrôle douane","Livré","Embarqué"]}],cols:["numero","escale","taille","sens","emplacement"],statut:ST(["À décharger","Sur parc","Contrôle douane","Livré","Embarqué"],{"À décharger":"p-blue","Sur parc":"p-amber","Contrôle douane":"p-violet",Livré:"p-green",Embarqué:"p-green"}),titreDe:r=>r.numero,sousDe:r=>r.taille+" · "+r.sens+" · "+(r.emplacement||"—"),
+   seed:Array.from({length:10},(_,i)=>({numero:"CDKU"+String(4012300+i*17),escale:pick(["e1","e2","e3"],i),taille:pick(["20 pieds","40 pieds","40 pieds HC"],i),sens:i%3?"Import":"Export",emplacement:"Bloc "+"ABC"[i%3]+"-"+(i+1),statut:pick(["Sur parc","Livré","Contrôle douane","À décharger","Embarqué"],i)}))},
+ incidents:{sing:"Incident",ajout:"Signaler un incident",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"escale",l:"Escale",type:"ref",ref:"escales"},{k:"type",l:"Type",type:"select",options:["Avarie conteneur","Accident de travail","Retard","Panne d'engin","Autre"]},{k:"description",l:"Description",type:"textarea",req:1},{k:"statut",l:"Statut",type:"select",options:["Ouvert","Traité"]}],cols:["date","escale","type"],statut:ST(["Ouvert","Traité"],{Ouvert:"p-red",Traité:"p-green"}),titreDe:r=>r.type,sousDe:r=>nomDe("escales",r.escale)+" · "+fd(r.date),seed:[{date:AUJ,escale:"e2",type:"Panne d'engin",description:"Reach stacker n°2 en panne, opération ralentie.",statut:"Ouvert"}]},
+ factures:{sing:"Facture",ajout:"Nouvelle facture",champs:[{k:"numero",l:"Numéro",req:1},{k:"escale",l:"Escale",type:"ref",ref:"escales"},{k:"client",l:"Client"},{k:"montant",l:"Montant",type:"money",req:1},{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"statut",l:"Statut",type:"select",options:["Émise","Payée","En retard"]}],cols:["numero","client","montant","date"],statut:ST(["Émise","Payée","En retard"],{Émise:"p-blue",Payée:"p-green","En retard":"p-red"}),titreDe:r=>r.numero+" · "+fcfa(r.montant),sousDe:r=>r.client,
+   seed:[{numero:"MAR-0101",escale:"e1",client:"Armateur A",montant:18500000,date:J(-1),statut:"Payée"},{numero:"MAR-0102",escale:"e2",client:"Armateur B",montant:12800000,date:AUJ,statut:"Émise"},{numero:"MAR-0098",escale:"e1",client:"Armateur A",montant:9600000,date:J(-25),statut:"En retard"}]}
+},
+kpisGroupe:D=>({navires:D.escales.length,escales:D.escales.filter(e=>e.statut!=="Annoncée").length,conteneurs:somme(D.operations,"faits"),ca:somme(D.factures.filter(f=>f.statut==="Payée"),"montant")}),
+roles:[
+ {id:"resp",poste:"Responsable Services Maritimes",ico:"⚓",desc:"Escales, rendement des équipes, facturation.",
+  dash:{kpis:D=>[["Navires à quai",D.escales.filter(e=>e.statut==="À quai").length,"var(--amber)"],["Escales annoncées",D.escales.filter(e=>e.statut==="Annoncée").length],["Conteneurs traités",nf(somme(D.operations,"faits"))],["Opérations en cours",D.operations.filter(o=>o.statut==="En cours").length],["Encaissé",fcfa(somme(D.factures.filter(f=>f.statut==="Payée"),"montant")),"var(--green)"],["Factures en retard",D.factures.filter(f=>f.statut==="En retard").length,"var(--red)"]],
+   listes:[{c:"escales",titre:"Navires à quai et attendus",filtre:r=>r.statut!=="Partie"},{c:"operations",titre:"Opérations en cours",filtre:r=>r.statut==="En cours"},{c:"incidents",titre:"Incidents ouverts",filtre:r=>r.statut==="Ouvert"}]},
+  menu:[{c:"escales",l:"🚢 Escales",can:["add","edit"],etapes:["À quai","Partie"]},{c:"operations",l:"🏗️ Opérations",can:["add","edit"],etapes:["En cours","Terminée"]},{c:"conteneurs",l:"📦 Conteneurs",can:["add","edit"]},{c:"incidents",l:"⚠️ Incidents",can:["add"],etapes:["Traité"]},{c:"factures",l:"💰 Facturation",can:["add","edit"],etapes:["Payée","En retard"]},{c:"equipe",l:"👥 Équipes",can:["add","edit"]}]},
+ {id:"escale",poste:"Agent d'escale",ico:"🚢",desc:"Annonce et suivi des navires, documents, facturation.",personne:"Agent d'escale",
+  dash:{actions:[{ico:"🚢",l:"Annoncer une escale",run:c=>c.nouveau("escales",{agent:c.moi.id,statut:"Annoncée"},{})},{ico:"🏗️",l:"Planifier une opération",run:c=>c.nouveau("operations",{statut:"Planifiée"},{})}],
+   kpis:(D,c)=>[["Mes escales actives",D.escales.filter(e=>e.agent===c.moi.id&&e.statut!=="Partie").length],["Navires à quai",D.escales.filter(e=>e.statut==="À quai").length,"var(--amber)"]],
+   listes:[{c:"escales",titre:"Mes escales",filtre:(r,c)=>r.agent===c.moi.id}]},
+  menu:[{c:"escales",l:"🚢 Escales",can:["add","edit"],etapes:["À quai","Partie"]},{c:"operations",l:"🏗️ Opérations",can:["add"]},{c:"factures",l:"💰 Factures",can:["add"]}]},
+ {id:"chef",poste:"Chef d'équipe manutention",ico:"🏗️",desc:"Mes opérations, avancement, incidents de quai.",personne:"Chef d'équipe manutention",
+  dash:{info:"Mettez à jour le nombre de conteneurs traités pendant l'opération : le responsable suit l'avancement en direct.",
+   actions:[{ico:"⚠️",l:"Signaler un incident",run:c=>c.nouveau("incidents",{statut:"Ouvert"},{})}],
+   kpis:(D,c)=>{const m=D.operations.filter(o=>o.chef===c.moi.id);return [["Mes opérations en cours",m.filter(o=>o.statut==="En cours").length,"var(--amber)"],["Conteneurs traités",nf(somme(m,"faits"))]]},
+   listes:[{c:"operations",titre:"Mes opérations",filtre:(r,c)=>r.chef===c.moi.id&&r.statut!=="Terminée"}]},
+  menu:[{c:"operations",l:"🏗️ Mes opérations",can:["edit"],filtre:(r,c)=>r.chef===c.moi.id,etapes:["En cours","Terminée"]},{c:"incidents",l:"⚠️ Incidents",can:["add"]},{c:"equipe",l:"👥 Dockers"}]},
+ {id:"pointeur",poste:"Pointeur",ico:"📋",desc:"Pointage des conteneurs sur le quai et le parc.",personne:"Pointeur",
+  dash:{actions:[{ico:"📦",l:"Enregistrer un conteneur",run:c=>c.nouveau("conteneurs",{statut:"Sur parc"},{})}],
+   kpis:D=>[["Sur parc",D.conteneurs.filter(x=>x.statut==="Sur parc").length],["À décharger",D.conteneurs.filter(x=>x.statut==="À décharger").length,"var(--amber)"],["En contrôle douane",D.conteneurs.filter(x=>x.statut==="Contrôle douane").length]],
+   listes:[{c:"conteneurs",titre:"À traiter",filtre:r=>["À décharger","Contrôle douane"].includes(r.statut)}]},
+  menu:[{c:"conteneurs",l:"📦 Conteneurs",can:["add","edit"],etapes:["Sur parc","Contrôle douane","Livré","Embarqué"]}]}
+]}};
+</script>
+</body>
+</html>

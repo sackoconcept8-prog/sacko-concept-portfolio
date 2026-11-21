@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>CDK GROUP</title>
+<link rel="icon" href="../logo-cdk-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../cdk.css">
+<script src="../secteur.js"></script>
+</head>
+<body>
+<script>
+window.SECTEUR=()=>{
+const eq=genEquipe("com",[["Chargé de communication",2,"Chargé de communication"],["Chargé d'événements",2,"Chargé d'événements"],["Graphiste / vidéaste",1,"Graphiste"]]);
+const cc=eq.filter(m=>m.fonction==="Chargé de communication").map(m=>m.id),ce=eq.filter(m=>m.fonction==="Chargé d'événements").map(m=>m.id);
+return {id:"comm",nom:"Communication & Événementiel",ico:"📣",c:"#b2457f",sous:"Logiciel de la communication : calendrier des publications avec validation, événements et préparation, demandes des départements, revue de presse.",
+collections:{
+ equipe:colEquipe(["Chargé de communication","Chargé d'événements","Graphiste / vidéaste"],eq),
+ publications:{sing:"Publication",ajout:"Nouvelle publication",champs:[{k:"date",l:"Date prévue",type:"date",defaut:AUJ},{k:"reseau",l:"Canal",type:"select",options:["Facebook","Instagram","LinkedIn","TikTok","Site web","Presse"]},{k:"sujet",l:"Sujet",req:1},{k:"texte",l:"Texte",type:"textarea"},{k:"auteur",l:"Auteur",type:"membre",auto:c=>c.moi?c.moi.id:""},{k:"vues",l:"Vues",type:"number",defaut:0},{k:"statut",l:"Statut",type:"select",options:["Idée","À valider","Validée","Publiée"]}],cols:["date","reseau","sujet","vues"],statut:ST(["Idée","À valider","Validée","Publiée"],{Idée:"p-grey","À valider":"p-amber",Validée:"p-blue",Publiée:"p-green"}),titreDe:r=>r.sujet,sousDe:r=>r.reseau+" · "+fd(r.date),tri:(a,b)=>a.date.localeCompare(b.date),
+   seed:[["Bilan de l'année du groupe","LinkedIn","À valider",2],["Nouveau circuit côtier","Instagram","Validée",3],["Soirée partenaires : invitation","Facebook","Publiée",-2],["Recrutement agents de sécurité","Facebook","Publiée",-4],["Visite du port en vidéo","TikTok","Idée",6],["Action sociale : soutien scolaire","Site web","À valider",1]].map(([sujet,reseau,statut,d],i)=>({date:J(d),reseau,sujet,texte:"",auteur:pick(cc,i),vues:statut==="Publiée"?1800+i*700:0,statut}))},
+ evenements:{sing:"Événement",ajout:"Nouvel événement",champs:[{k:"nom",l:"Nom",req:1},{k:"date",l:"Date",type:"date",req:1},{k:"lieu",l:"Lieu"},{k:"invites",l:"Invités prévus",type:"number"},{k:"budget",l:"Budget",type:"money"},{k:"depense",l:"Dépensé",type:"money",defaut:0},{k:"responsable",l:"Responsable",type:"membre",fonction:"Chargé d'événements"},{k:"statut",l:"Statut",type:"select",options:["En préparation","Confirmé","Réalisé","Annulé"]}],cols:["date","nom","lieu","invites","budget"],statut:ST(["En préparation","Confirmé","Réalisé","Annulé"],{"En préparation":"p-amber",Confirmé:"p-blue",Réalisé:"p-green",Annulé:"p-grey"}),titreDe:r=>r.nom,sousDe:r=>fd(r.date)+" · "+(r.lieu||""),
+   seed:[{id:"ev1",nom:"Soirée partenaires de fin d'année",date:J(9),lieu:"Hôtel partenaire",invites:120,budget:3200000,depense:850000,responsable:ce[0],statut:"Confirmé"},{id:"ev2",nom:"Journée portes ouvertes du port",date:J(24),lieu:"Zone portuaire",invites:300,budget:1500000,depense:0,responsable:ce[1],statut:"En préparation"},{id:"ev3",nom:"Remise des prix meilleurs agents",date:J(-12),lieu:"Siège",invites:60,budget:600000,depense:580000,responsable:ce[0],statut:"Réalisé"}]},
+ preparatifs:{sing:"Tâche d'événement",ajout:"Nouvelle tâche",champs:[{k:"evenement",l:"Événement",type:"ref",ref:"evenements",req:1},{k:"tache",l:"Tâche",req:1},{k:"responsable",l:"Responsable",type:"membre"},{k:"echeance",l:"Échéance",type:"date"},{k:"statut",l:"Statut",type:"select",options:["À faire","En cours","Fait"]}],cols:["evenement","tache","responsable","echeance"],statut:ST(["À faire","En cours","Fait"],{"À faire":"p-red","En cours":"p-amber",Fait:"p-green"}),titreDe:r=>r.tache,sousDe:r=>nomDe("evenements",r.evenement)+" · "+fd(r.echeance),
+   seed:[["ev1","Envoyer les invitations","Fait"],["ev1","Réserver la salle et le traiteur (Restauration)","Fait"],["ev1","Sonorisation et décoration","En cours"],["ev1","Plan de sécurité avec CDK Sécurité","À faire"],["ev2","Programme de la journée","En cours"],["ev2","Affiches et réseaux sociaux","À faire"]].map(([evenement,tache,statut],i)=>({evenement,tache,responsable:pick(ce,i),echeance:J(2+i),statut}))},
+ demandes:{sing:"Demande",ajout:"Nouvelle demande",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"departement",l:"Département demandeur",type:"select",options:["Présidence","CDK Sécurité","Tourisme","Maritime","Halieutique","Restauration","Social","Mobilité"]},{k:"objet",l:"Demande",req:1},{k:"pour",l:"Pour le",type:"date"},{k:"statut",l:"Statut",type:"select",options:["Reçue","En cours","Livrée"]}],cols:["date","departement","objet","pour"],statut:ST(["Reçue","En cours","Livrée"],{Reçue:"p-red","En cours":"p-amber",Livrée:"p-green"}),titreDe:r=>r.objet,sousDe:r=>r.departement,
+   seed:[{date:J(-1),departement:"Tourisme",objet:"Flyer du circuit côtier",pour:J(4),statut:"En cours"},{date:AUJ,departement:"Présidence",objet:"Discours de fin d'année",pour:J(8),statut:"Reçue"},{date:J(-6),departement:"CDK Sécurité",objet:"Annonce de recrutement",pour:J(-3),statut:"Livrée"}]},
+ presse:{sing:"Retombée",ajout:"Nouvelle retombée",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"media",l:"Média",req:1},{k:"titre",l:"Titre",req:1},{k:"ton",l:"Ton",type:"select",options:["Positif","Neutre","Négatif"]},{k:"lien",l:"Lien"}],cols:["date","media","titre","ton"],titreDe:r=>r.titre,sousDe:r=>r.media+" · "+r.ton,
+   seed:[{date:J(-3),media:"Journal national",titre:"CDK GROUP soutient l'école",ton:"Positif",lien:""},{date:J(-8),media:"Radio locale",titre:"Interview du Président",ton:"Positif",lien:""}]}
+},
+kpisGroupe:D=>({evenements:D.evenements.filter(e=>e.statut==="Réalisé").length,publications:D.publications.filter(p=>p.statut==="Publiée").length,abonnes:Math.round(somme(D.publications,"vues")/10),presse:D.presse.length}),
+roles:[
+ {id:"resp",poste:"Responsable Communication & Événementiel",ico:"📣",desc:"Valide les publications, pilote les événements et les budgets.",
+  dash:{kpis:D=>[["Publications à valider",D.publications.filter(p=>p.statut==="À valider").length,"var(--amber)"],["Publiées",D.publications.filter(p=>p.statut==="Publiée").length,"var(--green)"],["Vues totales",nf(somme(D.publications,"vues"))],["Événements à venir",D.evenements.filter(e=>["En préparation","Confirmé"].includes(e.statut)).length],["Budget événements",fcfa(somme(D.evenements,"budget"))],["Demandes en attente",D.demandes.filter(d=>d.statut!=="Livrée").length,"var(--red)"]],
+   listes:[{c:"publications",titre:"À valider",filtre:r=>r.statut==="À valider"},{c:"evenements",titre:"Événements à venir",filtre:r=>r.statut!=="Réalisé"},{c:"demandes",titre:"Demandes des départements",filtre:r=>r.statut!=="Livrée"}]},
+  menu:[{c:"publications",l:"🗓️ Calendrier éditorial",can:["add","edit"],etapes:["Validée","Publiée"],badge:D=>D.publications.filter(p=>p.statut==="À valider").length},{c:"evenements",l:"🎉 Événements",can:["add","edit"],etapes:["Confirmé","Réalisé","Annulé"]},{c:"preparatifs",l:"✅ Préparatifs",can:["add","edit"],etapes:["En cours","Fait"]},{c:"demandes",l:"📥 Demandes internes",can:["add","edit"],etapes:["En cours","Livrée"]},{c:"presse",l:"📰 Revue de presse",can:["add"]},{c:"equipe",l:"👥 Équipe",can:["add","edit"]}]},
+ {id:"comm",poste:"Chargé de communication",ico:"✍️",desc:"Rédige les publications et les envoie à la validation.",personne:["Chargé de communication","Graphiste / vidéaste"],
+  dash:{actions:[{ico:"✍️",l:"Nouvelle publication",run:c=>c.nouveau("publications",{auteur:c.moi.id,statut:"Idée"},{})}],
+   kpis:(D,c)=>{const m=D.publications.filter(p=>p.auteur===c.moi.id);return [["Mes publications",m.length],["En attente de validation",m.filter(p=>p.statut==="À valider").length,"var(--amber)"],["Mes vues",nf(somme(m,"vues"))]]},
+   listes:[{c:"publications",titre:"Prochaines publications",filtre:r=>r.statut!=="Publiée"},{c:"demandes",titre:"Demandes à traiter",filtre:r=>r.statut!=="Livrée"}]},
+  menu:[{c:"publications",l:"🗓️ Publications",can:["add","edit"],preset:c=>({auteur:c.moi.id,statut:"Idée"}),etapes:["À valider","Publiée"]},{c:"demandes",l:"📥 Demandes internes",can:["edit"],etapes:["En cours","Livrée"]},{c:"presse",l:"📰 Revue de presse",can:["add"]}]},
+ {id:"event",poste:"Chargé d'événements",ico:"🎉",desc:"Organise les événements et suit les préparatifs.",personne:"Chargé d'événements",
+  dash:{actions:[{ico:"✅",l:"Ajouter une tâche",run:c=>c.nouveau("preparatifs",{responsable:c.moi.id,statut:"À faire"},{})}],
+   kpis:(D,c)=>[["Mes événements",D.evenements.filter(e=>e.responsable===c.moi.id&&e.statut!=="Réalisé").length],["Tâches à faire",D.preparatifs.filter(p=>p.statut!=="Fait").length,"var(--amber)"]],
+   listes:[{c:"preparatifs",titre:"Préparatifs en cours",filtre:r=>r.statut!=="Fait"}]},
+  menu:[{c:"evenements",l:"🎉 Mes événements",can:["edit"],filtre:(r,c)=>r.responsable===c.moi.id},{c:"preparatifs",l:"✅ Préparatifs",can:["add","edit"],etapes:["En cours","Fait"]}]}
+]}};
+</script>
+</body>
+</html>

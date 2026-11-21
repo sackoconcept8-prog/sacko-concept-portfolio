@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>CDK GROUP</title>
+<link rel="icon" href="../logo-cdk-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../cdk.css">
+<script src="../secteur.js"></script>
+</head>
+<body>
+<script>
+window.SECTEUR=()=>{
+const eq=genEquipe("hal",[["Collecteur / peseur",3,"Collecteur"],["Vendeur",2,"Vendeur"],["Responsable chambre froide",1,"Chambre froide"]]);
+const col=eq.filter(m=>m.fonction==="Collecteur / peseur").map(m=>m.id),ven=eq.filter(m=>m.fonction==="Vendeur").map(m=>m.id);
+const ESP=["Thon","Sardinelle","Carpe","Bar","Crevettes","Dorade"],PRIX={Thon:1800,Sardinelle:700,Carpe:1500,Bar:2200,Crevettes:4500,Dorade:2000};
+const pir=Array.from({length:8},(_,i)=>({id:"p"+(i+1),nom:"Pirogue "+String(i+1).padStart(2,"0"),immat:"TG-PIR-"+(201+i),proprietaire:"Pêcheur "+String(i+1).padStart(2,"0"),port:i%2?"Port de pêche":"Plage Est",statut:i===6?"En réparation":"Active"}));
+return {id:"hali",nom:"Halieutique",ico:"🐟",c:"#0b7fa6",sous:"Logiciel de la pêche : pirogues et pêcheurs, débarquements et pesées, chambre froide, ventes et pertes.",
+collections:{
+ equipe:colEquipe(["Collecteur / peseur","Vendeur","Responsable chambre froide"],eq),
+ pirogues:{sing:"Pirogue",ajout:"Nouvelle pirogue",champs:[{k:"nom",l:"Nom",req:1},{k:"immat",l:"Immatriculation"},{k:"proprietaire",l:"Propriétaire / capitaine"},{k:"port",l:"Port d'attache"},{k:"statut",l:"Statut",type:"select",options:["Active","En réparation","Inactive"]}],cols:["nom","immat","proprietaire","port"],statut:ST(["Active","En réparation","Inactive"],{Active:"p-green","En réparation":"p-amber",Inactive:"p-grey"}),titreDe:r=>r.nom,sousDe:r=>r.proprietaire,seed:pir},
+ debarquements:{sing:"Débarquement",ajout:"Nouvelle pesée",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"pirogue",l:"Pirogue",type:"ref",ref:"pirogues",req:1},{k:"espece",l:"Espèce",type:"select",options:ESP},{k:"poids",l:"Poids (kg)",type:"number",req:1},{k:"prix",l:"Prix d'achat au kg",type:"money"},{k:"montant",l:"Montant à payer",type:"money"},{k:"collecteur",l:"Collecteur",type:"membre",fonction:"Collecteur / peseur",auto:c=>c.moi?c.moi.id:""},{k:"statut",l:"Statut",type:"select",options:["Pesé","Payé au pêcheur"]}],cols:["date","pirogue","espece","poids","montant"],statut:ST(["Pesé","Payé au pêcheur"],{Pesé:"p-amber","Payé au pêcheur":"p-green"}),titreDe:r=>nomDe("pirogues",r.pirogue)+" · "+r.espece,sousDe:r=>nf(r.poids)+" kg · "+fd(r.date),tri:(a,b)=>b.date.localeCompare(a.date),
+   seed:Array.from({length:12},(_,i)=>{const e=ESP[i%6],p=120+((i*73)%400),px=Math.round(PRIX[e]*0.6);return {date:J(-Math.floor(i/3)),pirogue:"p"+(1+i%8),espece:e,poids:p,prix:px,montant:p*px,collecteur:pick(col,i),statut:i<3?"Pesé":"Payé au pêcheur"}})},
+ froid:{sing:"Lot",ajout:"Entrée en chambre froide",champs:[{k:"lot",l:"Lot",req:1},{k:"espece",l:"Espèce",type:"select",options:ESP},{k:"poids",l:"Poids (kg)",type:"number"},{k:"entree",l:"Date d'entrée",type:"date",defaut:AUJ},{k:"temp",l:"Température (°C)",type:"number"},{k:"statut",l:"Statut",type:"select",options:["En stock","Vendu","Perdu"]}],cols:["lot","espece","poids","entree","temp"],statut:ST(["En stock","Vendu","Perdu"],{"En stock":"p-blue",Vendu:"p-green",Perdu:"p-red"}),titreDe:r=>r.lot+" · "+r.espece,sousDe:r=>nf(r.poids)+" kg · entré le "+fd(r.entree),
+   seed:ESP.map((e,i)=>({lot:"L-"+(310+i),espece:e,poids:150+i*40,entree:J(-i),temp:-18,statut:i===4?"Perdu":i<2?"Vendu":"En stock"}))},
+ ventes:{sing:"Vente",ajout:"Nouvelle vente",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"client",l:"Client",req:1},{k:"espece",l:"Espèce",type:"select",options:ESP},{k:"poids",l:"Poids (kg)",type:"number"},{k:"prix",l:"Prix au kg",type:"money"},{k:"montant",l:"Montant",type:"money",req:1},{k:"vendeur",l:"Vendeur",type:"membre",fonction:"Vendeur",auto:c=>c.moi?c.moi.id:""},{k:"statut",l:"Paiement",type:"select",options:["Payée","À crédit"]}],cols:["date","client","espece","poids","montant"],statut:ST(["Payée","À crédit"],{Payée:"p-green","À crédit":"p-amber"}),titreDe:r=>r.client+" · "+fcfa(r.montant),sousDe:r=>r.espece+" · "+nf(r.poids)+" kg",tri:(a,b)=>b.date.localeCompare(a.date),
+   seed:Array.from({length:8},(_,i)=>{const e=ESP[(i+2)%6],p=40+i*25;return {date:J(-Math.floor(i/2)),client:pick(["Mareyeuse 01","Restaurant du groupe","Hôtel partenaire","Mareyeuse 02","Marché central"],i),espece:e,poids:p,prix:PRIX[e],montant:p*PRIX[e],vendeur:pick(ven,i),statut:i===3?"À crédit":"Payée"}})}
+},
+kpisGroupe:D=>{const tot=somme(D.froid,"poids"),perdu=somme(D.froid.filter(f=>f.statut==="Perdu"),"poids");return {tonnes:Math.round(somme(D.debarquements,"poids")/100)/10,pirogues:D.pirogues.filter(p=>p.statut==="Active").length,ventes:somme(D.ventes,"montant"),pertes:tot?Math.round(100*perdu/tot):0}},
+roles:[
+ {id:"resp",poste:"Responsable Halieutique",ico:"🐟",desc:"Volumes débarqués, ventes, marges, pertes et chambre froide.",
+  dash:{kpis:D=>{const a=somme(D.debarquements,"montant"),v=somme(D.ventes,"montant"),tot=somme(D.froid,"poids"),pe=somme(D.froid.filter(f=>f.statut==="Perdu"),"poids");return [["Poisson débarqué",nf(somme(D.debarquements,"poids"))+" kg"],["Achats aux pêcheurs",fcfa(a)],["Ventes",fcfa(v),"var(--green)"],["Marge brute",fcfa(v-a),v-a>=0?"var(--green)":"var(--red)"],["Pertes",(tot?Math.round(100*pe/tot):0)+" %","var(--red)"],["Pêcheurs à payer",D.debarquements.filter(d=>d.statut==="Pesé").length,"var(--amber)"]]},
+   listes:[{c:"debarquements",titre:"Pesées à payer aux pêcheurs",filtre:r=>r.statut==="Pesé"},{c:"froid",titre:"Chambre froide",filtre:r=>r.statut==="En stock"},{c:"ventes",titre:"Ventes à crédit",filtre:r=>r.statut==="À crédit"}]},
+  menu:[{c:"debarquements",l:"⚖️ Débarquements",can:["add","edit"],etapes:["Payé au pêcheur"]},{c:"froid",l:"❄️ Chambre froide",can:["add","edit"],etapes:["Vendu","Perdu"]},{c:"ventes",l:"💰 Ventes",can:["add","edit"],etapes:["Payée"]},{c:"pirogues",l:"🛶 Pirogues et pêcheurs",can:["add","edit"]},{c:"equipe",l:"👥 Équipe",can:["add","edit"]}]},
+ {id:"collecteur",poste:"Collecteur / peseur",ico:"⚖️",desc:"Pesée des débarquements à l'arrivée des pirogues.",personne:"Collecteur / peseur",
+  dash:{actions:[{ico:"⚖️",l:"Nouvelle pesée",run:c=>c.nouveau("debarquements",{collecteur:c.moi.id,statut:"Pesé"},{})}],
+   kpis:(D,c)=>{const m=D.debarquements.filter(d=>d.collecteur===c.moi.id&&d.date===AUJ);return [["Mes pesées du jour",m.length],["Poids pesé aujourd'hui",nf(somme(m,"poids"))+" kg"]]},
+   listes:[{c:"debarquements",titre:"Mes dernières pesées",filtre:(r,c)=>r.collecteur===c.moi.id}]},
+  menu:[{c:"debarquements",l:"⚖️ Mes pesées",can:["add","edit"],filtre:(r,c)=>r.collecteur===c.moi.id,preset:c=>({collecteur:c.moi.id,statut:"Pesé"})},{c:"pirogues",l:"🛶 Pirogues"}]},
+ {id:"vendeur",poste:"Vendeur",ico:"💰",desc:"Ventes aux mareyeuses, restaurants et hôtels.",personne:"Vendeur",
+  dash:{actions:[{ico:"💰",l:"Nouvelle vente",run:c=>c.nouveau("ventes",{vendeur:c.moi.id,statut:"Payée"},{})}],
+   kpis:(D,c)=>{const m=D.ventes.filter(v=>v.vendeur===c.moi.id);return [["Mes ventes",fcfa(somme(m,"montant")),"var(--green)"],["À crédit",m.filter(v=>v.statut==="À crédit").length,"var(--amber)"],["Stock disponible",nf(somme(D.froid.filter(f=>f.statut==="En stock"),"poids"))+" kg"]]},
+   listes:[{c:"froid",titre:"Disponible en chambre froide",filtre:r=>r.statut==="En stock"}]},
+  menu:[{c:"ventes",l:"💰 Mes ventes",can:["add","edit"],filtre:(r,c)=>r.vendeur===c.moi.id,etapes:["Payée"]},{c:"froid",l:"❄️ Stock disponible"}]},
+ {id:"froid",poste:"Responsable chambre froide",ico:"❄️",desc:"Entrées, températures, sorties et pertes.",personne:"Responsable chambre froide",
+  dash:{actions:[{ico:"❄️",l:"Entrée en chambre froide",run:c=>c.nouveau("froid",{statut:"En stock",temp:-18},{})}],
+   kpis:D=>[["Lots en stock",D.froid.filter(f=>f.statut==="En stock").length],["Poids en stock",nf(somme(D.froid.filter(f=>f.statut==="En stock"),"poids"))+" kg"],["Lots perdus",D.froid.filter(f=>f.statut==="Perdu").length,"var(--red)"]],
+   listes:[{c:"froid",titre:"En stock",filtre:r=>r.statut==="En stock"}]},
+  menu:[{c:"froid",l:"❄️ Chambre froide",can:["add","edit"],etapes:["Vendu","Perdu"]}]}
+]}};
+</script>
+</body>
+</html>

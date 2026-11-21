@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>CDK GROUP</title>
+<link rel="icon" href="../logo-cdk-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../cdk.css">
+<script src="../secteur.js"></script>
+</head>
+<body>
+<script>
+window.SECTEUR=()=>{
+const eq=genEquipe("tou",[["Agent de réservation",2,"Agent de réservation"],["Guide",4,"Guide"],["Chargé de partenariats",1,"Chargé de partenariats"]]);
+const guides=eq.filter(m=>m.fonction==="Guide").map(m=>m.id);
+const circ=[["c1","Circuit côtier",1,15000,20],["c2","Découverte du lac",1,20000,15],["c3","Villages artisanaux",2,45000,12],["c4","Plateaux et cascades",3,85000,10]];
+return {id:"tour",nom:"Tourisme & Partenariats",ico:"🌍",c:"#0f8f7a",sous:"Logiciel du tourisme : circuits, réservations, départs et guides, partenaires et avis des clients.",
+collections:{
+ equipe:colEquipe(["Agent de réservation","Guide","Chargé de partenariats"],eq),
+ circuits:{sing:"Circuit",ajout:"Nouveau circuit",champs:[{k:"nom",l:"Nom",req:1},{k:"jours",l:"Durée (jours)",type:"number"},{k:"prix",l:"Prix par personne",type:"money"},{k:"places",l:"Places par départ",type:"number"},{k:"programme",l:"Programme",type:"textarea"},{k:"statut",l:"Statut",type:"select",options:["Actif","Suspendu"]}],cols:["nom","jours","prix","places"],statut:ST(["Actif","Suspendu"],{Actif:"p-green",Suspendu:"p-grey"}),titreDe:r=>r.nom,sousDe:r=>r.jours+" jour(s) · "+fcfa(r.prix),seed:circ.map(([id,nom,jours,prix,places])=>({id,nom,jours,prix,places,programme:"Accueil, visite guidée, repas local, retour.",statut:"Actif"}))},
+ reservations:{sing:"Réservation",ajout:"Nouvelle réservation",champs:[{k:"client",l:"Client",req:1},{k:"contact",l:"Téléphone / e-mail"},{k:"circuit",l:"Circuit",type:"ref",ref:"circuits",req:1},{k:"date",l:"Date du départ",type:"date",req:1},{k:"personnes",l:"Personnes",type:"number",defaut:2},{k:"montant",l:"Montant",type:"money"},{k:"source",l:"Source",type:"select",options:["Direct","Hôtel partenaire","Agence partenaire","Site web","Réseaux sociaux"]},{k:"statut",l:"Statut",type:"select",options:["Demandée","Confirmée","Payée","Annulée"]}],cols:["date","client","circuit","personnes","montant"],statut:ST(["Demandée","Confirmée","Payée","Annulée"],{Demandée:"p-amber",Confirmée:"p-blue",Payée:"p-green",Annulée:"p-grey"}),titreDe:r=>r.client+" · "+nomDe("circuits",r.circuit),sousDe:r=>fd(r.date)+" · "+r.personnes+" pers.",tri:(a,b)=>a.date.localeCompare(b.date),
+   seed:Array.from({length:9},(_,i)=>{const c=circ[i%4];return {client:"Client "+String(i+1).padStart(2,"0"),contact:"+228 9"+i+" 00 00 0"+i,circuit:c[0],date:J(i-3),personnes:2+i%4,montant:c[3]*(2+i%4),source:pick(["Direct","Hôtel partenaire","Agence partenaire","Site web","Réseaux sociaux"],i),statut:pick(["Payée","Payée","Confirmée","Demandée","Payée","Annulée"],i)}})},
+ departs:{sing:"Départ",ajout:"Nouveau départ",champs:[{k:"date",l:"Date",type:"date",req:1},{k:"circuit",l:"Circuit",type:"ref",ref:"circuits",req:1},{k:"guide",l:"Guide",type:"membre",fonction:"Guide"},{k:"participants",l:"Participants",type:"number"},{k:"rapport",l:"Rapport du guide",type:"textarea"},{k:"statut",l:"Statut",type:"select",options:["Prévu","En cours","Terminé","Annulé"]}],cols:["date","circuit","guide","participants"],statut:ST(["Prévu","En cours","Terminé","Annulé"],{Prévu:"p-blue","En cours":"p-amber",Terminé:"p-green",Annulé:"p-grey"}),titreDe:r=>nomDe("circuits",r.circuit),sousDe:r=>fd(r.date)+" · "+(membre(r.guide)||{}).nom,tri:(a,b)=>a.date.localeCompare(b.date),
+   seed:[-2,-1,0,1,3,5].map((d,i)=>({date:J(d),circuit:circ[i%4][0],guide:pick(guides,i),participants:4+i*2,rapport:d<0?"Groupe satisfait, météo favorable.":"",statut:d<0?"Terminé":d===0?"En cours":"Prévu"}))},
+ partenaires:{sing:"Partenaire",ajout:"Nouveau partenaire",champs:[{k:"nom",l:"Nom",req:1},{k:"type",l:"Type",type:"select",options:["Hôtel","Agence de voyage","Transport","Restaurant","Institution"]},{k:"contact",l:"Contact"},{k:"commission",l:"Commission (%)",type:"number"},{k:"notes",l:"Notes",type:"textarea"},{k:"statut",l:"Statut",type:"select",options:["Prospect","En discussion","Signé","Arrêté"]}],cols:["nom","type","commission"],statut:ST(["Prospect","En discussion","Signé","Arrêté"],{Prospect:"p-grey","En discussion":"p-amber",Signé:"p-green",Arrêté:"p-red"}),titreDe:r=>r.nom,sousDe:r=>r.type,
+   seed:[["Hôtel partenaire A","Hôtel","Signé"],["Hôtel partenaire B","Hôtel","En discussion"],["Agence de voyage C","Agence de voyage","Signé"],["Transporteur D","Transport","Prospect"],["Office du tourisme","Institution","Signé"]].map(([nom,type,statut],i)=>({nom,type,contact:"+228 22 00 00 0"+i,commission:10,notes:"",statut}))},
+ avis:{sing:"Avis client",ajout:"Nouvel avis",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"circuit",l:"Circuit",type:"ref",ref:"circuits"},{k:"note",l:"Note",type:"select",options:["5","4","3","2","1"]},{k:"commentaire",l:"Commentaire",type:"textarea"}],cols:["date","circuit","note"],titreDe:r=>"★ "+r.note+" · "+nomDe("circuits",r.circuit),sousDe:r=>r.commentaire,seed:[{date:J(-2),circuit:"c1",note:"5",commentaire:"Guide passionnant."},{date:J(-6),circuit:"c3",note:"4",commentaire:"Très beau, un peu long en voiture."}]}
+},
+kpisGroupe:D=>{const ok=D.reservations.filter(r=>["Confirmée","Payée"].includes(r.statut));return {visiteurs:somme(ok,"personnes"),circuits:ok.length,partenaires:D.partenaires.filter(p=>p.statut==="Signé").length,ca:somme(D.reservations.filter(r=>r.statut==="Payée"),"montant")}},
+roles:[
+ {id:"resp",poste:"Chargé(e) des partenariats et du Tourisme",ico:"🌍",desc:"Ventes, circuits, guides, partenaires et satisfaction.",
+  dash:{kpis:D=>{const p=D.reservations.filter(r=>r.statut==="Payée");return [["Chiffre d'affaires",fcfa(somme(p,"montant")),"var(--green)"],["Visiteurs confirmés",somme(D.reservations.filter(r=>["Confirmée","Payée"].includes(r.statut)),"personnes")],["Réservations à confirmer",D.reservations.filter(r=>r.statut==="Demandée").length,"var(--amber)"],["Départs à venir",D.departs.filter(d=>d.statut==="Prévu").length],["Partenaires signés",D.partenaires.filter(p=>p.statut==="Signé").length],["Note moyenne",(D.avis.length?(somme(D.avis,"note")/D.avis.length).toFixed(1):"—")+" / 5"]]},
+   listes:[{c:"departs",titre:"Prochains départs",filtre:r=>r.statut!=="Terminé"},{c:"reservations",titre:"Réservations à confirmer",filtre:r=>r.statut==="Demandée"}]},
+  menu:[{c:"reservations",l:"🎫 Réservations",can:["add","edit"],etapes:["Confirmée","Payée","Annulée"]},{c:"departs",l:"🚌 Départs et guides",can:["add","edit"]},{c:"circuits",l:"🗺️ Circuits",can:["add","edit"]},{c:"partenaires",l:"🤝 Partenaires",can:["add","edit"],etapes:["En discussion","Signé","Arrêté"]},{c:"avis",l:"⭐ Avis clients",can:["add"]},{c:"equipe",l:"👥 Équipe",can:["add","edit"]}]},
+ {id:"resa",poste:"Agent de réservation",ico:"🎫",desc:"Réservations, paiements et organisation des départs.",personne:"Agent de réservation",
+  dash:{actions:[{ico:"➕",l:"Nouvelle réservation",run:c=>c.nouveau("reservations",{statut:"Demandée"},{})},{ico:"🚌",l:"Programmer un départ",run:c=>c.nouveau("departs",{statut:"Prévu"},{})}],
+   kpis:D=>[["À confirmer",D.reservations.filter(r=>r.statut==="Demandée").length,"var(--amber)"],["Confirmées non payées",D.reservations.filter(r=>r.statut==="Confirmée").length],["Départs cette semaine",D.departs.filter(d=>d.date>=AUJ&&d.date<=J(7)).length]],
+   listes:[{c:"reservations",titre:"À traiter",filtre:r=>["Demandée","Confirmée"].includes(r.statut)}]},
+  menu:[{c:"reservations",l:"🎫 Réservations",can:["add","edit"],etapes:["Confirmée","Payée","Annulée"]},{c:"departs",l:"🚌 Départs",can:["add","edit"]},{c:"circuits",l:"🗺️ Circuits"}]},
+ {id:"guide",poste:"Guide",ico:"🧭",desc:"Mes départs, mes groupes et mon rapport de sortie.",personne:"Guide",
+  dash:{info:"Après chaque sortie, ouvrez le départ et passez-le « Terminé », puis écrivez votre rapport (remarques du groupe, problèmes rencontrés).",
+   kpis:(D,c)=>[["Mes prochains départs",D.departs.filter(d=>d.guide===c.moi.id&&d.statut==="Prévu").length],["Sorties terminées",D.departs.filter(d=>d.guide===c.moi.id&&d.statut==="Terminé").length,"var(--green)"]],
+   listes:[{c:"departs",titre:"Mes départs",filtre:(r,c)=>r.guide===c.moi.id&&r.statut!=="Terminé"}]},
+  menu:[{c:"departs",l:"🚌 Mes départs",can:["edit"],filtre:(r,c)=>r.guide===c.moi.id,etapes:["En cours","Terminé"]},{c:"circuits",l:"🗺️ Circuits"},{c:"avis",l:"⭐ Avis clients",can:["add"]}]}
+]}};
+</script>
+</body>
+</html>

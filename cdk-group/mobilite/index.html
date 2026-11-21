@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>CDK GROUP</title>
+<link rel="icon" href="../logo-cdk-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../cdk.css">
+<script src="../secteur.js"></script>
+</head>
+<body>
+<script>
+window.SECTEUR=()=>{
+const eq=genEquipe("mob",[["Chauffeur",6,"Chauffeur"],["Gestionnaire de parc",1,"Gestionnaire de parc"],["Gestionnaire immobilier",1,"Gestionnaire immobilier"]]);
+const ch=eq.filter(m=>m.fonction==="Chauffeur").map(m=>m.id);
+const veh=[["v1","TG-1021-AB","Camion de livraison","En course"],["v2","TG-3344-CD","Fourgon","Disponible"],["v3","TG-7788-EF","Minibus","Disponible"],["v4","TG-1200-GH","Pick-up","En panne"],["v5","TG-5521-IJ","Berline de direction","Disponible"],["v6","TG-9910-KL","Camion de livraison","Entretien"]];
+const biens=[["bi1","Appartement A1","Appartement",180000,"Loué"],["bi2","Appartement A2","Appartement",180000,"Loué"],["bi3","Bureau B1","Bureau",350000,"Loué"],["bi4","Magasin M1","Magasin",250000,"Libre"],["bi5","Villa V1","Villa",600000,"Loué"],["bi6","Entrepôt E1","Entrepôt",900000,"En travaux"]];
+return {id:"mob",nom:"Mobilité, Transport & Immobilier",ico:"🚚",c:"#3d6b2c",sous:"Logiciel du transport et de l'immobilier : véhicules, courses et livraisons, carburant, entretiens, biens immobiliers, locataires et loyers.",
+collections:{
+ equipe:colEquipe(["Chauffeur","Gestionnaire de parc","Gestionnaire immobilier"],eq),
+ vehicules:{sing:"Véhicule",ajout:"Nouveau véhicule",champs:[{k:"immat",l:"Immatriculation",req:1},{k:"type",l:"Type"},{k:"km",l:"Kilométrage",type:"number"},{k:"assurance",l:"Fin d'assurance",type:"date"},{k:"statut",l:"Statut",type:"select",options:["Disponible","En course","En panne","Entretien"]}],cols:["immat","type","km","assurance"],statut:ST(["Disponible","En course","En panne","Entretien"],{Disponible:"p-green","En course":"p-blue","En panne":"p-red",Entretien:"p-amber"}),titreDe:r=>r.immat+" · "+r.type,sousDe:r=>nf(r.km)+" km",seed:veh.map(([id,immat,type,statut],i)=>({id,immat,type,km:45000+i*17300,assurance:J(i===2?12:90+i*30),statut}))},
+ courses:{sing:"Course",ajout:"Nouvelle course",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"heure",l:"Heure",type:"time"},{k:"client",l:"Client / service",req:1},{k:"depart",l:"Départ"},{k:"arrivee",l:"Arrivée"},{k:"chauffeur",l:"Chauffeur",type:"membre",fonction:"Chauffeur"},{k:"vehicule",l:"Véhicule",type:"ref",ref:"vehicules"},{k:"montant",l:"Montant facturé",type:"money"},{k:"statut",l:"Statut",type:"select",options:["Planifiée","En cours","Terminée","Annulée"]}],cols:["date","heure","client","depart","arrivee","chauffeur"],statut:ST(["Planifiée","En cours","Terminée","Annulée"],{Planifiée:"p-blue","En cours":"p-amber",Terminée:"p-green",Annulée:"p-grey"}),titreDe:r=>r.client+" · "+r.depart+" → "+r.arrivee,sousDe:r=>fd(r.date)+" "+(r.heure||"")+" · "+(membre(r.chauffeur)||{}).nom,tri:(a,b)=>(b.date+b.heure).localeCompare(a.date+a.heure),
+   seed:Array.from({length:10},(_,i)=>({date:J(i<4?-1:i<8?0:1),heure:HM(7+i,0),client:pick(["Services Maritimes","Restauration","Halieutique","Client externe","Présidence"],i),depart:pick(["Siège","Port","Entrepôt","Marché"],i),arrivee:pick(["Port","Hôtel partenaire","Siège","Aéroport"],i+1),chauffeur:pick(ch,i),vehicule:pick(["v1","v2","v3","v5"],i),montant:i%5===3?45000:0,statut:i<4?"Terminée":i<6?"Terminée":i<8?"En cours":"Planifiée"}))},
+ carburant:{sing:"Plein",ajout:"Nouveau plein",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"vehicule",l:"Véhicule",type:"ref",ref:"vehicules",req:1},{k:"litres",l:"Litres",type:"number",req:1},{k:"montant",l:"Montant",type:"money"},{k:"km",l:"Kilométrage au compteur",type:"number"},{k:"chauffeur",l:"Chauffeur",type:"membre",fonction:"Chauffeur",auto:c=>c.moi?c.moi.id:""}],cols:["date","vehicule","litres","montant","chauffeur"],titreDe:r=>nomDe("vehicules",r.vehicule)+" · "+r.litres+" L",sousDe:r=>fcfa(r.montant)+" · "+fd(r.date),
+   seed:Array.from({length:6},(_,i)=>({date:J(-i),vehicule:pick(["v1","v2","v3","v5"],i),litres:40+i*5,montant:(40+i*5)*680,km:46000+i*120,chauffeur:pick(ch,i)}))},
+ entretiens:{sing:"Entretien",ajout:"Nouvel entretien",champs:[{k:"vehicule",l:"Véhicule",type:"ref",ref:"vehicules",req:1},{k:"type",l:"Type",type:"select",options:["Vidange","Pneus","Freins","Réparation","Visite technique"]},{k:"date",l:"Date",type:"date"},{k:"garage",l:"Garage"},{k:"cout",l:"Coût",type:"money"},{k:"statut",l:"Statut",type:"select",options:["Prévu","En cours","Fait"]}],cols:["date","vehicule","type","garage","cout"],statut:ST(["Prévu","En cours","Fait"],{Prévu:"p-blue","En cours":"p-amber",Fait:"p-green"}),titreDe:r=>r.type+" · "+nomDe("vehicules",r.vehicule),sousDe:r=>fd(r.date)+" · "+fcfa(r.cout),
+   seed:[{vehicule:"v4",type:"Réparation",date:AUJ,garage:"Garage 1",cout:420000,statut:"En cours"},{vehicule:"v6",type:"Vidange",date:AUJ,garage:"Garage 2",cout:65000,statut:"En cours"},{vehicule:"v3",type:"Visite technique",date:J(10),garage:"Centre agréé",cout:30000,statut:"Prévu"}]},
+ incidents:{sing:"Incident véhicule",ajout:"Signaler un problème",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"vehicule",l:"Véhicule",type:"ref",ref:"vehicules",req:1},{k:"description",l:"Description",type:"textarea",req:1},{k:"par",l:"Signalé par",type:"membre",auto:c=>c.moi?c.moi.id:""},{k:"statut",l:"Statut",type:"select",options:["Ouvert","Traité"]}],cols:["date","vehicule","description"],statut:ST(["Ouvert","Traité"],{Ouvert:"p-red",Traité:"p-green"}),titreDe:r=>nomDe("vehicules",r.vehicule),sousDe:r=>r.description,seed:[{date:J(-1),vehicule:"v4",description:"Bruit au moteur puis arrêt.",par:ch[3],statut:"Ouvert"}]},
+ biens:{sing:"Bien",ajout:"Nouveau bien",champs:[{k:"nom",l:"Bien",req:1},{k:"type",l:"Type",type:"select",options:["Appartement","Villa","Bureau","Magasin","Entrepôt","Terrain"]},{k:"adresse",l:"Adresse"},{k:"loyer",l:"Loyer mensuel",type:"money"},{k:"locataire",l:"Locataire"},{k:"fin_bail",l:"Fin du bail",type:"date"},{k:"statut",l:"Statut",type:"select",options:["Loué","Libre","En travaux"]}],cols:["nom","type","loyer","locataire","fin_bail"],statut:ST(["Loué","Libre","En travaux"],{Loué:"p-green",Libre:"p-amber","En travaux":"p-grey"}),titreDe:r=>r.nom,sousDe:r=>r.type+" · "+fcfa(r.loyer),
+   seed:biens.map(([id,nom,type,loyer,statut],i)=>({id,nom,type,adresse:pick(["Quartier résidentiel","Centre-ville","Zone industrielle"],i),loyer,locataire:statut==="Loué"?"Locataire "+String(i+1).padStart(2,"0"):"",fin_bail:statut==="Loué"?J(30+i*60):"",statut}))},
+ loyers:{sing:"Loyer",ajout:"Enregistrer un loyer",champs:[{k:"bien",l:"Bien",type:"ref",ref:"biens",req:1},{k:"mois",l:"Mois",req:1,defaut:AUJ.slice(0,7)},{k:"montant",l:"Montant",type:"money"},{k:"date",l:"Date de paiement",type:"date"},{k:"statut",l:"Statut",type:"select",options:["Payé","En attente","En retard"]}],cols:["mois","bien","montant","date"],statut:ST(["Payé","En attente","En retard"],{Payé:"p-green","En attente":"p-amber","En retard":"p-red"}),titreDe:r=>nomDe("biens",r.bien)+" · "+r.mois,sousDe:r=>fcfa(r.montant),
+   seed:biens.filter(b=>b[4]==="Loué").map(([id,nom,t,loyer],i)=>({bien:id,mois:AUJ.slice(0,7),montant:loyer,date:i<2?J(-i-3):"",statut:i<2?"Payé":i===2?"En retard":"En attente"}))}
+},
+kpisGroupe:D=>({courses:D.courses.filter(c=>c.statut==="Terminée").length,vehicules:D.vehicules.filter(v=>!["En panne","Entretien"].includes(v.statut)).length,biens:D.biens.filter(b=>b.statut==="Loué").length,loyers:somme(D.loyers.filter(l=>l.statut==="Payé"),"montant")}),
+roles:[
+ {id:"resp",poste:"Responsable Mobilité, Transport et Immobilier",ico:"🚚",desc:"Parc automobile, courses, coûts, biens et loyers.",
+  dash:{kpis:D=>[["Véhicules disponibles",D.vehicules.filter(v=>v.statut==="Disponible").length,"var(--green)"],["En panne / entretien",D.vehicules.filter(v=>["En panne","Entretien"].includes(v.statut)).length,"var(--red)"],["Courses du jour",D.courses.filter(c=>c.date===AUJ).length],["Carburant (période)",fcfa(somme(D.carburant,"montant"))],["Biens loués",D.biens.filter(b=>b.statut==="Loué").length+" / "+D.biens.length],["Loyers encaissés",fcfa(somme(D.loyers.filter(l=>l.statut==="Payé"),"montant")),"var(--green)"]],
+   listes:[{c:"incidents",titre:"Problèmes signalés",filtre:r=>r.statut==="Ouvert"},{c:"loyers",titre:"Loyers non payés",filtre:r=>r.statut!=="Payé"},{c:"courses",titre:"Courses en cours",filtre:r=>r.statut==="En cours"}]},
+  menu:[{c:"courses",l:"🛣️ Courses et livraisons",can:["add","edit"],etapes:["En cours","Terminée","Annulée"]},{c:"vehicules",l:"🚚 Véhicules",can:["add","edit"]},{c:"carburant",l:"⛽ Carburant"},{c:"entretiens",l:"🔧 Entretiens",can:["add","edit"],etapes:["En cours","Fait"]},{c:"incidents",l:"⚠️ Problèmes signalés",etapes:["Traité"]},{c:"biens",l:"🏠 Biens immobiliers",can:["add","edit"]},{c:"loyers",l:"💰 Loyers",can:["add","edit"],etapes:["Payé","En retard"]},{c:"equipe",l:"👥 Équipe",can:["add","edit"]}]},
+ {id:"chauffeur",poste:"Chauffeur",ico:"🚗",desc:"Mes courses du jour, carburant et problèmes de véhicule.",personne:"Chauffeur",
+  dash:{info:"Passez la course « En cours » au départ et « Terminée » à l'arrivée. Enregistrez chaque plein avec le kilométrage.",
+   actions:[{ico:"⛽",l:"Enregistrer un plein",run:c=>c.nouveau("carburant",{chauffeur:c.moi.id},{})},{ico:"⚠️",l:"Signaler un problème",run:c=>c.nouveau("incidents",{par:c.moi.id,statut:"Ouvert"},{})}],
+   kpis:(D,c)=>[["Mes courses du jour",D.courses.filter(x=>x.chauffeur===c.moi.id&&x.date===AUJ).length],["Terminées",D.courses.filter(x=>x.chauffeur===c.moi.id&&x.statut==="Terminée").length,"var(--green)"]],
+   listes:[{c:"courses",titre:"Mes courses",filtre:(r,c)=>r.chauffeur===c.moi.id&&r.statut!=="Terminée"}]},
+  menu:[{c:"courses",l:"🛣️ Mes courses",filtre:(r,c)=>r.chauffeur===c.moi.id,etapes:["En cours","Terminée"]},{c:"carburant",l:"⛽ Mes pleins",can:["add"],filtre:(r,c)=>r.chauffeur===c.moi.id,preset:c=>({chauffeur:c.moi.id})},{c:"incidents",l:"⚠️ Mes signalements",can:["add"],filtre:(r,c)=>r.par===c.moi.id}]},
+ {id:"parc",poste:"Gestionnaire de parc",ico:"🔧",desc:"Affectation des véhicules, entretiens, assurances.",personne:"Gestionnaire de parc",
+  dash:{actions:[{ico:"🛣️",l:"Planifier une course",run:c=>c.nouveau("courses",{statut:"Planifiée"},{})},{ico:"🔧",l:"Programmer un entretien",run:c=>c.nouveau("entretiens",{statut:"Prévu"},{})}],
+   kpis:D=>[["Disponibles",D.vehicules.filter(v=>v.statut==="Disponible").length,"var(--green)"],["En panne",D.vehicules.filter(v=>v.statut==="En panne").length,"var(--red)"],["Assurances à renouveler (30 j)",D.vehicules.filter(v=>v.assurance&&v.assurance<=J(30)).length,"var(--amber)"]],
+   listes:[{c:"incidents",titre:"Problèmes signalés",filtre:r=>r.statut==="Ouvert"},{c:"entretiens",titre:"Entretiens en cours",filtre:r=>r.statut!=="Fait"}]},
+  menu:[{c:"vehicules",l:"🚚 Véhicules",can:["add","edit"],etapes:["Disponible","En panne","Entretien"]},{c:"courses",l:"🛣️ Courses",can:["add","edit"]},{c:"entretiens",l:"🔧 Entretiens",can:["add","edit"],etapes:["En cours","Fait"]},{c:"carburant",l:"⛽ Carburant"},{c:"incidents",l:"⚠️ Problèmes",etapes:["Traité"]}]},
+ {id:"immo",poste:"Gestionnaire immobilier",ico:"🏠",desc:"Biens, locataires, baux et encaissement des loyers.",personne:"Gestionnaire immobilier",
+  dash:{actions:[{ico:"💰",l:"Enregistrer un loyer",run:c=>c.nouveau("loyers",{statut:"Payé",date:AUJ},{})}],
+   kpis:D=>[["Biens loués",D.biens.filter(b=>b.statut==="Loué").length+" / "+D.biens.length],["Loyers du mois encaissés",fcfa(somme(D.loyers.filter(l=>l.statut==="Payé"&&l.mois===AUJ.slice(0,7)),"montant")),"var(--green)"],["Loyers en retard",D.loyers.filter(l=>l.statut==="En retard").length,"var(--red)"],["Baux à renouveler (60 j)",D.biens.filter(b=>b.fin_bail&&b.fin_bail<=J(60)).length,"var(--amber)"]],
+   listes:[{c:"loyers",titre:"Loyers non payés",filtre:r=>r.statut!=="Payé"},{c:"biens",titre:"Biens libres",filtre:r=>r.statut!=="Loué"}]},
+  menu:[{c:"biens",l:"🏠 Biens",can:["add","edit"]},{c:"loyers",l:"💰 Loyers",can:["add","edit"],etapes:["Payé","En retard"]}]}
+]}};
+</script>
+</body>
+</html>

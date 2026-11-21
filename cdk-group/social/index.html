@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>CDK GROUP</title>
+<link rel="icon" href="../logo-cdk-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../cdk.css">
+<script src="../secteur.js"></script>
+</head>
+<body>
+<script>
+window.SECTEUR=()=>{
+const eq=genEquipe("soc",[["Travailleur social",3,"Travailleur social"],["Agent d'accueil",1,"Agent d'accueil"]]);
+const ts=eq.filter(m=>m.fonction==="Travailleur social").map(m=>m.id);
+const ben=Array.from({length:10},(_,i)=>({id:"b"+(i+1),nom:"Bénéficiaire "+String(i+1).padStart(3,"0"),quartier:pick(["Quartier Nord","Quartier Sud","Zone portuaire","Village côtier"],i),situation:pick(["Famille nombreuse","Élève","Personne âgée","Employé du groupe en difficulté","Pêcheur sinistré"],i),referent:pick(ts,i),statut:i===9?"Clos":"Suivi"}));
+return {id:"soc",nom:"Social",ico:"🤝",c:"#6b3fa0",sous:"Logiciel de l'action sociale : bénéficiaires, dossiers d'aide et décisions, visites à domicile, actions collectives et accueil.",
+collections:{
+ equipe:colEquipe(["Travailleur social","Agent d'accueil"],eq),
+ beneficiaires:{sing:"Bénéficiaire",ajout:"Nouveau bénéficiaire",champs:[{k:"nom",l:"Nom",req:1},{k:"quartier",l:"Quartier"},{k:"situation",l:"Situation"},{k:"referent",l:"Travailleur social référent",type:"membre",fonction:"Travailleur social"},{k:"notes",l:"Notes confidentielles",type:"textarea"},{k:"statut",l:"Statut",type:"select",options:["Suivi","Clos"]}],cols:["nom","quartier","situation","referent"],statut:ST(["Suivi","Clos"],{Suivi:"p-blue",Clos:"p-grey"}),titreDe:r=>r.nom,sousDe:r=>r.situation,seed:ben},
+ dossiers:{sing:"Dossier d'aide",ajout:"Nouveau dossier",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"beneficiaire",l:"Bénéficiaire",type:"ref",ref:"beneficiaires",req:1},{k:"type",l:"Type d'aide",type:"select",options:["Scolarité","Santé","Alimentaire","Logement","Microcrédit","Urgence"]},{k:"montant",l:"Montant demandé",type:"money"},{k:"motif",l:"Motif",type:"textarea"},{k:"referent",l:"Travailleur social",type:"membre",fonction:"Travailleur social",auto:c=>c.moi?c.moi.id:""},{k:"statut",l:"Statut",type:"select",options:["Nouveau","En étude","Accordé","Refusé","Versé"]}],cols:["date","beneficiaire","type","montant"],statut:ST(["Nouveau","En étude","Accordé","Refusé","Versé"],{Nouveau:"p-red","En étude":"p-amber",Accordé:"p-blue",Refusé:"p-grey",Versé:"p-green"}),titreDe:r=>r.type+" · "+nomDe("beneficiaires",r.beneficiaire),sousDe:r=>fcfa(r.montant)+" · "+fd(r.date),tri:(a,b)=>b.date.localeCompare(a.date),
+   seed:Array.from({length:9},(_,i)=>({date:J(-i*2),beneficiaire:"b"+(1+i),type:pick(["Scolarité","Santé","Alimentaire","Logement","Microcrédit","Urgence"],i),montant:[75000,120000,40000,150000,250000,60000][i%6],motif:"Demande étudiée en visite.",referent:pick(ts,i),statut:pick(["Nouveau","En étude","Accordé","Versé","Versé","Refusé"],i)}))},
+ visites:{sing:"Visite",ajout:"Nouvelle visite",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"beneficiaire",l:"Bénéficiaire",type:"ref",ref:"beneficiaires",req:1},{k:"par",l:"Travailleur social",type:"membre",fonction:"Travailleur social",auto:c=>c.moi?c.moi.id:""},{k:"compte",l:"Compte rendu",type:"textarea",req:1},{k:"suite",l:"Suite à donner",type:"select",options:["Aucune","Ouvrir un dossier","Revoir dans 1 mois","Orienter vers un partenaire"]}],cols:["date","beneficiaire","par","suite"],titreDe:r=>"Visite · "+nomDe("beneficiaires",r.beneficiaire),sousDe:r=>fd(r.date)+" · "+r.suite,
+   seed:[{date:J(-1),beneficiaire:"b2",par:ts[1],compte:"Famille de 6 enfants, revenus irréguliers.",suite:"Ouvrir un dossier"},{date:J(-5),beneficiaire:"b4",par:ts[0],compte:"Logement insalubre après la pluie.",suite:"Revoir dans 1 mois"}]},
+ actions:{sing:"Action collective",ajout:"Nouvelle action",champs:[{k:"nom",l:"Action",req:1},{k:"date",l:"Date",type:"date"},{k:"lieu",l:"Lieu"},{k:"participants",l:"Bénéficiaires touchés",type:"number"},{k:"budget",l:"Budget",type:"money"},{k:"statut",l:"Statut",type:"select",options:["Prévue","Réalisée","Annulée"]}],cols:["date","nom","lieu","participants","budget"],statut:ST(["Prévue","Réalisée","Annulée"],{Prévue:"p-blue",Réalisée:"p-green",Annulée:"p-grey"}),titreDe:r=>r.nom,sousDe:r=>fd(r.date)+" · "+r.participants+" bénéficiaires",
+   seed:[{nom:"Kits scolaires",date:J(-20),lieu:"École du quartier Nord",participants:180,budget:2700000,statut:"Réalisée"},{nom:"Dépistage gratuit",date:J(6),lieu:"Siège",participants:100,budget:900000,statut:"Prévue"},{nom:"Repas de fin d'année",date:J(25),lieu:"Village côtier",participants:250,budget:1500000,statut:"Prévue"}]},
+ accueil:{sing:"Passage à l'accueil",ajout:"Nouveau passage",champs:[{k:"date",l:"Date",type:"date",defaut:AUJ},{k:"heure",l:"Heure",type:"time",defaut:maintenant},{k:"personne",l:"Personne reçue",req:1},{k:"motif",l:"Motif",type:"select",options:["Demande d'aide","Information","Suivi de dossier","Réclamation"]},{k:"oriente",l:"Orienté vers",type:"membre",fonction:"Travailleur social"},{k:"statut",l:"Statut",type:"select",options:["À traiter","Traité"]}],cols:["date","heure","personne","motif","oriente"],statut:ST(["À traiter","Traité"],{"À traiter":"p-red",Traité:"p-green"}),titreDe:r=>r.personne,sousDe:r=>r.motif+" · "+r.heure,
+   seed:[{date:AUJ,heure:HM(9,15),personne:"Visiteur 01",motif:"Demande d'aide",oriente:ts[0],statut:"À traiter"},{date:AUJ,heure:HM(10,40),personne:"Bénéficiaire 003",motif:"Suivi de dossier",oriente:ts[2],statut:"Traité"}]}
+},
+kpisGroupe:D=>({dossiers:D.dossiers.length,beneficiaires:D.beneficiaires.filter(b=>b.statut==="Suivi").length+somme(D.actions.filter(a=>a.statut==="Réalisée"),"participants"),actions:D.actions.filter(a=>a.statut==="Réalisée").length,budget:somme(D.dossiers.filter(d=>["Accordé","Versé"].includes(d.statut)),"montant")+somme(D.actions.filter(a=>a.statut==="Réalisée"),"budget")}),
+roles:[
+ {id:"resp",poste:"Responsable Social",ico:"🤝",desc:"Décide des aides, suit le budget et les actions collectives.",
+  dash:{kpis:D=>[["Bénéficiaires suivis",D.beneficiaires.filter(b=>b.statut==="Suivi").length],["Dossiers à décider",D.dossiers.filter(d=>["Nouveau","En étude"].includes(d.statut)).length,"var(--amber)"],["Aides accordées",fcfa(somme(D.dossiers.filter(d=>["Accordé","Versé"].includes(d.statut)),"montant")),"var(--green)"],["Actions réalisées",D.actions.filter(a=>a.statut==="Réalisée").length],["Accueil à traiter",D.accueil.filter(a=>a.statut==="À traiter").length,"var(--red)"]],
+   listes:[{c:"dossiers",titre:"Dossiers à décider",filtre:r=>["Nouveau","En étude"].includes(r.statut)},{c:"actions",titre:"Actions prévues",filtre:r=>r.statut==="Prévue"}]},
+  menu:[{c:"dossiers",l:"📁 Dossiers d'aide",can:["add","edit"],etapes:["En étude","Accordé","Refusé","Versé"],badge:D=>D.dossiers.filter(d=>d.statut==="Nouveau").length},{c:"beneficiaires",l:"👪 Bénéficiaires",can:["add","edit"]},{c:"visites",l:"🏠 Visites"},{c:"actions",l:"📢 Actions collectives",can:["add","edit"],etapes:["Réalisée","Annulée"]},{c:"accueil",l:"🛎️ Accueil"},{c:"equipe",l:"👥 Équipe",can:["add","edit"]}]},
+ {id:"ts",poste:"Travailleur social",ico:"🧑‍🤝‍🧑",desc:"Mes bénéficiaires, visites à domicile et dossiers d'aide.",personne:"Travailleur social",
+  dash:{actions:[{ico:"🏠",l:"Compte rendu de visite",run:c=>c.nouveau("visites",{par:c.moi.id,suite:"Aucune"},{})},{ico:"📁",l:"Ouvrir un dossier",run:c=>c.nouveau("dossiers",{referent:c.moi.id,statut:"Nouveau"},{})}],
+   kpis:(D,c)=>[["Mes bénéficiaires",D.beneficiaires.filter(b=>b.referent===c.moi.id&&b.statut==="Suivi").length],["Mes dossiers en cours",D.dossiers.filter(d=>d.referent===c.moi.id&&["Nouveau","En étude"].includes(d.statut)).length,"var(--amber)"],["Personnes orientées vers moi",D.accueil.filter(a=>a.oriente===c.moi.id&&a.statut==="À traiter").length,"var(--red)"]],
+   listes:[{c:"accueil",titre:"Personnes à recevoir",filtre:(r,c)=>r.oriente===c.moi.id&&r.statut==="À traiter"},{c:"beneficiaires",titre:"Mes bénéficiaires",filtre:(r,c)=>r.referent===c.moi.id&&r.statut==="Suivi"}]},
+  menu:[{c:"beneficiaires",l:"👪 Mes bénéficiaires",can:["add","edit"],filtre:(r,c)=>r.referent===c.moi.id,preset:c=>({referent:c.moi.id,statut:"Suivi"})},{c:"visites",l:"🏠 Mes visites",can:["add"],filtre:(r,c)=>r.par===c.moi.id},{c:"dossiers",l:"📁 Mes dossiers",can:["add","edit"],filtre:(r,c)=>r.referent===c.moi.id,etapes:["En étude"]},{c:"accueil",l:"🛎️ Orientés vers moi",filtre:(r,c)=>r.oriente===c.moi.id,etapes:["Traité"]}]},
+ {id:"accueil",poste:"Agent d'accueil",ico:"🛎️",desc:"Enregistre les visiteurs et les oriente.",personne:"Agent d'accueil",
+  dash:{actions:[{ico:"🛎️",l:"Enregistrer un passage",run:c=>c.nouveau("accueil",{statut:"À traiter"},{})}],
+   kpis:D=>[["Passages aujourd'hui",D.accueil.filter(a=>a.date===AUJ).length],["En attente",D.accueil.filter(a=>a.statut==="À traiter").length,"var(--amber)"]],
+   listes:[{c:"accueil",titre:"Passages du jour",filtre:r=>r.date===AUJ}]},
+  menu:[{c:"accueil",l:"🛎️ Accueil",can:["add","edit"]}]}
+]}};
+</script>
+</body>
+</html>
