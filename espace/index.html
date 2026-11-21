@@ -137,6 +137,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 .ech{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.ech:last-child{border-bottom:0}
 .ech .d{flex:0 0 auto;font-weight:700;font-size:13px;border-radius:8px;padding:3px 8px}
 #voile{position:fixed;inset:0;background:rgba(20,30,45,.35);z-index:14}
+.conseiller [data-rs],.conseiller #rp-cert{display:none!important}
 #tech-bar{background:#fff7e6;border-bottom:1px solid #f1d9a6;color:#6b4a0f;font-size:13px}
 #tech-bar .in{max-width:1400px;margin:0 auto;padding:8px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 #tech-bar select{max-width:340px;padding:6px 10px;font-size:13px}
@@ -390,7 +391,7 @@ async function entrer(){
   if(ag){slug=ag.slug;try{localStorage.setItem("espace-slug",slug)}catch(_){}habiller(ag)}
   if(!ctx.acces_ouvert)return bloquer(ctx.motif_blocage);
   $("#hd-moi").textContent=moi.nom_complet+" · "+(moi.fonction||ROLES[moi.role]||moi.role);
-  ecran("app");majAvatar();$("#hd-av").onclick=maPhoto;
+  ecran("app");majAvatar();document.body.classList.toggle("conseiller",estConseiller());$("#hd-av").onclick=maPhoto;
   moi.role_reel=moi.role;espace="direction";
   if(moi.role==="dg"){try{const q=await sb.from("profiles").select("id").eq("role","rh").eq("est_actif",true).limit(1);dgGardeRH=!(q.data||[]).length}catch(_){dgGardeRH=true}
     try{espace=dgGardeRH&&localStorage.getItem("espace-"+moi.id)==="rh"?"rh":"direction"}catch(_){}}
@@ -412,10 +413,60 @@ async function entrer(){
   if(moi.role==="agent"&&!modeTech)envoyerFile();
   if(modeTech)barreTechnicien();
 }
+/* ---------- espace conseiller : rapports et recommandations au CEO ---------- */
+const TYPES_AVIS=["Discipline (renvoi, sanction)","Retards et absences","Félicitations / promotion","Formation","Organisation et planning","Sécurité d'un site","Autre"];
+const ST_AVIS={Nouvelle:"p-red",Lue:"p-grey","En cours":"p-amber",Acceptée:"p-green",Refusée:"p-grey"};
+function formAvis(ref,agentId){
+  const act=agents.filter(a=>a.statut==="Actif").sort((x,y)=>nomAg(x).localeCompare(nomAg(y)));
+  modal("Nouvelle recommandation au CEO",`<div class="row"><div class="field"><label class="f">Type</label><select class="input" id="av-type">${TYPES_AVIS.map(t=>`<option>${t}</option>`).join("")}</select></div><div class="field"><label class="f">Priorité</label><select class="input" id="av-prio"><option>Normale</option><option>Haute</option><option>Urgente</option><option>Basse</option></select></div></div>
+  <div class="field"><label class="f">Agent concerné <span class="muted" style="font-weight:400">(facultatif)</span></label><select class="input" id="av-ag"><option value="">— Aucun agent en particulier —</option>${act.map(a=>`<option value="${a.id}" ${a.id===agentId?"selected":""}>${esc(nomAg(a))} · ${esc(a.matricule||"")}</option>`).join("")}</select></div>
+  <div class="field"><label class="f">Rapport concerné</label><input class="input" id="av-ref" maxlength="120" value="${esc(ref||"")}" placeholder="Ex. Rapport mensuel · novembre 2026"></div>
+  <div class="field"><label class="f">Objet</label><input class="input" id="av-obj" maxlength="140" placeholder="Ex. Retards répétés de l'agent sur le site de nuit"></div>
+  <div class="field"><label class="f">Votre analyse et votre conseil</label><textarea class="input" id="av-msg" rows="6" maxlength="4000" placeholder="Ce que vous avez constaté dans le rapport, ce que vous recommandez au CEO et pourquoi."></textarea></div>`,
+  `<button class="btn" id="av-no">Annuler</button><button class="btn pri" id="av-ok">Envoyer au CEO</button>`);
+  $("#av-no").onclick=closeModal;
+  $("#av-ok").onclick=()=>busy($("#av-ok"),async()=>{const o=$("#av-obj").value.trim(),m=$("#av-msg").value.trim();if(o.length<2||m.length<2)throw new Error("Écrivez l'objet et votre conseil.");
+    must(await sb.from("recommandations").insert({agence_id:ag.id,auteur_id:(await sb.auth.getUser()).data.user.id,type:$("#av-type").value,priorite:$("#av-prio").value,agent_id:$("#av-ag").value||null,reference:$("#av-ref").value.trim()||null,objet:o,message:m}));
+    closeModal();toast("Recommandation envoyée au CEO");if(tab==="avis"||tab==="accueil")ouvrir(tab)})}
+function carteAvis(x,ceo){const a=x.agent_id?agents.find(z=>z.id===x.agent_id)||AG_(x.agent_id):null;
+  return `<div class="card"><div class="actions" style="justify-content:space-between;align-items:flex-start"><div style="min-width:0"><b>${esc(x.objet)}</b><div class="muted xs">${esc(x.type)} · priorité ${esc(x.priorite.toLowerCase())} · ${fdt(x.created_at)}${ceo&&x.auteur?" · par "+esc(x.auteur):""}</div></div><span class="pill ${ST_AVIS[x.statut]||"p-grey"}">${esc(x.statut)}</span></div>
+  ${a||x.reference?`<p class="muted sm" style="margin:8px 0 0">${a?"Agent concerné : <b>"+esc(nomAg(a))+"</b>":""}${a&&x.reference?" · ":""}${x.reference?"Rapport : "+esc(x.reference):""}</p>`:""}
+  <p style="white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0">${esc(x.message)}</p>
+  ${x.reponse?`<div class="idbox sm" style="margin-top:10px"><b>Réponse du CEO</b> · ${fdt(x.repondu_le)}<br>${esc(x.reponse)}</div>`:""}
+  ${ceo?`<div class="actions" style="margin-top:10px"><button class="btn sm pri" data-rc="${x.id}" data-st="Acceptée">Accepter</button><button class="btn sm" data-rc="${x.id}" data-st="En cours">En cours</button><button class="btn sm" data-rc="${x.id}" data-st="Refusée">Refuser</button></div>`:""}</div>`}
+async function vAccueilConseiller(){
+  const l=must(await sb.from("recommandations").select("*").order("created_at",{ascending:false}).limit(100));
+  const ra=must(await sb.from("rapports_supervision").select("id,superviseur_id,date_service,poste,created_at").order("created_at",{ascending:false}).limit(5));
+  const n=k=>l.filter(x=>k.includes(x.statut)).length;
+  $("#main").innerHTML=`<div class="head"><div><h1>Bonjour ${esc(moi.nom_complet.split(" ")[0])}</h1><p class="muted sm" style="margin:2px 0 0">Espace conseiller · ${esc(ag.nom_agence)}. Examinez les rapports soumis au CEO et adressez-lui vos recommandations.</p></div><button class="btn pri" id="av-new">+ Nouvelle recommandation</button></div>
+  <div class="tiles"><div class="tile click" data-go="avis"><b>${l.length}</b><span class="muted sm">Recommandations envoyées</span></div><div class="tile click" data-go="avis"><b style="${n(["Nouvelle","Lue"])?"color:var(--amber)":""}">${n(["Nouvelle","Lue"])}</b><span class="muted sm">En attente du CEO</span></div><div class="tile click" data-go="avis"><b>${n(["En cours"])}</b><span class="muted sm">En cours</span></div><div class="tile click" data-go="avis"><b style="color:var(--green)">${n(["Acceptée"])}</b><span class="muted sm">Acceptées</span></div></div>
+  <div class="card"><h2>Rapports à examiner</h2>
+    <div class="line click" data-go="rapports"><div class="grow"><b>Rapport mensuel · ${esc(fmo(auj().slice(0,7)))}</b><div class="muted xs">Ponctualité, retards, absences, rondes, incidents, classement des agents</div></div><span class="btn sm">Ouvrir</span></div>
+    ${ra.map(r=>`<div class="line click" data-go="supervision"><div class="grow"><b>Rapport de supervision · ${esc(nomAg(AG_(r.superviseur_id)))}</b><div class="muted xs">${esc(POSTE(r.poste||"J").libelle)} du ${fd(r.date_service)}</div></div><span class="btn sm">Ouvrir</span></div>`).join("")}
+    <div class="line click" data-go="incidents"><div class="grow"><b>Main courante</b><div class="muted xs">Incidents signalés par les agents et les superviseurs</div></div><span class="btn sm">Ouvrir</span></div></div>
+  <div class="idbox sm">Votre espace est en consultation : vous ne voyez ni les données des clients ni les factures. Pour chaque rapport, utilisez « Donner mon avis » pour conseiller le CEO (renvoi, sanction, félicitations, formation, organisation…). Le CEO vous répond ici.</div>`;
+  $("#av-new").onclick=()=>formAvis("");$("#main").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go))}
+async function vAvis(){
+  const l=must(await sb.from("recommandations").select("*").order("created_at",{ascending:false}).limit(200));
+  $("#main").innerHTML=`<div class="head"><div><h1>Mes recommandations</h1><p class="muted sm" style="margin:2px 0 0">Vos conseils au CEO et ses réponses.</p></div><button class="btn pri" id="av-new">+ Nouvelle recommandation</button></div>${l.length?l.map(x=>carteAvis(x,false)).join(""):'<div class="empty">Aucune recommandation pour le moment.<br>Ouvrez un rapport puis cliquez sur « Donner mon avis ».</div>'}`;
+  $("#av-new").onclick=()=>formAvis("")}
+function barreAvis(t){const ref={rapports:"Rapport mensuel · "+fmo(typeof moisR==="string"&&moisR?moisR:auj().slice(0,7)),supervision:"Rapports de supervision",incidents:"Main courante"}[t];if(!ref)return;
+  const h=$("#main .head");if(!h||$("#av-barre"))return;
+  h.insertAdjacentHTML("afterend",`<div class="card" id="av-barre" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-color:var(--p)"><div class="grow" style="min-width:200px"><b>💡 Votre avis de conseiller</b><div class="muted sm">Un agent à recadrer, à renvoyer ou à féliciter ? Un site à réorganiser ? Conseillez le CEO sur ce rapport.</div></div><button class="btn pri" id="av-go">Donner mon avis</button></div>`);
+  $("#av-go").onclick=()=>formAvis(ref)}
+async function vRecos(){
+  const l=must(await sb.from("recommandations").select("*").order("created_at",{ascending:false}).limit(200));
+  l.forEach(x=>{const c=comptes.find(k=>k.id===x.auteur_id);x.auteur=c?c.nom_complet:"Conseiller"});
+  const nouv=l.filter(x=>x.statut==="Nouvelle").map(x=>x.id);if(nouv.length)sb.from("recommandations").update({statut:"Lue"}).in("id",nouv).then(()=>{},()=>{});
+  $("#main").innerHTML=`<div class="head"><div><h1>Avis du conseiller</h1><p class="muted sm" style="margin:2px 0 0">Les recommandations de votre conseiller à partir des rapports. Répondez pour lui indiquer votre décision.</p></div></div>${l.length?l.map(x=>carteAvis(x,true)).join(""):'<div class="empty">Aucune recommandation reçue pour le moment.<br>Créez un compte « Conseiller » dans Comptes pour donner cet espace à votre conseiller.</div>'}`;
+  $("#main").querySelectorAll("[data-rc]").forEach(b=>b.onclick=()=>{const st=b.dataset.st;
+    modal("Décision : "+esc(st),`<div class="field"><label class="f">Votre réponse au conseiller <span class="muted" style="font-weight:400">(facultatif)</span></label><textarea class="input" id="rc-msg" rows="4" maxlength="2000" placeholder="Ex. D'accord, j'envoie une demande d'explication à l'agent."></textarea></div>`,`<button class="btn" id="rc-no">Annuler</button><button class="btn pri" id="rc-ok">Enregistrer</button>`);
+    $("#rc-no").onclick=closeModal;$("#rc-ok").onclick=()=>busy($("#rc-ok"),async()=>{const r=$("#rc-msg").value.trim();must(await sb.from("recommandations").update({statut:st,reponse:r||null,repondu_le:r?new Date().toISOString():null}).eq("id",b.dataset.rc));closeModal();toast("Décision enregistrée");ouvrir("recos")})})}
+
 /* ---------- espace technicien ---------- */
 let modeTech=false;
 const lectureSeuleTech=()=>(modeTech&&moi&&["agent","client"].includes(moi.role))||estConseiller();
-{const _from=sb.from.bind(sb);sb.from=t=>{const q=_from(t);if(lectureSeuleTech())["insert","update","upsert","delete"].forEach(m=>{q[m]=()=>{throw new Error(estConseiller()?"Espace conseiller : consultation seulement. Transmettez votre remarque au CEO.":"Mode technicien : l'interface de ce compte est affichée en consultation seulement.")}});return q}}
+{const _from=sb.from.bind(sb);sb.from=t=>{const q=_from(t);if(lectureSeuleTech()&&!(t==="recommandations"&&estConseiller()))["insert","update","upsert","delete"].forEach(m=>{q[m]=()=>{throw new Error(estConseiller()?"Espace conseiller : consultation seulement. Transmettez votre remarque au CEO.":"Mode technicien : l'interface de ce compte est affichée en consultation seulement.")}});return q}}
 async function ecranTechnicien(){
   ecran("tech");montrerLogo(LOGO_DEFAUT);document.title="Espace technicien · SACKO CONCEPT";
   $("#tc-qui").textContent="Connecté : "+(ctx.technicien_nom||"")+(ctx.role_reel==="super_admin"?" · administration":" · technicien")+". Choisissez l'agence à ouvrir.";
@@ -443,7 +494,7 @@ let espace="direction";
 function appliquerEspace(){if(estSupGeneral())moi.role=espace==="supervision"?"superviseur":"rh"}
 const MENU_SUP=[["pointage","Pointage"],["visites","Visites et notes"],["rapport","Mon rapport"],["equipe","Mes agents"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"]];
 function menuDirection(){
-  if(estConseiller())return menuDirectionBase().map(([g,l])=>[g,l.filter(([k])=>!["comptes","reglages"].includes(k))]).filter(([g,l])=>l.length);
+  if(estConseiller())return [["Mon espace",[["accueil","Accueil"],["avis","Mes recommandations"]]],["Rapports soumis au CEO",[["rapports","Rapport mensuel"],["supervision","Rapports de supervision"],["incidents","Main courante"]]],["Aide",[["support","Support"]]]];
   return menuDirectionBase()}
 function menuDirectionBase(){
   if(espace==="supervision")return [["Supervision",MENU_SUP]];
@@ -451,7 +502,7 @@ function menuDirectionBase(){
   if(espace==="rh")return [["",[["accueil","Tableau de bord RH"]]],["Personnel",[["agents","Agents"],["conges","Congés"],["documents","Documents RH"],["messages","Messages"],["paie","Paie"],["materiel","Matériel"]]],
     ["Suivi",[["planning","Planning"],["pointage","Pointage"]]],["Aide",[["support","Support"]]]];
   return [["",[["accueil","Tableau de bord"]]],["Opérations",[["planning","Planning"],["pointage","Pointage"],["incidents","Main courante"],["rondes","Rondes"],["supervision","Supervision"]]],
-    ["Clients",[["sites","Sites"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["comptes","Comptes"],["reglages","Réglages"],["support","Support"]]]];
+    ["Clients",[["sites","Sites"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["recos","Avis du conseiller"],["comptes","Comptes"],["reglages","Réglages"],["support","Support"]]]];
 }
 function dessinerMenu(G){
   const sw=moi.role_reel==="dg"&&dgGardeRH?`<div class="esp"><button data-esp="direction" class="${espace==="direction"?"on":""}">Direction</button><button data-esp="rh" class="${espace==="rh"?"on":""}">Espace RH</button></div>`
@@ -479,10 +530,11 @@ async function charger(){
   const [s,a,c]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.from("agents").select("*").order("nom"),sb.from("profiles").select("id,nom_complet,role,fonction,photo_url,agent_id,site_id,est_actif,derniere_connexion").order("created_at")]);
   sites=must(s);agents=must(a);comptes=must(c);
 }
+async function chargerConseiller(){const [s,a]=await Promise.all([sb.rpc("sites_noms"),sb.rpc("agents_noms")]);sites=must(s);agents=must(a).sort((x,y)=>String(x.nom).localeCompare(String(y.nom)));comptes=[]}
 async function chargerCommercial(){const [s,a]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.rpc("agents_noms")]);sites=must(s);agents=must(a).sort((x,y)=>String(x.nom).localeCompare(String(y.nom)));comptes=[]}
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button,#side button[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));menu(false);window.scrollTo(0,0);
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estConseiller())await chargerCommercial();else if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();await({accueil:moi.role==="agent"?vAgentAccueil:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport}[t])()}
+  try{if(estConseiller())await chargerConseiller();else if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();await({accueil:moi.role==="agent"?vAgentAccueil:estConseiller()?vAccueilConseiller:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport,avis:vAvis,recos:vRecos}[t])();if(estConseiller())barreAvis(t)}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
@@ -1267,7 +1319,8 @@ async function verifierAlertes(){
   else bar.classList.add("hide");
   if(!estDirection())return;
   const [c,d,a,m,dc,r]=await Promise.all([sb.from("conges").select("id").eq("statut","En attente"),sb.from("documents_rh").select("id").eq("statut","Répondu"),sb.from("avances").select("id").eq("statut","En attente"),sb.from("demandes_materiel").select("id").eq("statut","En attente"),sb.from("demandes_clients").select("id").eq("statut","Nouvelle"),sb.from("incidents").select("id").eq("statut","Ouvert")]);
-  const n={conges:(c.data||[]).length,documents:(d.data||[]).length,paie:(a.data||[]).length,materiel:(m.data||[]).length,demandes:(dc.data||[]).length,incidents:(r.data||[]).length+al.length};
+  let rc=0;if(moi.role_reel==="dg"){try{rc=((await sb.from("recommandations").select("id").eq("statut","Nouvelle")).data||[]).length}catch(_){}}
+  const n={recos:rc,conges:(c.data||[]).length,documents:(d.data||[]).length,paie:(a.data||[]).length,materiel:(m.data||[]).length,demandes:(dc.data||[]).length,incidents:(r.data||[]).length+al.length};
   Object.entries(n).forEach(([k,v])=>{const e=document.querySelector(`[data-b="${k}"]`);if(e){e.textContent=v;e.classList.toggle("hide",!v)}});
 }
 
