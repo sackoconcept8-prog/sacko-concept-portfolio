@@ -344,12 +344,14 @@ async function demarrer(nouveau){
       ${CTX.espace.logo_url?`<img src="${esc(CTX.espace.logo_url)}" style="max-height:70px">`:''}
       <h2>Votre abonnement est arrivé à échéance</h2>
       <p style="color:var(--mut)">Vos données sont conservées en sécurité. ${estGerant()?'Renouvelez votre abonnement pour retrouver l\'accès immédiatement.':'Contactez votre responsable.'}</p>
-      ${estGerant()?`<a class="btn" target="_blank" href="https://wa.me/15054642331?text=${msg}">Renouveler mon abonnement</a>`:''}</div>`;
+      ${estGerant()?`<button class="btn" id="renouv">Renouveler mon abonnement</button>`:''}</div>`;
+    if(estGerant())$('#renouv').onclick=()=>vAbonnement();
     setTimeout(()=>{sp.style.opacity=0;setTimeout(()=>sp.classList.add('cache'),500)},900);return;
   }
   aller(estGerant()?'accueil':'caisse');
   setTimeout(()=>{sp.style.opacity=0;setTimeout(()=>sp.classList.add('cache'),500)},1300);
   if(nouveau)setTimeout(()=>toast('Votre espace est prêt ! Commencez par ajouter vos articles.'),1600);
+  if(params.get('paye'))setTimeout(()=>{toast('Merci ! Votre paiement est en cours de confirmation, l\'accès s\'active automatiquement.');history.replaceState(null,'',location.pathname)},1600);
 }
 function localStorageGet(k){try{return localStorage.getItem('sc_'+k)}catch{return null}}
 function localStorageSet(k,v){try{localStorage.setItem('sc_'+k,v)}catch{}}
@@ -366,13 +368,14 @@ const IC={
  ventes:'<path d="M4 19V5M4 19h16M8 15l4-4 3 3 5-6"/>',
  clients:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 11a3 3 0 100-6M22 21c0-3-2-5-4-5.5"/>',
  equipe:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+ abonnement:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>',
  reglages:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/>'
 };
 const svg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
 function pages(){
   const a=CTX.logiciels.includes('stockpro');const g=estGerant();
   return [g&&['accueil','Tableau de bord'],a&&['caisse','Caisse'],a&&g&&['articles','Articles'],a&&g&&['mouvements','Entrées / sorties'],
-    a&&['ventes','Ventes'],a&&['clients','Clients'],g&&['equipe','Équipe'],g&&['reglages','Mon espace']].filter(Boolean);
+    a&&['ventes','Ventes'],a&&['clients','Clients'],g&&['equipe','Équipe'],g&&['abonnement','Abonnement'],g&&['reglages','Mon espace']].filter(Boolean);
 }
 function construireMenu(){
   $('#nav').innerHTML=pages().map(([k,t])=>`<button data-v="${k}">${svg(k)}${t}</button>`).join('');
@@ -380,11 +383,11 @@ function construireMenu(){
   document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>aller(b.dataset.v));
 }
 function aller(v){VUE=v;document.querySelectorAll('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));window.scrollTo(0,0);
-  ({accueil:vAccueil,caisse:vCaisse,articles:vArticles,mouvements:vMouvements,ventes:vVentes,clients:vClients,equipe:vEquipe,reglages:vReglages}[v]||vAccueil)()}
+  ({accueil:vAccueil,caisse:vCaisse,articles:vArticles,mouvements:vMouvements,ventes:vVentes,clients:vClients,equipe:vEquipe,abonnement:vAbonnement,reglages:vReglages}[v]||vAccueil)()}
 function entete(titre,btn=''){
   const e=CTX.espace;let bandeau='';
   if(e.statut==='essai'){const j=Math.max(0,Math.ceil((new Date(e.essai_fin)-Date.now())/864e5));
-    bandeau=`<div class="essai">⏳ Essai gratuit : <b>${j} jour${j>1?'s':''} restant${j>1?'s':''}</b>. <a href="https://wa.me/15054642331?text=${encodeURIComponent('Bonjour, je souhaite activer mon abonnement pour '+e.nom+' ('+e.slug+')')}" target="_blank">Activer mon abonnement</a></div>`}
+    bandeau=`<div class="essai">⏳ Essai gratuit : <b>${j} jour${j>1?'s':''} restant${j>1?'s':''}</b>. <a href="#" onclick="aller('abonnement');return false">Choisir ma formule</a></div>`}
   return bandeau+`<div class="entete"><h1>${titre}</h1><div>${btn}</div></div>`;
 }
 const C=()=>$('#contenu');
@@ -606,6 +609,37 @@ function partagerAcces(msg,tel){
    <textarea rows="6" readonly>${esc(msg)}</textarea><div class="actions"><button class="btn sec" onclick="navigator.clipboard?.writeText(${esc(JSON.stringify(msg))});toast('Copié')">Copier</button>
    <a class="btn" target="_blank" href="https://wa.me/${esc((tel||'').replace(/\D/g,''))}?text=${encodeURIComponent(msg)}">Envoyer par WhatsApp</a></div>
    <button class="btn lien" style="width:100%" onclick="fermer()">Fermer</button></div></div>`;
+}
+
+
+/* ============ Abonnement (paiement automatique) ============ */
+const FORM={starter:'Starter',business:'Business',premium:'Premium',standard:'Standard',serenite:'Sérénité'};
+async function vAbonnement(){
+  const t=verif(await sb.from('tarifs').select('*').eq('actif',true).eq('logiciel','stockpro').order('ordre'));
+  const lic=(await sb.from('licences').select('*').eq('espace_id',E())).data||[];
+  const l=lic.find(x=>x.logiciel==='stockpro');
+  const formules=[...new Set(t.map(x=>x.formule))];
+  C().innerHTML=entete('Mon abonnement')+`
+   <div class="carte" style="margin-bottom:14px">Formule actuelle : <b>${l?(l.formule==='essai'?'Essai gratuit':FORM[l.formule]||l.formule):'—'}</b>${l?.date_fin?` · valable jusqu'au <b>${new Date(l.date_fin).toLocaleDateString('fr-FR')}</b>`:''}<br><small style="color:var(--mut)">Si vous renouvelez avant l'échéance, la durée s'ajoute à votre date de fin.</small></div>
+   ${t.length?`<div class="kpis" style="grid-template-columns:repeat(${Math.min(formules.length,3)},1fr)">${formules.map(f=>{const opts=t.filter(x=>x.formule===f);const m1=opts.find(x=>x.mois===1);
+     return`<div class="carte"><h3 style="margin:0">${FORM[f]||f}</h3><p style="color:var(--mut);margin:4px 0 10px">${opts[0].employes_max?'Jusqu\'à '+opts[0].employes_max+' employés':'Employés illimités'}</p>
+     ${m1?`<div style="font-size:24px;font-weight:800">${fmtT(m1)}<small style="font-size:13px;color:var(--mut)"> /mois</small></div>`:''}
+     <div style="display:grid;gap:8px;margin-top:12px">${opts.map(o=>`<button class="btn ${o.mois===1?'':'sec'}" data-t="${o.id}">${o.mois} mois — ${fmtT(o)}${o.mois===3?' (-10 %)':o.mois===12?' (-20 %)':''}</button>`).join('')}</div></div>`}).join('')}</div>`:'<div class="carte">Les formules seront bientôt disponibles. Contactez SACKO CONCEPT.</div>'}
+   <p style="color:var(--mut);font-size:13px;text-align:center">Paiement sécurisé par Chariow : Mobile Money (MTN, Moov, Orange, Wave, Airtel…) ou carte bancaire. Votre accès est activé automatiquement dès le paiement.</p>`;
+  document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>payer(t.find(x=>x.id===b.dataset.t)));
+}
+const fmtT=o=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:o.devise,maximumFractionDigits:o.devise==='XOF'?0:2}).format(o.prix);
+const PAYS=[['BJ','Bénin','229'],['TG','Togo','228'],['ML','Mali','223'],['CI','Côte d\'Ivoire','225'],['SN','Sénégal','221'],['BF','Burkina Faso','226'],['NE','Niger','227'],['GN','Guinée','224'],['CM','Cameroun','237'],['GA','Gabon','241'],['CG','Congo','242'],['CD','RD Congo','243'],['FR','France','33'],['US','États-Unis','1']];
+function payer(o){
+  modale(`<h3>Paiement — ${FORM[o.formule]||o.formule} ${o.mois} mois</h3><p style="font-size:22px;font-weight:800;margin:6px 0">${fmtT(o)}</p>
+   <label>Pays du numéro de paiement</label><select name="pays">${PAYS.map(p=>`<option value="${p[0]}" ${p[1].toLowerCase()===(CTX.espace.pays||'').toLowerCase()?'selected':''}>${p[1]} (+${p[2]})</option>`).join('')}</select>
+   <label>Numéro de téléphone (Mobile Money ou contact)</label><input name="tel" inputmode="tel" required value="${esc((CTX.membre.telephone||CTX.espace.telephone||'').replace(/\D/g,''))}" placeholder="sans l'indicatif">`,
+  async f=>{const v=Object.fromEntries(new FormData(f));const pref=PAYS.find(p=>p[0]===v.pays)[2];let tel=v.tel.replace(/\D/g,'');if(tel.startsWith(pref)&&tel.length>pref.length+6)tel=tel.slice(pref.length);
+    const{data:{session}}=await sb.auth.getSession();
+    const r=await fetch(SB_URL+'/functions/v1/paiement',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+session.access_token},
+      body:JSON.stringify({espace_id:E(),tarif_id:o.id,telephone:tel,pays_code:v.pays,retour:location.origin+location.pathname+'?paye=1'})});
+    const j=await r.json();if(!r.ok||!j.url)throw new Error(j.erreur||'Paiement impossible');location.href=j.url});
+  $('#m-ok').textContent='Payer maintenant';
 }
 
 /* ============ Mon espace (marque) ============ */
