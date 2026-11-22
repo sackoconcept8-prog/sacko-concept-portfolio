@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Admin — Plateforme SACKO CONCEPT</title>
+<link rel="icon" href="/assets/sacko-logo-96.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--p:#1f8a5b;--p2:#e9f6ef;--txt:#1b2430;--mut:#667085;--bord:#e6e8ec;--fond:#f7f8fa;--rouge:#d92d20}
+*{box-sizing:border-box}body{margin:0;font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:var(--fond);color:var(--txt);font-size:15px}
+.cache{display:none!important}button,input,select{font:inherit}
+.btn{background:var(--p);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer}
+.btn.sec{background:var(--p2);color:var(--p)}.btn.pt{padding:6px 10px;font-size:13px}.btn.rouge{background:#fee4e2;color:var(--rouge)}
+input,select{width:100%;border:1px solid #d0d5dd;border-radius:10px;padding:10px 12px;background:#fff}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 6px}
+.carte{background:#fff;border:1px solid var(--bord);border-radius:14px;padding:18px}
+.err{color:var(--rouge);font-size:13px;min-height:18px;margin-top:8px}
+header{background:#fff;border-bottom:1px solid var(--bord);padding:14px 24px;display:flex;justify-content:space-between;align-items:center}
+header b{display:flex;gap:10px;align-items:center}header img{width:34px}
+main{max-width:1200px;margin:0 auto;padding:22px 18px 60px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.kpi small{color:var(--mut);font-size:12px;font-weight:600;text-transform:uppercase}.kpi div{font-size:24px;font-weight:800;margin-top:4px}
+.esp{display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid #f2f4f7}
+.esp:last-child{border-bottom:0}.esp img,.esp .ph{width:56px;height:56px;border-radius:12px;object-fit:contain;background:var(--fond);border:1px solid var(--bord)}
+.esp small{color:var(--mut)}.acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;background:var(--p2);color:var(--p);margin-right:4px}
+.tag.o{background:#fef0c7;color:#b54708}.tag.r{background:#fee4e2;color:var(--rouge)}.tag.g{background:#f2f4f7;color:#475467}
+.voile{position:fixed;inset:0;background:#10182866;display:flex;align-items:center;justify-content:center;padding:16px}
+.modale{background:#fff;border-radius:16px;padding:22px;width:100%;max-width:440px}
+.grille2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media(max-width:800px){.kpis{grid-template-columns:1fr 1fr}.esp{grid-template-columns:44px 1fr}.esp img,.esp .ph{width:44px;height:44px}.acts{grid-column:1/-1;justify-content:flex-start}}
+</style>
+</head>
+<body>
+<section id="v-cnx" class="cache" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
+  <form class="carte" id="f-cnx" style="width:100%;max-width:380px">
+    <img src="/assets/sacko-logo-96.png" style="width:52px"><h2 style="margin:10px 0 2px">Admin plateforme</h2><p style="color:var(--mut);margin:0 0 8px">Réservé à SACKO CONCEPT</p>
+    <label>E-mail</label><input id="c-mail" type="email" required><label>Mot de passe</label><input id="c-pass" type="password" required>
+    <div class="err" id="c-err"></div><button class="btn" style="width:100%">Se connecter</button>
+  </form>
+</section>
+<section id="v-admin" class="cache">
+  <header><b><img src="/assets/sacko-logo-96.png" alt="">Plateforme SACKO CONCEPT — Admin</b><button class="btn sec pt" id="deco">Déconnexion</button></header>
+  <main>
+    <div class="kpis" id="kpis"></div>
+    <div class="carte">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+        <input id="rech" placeholder="🔍 Rechercher un client" style="max-width:320px">
+        <select id="filtre" style="max-width:200px"><option value="">Tous les statuts</option><option value="essai">En essai</option><option value="actif">Actifs</option><option value="suspendu">Suspendus</option><option value="resilie">Résiliés</option></select>
+      </div>
+      <div id="liste"></div>
+    </div>
+  </main>
+</section>
+<div id="mz"></div>
+<script>
+const sb=supabase.createClient('https://cqbuxbchjnlhezkzzlqq.supabase.co','sb_publishable_2FhOq6XnaOlE6s0p1kExkA_FEuEoPOm');
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=(v,d='XOF')=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:d,maximumFractionDigits:d==='XOF'?0:2}).format(v||0);
+const jours=d=>Math.ceil((new Date(d)-Date.now())/864e5);
+const ST={essai:['Essai','o'],actif:['Actif',''],suspendu:['Suspendu','r'],resilie:['Résilié','g']};
+let DATA=[];
+
+$('#f-cnx').onsubmit=async e=>{e.preventDefault();const{error}=await sb.auth.signInWithPassword({email:$('#c-mail').value.trim(),password:$('#c-pass').value});
+  if(error){$('#c-err').textContent='Identifiants incorrects';return}charger()};
+$('#deco').onclick=async()=>{await sb.auth.signOut();location.reload()};
+
+async function charger(){
+  const{data,error}=await sb.rpc('admin_espaces');
+  if(error||data===null){$('#v-cnx').classList.remove('cache');$('#v-admin').classList.add('cache');if(!error&&data===null){$('#c-err').textContent="Ce compte n'est pas administrateur.";await sb.auth.signOut()}return}
+  DATA=data;$('#v-cnx').classList.add('cache');$('#v-admin').classList.remove('cache');
+  const n=s=>DATA.filter(x=>x.statut===s).length;
+  const enc=DATA.reduce((a,x)=>a+(+x.encaisse||0),0);
+  $('#kpis').innerHTML=`<div class="carte kpi"><small>Clients</small><div>${DATA.length}</div></div><div class="carte kpi"><small>Abonnés actifs</small><div>${n('actif')}</div></div>
+   <div class="carte kpi"><small>En essai</small><div>${n('essai')}</div></div><div class="carte kpi"><small>Encaissé (total)</small><div>${fmt(enc)}</div></div>`;
+  dessiner();
+}
+function dessiner(){
+  const q=$('#rech').value.toLowerCase(),f=$('#filtre').value;
+  const l=DATA.filter(x=>(!f||x.statut===f)&&(!q||[x.nom,x.slug,x.proprietaire?.nom,x.proprietaire?.email,x.pays].join(' ').toLowerCase().includes(q)));
+  $('#liste').innerHTML=l.map(x=>{const st=ST[x.statut];const lic=x.licences.map(li=>`<span class="tag ${li.statut==='actif'?'':li.statut==='essai'?'o':'r'}">${esc(li.logiciel)} → ${li.date_fin?new Date(li.date_fin).toLocaleDateString('fr-FR'):'∞'}</span>`).join('');
+    const tel=(x.proprietaire?.telephone||x.telephone||'').replace(/\D/g,'');
+    return`<div class="esp">${x.logo_url?`<img src="${esc(x.logo_url)}" alt="">`:'<div class="ph"></div>'}
+     <div><b>${esc(x.nom)}</b> <span class="tag ${st[1]}">${st[0]}</span>${x.statut==='essai'?`<small>${jours(x.essai_fin)} j restants</small>`:''}<br>
+     <small>${esc(x.proprietaire?.nom||'')} · ${esc(x.proprietaire?.email||'')} · ${esc(x.pays||'')} · ${esc(x.secteur||'')} · ${x.nb_membres} membre(s) · code : ${esc(x.slug)}</small><br>${lic}<small>Encaissé : ${fmt(x.encaisse,x.devise)}</small></div>
+     <div class="acts"><button class="btn pt" data-act="${x.id}">Activer / renouveler</button><button class="btn sec pt" data-essai="${x.id}">+7 j d'essai</button>
+     ${x.statut==='suspendu'||x.statut==='resilie'?`<button class="btn sec pt" data-st="${x.id}:actif">Réactiver</button>`:`<button class="btn rouge pt" data-st="${x.id}:suspendu">Suspendre</button>`}
+     ${tel?`<a class="btn sec pt" target="_blank" href="https://wa.me/${tel}">WhatsApp</a>`:''}</div></div>`}).join('')||'<p style="color:var(--mut);text-align:center;padding:24px">Aucun client</p>';
+  document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>activer(DATA.find(x=>x.id===b.dataset.act)));
+  document.querySelectorAll('[data-essai]').forEach(b=>b.onclick=async()=>{await appel('admin_prolonger_essai',{p_espace:b.dataset.essai,p_jours:7})});
+  document.querySelectorAll('[data-st]').forEach(b=>b.onclick=async()=>{const[id,s]=b.dataset.st.split(':');if(s==='suspendu'&&!confirm('Suspendre cet espace ? Le client ne pourra plus l\'utiliser.'))return;await appel('admin_statut',{p_espace:id,p_statut:s})});
+}
+async function appel(fn,p){const{error}=await sb.rpc(fn,p);if(error)alert(error.message);else charger()}
+$('#rech').oninput=dessiner;$('#filtre').onchange=dessiner;
+
+function activer(x){
+  $('#mz').innerHTML=`<div class="voile"><form class="modale"><h3 style="margin:0">Activer — ${esc(x.nom)}</h3>
+   <div class="grille2"><div><label>Logiciel</label><select name="l">${['stockpro','securipro','nettopro','rhpro','btppro','phonepro'].map(c=>`<option ${x.licences.some(li=>li.logiciel===c)?'selected':''}>${c}</option>`).join('')}</select></div>
+   <div><label>Durée</label><select name="m"><option value="1">1 mois</option><option value="3">3 mois</option><option value="6">6 mois</option><option value="12">12 mois</option></select></div>
+   <div><label>Formule</label><select name="f"><option value="standard">Standard</option><option value="premium">Premium</option><option value="serenite">Sérénité</option></select></div>
+   <div><label>Moyen de paiement</label><select name="mo"><option value="chariow">Chariow</option><option value="stripe">Stripe</option><option value="paypal">PayPal</option><option value="representant">Représentant</option><option value="virement">Virement</option></select></div>
+   <div><label>Montant reçu (${esc(x.devise)})</label><input name="mt" type="number" min="0" step="any" required></div>
+   <div><label>Référence</label><input name="ref" placeholder="N° de commande"></div></div>
+   <div class="err" id="m-err"></div>
+   <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button type="button" class="btn sec" id="m-ann">Annuler</button><button class="btn">Activer</button></div></form></div>`;
+  $('#m-ann').onclick=()=>$('#mz').innerHTML='';
+  $('#mz form').onsubmit=async e=>{e.preventDefault();const v=Object.fromEntries(new FormData(e.target));
+    const{error}=await sb.rpc('admin_activer',{p_espace:x.id,p_logiciel:v.l,p_mois:+v.m,p_formule:v.f,p_montant:+v.mt||0,p_moyen:v.mo,p_reference:v.ref||null});
+    if(error){$('#m-err').textContent=error.message;return}$('#mz').innerHTML='';charger()};
+}
+(async()=>{const{data:{session}}=await sb.auth.getSession();if(session)charger();else $('#v-cnx').classList.remove('cache')})();
+</script>
+</body>
+</html>

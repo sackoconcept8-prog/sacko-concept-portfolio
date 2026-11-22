@@ -337,7 +337,17 @@ async function demarrer(nouveau){
   $('#m-logo').src=CTX.espace.logo_url||'/assets/sacko-logo-96.png';$('#m-nom').textContent=CTX.espace.nom;
   $('#moi-nom').textContent=CTX.membre.nom_complet;$('#moi-role').textContent=ROLES[CTX.membre.role];
   construireMenu();
-  aller(estGerant()?(nouveau?'accueil':'accueil'):'caisse');
+  if(['suspendu','resilie'].includes(CTX.espace.statut)){
+    const msg=encodeURIComponent('Bonjour SACKO CONCEPT, je souhaite renouveler mon abonnement pour '+CTX.espace.nom+' (code : '+CTX.espace.slug+')');
+    $('#nav').innerHTML='';$('#nav-mob').innerHTML='';
+    C().innerHTML=`<div class="carte" style="max-width:520px;margin:40px auto;text-align:center">
+      ${CTX.espace.logo_url?`<img src="${esc(CTX.espace.logo_url)}" style="max-height:70px">`:''}
+      <h2>Votre abonnement est arrivé à échéance</h2>
+      <p style="color:var(--mut)">Vos données sont conservées en sécurité. ${estGerant()?'Renouvelez votre abonnement pour retrouver l\'accès immédiatement.':'Contactez votre responsable.'}</p>
+      ${estGerant()?`<a class="btn" target="_blank" href="https://wa.me/15054642331?text=${msg}">Renouveler mon abonnement</a>`:''}</div>`;
+    setTimeout(()=>{sp.style.opacity=0;setTimeout(()=>sp.classList.add('cache'),500)},900);return;
+  }
+  aller(estGerant()?'accueil':'caisse');
   setTimeout(()=>{sp.style.opacity=0;setTimeout(()=>sp.classList.add('cache'),500)},1300);
   if(nouveau)setTimeout(()=>toast('Votre espace est prêt ! Commencez par ajouter vos articles.'),1600);
 }
