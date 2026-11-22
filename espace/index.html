@@ -505,7 +505,7 @@ function menuDirection(){
   if(estConseiller())return [["Mon espace",[["accueil","Accueil"],["avis","Mes recommandations"]]],["Rapports soumis au CEO",[["rapports","Rapport mensuel"],["supervision","Rapports de supervision"],["incidents","Main courante"]]],["Aide",[["support","Support"]]]];
   return menuDirectionBase()}
 function menuDirectionBase(){
-  if(espace==="supervision")return [["Supervision",MENU_SUP]];
+  if(espace==="supervision")return [["Supervision",[...MENU_SUP,["sites-terrain","Sites : position et rondes"]]]];
   if(espace==="commercial")return [["Clients",[["sites","Sites clients"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["support","Support"]]]];
   if(espace==="rh")return [["",[["accueil","Tableau de bord RH"]]],["Personnel",[["agents","Agents"],["conges","Congés"],["documents","Documents RH"],["messages","Messages"],["paie","Paie"],["materiel","Matériel"]]],
     ["Suivi",[["planning","Planning"],["pointage","Pointage"]]],["Aide",[["support","Support"]]]];
@@ -542,7 +542,7 @@ async function chargerConseiller(){const [s,a]=await Promise.all([sb.rpc("sites_
 async function chargerCommercial(){const [s,a]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.rpc("agents_noms")]);sites=must(s);agents=must(a).sort((x,y)=>String(x.nom).localeCompare(String(y.nom)));comptes=[]}
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button,#side button[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));menu(false);window.scrollTo(0,0);
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estConseiller())await chargerConseiller();else if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();await({accueil:moi.role==="agent"?vAgentAccueil:estConseiller()?vAccueilConseiller:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-agents":vClientAgents,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport,avis:vAvis,recos:vRecos}[t])();if(estConseiller())barreAvis(t)}
+  try{if(estConseiller())await chargerConseiller();else if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();await({accueil:moi.role==="agent"?vAgentAccueil:estConseiller()?vAccueilConseiller:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,"sites-terrain":vSitesTerrain,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-agents":vClientAgents,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport,avis:vAvis,recos:vRecos}[t])();if(estConseiller())barreAvis(t)}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
@@ -747,6 +747,30 @@ async function vSupport(){
 }
 
 /* ---------- position GPS ---------- */
+/* superviseur général : enregistrer sur place la position d'un site et ses points de ronde */
+function vSitesTerrain(){
+  const l=sites.filter(x=>x.actif!==false);
+  $("#main").innerHTML=`<div class="head"><div><h1>Sites : position et rondes</h1><p class="muted sm" style="margin:2px 0 0">Sur place, enregistrez la position du site : le pointage des agents sera contrôlé à partir de ce point. Ajoutez aussi les points que l'agent doit vérifier pendant sa ronde.</p></div></div>
+  ${l.length?l.map(x=>{const ok=x.latitude!=null&&x.longitude!=null,pts=x.points_ronde||[];return `<div class="card"><div class="row" style="justify-content:space-between;align-items:flex-start"><div class="grow"><h2 style="margin:0 0 4px">${esc(x.nom)}</h2><div class="muted sm">${esc([x.adresse,x.ville].filter(Boolean).join(", "))}</div></div>
+    <span class="pill ${ok?"p-green":"p-red"}">${ok?"Position enregistrée":"Position manquante"}</span></div>
+    <p class="sm" style="margin:10px 0 4px"><b>Zone de pointage :</b> ${x.rayon_m||300} m autour du site${ok?` · <a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${x.latitude},${x.longitude}">voir sur la carte</a>`:""}</p>
+    <p class="sm" style="margin:0 0 10px"><b>Points de ronde :</b> ${pts.length?pts.map(esc).join(" · "):'<span class="muted">aucun</span>'}</p>
+    <div class="actions"><button class="btn pri" data-pos="${x.id}">📍 Enregistrer ma position ici</button><button class="btn" data-pts="${x.id}">🔦 Points de ronde et zone</button></div></div>`}).join(""):'<div class="empty">Aucun site pour le moment. La direction crée les sites.</div>'}`;
+  const S_=id=>sites.find(x=>x.id===id);
+  $("#main").querySelectorAll("[data-pos]").forEach(b=>b.onclick=()=>{const x=S_(b.dataset.pos);
+    modal("Position de « "+esc(x.nom)+" »",`<p style="margin-top:0">Êtes-vous <b>sur le site</b>, à l'entrée principale ? Votre position actuelle va devenir la position du site.</p>`,`<button class="btn" id="sp-no">Annuler</button><button class="btn pri" id="sp-ok">Oui, enregistrer</button>`);
+    $("#sp-no").onclick=closeModal;
+    $("#sp-ok").onclick=()=>busy($("#sp-ok"),async()=>{$("#sp-ok").textContent="Localisation…";const pos=await position();
+      must(await sb.from("sites").update({latitude:+pos.lat.toFixed(6),longitude:+pos.lng.toFixed(6)}).eq("id",x.id));
+      x.latitude=+pos.lat.toFixed(6);x.longitude=+pos.lng.toFixed(6);closeModal();toast("Position du site enregistrée");vSitesTerrain()})});
+  $("#main").querySelectorAll("[data-pts]").forEach(b=>b.onclick=()=>{const x=S_(b.dataset.pts);
+    modal("Points de ronde · "+esc(x.nom),`<div class="field"><label class="f">Un point par ligne, dans l'ordre de la ronde</label><textarea class="input" id="sp-pts" rows="7" placeholder="Portail principal&#10;Parking&#10;Arrière du bâtiment">${esc((x.points_ronde||[]).join("\n"))}</textarea></div>
+      <div class="field"><label class="f">Zone de pointage autour du site</label><select class="input" id="sp-r">${[100,200,300,500,800].map(r=>`<option value="${r}" ${r===(x.rayon_m||300)?"selected":""}>${r} mètres</option>`).join("")}</select></div>`,
+      `<button class="btn" id="sp-no">Annuler</button><button class="btn pri" id="sp-ok">Enregistrer</button>`);
+    $("#sp-no").onclick=closeModal;
+    $("#sp-ok").onclick=()=>busy($("#sp-ok"),async()=>{const pts=$("#sp-pts").value.split("\n").map(t=>t.trim()).filter(Boolean).slice(0,30),r=+$("#sp-r").value;
+      must(await sb.from("sites").update({points_ronde:pts,rayon_m:r}).eq("id",x.id));x.points_ronde=pts;x.rayon_m=r;closeModal();toast("Points de ronde enregistrés");vSitesTerrain()})});
+}
 function position(){return new Promise((ok,ko)=>{if(!navigator.geolocation)return ko(new Error("Ce téléphone ne permet pas la localisation."));
   navigator.geolocation.getCurrentPosition(p=>ok({lat:p.coords.latitude,lng:p.coords.longitude,precision:p.coords.accuracy}),
     e=>ko(new Error(e.code===1?"Localisation refusée. Autorisez la localisation pour ce site dans votre navigateur.":"Position introuvable. Vérifiez que la localisation (GPS) est activée.")),
