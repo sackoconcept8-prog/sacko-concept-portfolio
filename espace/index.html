@@ -750,10 +750,12 @@ async function vSupport(){
 /* superviseur général : enregistrer sur place la position d'un site et ses points de ronde */
 function vSitesTerrain(){
   const l=sites.filter(x=>x.actif!==false);
-  $("#main").innerHTML=`<div class="head"><div><h1>Sites : position et rondes</h1><p class="muted sm" style="margin:2px 0 0">Sur place, enregistrez la position du site : le pointage des agents sera contrôlé à partir de ce point. Ajoutez aussi les points que l'agent doit vérifier pendant sa ronde.</p></div></div>
+  $("#main").innerHTML=`<div class="head"><div><h1>Sites : position et rondes</h1><p class="muted sm" style="margin:2px 0 0">Consultation des sites (sans prix ni coordonnées du client). Sur place, enregistrez la position du site : le pointage des agents sera contrôlé à partir de ce point. Ajoutez aussi les points que l'agent doit vérifier pendant sa ronde.</p></div></div>
   ${l.length?l.map(x=>{const ok=x.latitude!=null&&x.longitude!=null,pts=x.points_ronde||[];return `<div class="card"><div class="row" style="justify-content:space-between;align-items:flex-start"><div class="grow"><h2 style="margin:0 0 4px">${esc(x.nom)}</h2><div class="muted sm">${esc([x.adresse,x.ville].filter(Boolean).join(", "))}</div></div>
     <span class="pill ${ok?"p-green":"p-red"}">${ok?"Position enregistrée":"Position manquante"}</span></div>
-    <p class="sm" style="margin:10px 0 4px"><b>Zone de pointage :</b> ${x.rayon_m||300} m autour du site${ok?` · <a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${x.latitude},${x.longitude}">voir sur la carte</a>`:""}</p>
+    <p class="sm" style="margin:10px 0 4px"><b>Agents :</b> ${(x.besoins||{}).J||0} de jour · ${(x.besoins||{}).N||0} de nuit demandés · ${agents.filter(g=>g.site_id===x.id&&g.statut==="Actif").length} affecté(s)</p>
+    ${x.consignes?`<p class="sm" style="margin:0 0 4px;white-space:pre-wrap"><b>Consignes :</b> ${esc(x.consignes)}</p>`:""}
+    <p class="sm" style="margin:0 0 4px"><b>Zone de pointage :</b> ${x.rayon_m||300} m autour du site${ok?` · <a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${x.latitude},${x.longitude}">voir sur la carte</a>`:""}</p>
     <p class="sm" style="margin:0 0 10px"><b>Points de ronde :</b> ${pts.length?pts.map(esc).join(" · "):'<span class="muted">aucun</span>'}</p>
     <div class="actions"><button class="btn pri" data-pos="${x.id}">📍 Enregistrer ma position ici</button><button class="btn" data-pts="${x.id}">🔦 Points de ronde et zone</button></div></div>`}).join(""):'<div class="empty">Aucun site pour le moment. La direction crée les sites.</div>'}`;
   const S_=id=>sites.find(x=>x.id===id);
