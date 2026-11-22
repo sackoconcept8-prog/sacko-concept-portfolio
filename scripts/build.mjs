@@ -37,6 +37,8 @@ await readFile(join(out,'en/hrpro/index.html'));
 await cp(join(root,'rhpro'),join(out,'rhpro'), {recursive:true});
 for (const file of ['rhpro/index.html','rhpro/dollars/index.html','rhpro/fcfa/index.html','rhpro/demo/index.html','rhpro/sacko-logo.jpg']) await readFile(join(out,file));
 await cp(join(root,'stockpro'),join(out,'stockpro'), {recursive:true});
+await cp(join(root,'plateforme'),join(out,'plateforme'), {recursive:true});
+await readFile(join(out,'plateforme/index.html'));
 for (const file of ['stockpro/index.html','stockpro/dollars/index.html','stockpro/fcfa/index.html','stockpro/demo/index.html','stockpro/sacko-logo.jpg']) await readFile(join(out,file));
 await cp(join(root,'phonepro'),join(out,'phonepro'), {recursive:true});
 await cp(join(root,'pins'),join(out,'pins'), {recursive:true});

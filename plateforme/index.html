@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Plateforme SACKO CONCEPT</title>
+<meta name="theme-color" content="#1f8a5b">
+<link rel="icon" href="/assets/sacko-logo-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--p:#1f8a5b;--p2:#e9f6ef;--txt:#1b2430;--mut:#667085;--bord:#e6e8ec;--fond:#f7f8fa;--blanc:#fff;--rouge:#d92d20;--orange:#f79009;--r:14px}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--txt);background:var(--fond);font-size:15px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit}
+.cache{display:none!important}
+.btn{background:var(--p);color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:600;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-content:center}
+.btn:hover{filter:brightness(.95)}.btn:disabled{opacity:.55;cursor:wait}
+.btn.sec{background:var(--p2);color:var(--p)}.btn.lien{background:none;color:var(--p);padding:6px}
+.btn.rouge{background:#fee4e2;color:var(--rouge)}.btn.pt{padding:7px 12px;font-size:13px}
+label{display:block;font-size:13px;font-weight:600;color:#344054;margin:12px 0 6px}
+input,select,textarea{width:100%;border:1px solid #d0d5dd;border-radius:10px;padding:11px 12px;background:#fff;color:var(--txt)}
+input:focus,select:focus,textarea:focus{outline:2px solid color-mix(in srgb,var(--p) 35%,transparent);border-color:var(--p)}
+.carte{background:#fff;border:1px solid var(--bord);border-radius:var(--r);padding:20px}
+.err{color:var(--rouge);font-size:13px;min-height:18px;margin-top:8px}
+.ok{color:var(--p);font-size:13px}
+/* ---------- Accueil / auth ---------- */
+.auth{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr}
+.auth-g{background:linear-gradient(160deg,var(--p2),#fff 70%);padding:48px;display:flex;flex-direction:column;justify-content:space-between}
+.auth-g h1{font-size:38px;line-height:1.12;margin:28px 0 14px;letter-spacing:-.02em}
+.auth-g p{color:var(--mut);font-size:16px;max-width:460px;line-height:1.6}
+.auth-g ul{list-style:none;padding:0;margin:24px 0;display:grid;gap:10px}
+.auth-g li{display:flex;gap:10px;align-items:center}.auth-g li b{color:var(--p)}
+.marque{display:flex;gap:10px;align-items:center;font-weight:800;letter-spacing:.02em}
+.marque img{width:40px;height:40px;object-fit:contain;border-radius:10px;background:#fff}
+.auth-d{display:flex;align-items:center;justify-content:center;padding:32px;background:#fff}
+.boite{width:100%;max-width:420px}
+.boite h2{font-size:24px;margin:0 0 6px}.boite .sous{color:var(--mut);margin:0 0 18px}
+.onglets{display:flex;background:var(--fond);border-radius:12px;padding:4px;margin-bottom:18px}
+.onglets button{flex:1;border:0;background:none;padding:9px;border-radius:9px;font-weight:600;color:var(--mut);cursor:pointer}
+.onglets button.on{background:#fff;color:var(--txt);box-shadow:0 1px 3px #0001}
+.logo-zone{border:2px dashed #d0d5dd;border-radius:12px;padding:16px;text-align:center;cursor:pointer;color:var(--mut)}
+.logo-zone img{max-height:70px;max-width:180px;display:block;margin:0 auto 8px}
+.apercu{display:flex;gap:10px;align-items:center;margin-top:10px;font-size:13px;color:var(--mut)}
+.pastille{width:28px;height:28px;border-radius:8px;border:1px solid var(--bord)}
+.etapes{display:flex;gap:6px;margin-bottom:16px}.etapes i{flex:1;height:4px;border-radius:4px;background:var(--bord)}.etapes i.on{background:var(--p)}
+.grille2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+/* ---------- Ecran logo ---------- */
+#splash{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;transition:opacity .5s}
+#splash img{max-width:160px;max-height:120px;animation:pop .8s ease}
+#splash .nm{margin-top:14px;font-weight:800;font-size:20px;color:var(--p)}
+#splash .barre{width:120px;height:4px;background:var(--p2);border-radius:4px;margin-top:18px;overflow:hidden}
+#splash .barre i{display:block;height:100%;width:40%;background:var(--p);animation:ch 1s infinite}
+@keyframes pop{from{transform:scale(.7);opacity:0}}@keyframes ch{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
+/* ---------- Application ---------- */
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.menu{background:#fff;border-right:1px solid var(--bord);padding:18px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.menu .marque{padding:4px 8px 18px;border-bottom:1px solid var(--bord);margin-bottom:12px}
+.menu .marque span{font-size:15px;line-height:1.2}
+.menu nav{display:grid;gap:3px;flex:1;align-content:start}
+.menu nav button{display:flex;gap:10px;align-items:center;border:0;background:none;text-align:left;padding:10px 12px;border-radius:10px;color:#475467;font-weight:600;cursor:pointer}
+.menu nav button:hover{background:var(--fond)}.menu nav button.on{background:var(--p2);color:var(--p)}
+.menu nav svg{width:19px;height:19px;flex:none}
+.moi{border-top:1px solid var(--bord);padding-top:12px;font-size:13px}
+.moi b{display:block}.moi small{color:var(--mut)}
+.contenu{padding:26px 30px 80px;max-width:1200px;width:100%}
+.entete{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.entete h1{font-size:24px;margin:0;letter-spacing:-.01em}
+.essai{background:#fffaeb;border:1px solid #fedf89;color:#93370d;border-radius:12px;padding:10px 14px;font-size:13px;margin-bottom:18px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.kpi{background:#fff;border:1px solid var(--bord);border-radius:var(--r);padding:16px}
+.kpi small{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.kpi div{font-size:22px;font-weight:800;margin-top:6px}
+.kpi.p{background:var(--p);color:#fff;border-color:var(--p)}.kpi.p small{color:#ffffffcc}
+.deux{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding:10px;border-bottom:1px solid var(--bord)}
+td{padding:11px 10px;border-bottom:1px solid #f2f4f7}
+tr:last-child td{border-bottom:0}
+.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:12px;font-weight:600;background:var(--p2);color:var(--p)}
+.tag.rouge{background:#fee4e2;color:var(--rouge)}.tag.orange{background:#fef0c7;color:#b54708}.tag.gris{background:#f2f4f7;color:#475467}
+.vide{color:var(--mut);text-align:center;padding:28px}
+.recherche{max-width:320px}
+/* Caisse */
+.caisse{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start}
+.produits{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.prod{background:#fff;border:1px solid var(--bord);border-radius:12px;padding:12px;cursor:pointer;text-align:left}
+.prod:hover{border-color:var(--p)}.prod b{display:block;font-size:14px}.prod span{color:var(--p);font-weight:700}
+.prod small{display:block;color:var(--mut);font-size:12px;margin-top:4px}.prod.epuise{opacity:.45;cursor:not-allowed}
+.panier{position:sticky;top:16px}
+.ligne{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #f2f4f7}
+.qte{display:flex;align-items:center;gap:6px}.qte button{width:28px;height:28px;border-radius:8px;border:1px solid var(--bord);background:#fff;cursor:pointer}
+.total{display:flex;justify-content:space-between;font-size:20px;font-weight:800;margin:14px 0}
+/* Modale */
+.voile{position:fixed;inset:0;background:#10182866;display:flex;align-items:center;justify-content:center;z-index:40;padding:16px}
+.modale{background:#fff;border-radius:16px;padding:22px;width:100%;max-width:480px;max-height:92vh;overflow:auto}
+.modale h3{margin:0 0 4px}
+.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#101828;color:#fff;padding:12px 18px;border-radius:12px;z-index:60;font-size:14px}
+.bas-mobile{display:none}
+@media(max-width:900px){
+ .auth{grid-template-columns:1fr}.auth-g{padding:28px}.auth-g h1{font-size:28px}.auth-g ul{display:none}
+ .app{grid-template-columns:1fr}.menu{display:none}
+ .contenu{padding:18px 14px 90px}.kpis{grid-template-columns:1fr 1fr}.deux,.caisse{grid-template-columns:1fr}
+ .bas-mobile{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--bord);z-index:30;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+ .bas-mobile button{flex:1;border:0;background:none;font-size:11px;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:600}
+ .bas-mobile button.on{color:var(--p)}.bas-mobile svg{width:22px;height:22px}
+ .tab-scroll{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= ACCUEIL : connexion / inscription ================= -->
+<section id="v-auth" class="auth cache">
+  <div class="auth-g">
+    <div class="marque" id="auth-marque"><img src="/assets/sacko-logo-96.png" alt=""><span>SACKO CONCEPT</span></div>
+    <div>
+      <h1 id="auth-titre">Votre logiciel de gestion, à votre image, en 2 minutes.</h1>
+      <p id="auth-texte">Ajoutez votre logo : vos couleurs s'appliquent partout automatiquement. Stock, ventes, caisse et équipe, sur ordinateur et téléphone.</p>
+      <ul>
+        <li><b>✓</b> 14 jours d'essai gratuit, sans carte bancaire</li>
+        <li><b>✓</b> Votre logo et vos couleurs sur tout le logiciel</li>
+        <li><b>✓</b> Vos vendeurs se connectent avec un identifiant et un code PIN</li>
+        <li><b>✓</b> Vos données sont séparées et protégées</li>
+      </ul>
+    </div>
+    <small style="color:var(--mut)">© SACKO CONCEPT LLC — Albuquerque, NM, USA</small>
+  </div>
+  <div class="auth-d"><div class="boite">
+    <div class="onglets"><button id="o-cnx" class="on">Se connecter</button><button id="o-ins">Créer mon espace</button></div>
+
+    <!-- Connexion -->
+    <form id="f-cnx">
+      <h2>Bon retour 👋</h2><p class="sous">Connectez-vous à votre espace.</p>
+      <label>E-mail ou identifiant</label><input id="c-id" autocomplete="username" required>
+      <div id="c-code-zone" class="cache"><label>Code de votre entreprise</label><input id="c-code" placeholder="ex. boutique-awa"></div>
+      <label>Mot de passe ou code PIN</label><input id="c-pass" type="password" autocomplete="current-password" required>
+      <div class="err" id="c-err"></div>
+      <button class="btn" style="width:100%" id="c-btn">Se connecter</button>
+      <button type="button" class="btn lien" id="c-oubli" style="width:100%;margin-top:6px">Mot de passe oublié ?</button>
+    </form>
+
+    <!-- Inscription -->
+    <form id="f-ins" class="cache">
+      <div class="etapes"><i class="on"></i><i></i></div>
+      <div id="ins-1">
+        <h2>Votre entreprise</h2><p class="sous">Votre logiciel se crée à votre image.</p>
+        <label>Logo de l'entreprise</label>
+        <div class="logo-zone" id="logo-zone"><img id="logo-ap" class="cache" alt=""><span id="logo-txt">Touchez pour ajouter votre logo (PNG, JPG)</span></div>
+        <input type="file" id="logo-f" accept="image/png,image/jpeg,image/webp" class="cache">
+        <div class="apercu cache" id="couleurs-ap"><span class="pastille" id="pa1"></span><span class="pastille" id="pa2"></span>Couleurs détectées dans votre logo
+          <input type="color" id="coul-man" title="Changer la couleur" style="width:38px;height:30px;padding:2px"></div>
+        <label>Nom de l'entreprise</label><input id="i-ent" required maxlength="80">
+        <div class="grille2">
+          <div><label>Secteur</label><select id="i-sect"><option>Commerce / boutique</option><option>Supermarché / alimentation</option><option>Téléphones / électronique</option><option>Quincaillerie / BTP</option><option>Pharmacie / parapharmacie</option><option>Restauration / bar</option><option>Cosmétique / mode</option><option>Autre</option></select></div>
+          <div><label>Pays</label><input id="i-pays" placeholder="Bénin"></div>
+          <div><label>Devise</label><select id="i-dev"><option value="XOF">F CFA</option><option value="EUR">Euro</option><option value="USD">Dollar</option></select></div>
+          <div><label>Langue</label><select id="i-lang"><option value="fr">Français</option><option value="en">English</option></select></div>
+        </div>
+        <button type="button" class="btn" style="width:100%;margin-top:18px" id="ins-suiv">Continuer</button>
+      </div>
+      <div id="ins-2" class="cache">
+        <h2>Votre compte</h2><p class="sous">Vous serez le propriétaire de l'espace.</p>
+        <label>Votre nom complet</label><input id="i-nom" required>
+        <label>E-mail</label><input id="i-email" type="email" autocomplete="email" required>
+        <label>Téléphone / WhatsApp</label><input id="i-tel" type="tel">
+        <label>Mot de passe (8 caractères minimum)</label><input id="i-pass" type="password" minlength="8" autocomplete="new-password" required>
+        <input id="i-piege" class="cache" tabindex="-1" autocomplete="off">
+        <div class="err" id="i-err"></div>
+        <button class="btn" style="width:100%" id="i-btn">Créer mon espace gratuit</button>
+        <button type="button" class="btn lien" style="width:100%" id="ins-prec">← Retour</button>
+        <p style="font-size:12px;color:var(--mut)">En créant un espace, vous acceptez les <a href="/cgv.html" target="_blank">conditions</a> et la <a href="/confidentialite.html" target="_blank">politique de confidentialité</a>.</p>
+      </div>
+    </form>
+
+    <!-- Nouveau mot de passe (après lien e-mail) -->
+    <form id="f-reset" class="cache">
+      <h2>Nouveau mot de passe</h2><p class="sous">Choisissez votre nouveau mot de passe.</p>
+      <label>Nouveau mot de passe</label><input id="r-pass" type="password" minlength="8" required>
+      <div class="err" id="r-err"></div>
+      <button class="btn" style="width:100%">Enregistrer</button>
+    </form>
+  </div></div>
+</section>
+
+<!-- ================= Ecran d'ouverture au logo du client ================= -->
+<div id="splash" class="cache"><img id="sp-logo" alt=""><div class="nm" id="sp-nom"></div><div class="barre"><i></i></div></div>
+
+<!-- ================= APPLICATION ================= -->
+<section id="v-app" class="app cache">
+  <aside class="menu">
+    <div class="marque"><img id="m-logo" alt=""><span id="m-nom"></span></div>
+    <nav id="nav"></nav>
+    <div class="moi"><b id="moi-nom"></b><small id="moi-role"></small><br><button class="btn lien" id="deco" style="padding:6px 0">Se déconnecter</button></div>
+  </aside>
+  <main class="contenu" id="contenu"></main>
+  <div class="bas-mobile" id="nav-mob"></div>
+</section>
+
+<div id="modale-zone"></div>
+
+<script>
+/* ============ Configuration ============ */
+const SB_URL = 'https://cqbuxbchjnlhezkzzlqq.supabase.co';
+const SB_KEY = 'sb_publishable_2FhOq6XnaOlE6s0p1kExkA_FEuEoPOm';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const params = new URLSearchParams(location.search);
+let CTX = null; // {espace, membre, logiciels}
+let VUE = 'accueil';
+
+/* ============ Couleurs de marque ============ */
+function hexRgb(h){const n=parseInt(h.slice(1),16);return[n>>16,(n>>8)&255,n&255]}
+function rgbHex(r,g,b){return'#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('')}
+function lum([r,g,b]){return(0.299*r+0.587*g+0.114*b)/255}
+function melange(h,blanc){const[r,g,b]=hexRgb(h);return rgbHex(r+(255-r)*blanc,g+(255-g)*blanc,b+(255-b)*blanc)}
+function lisible(h){let c=hexRgb(h);while(lum(c)>0.55){c=c.map(v=>v*0.88)}return rgbHex(...c)}
+function appliquerMarque(e){
+  const p=lisible(e.couleur_principale||'#1f8a5b');
+  document.documentElement.style.setProperty('--p',p);
+  document.documentElement.style.setProperty('--p2',e.couleur_secondaire||melange(p,.9));
+  document.querySelector('meta[name=theme-color]').content=p;
+  document.title=(e.nom||'Espace')+' — Gestion';
+  if(e.logo_url){document.querySelector('link[rel=icon]').href=e.logo_url}
+}
+// Extraction automatique de la couleur dominante d'un logo
+function couleurDuLogo(img){
+  const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');
+  x.drawImage(img,0,0,64,64);const d=x.getImageData(0,0,64,64).data;const seaux={};
+  for(let i=0;i<d.length;i+=4){
+    const[r,g,b,a]=[d[i],d[i+1],d[i+2],d[i+3]];if(a<125)continue;
+    const mx=Math.max(r,g,b),mn=Math.min(r,g,b);
+    if(mx>235&&mn>215)continue; if(mx<30)continue; const sat=mx?(mx-mn)/mx:0; if(sat<0.18)continue;
+    const k=[r>>4,g>>4,b>>4].join();(seaux[k]=seaux[k]||{n:0,r:0,g:0,b:0,s:0});
+    const s=seaux[k];s.n++;s.r+=r;s.g+=g;s.b+=b;s.s+=sat;
+  }
+  const best=Object.values(seaux).sort((a,b)=>(b.n*(.6+b.s/b.n))-(a.n*(.6+a.s/a.n)))[0];
+  if(!best)return'#1f2a44';
+  return lisible(rgbHex(best.r/best.n,best.g/best.n,best.b/best.n));
+}
+
+/* ============ Format ============ */
+const fmt=v=>{const dev=CTX?.espace?.devise||'XOF';return new Intl.NumberFormat(CTX?.espace?.langue==='en'?'en-US':'fr-FR',{style:'currency',currency:dev,maximumFractionDigits:dev==='XOF'?0:2}).format(v||0)};
+const dt=v=>new Date(v).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
+function erreurMsg(e){const m=e?.message||String(e);if(/Invalid login/i.test(m))return'Identifiant ou mot de passe incorrect';return m}
+
+/* ============ Accueil / Auth ============ */
+function montrerAuth(){
+  $('#v-app').classList.add('cache');$('#v-auth').classList.remove('cache');
+  const slug=params.get('e');
+  if(slug){ // page de connexion aux couleurs de l'entreprise
+    $('#c-code').value=slug;
+    sb.rpc('marque_espace',{p_slug:slug}).then(({data})=>{ if(!data)return; appliquerMarque(data);
+      $('#auth-marque').innerHTML=`${data.logo_url?`<img src="${esc(data.logo_url)}" alt="">`:''}<span>${esc(data.nom)}</span>`;
+      $('#auth-titre').textContent='Bienvenue chez '+data.nom;$('#auth-texte').textContent='Connectez-vous à votre espace de travail.';
+      $('#o-ins').classList.add('cache');
+    });
+  }
+  if(params.get('inscription')!==null) ongletIns();
+}
+function ongletCnx(){$('#o-cnx').classList.add('on');$('#o-ins').classList.remove('on');$('#f-cnx').classList.remove('cache');$('#f-ins').classList.add('cache')}
+function ongletIns(){$('#o-ins').classList.add('on');$('#o-cnx').classList.remove('on');$('#f-ins').classList.remove('cache');$('#f-cnx').classList.add('cache')}
+$('#o-cnx').onclick=ongletCnx;$('#o-ins').onclick=ongletIns;
+$('#c-id').addEventListener('input',e=>{$('#c-code-zone').classList.toggle('cache',e.target.value.includes('@')||!e.target.value||!!params.get('e'))});
+
+$('#f-cnx').onsubmit=async ev=>{
+  ev.preventDefault();$('#c-err').textContent='';const btn=$('#c-btn');btn.disabled=true;
+  let id=$('#c-id').value.trim().toLowerCase();
+  if(!id.includes('@')){const code=$('#c-code').value.trim().toLowerCase();
+    if(!code){$('#c-code-zone').classList.remove('cache');$('#c-err').textContent='Indiquez le code de votre entreprise (donné par votre responsable).';btn.disabled=false;return}
+    id=`${id}@${code}.membres.sackoconcept.com`}
+  const{error}=await sb.auth.signInWithPassword({email:id,password:$('#c-pass').value});
+  btn.disabled=false;if(error){$('#c-err').textContent=erreurMsg(error);return}
+  demarrer();
+};
+$('#c-oubli').onclick=async()=>{
+  const id=$('#c-id').value.trim();
+  if(!id.includes('@')){$('#c-err').textContent=id?'Pour un identifiant avec code PIN, demandez un nouveau code à votre responsable.':'Saisissez d\'abord votre e-mail ci-dessus.';return}
+  const{error}=await sb.auth.resetPasswordForEmail(id,{redirectTo:location.origin+location.pathname});
+  $('#c-err').innerHTML=error?esc(erreurMsg(error)):'<span class="ok">Si un compte existe, un lien vous a été envoyé par e-mail.</span>';
+};
+
+// Inscription — logo et couleurs
+let LOGO_DATA=null,COUL1='#1f8a5b';
+$('#logo-zone').onclick=()=>$('#logo-f').click();
+$('#logo-f').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  if(f.size>2e6){toast('Logo trop lourd (2 Mo maximum)');return}
+  const rd=new FileReader();rd.onload=()=>{
+    const img=new Image();img.onload=()=>{
+      // redimensionner à 512 px max
+      const k=Math.min(1,512/Math.max(img.width,img.height));const c=document.createElement('canvas');
+      c.width=img.width*k;c.height=img.height*k;c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      LOGO_DATA=c.toDataURL(f.type==='image/jpeg'?'image/jpeg':'image/png',.9);
+      COUL1=couleurDuLogo(img);majCouleurs();
+      $('#logo-ap').src=LOGO_DATA;$('#logo-ap').classList.remove('cache');$('#logo-txt').textContent='Changer le logo';
+      $('#couleurs-ap').classList.remove('cache');
+    };img.src=rd.result};rd.readAsDataURL(f);
+};
+function majCouleurs(){$('#pa1').style.background=COUL1;$('#pa2').style.background=melange(COUL1,.9);$('#coul-man').value=COUL1;appliquerMarque({couleur_principale:COUL1,couleur_secondaire:melange(COUL1,.9)})}
+$('#coul-man').oninput=e=>{COUL1=lisible(e.target.value);majCouleurs()};
+$('#ins-suiv').onclick=()=>{if($('#i-ent').value.trim().length<2){toast("Indiquez le nom de l'entreprise");return}
+  $('#ins-1').classList.add('cache');$('#ins-2').classList.remove('cache');document.querySelectorAll('.etapes i')[1].classList.add('on')};
+$('#ins-prec').onclick=()=>{$('#ins-2').classList.add('cache');$('#ins-1').classList.remove('cache');document.querySelectorAll('.etapes i')[1].classList.remove('on')};
+$('#f-ins').onsubmit=async ev=>{
+  ev.preventDefault();$('#i-err').textContent='';const btn=$('#i-btn');btn.disabled=true;btn.textContent='Création de votre espace…';
+  const corps={entreprise:$('#i-ent').value,nom:$('#i-nom').value,email:$('#i-email').value,password:$('#i-pass').value,
+    telephone:$('#i-tel').value,secteur:$('#i-sect').value,pays:$('#i-pays').value,devise:$('#i-dev').value,langue:$('#i-lang').value,
+    couleur_principale:COUL1,couleur_secondaire:melange(COUL1,.9),logo:LOGO_DATA,logiciel:params.get('logiciel')||'stockpro',site_web:$('#i-piege').value};
+  try{
+    const r=await fetch(SB_URL+'/functions/v1/inscription',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY},body:JSON.stringify(corps)});
+    const j=await r.json();if(!r.ok||j.erreur)throw new Error(j.erreur||'Erreur');
+    const{error}=await sb.auth.signInWithPassword({email:corps.email.trim().toLowerCase(),password:corps.password});
+    if(error)throw error;demarrer(true);
+  }catch(e){$('#i-err').textContent=erreurMsg(e)}
+  btn.disabled=false;btn.textContent='Créer mon espace gratuit';
+};
+$('#f-reset').onsubmit=async ev=>{ev.preventDefault();const{error}=await sb.auth.updateUser({password:$('#r-pass').value});
+  if(error){$('#r-err').textContent=erreurMsg(error);return}toast('Mot de passe modifié');history.replaceState(null,'',location.pathname);demarrer()};
+
+/* ============ Démarrage de l'espace ============ */
+async function demarrer(nouveau){
+  const{data,error}=await sb.rpc('mes_espaces');
+  if(error||!data?.length){await sb.auth.signOut();montrerAuth();$('#c-err').textContent=error?erreurMsg(error):'Aucun espace actif pour ce compte. Contactez SACKO CONCEPT.';return}
+  const choisi=data.find(x=>x.espace.id===localStorageGet('espace'))||data[0];
+  CTX=choisi;localStorageSet('espace',CTX.espace.id);
+  appliquerMarque(CTX.espace);
+  // Ecran d'ouverture au logo du client
+  const sp=$('#splash');$('#sp-nom').textContent=CTX.espace.nom;
+  if(CTX.espace.logo_url){$('#sp-logo').src=CTX.espace.logo_url;$('#sp-logo').classList.remove('cache')}else $('#sp-logo').classList.add('cache');
+  sp.classList.remove('cache');sp.style.opacity=1;
+  $('#v-auth').classList.add('cache');$('#v-app').classList.remove('cache');
+  $('#m-logo').src=CTX.espace.logo_url||'/assets/sacko-logo-96.png';$('#m-nom').textContent=CTX.espace.nom;
+  $('#moi-nom').textContent=CTX.membre.nom_complet;$('#moi-role').textContent=ROLES[CTX.membre.role];
+  construireMenu();
+  aller(estGerant()?(nouveau?'accueil':'accueil'):'caisse');
+  setTimeout(()=>{sp.style.opacity=0;setTimeout(()=>sp.classList.add('cache'),500)},1300);
+  if(nouveau)setTimeout(()=>toast('Votre espace est prêt ! Commencez par ajouter vos articles.'),1600);
+}
+function localStorageGet(k){try{return localStorage.getItem('sc_'+k)}catch{return null}}
+function localStorageSet(k,v){try{localStorage.setItem('sc_'+k,v)}catch{}}
+const ROLES={proprietaire:'Propriétaire',gerant:'Gérant',vendeur:'Vendeur',employe:'Employé'};
+const estGerant=()=>['proprietaire','gerant'].includes(CTX?.membre?.role);
+$('#deco').onclick=async()=>{await sb.auth.signOut();location.href=location.pathname+(params.get('e')?'?e='+params.get('e'):'')};
+
+/* ============ Menu ============ */
+const IC={
+ accueil:'<path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/>',
+ caisse:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h4M7 17h4M15 13h2M15 17h2"/>',
+ articles:'<path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/>',
+ mouvements:'<path d="M7 4v16M7 20l-4-4M7 20l4-4M17 20V4M17 4l-4 4M17 4l4 4"/>',
+ ventes:'<path d="M4 19V5M4 19h16M8 15l4-4 3 3 5-6"/>',
+ clients:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 11a3 3 0 100-6M22 21c0-3-2-5-4-5.5"/>',
+ equipe:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+ reglages:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/>'
+};
+const svg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
+function pages(){
+  const a=CTX.logiciels.includes('stockpro');const g=estGerant();
+  return [g&&['accueil','Tableau de bord'],a&&['caisse','Caisse'],a&&g&&['articles','Articles'],a&&g&&['mouvements','Entrées / sorties'],
+    a&&['ventes','Ventes'],a&&['clients','Clients'],g&&['equipe','Équipe'],g&&['reglages','Mon espace']].filter(Boolean);
+}
+function construireMenu(){
+  $('#nav').innerHTML=pages().map(([k,t])=>`<button data-v="${k}">${svg(k)}${t}</button>`).join('');
+  $('#nav-mob').innerHTML=pages().filter(([k])=>['accueil','caisse','articles','ventes','equipe'].includes(k)).slice(0,5).map(([k,t])=>`<button data-v="${k}">${svg(k)}${t.split(' ')[0]}</button>`).join('');
+  document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>aller(b.dataset.v));
+}
+function aller(v){VUE=v;document.querySelectorAll('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));window.scrollTo(0,0);
+  ({accueil:vAccueil,caisse:vCaisse,articles:vArticles,mouvements:vMouvements,ventes:vVentes,clients:vClients,equipe:vEquipe,reglages:vReglages}[v]||vAccueil)()}
+function entete(titre,btn=''){
+  const e=CTX.espace;let bandeau='';
+  if(e.statut==='essai'){const j=Math.max(0,Math.ceil((new Date(e.essai_fin)-Date.now())/864e5));
+    bandeau=`<div class="essai">⏳ Essai gratuit : <b>${j} jour${j>1?'s':''} restant${j>1?'s':''}</b>. <a href="https://wa.me/15054642331?text=${encodeURIComponent('Bonjour, je souhaite activer mon abonnement pour '+e.nom+' ('+e.slug+')')}" target="_blank">Activer mon abonnement</a></div>`}
+  return bandeau+`<div class="entete"><h1>${titre}</h1><div>${btn}</div></div>`;
+}
+const C=()=>$('#contenu');
+function modale(html,onOk){
+  $('#modale-zone').innerHTML=`<div class="voile"><form class="modale">${html}<div class="err" id="m-err"></div><div class="actions"><button type="button" class="btn sec" id="m-ann">Annuler</button><button class="btn" id="m-ok">Enregistrer</button></div></form></div>`;
+  const f=$('#modale-zone form');$('#m-ann').onclick=fermer;$('.voile').onclick=e=>{if(e.target.classList.contains('voile'))fermer()};
+  f.onsubmit=async ev=>{ev.preventDefault();$('#m-ok').disabled=true;try{await onOk(f);fermer()}catch(e){$('#m-err').textContent=erreurMsg(e);$('#m-ok').disabled=false}};
+}
+function fermer(){$('#modale-zone').innerHTML=''}
+const E=()=>CTX.espace.id;
+const verif=({data,error})=>{if(error)throw error;return data};
+
+/* ============ Tableau de bord ============ */
+async function vAccueil(){
+  C().innerHTML=entete('Bonjour '+esc(CTX.membre.nom_complet.split(' ')[0])+' 👋')+'<div class="vide">Chargement…</div>';
+  if(!CTX.logiciels.includes('stockpro')){C().innerHTML=entete('Bienvenue')+'<div class="carte">Aucun logiciel actif sur cet espace. Contactez SACKO CONCEPT.</div>';return}
+  const r=verif(await sb.rpc('sp_resume',{p_espace:E()}));
+  const{data:dern}=await sb.from('sp_ventes').select('numero,total,statut,created_at,mode_paiement').eq('espace_id',E()).order('created_at',{ascending:false}).limit(6);
+  C().innerHTML=entete('Bonjour '+esc(CTX.membre.nom_complet.split(' ')[0])+' 👋','<button class="btn" onclick="aller(\'caisse\')">+ Nouvelle vente</button>')+`
+  <div class="kpis">
+    <div class="kpi p"><small>Ventes du jour</small><div>${fmt(r.ventes_jour)}</div><small>${r.nb_ventes_jour} vente(s)</small></div>
+    <div class="kpi"><small>Ventes du mois</small><div>${fmt(r.ventes_mois)}</div></div>
+    <div class="kpi"><small>Bénéfice du mois</small><div>${fmt(r.marge_mois)}</div></div>
+    <div class="kpi"><small>Valeur du stock</small><div>${fmt(r.valeur_stock)}</div><small>${r.nb_articles} article(s)</small></div>
+  </div>
+  ${r.nb_articles===0?`<div class="carte" style="margin-bottom:14px"><b>Première étape :</b> ajoutez vos articles pour commencer à vendre. <button class="btn pt" style="margin-left:8px" onclick="aller('articles')">Ajouter mes articles</button></div>`:''}
+  <div class="deux">
+    <div class="carte"><h3 style="margin-top:0">⚠️ Stock faible</h3>${r.alertes.length?`<table>${r.alertes.map(a=>`<tr><td>${esc(a.nom)}</td><td><span class="tag ${a.quantite<=0?'rouge':'orange'}">${a.quantite} restant(s)</span></td></tr>`).join('')}</table>`:'<div class="vide">Aucune alerte. Tout va bien ✓</div>'}</div>
+    <div class="carte"><h3 style="margin-top:0">🏆 Meilleures ventes du mois</h3>${r.top.length?`<table>${r.top.map(t=>`<tr><td>${esc(t.libelle)}</td><td>${t.qte}</td><td style="text-align:right"><b>${fmt(t.ca)}</b></td></tr>`).join('')}</table>`:'<div class="vide">Pas encore de ventes ce mois-ci</div>'}</div>
+  </div>
+  <div class="carte" style="margin-top:14px"><h3 style="margin-top:0">Dernières ventes ${r.credits>0?`<span class="tag orange" style="margin-left:6px">Crédits clients : ${fmt(r.credits)}</span>`:''}</h3>
+    ${dern?.length?`<div class="tab-scroll"><table><tr><th>N°</th><th>Date</th><th>Paiement</th><th>Statut</th><th style="text-align:right">Total</th></tr>${dern.map(v=>`<tr><td>${v.numero}</td><td>${dt(v.created_at)}</td><td>${MODES[v.mode_paiement]}</td><td>${tagStatut(v.statut)}</td><td style="text-align:right"><b>${fmt(v.total)}</b></td></tr>`).join('')}</table></div>`:'<div class="vide">Aucune vente pour le moment</div>'}
+  </div>`;
+}
+const MODES={especes:'Espèces',mobile_money:'Mobile Money',carte:'Carte',virement:'Virement',credit:'Crédit'};
+const tagStatut=s=>s==='payee'?'<span class="tag">Payée</span>':s==='credit'?'<span class="tag orange">À crédit</span>':'<span class="tag gris">Annulée</span>';
+
+/* ============ Caisse ============ */
+let PANIER=[],ARTS=[];
+async function vCaisse(){
+  ARTS=verif(await sb.from('sp_articles').select('*').eq('espace_id',E()).eq('actif',true).order('nom'));
+  const clients=verif(await sb.from('sp_clients').select('id,nom').eq('espace_id',E()).order('nom'));
+  C().innerHTML=entete('Caisse')+`<div class="caisse">
+    <div><input class="recherche" id="k-rech" placeholder="🔍 Rechercher un article ou scanner un code" style="margin-bottom:12px;max-width:none">
+      <div class="produits" id="k-prods"></div></div>
+    <div class="carte panier"><h3 style="margin-top:0">Panier</h3><div id="k-lignes"></div>
+      <label>Remise</label><input id="k-rem" type="number" min="0" value="0">
+      <label>Client (facultatif)</label><select id="k-cli"><option value="">Client de passage</option>${clients.map(c=>`<option value="${c.id}">${esc(c.nom)}</option>`).join('')}</select>
+      <label>Paiement</label><select id="k-mode">${Object.entries(MODES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select>
+      <div class="total"><span>Total</span><span id="k-tot">${fmt(0)}</span></div>
+      <button class="btn" style="width:100%" id="k-ok">Valider la vente</button><div class="err" id="k-err"></div></div></div>`;
+  const dessiner=()=>{const q=$('#k-rech').value.toLowerCase();
+    $('#k-prods').innerHTML=ARTS.filter(a=>!q||a.nom.toLowerCase().includes(q)||(a.reference||'').toLowerCase().includes(q)||a.code_barre===q).map(a=>
+      `<button class="prod ${a.quantite<=0?'epuise':''}" data-id="${a.id}"><b>${esc(a.nom)}</b><span>${fmt(a.prix_vente)}</span><small>Stock : ${a.quantite} ${esc(a.unite)}</small></button>`).join('')||'<div class="vide">Aucun article. '+(estGerant()?'<a href="#" onclick="aller(\'articles\');return false">Ajouter des articles</a>':'')+'</div>';
+    document.querySelectorAll('.prod').forEach(b=>b.onclick=()=>ajouterPanier(b.dataset.id));};
+  $('#k-rech').oninput=dessiner;
+  $('#k-rech').onkeydown=e=>{if(e.key==='Enter'){const a=ARTS.find(x=>x.code_barre&&x.code_barre===e.target.value.trim());if(a){ajouterPanier(a.id);e.target.value='';dessiner()}}};
+  $('#k-rem').oninput=dessinerPanier;$('#k-ok').onclick=validerVente;dessiner();dessinerPanier();
+}
+function ajouterPanier(id){const a=ARTS.find(x=>x.id===id);if(!a||a.quantite<=0)return;const l=PANIER.find(x=>x.id===id);
+  if(l){if(l.q<a.quantite)l.q++;else toast('Stock maximum atteint')}else PANIER.push({id,q:1});dessinerPanier()}
+function dessinerPanier(){
+  let tot=0;$('#k-lignes').innerHTML=PANIER.map(l=>{const a=ARTS.find(x=>x.id===l.id);tot+=a.prix_vente*l.q;
+    return`<div class="ligne"><div><b style="font-size:14px">${esc(a.nom)}</b><br><small>${fmt(a.prix_vente)}</small></div><div class="qte"><button data-m="${l.id}">−</button>${l.q}<button data-p="${l.id}">+</button></div></div>`}).join('')||'<div class="vide" style="padding:14px">Touchez un article pour l\'ajouter</div>';
+  $('#k-tot').textContent=fmt(Math.max(0,tot-(+$('#k-rem').value||0)));
+  document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const l=PANIER.find(x=>x.id===b.dataset.m);l.q--;if(l.q<=0)PANIER=PANIER.filter(x=>x!==l);dessinerPanier()});
+  document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>ajouterPanier(b.dataset.p));
+}
+async function validerVente(){
+  if(!PANIER.length){$('#k-err').textContent='Le panier est vide';return}
+  const btn=$('#k-ok');btn.disabled=true;$('#k-err').textContent='';
+  const{data,error}=await sb.rpc('sp_enregistrer_vente',{p_espace:E(),p_lignes:PANIER.map(l=>({article_id:l.id,quantite:l.q})),
+    p_mode:$('#k-mode').value,p_client:$('#k-cli').value||null,p_remise:+$('#k-rem').value||0});
+  btn.disabled=false;if(error){$('#k-err').textContent=erreurMsg(error);return}
+  const lignes=PANIER.map(l=>{const a=ARTS.find(x=>x.id===l.id);return{nom:a.nom,q:l.q,p:a.prix_vente}});
+  PANIER=[];toast('Vente '+data.numero+' enregistrée ✓');recu(data,lignes);vCaisse();
+}
+function recu(v,lignes){
+  const e=CTX.espace;
+  $('#modale-zone').innerHTML=`<div class="voile"><div class="modale" id="recu" style="max-width:360px">
+   <div style="text-align:center">${e.logo_url?`<img src="${esc(e.logo_url)}" style="max-height:60px">`:''}<h3>${esc(e.nom)}</h3><small>${e.telephone?esc(e.telephone)+'<br>':''}Reçu ${v.numero} — ${dt(new Date())}</small></div>
+   <table style="margin:12px 0">${lignes.map(l=>`<tr><td>${esc(l.nom)} × ${l.q}</td><td style="text-align:right">${fmt(l.p*l.q)}</td></tr>`).join('')}</table>
+   <div class="total"><span>Total</span><span>${fmt(v.total)}</span></div><p style="text-align:center;font-size:12px;color:var(--mut)">Merci pour votre achat !</p>
+   <div class="actions"><button class="btn sec" onclick="fermer()">Fermer</button><button class="btn" onclick="window.print()">Imprimer</button></div></div></div>`;
+}
+
+/* ============ Articles ============ */
+async function vArticles(){
+  const arts=verif(await sb.from('sp_articles').select('*, sp_categories(nom)').eq('espace_id',E()).eq('actif',true).order('nom'));
+  C().innerHTML=entete('Articles',`<button class="btn sec" id="a-imp">Importer (Excel/CSV)</button> <button class="btn" id="a-new">+ Ajouter</button>`)+`
+   <input class="recherche" id="a-rech" placeholder="🔍 Rechercher" style="margin-bottom:12px">
+   <div class="carte tab-scroll"><table id="a-tab"></table></div>`;
+  const dess=()=>{const q=$('#a-rech').value.toLowerCase();const l=arts.filter(a=>!q||a.nom.toLowerCase().includes(q)||(a.reference||'').toLowerCase().includes(q));
+    $('#a-tab').innerHTML=l.length?`<tr><th>Article</th><th>Catégorie</th><th>Prix d'achat</th><th>Prix de vente</th><th>Stock</th><th></th></tr>`+l.map(a=>`<tr>
+      <td><b>${esc(a.nom)}</b>${a.reference?`<br><small style="color:var(--mut)">${esc(a.reference)}</small>`:''}</td><td>${esc(a.sp_categories?.nom||'—')}</td>
+      <td>${fmt(a.prix_achat)}</td><td><b>${fmt(a.prix_vente)}</b></td>
+      <td><span class="tag ${a.quantite<=0?'rouge':a.quantite<=a.seuil_alerte?'orange':''}">${a.quantite} ${esc(a.unite)}</span></td>
+      <td style="white-space:nowrap"><button class="btn pt sec" data-mv="${a.id}">Stock</button> <button class="btn pt lien" data-ed="${a.id}">Modifier</button></td></tr>`).join(''):'<tr><td class="vide">Aucun article. Cliquez sur « + Ajouter » ou importez votre fichier Excel.</td></tr>';
+    document.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>formArticle(arts.find(a=>a.id===b.dataset.ed)));
+    document.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>formMouvement(arts.find(a=>a.id===b.dataset.mv)));};
+  $('#a-rech').oninput=dess;$('#a-new').onclick=()=>formArticle();$('#a-imp').onclick=importer;dess();
+}
+async function formArticle(a={}){
+  const cats=verif(await sb.from('sp_categories').select('*').eq('espace_id',E()).order('nom'));
+  modale(`<h3>${a.id?'Modifier':'Nouvel'} article</h3>
+    <label>Nom</label><input name="nom" required value="${esc(a.nom)}">
+    <div class="grille2"><div><label>Référence</label><input name="reference" value="${esc(a.reference)}"></div>
+    <div><label>Code-barres</label><input name="code_barre" value="${esc(a.code_barre)}"></div>
+    <div><label>Catégorie</label><input name="cat" list="cats" value="${esc(cats.find(c=>c.id===a.categorie_id)?.nom||'')}"><datalist id="cats">${cats.map(c=>`<option value="${esc(c.nom)}">`).join('')}</datalist></div>
+    <div><label>Unité</label><input name="unite" value="${esc(a.unite||'pièce')}"></div>
+    <div><label>Prix d'achat</label><input name="prix_achat" type="number" min="0" step="any" value="${a.prix_achat??0}"></div>
+    <div><label>Prix de vente</label><input name="prix_vente" type="number" min="0" step="any" required value="${a.prix_vente??''}"></div>
+    ${a.id?'':'<div><label>Stock initial</label><input name="quantite" type="number" step="any" value="0"></div>'}
+    <div><label>Alerte si stock ≤</label><input name="seuil_alerte" type="number" min="0" step="any" value="${a.seuil_alerte??5}"></div></div>
+    ${a.id?'<button type="button" class="btn rouge pt" style="margin-top:14px" id="a-sup">Retirer cet article</button>':''}`,
+  async f=>{const v=Object.fromEntries(new FormData(f));let categorie_id=null;
+    if(v.cat.trim()){const ex=cats.find(c=>c.nom.toLowerCase()===v.cat.trim().toLowerCase());
+      categorie_id=ex?ex.id:verif(await sb.from('sp_categories').insert({espace_id:E(),nom:v.cat.trim()}).select().single()).id}
+    const row={nom:v.nom.trim(),reference:v.reference||null,code_barre:v.code_barre||null,unite:v.unite||'pièce',categorie_id,
+      prix_achat:+v.prix_achat||0,prix_vente:+v.prix_vente||0,seuil_alerte:+v.seuil_alerte||0};
+    if(a.id)verif(await sb.from('sp_articles').update(row).eq('id',a.id));
+    else{const n=verif(await sb.from('sp_articles').insert({...row,espace_id:E(),quantite:0}).select().single());
+      if(+v.quantite)verif(await sb.rpc('sp_mouvement_stock',{p_article:n.id,p_type:'entree',p_quantite:+v.quantite,p_note:'Stock initial'}))}
+    toast('Article enregistré');vArticles()});
+  if(a.id)$('#a-sup').onclick=async()=>{if(!confirm('Retirer cet article de la liste ?'))return;verif(await sb.from('sp_articles').update({actif:false}).eq('id',a.id));fermer();vArticles()};
+}
+function formMouvement(a){
+  modale(`<h3>Stock : ${esc(a.nom)}</h3><p style="color:var(--mut);margin:4px 0">Stock actuel : <b>${a.quantite} ${esc(a.unite)}</b></p>
+   <label>Opération</label><select name="type"><option value="entree">Entrée (réception, achat)</option><option value="sortie">Sortie (perte, casse, usage)</option><option value="ajustement">Inventaire (stock réel compté)</option></select>
+   <label>Quantité</label><input name="q" type="number" step="any" min="0" required>
+   <label>Note</label><input name="note" placeholder="ex. Livraison fournisseur">`,
+  async f=>{const v=Object.fromEntries(new FormData(f));verif(await sb.rpc('sp_mouvement_stock',{p_article:a.id,p_type:v.type,p_quantite:+v.q,p_note:v.note||null}));toast('Stock mis à jour');aller(VUE)});
+}
+function importer(){
+  modale(`<h3>Importer vos articles</h3><p style="color:var(--mut);font-size:14px">Fichier CSV (exporté depuis Excel : « Enregistrer sous » → CSV) avec les colonnes :<br><b>nom ; prix_achat ; prix_vente ; quantite ; categorie ; reference</b></p>
+   <input type="file" name="f" accept=".csv,text/csv" required>`,
+  async f=>{const file=f.f.files[0];const txt=await file.text();const lignes=txt.split(/\r?\n/).filter(l=>l.trim());
+    const sep=lignes[0].includes(';')?';':',';const ent=lignes[0].toLowerCase().split(sep).map(s=>s.trim().replace(/"/g,''));
+    const idx=k=>ent.findIndex(h=>h.startsWith(k));const num=s=>+String(s||'0').replace(/\s/g,'').replace(',','.')||0;
+    const cats=verif(await sb.from('sp_categories').select('*').eq('espace_id',E()));let n=0;
+    for(const l of lignes.slice(1)){const c=l.split(sep).map(s=>s.trim().replace(/^"|"$/g,''));const nom=c[idx('nom')];if(!nom)continue;
+      let categorie_id=null;const cn=idx('cat')>=0?c[idx('cat')]:'';
+      if(cn){let ex=cats.find(x=>x.nom.toLowerCase()===cn.toLowerCase());if(!ex){ex=verif(await sb.from('sp_categories').insert({espace_id:E(),nom:cn}).select().single());cats.push(ex)}categorie_id=ex.id}
+      const art=verif(await sb.from('sp_articles').insert({espace_id:E(),nom,categorie_id,reference:idx('ref')>=0?c[idx('ref')]||null:null,
+        prix_achat:num(c[idx('prix_a')]),prix_vente:num(c[idx('prix_v')]),quantite:0,seuil_alerte:5}).select().single());
+      const q=num(c[idx('quant')]);if(q)verif(await sb.rpc('sp_mouvement_stock',{p_article:art.id,p_type:'entree',p_quantite:q,p_note:'Import'}));n++}
+    toast(n+' article(s) importé(s)');vArticles()});
+}
+
+/* ============ Mouvements ============ */
+async function vMouvements(){
+  const m=verif(await sb.from('sp_mouvements').select('*, sp_articles(nom), membres(nom_complet)').eq('espace_id',E()).order('created_at',{ascending:false}).limit(200));
+  const T={entree:['Entrée',''],sortie:['Sortie','rouge'],vente:['Vente','gris'],ajustement:['Inventaire','orange'],annulation:['Annulation','orange']};
+  C().innerHTML=entete('Entrées / sorties de stock')+`<div class="carte tab-scroll">${m.length?`<table><tr><th>Date</th><th>Article</th><th>Opération</th><th>Quantité</th><th>Par</th><th>Note</th></tr>
+   ${m.map(x=>`<tr><td>${dt(x.created_at)}</td><td>${esc(x.sp_articles?.nom)}</td><td><span class="tag ${T[x.type][1]}">${T[x.type][0]}</span></td><td><b>${x.quantite>0?'+':''}${x.quantite}</b></td><td>${esc(x.membres?.nom_complet||'')}</td><td>${esc(x.note||'')}</td></tr>`).join('')}</table>`:'<div class="vide">Aucun mouvement</div>'}</div>`;
+}
+
+/* ============ Ventes ============ */
+async function vVentes(){
+  let q=sb.from('sp_ventes').select('*, sp_clients(nom), membres(nom_complet)').eq('espace_id',E()).order('created_at',{ascending:false}).limit(200);
+  if(!estGerant())q=q.eq('membre_id',CTX.membre.id);
+  const v=verif(await q);
+  C().innerHTML=entete(estGerant()?'Ventes':'Mes ventes',estGerant()?'<button class="btn sec" id="v-exp">Exporter (Excel)</button>':'')+`<div class="carte tab-scroll">${v.length?`<table><tr><th>N°</th><th>Date</th><th>Client</th><th>Vendeur</th><th>Paiement</th><th>Statut</th><th style="text-align:right">Total</th><th></th></tr>
+   ${v.map(x=>`<tr><td>${x.numero}</td><td>${dt(x.created_at)}</td><td>${esc(x.sp_clients?.nom||'Passage')}</td><td>${esc(x.membres?.nom_complet||'')}</td><td>${MODES[x.mode_paiement]}</td><td>${tagStatut(x.statut)}</td><td style="text-align:right"><b>${fmt(x.total)}</b></td>
+   <td style="white-space:nowrap">${estGerant()&&x.statut==='credit'?`<button class="btn pt sec" data-payer="${x.id}">Encaisser</button>`:''} ${estGerant()&&x.statut!=='annulee'?`<button class="btn pt lien" data-ann="${x.id}">Annuler</button>`:''}</td></tr>`).join('')}</table>`:'<div class="vide">Aucune vente</div>'}</div>`;
+  document.querySelectorAll('[data-ann]').forEach(b=>b.onclick=async()=>{if(!confirm('Annuler cette vente ? Le stock sera remis.'))return;verif(await sb.rpc('sp_annuler_vente',{p_vente:b.dataset.ann}));toast('Vente annulée');vVentes()});
+  document.querySelectorAll('[data-payer]').forEach(b=>b.onclick=async()=>{verif(await sb.from('sp_ventes').update({statut:'payee'}).eq('id',b.dataset.payer));toast('Crédit encaissé');vVentes()});
+  if($('#v-exp'))$('#v-exp').onclick=()=>{const csv=['N°;Date;Client;Vendeur;Paiement;Statut;Total',...v.map(x=>[x.numero,new Date(x.created_at).toLocaleString('fr-FR'),x.sp_clients?.nom||'Passage',x.membres?.nom_complet||'',MODES[x.mode_paiement],x.statut,x.total].join(';'))].join('\n');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'}));a.download='ventes-'+CTX.espace.slug+'.csv';a.click()};
+}
+
+/* ============ Clients ============ */
+async function vClients(){
+  const c=verif(await sb.from('sp_clients').select('*').eq('espace_id',E()).order('nom'));
+  C().innerHTML=entete('Clients','<button class="btn" id="cl-new">+ Ajouter</button>')+`<div class="carte tab-scroll">${c.length?`<table><tr><th>Nom</th><th>Téléphone</th><th>E-mail</th><th>Note</th></tr>${c.map(x=>`<tr><td><b>${esc(x.nom)}</b></td><td>${x.telephone?`<a href="https://wa.me/${esc(x.telephone.replace(/\D/g,''))}" target="_blank">${esc(x.telephone)}</a>`:''}</td><td>${esc(x.email||'')}</td><td>${esc(x.note||'')}</td></tr>`).join('')}</table>`:'<div class="vide">Aucun client enregistré</div>'}</div>`;
+  $('#cl-new').onclick=()=>modale(`<h3>Nouveau client</h3><label>Nom</label><input name="nom" required><label>Téléphone / WhatsApp</label><input name="telephone"><label>E-mail</label><input name="email" type="email"><label>Note</label><input name="note">`,
+    async f=>{const v=Object.fromEntries(new FormData(f));verif(await sb.from('sp_clients').insert({...v,espace_id:E()}));toast('Client ajouté');vClients()});
+}
+
+/* ============ Équipe ============ */
+async function vEquipe(){
+  const m=verif(await sb.from('membres').select('*').eq('espace_id',E()).order('created_at'));
+  const lien=location.origin+location.pathname+'?e='+CTX.espace.slug;
+  C().innerHTML=entete('Équipe','<button class="btn" id="eq-new">+ Ajouter un membre</button>')+`
+  <div class="carte" style="margin-bottom:14px;font-size:14px">🔗 Lien de connexion de votre équipe (à vos couleurs) : <b>${esc(lien)}</b> <button class="btn pt sec" id="eq-copie">Copier</button><br><small style="color:var(--mut)">Code entreprise : <b>${esc(CTX.espace.slug)}</b></small></div>
+  <div class="carte tab-scroll"><table><tr><th>Nom</th><th>Rôle</th><th>Connexion</th><th>Statut</th><th></th></tr>
+  ${m.map(x=>`<tr><td><b>${esc(x.nom_complet)}</b>${x.poste?`<br><small style="color:var(--mut)">${esc(x.poste)}</small>`:''}</td><td>${ROLES[x.role]}</td>
+   <td>${x.identifiant?`Identifiant : <b>${esc(x.identifiant)}</b> + PIN`:'E-mail + mot de passe'}</td><td>${x.actif?'<span class="tag">Actif</span>':'<span class="tag gris">Désactivé</span>'}</td>
+   <td style="white-space:nowrap">${x.role!=='proprietaire'?`<button class="btn pt sec" data-pin="${x.id}">${x.identifiant?'Nouveau PIN':'Nouveau mot de passe'}</button> <button class="btn pt lien" data-act="${x.id}">${x.actif?'Désactiver':'Réactiver'}</button>`:''}</td></tr>`).join('')}</table></div>`;
+  $('#eq-copie').onclick=()=>{navigator.clipboard?.writeText(lien);toast('Lien copié')};
+  $('#eq-new').onclick=()=>modale(`<h3>Ajouter un membre</h3>
+    <label>Nom complet</label><input name="nom_complet" required>
+    <div class="grille2"><div><label>Rôle</label><select name="role"><option value="vendeur">Vendeur</option>${CTX.membre.role==='proprietaire'?'<option value="gerant">Gérant</option>':''}</select></div>
+    <div><label>Poste</label><input name="poste" placeholder="Caissière"></div></div>
+    <label>Téléphone</label><input name="telephone">
+    <label>Mode de connexion</label><select name="mode" id="eq-mode"><option value="pin">Identifiant + code PIN (sans e-mail)</option><option value="email">E-mail + mot de passe</option></select>
+    <div id="eq-pin"><div class="grille2"><div><label>Identifiant</label><input name="identifiant" placeholder="ex. awa"></div><div><label>Code PIN (6 chiffres)</label><input name="pin" inputmode="numeric" pattern="\\d{6}" value="${String(Math.floor(1e5+Math.random()*9e5))}"></div></div></div>
+    <div id="eq-mail" class="cache"><label>E-mail</label><input name="email" type="email"><label>Mot de passe provisoire (8 caractères min.)</label><input name="mdp"></div>`,
+   async f=>{const v=Object.fromEntries(new FormData(f));
+     const corps={action:'creer',espace_id:E(),nom_complet:v.nom_complet,role:v.role,poste:v.poste,telephone:v.telephone,
+       ...(v.mode==='pin'?{identifiant:v.identifiant,mot_de_passe:v.pin}:{email:v.email,mot_de_passe:v.mdp})};
+     const j=await appelMembres(corps);
+     const msg=v.mode==='pin'?`Bonjour ${v.nom_complet}, voici votre accès à ${CTX.espace.nom} :\n${lien}\nIdentifiant : ${j.connexion.identifiant}\nCode PIN : ${v.pin}`:`Bonjour ${v.nom_complet}, voici votre accès à ${CTX.espace.nom} :\n${lien}\nE-mail : ${v.email}\nMot de passe provisoire : ${v.mdp}`;
+     setTimeout(()=>partagerAcces(msg,v.telephone),50);vEquipe()});
+  document.addEventListener('change',e=>{if(e.target.id==='eq-mode'){$('#eq-pin').classList.toggle('cache',e.target.value!=='pin');$('#eq-mail').classList.toggle('cache',e.target.value==='pin')}});
+  document.querySelectorAll('[data-pin]').forEach(b=>b.onclick=()=>{const x=m.find(y=>y.id===b.dataset.pin);
+    modale(`<h3>${x.identifiant?'Nouveau code PIN':'Nouveau mot de passe'}</h3><p>${esc(x.nom_complet)}</p><input name="s" required value="${x.identifiant?String(Math.floor(1e5+Math.random()*9e5)):''}" ${x.identifiant?'pattern="\\d{6}" inputmode="numeric"':'minlength="8"'}>`,
+     async f=>{const s=f.s.value;await appelMembres({action:'nouveau_secret',espace_id:E(),membre_id:x.id,mot_de_passe:s});
+       setTimeout(()=>partagerAcces(`Bonjour ${x.nom_complet}, votre nouveau ${x.identifiant?'code PIN':'mot de passe'} pour ${CTX.espace.nom} : ${s}\n${lien}`,x.telephone),50)})});
+  document.querySelectorAll('[data-act]').forEach(b=>b.onclick=async()=>{const x=m.find(y=>y.id===b.dataset.act);verif(await sb.from('membres').update({actif:!x.actif}).eq('id',x.id));vEquipe()});
+}
+async function appelMembres(corps){
+  const{data:{session}}=await sb.auth.getSession();
+  const r=await fetch(SB_URL+'/functions/v1/membres',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+session.access_token},body:JSON.stringify(corps)});
+  const j=await r.json();if(!r.ok||j.erreur)throw new Error(j.erreur||'Erreur');return j;
+}
+function partagerAcces(msg,tel){
+  $('#modale-zone').innerHTML=`<div class="voile"><div class="modale"><h3>✓ Accès prêt</h3><p style="color:var(--mut)">Envoyez ces informations au membre :</p>
+   <textarea rows="6" readonly>${esc(msg)}</textarea><div class="actions"><button class="btn sec" onclick="navigator.clipboard?.writeText(${esc(JSON.stringify(msg))});toast('Copié')">Copier</button>
+   <a class="btn" target="_blank" href="https://wa.me/${esc((tel||'').replace(/\D/g,''))}?text=${encodeURIComponent(msg)}">Envoyer par WhatsApp</a></div>
+   <button class="btn lien" style="width:100%" onclick="fermer()">Fermer</button></div></div>`;
+}
+
+/* ============ Mon espace (marque) ============ */
+function vReglages(){
+  const e=CTX.espace;
+  C().innerHTML=entete('Mon espace')+`<div class="deux"><form class="carte" id="rg">
+    <h3 style="margin-top:0">Identité de l'entreprise</h3>
+    <label>Logo</label><div class="logo-zone" id="rg-lz"><img src="${esc(e.logo_url||'')}" class="${e.logo_url?'':'cache'}" id="rg-img"><span>Changer le logo</span></div><input type="file" id="rg-f" class="cache" accept="image/png,image/jpeg,image/webp">
+    <label>Nom</label><input name="nom" value="${esc(e.nom)}" required>
+    <div class="grille2"><div><label>Couleur principale</label><input type="color" name="couleur_principale" value="${e.couleur_principale}" style="height:44px"></div>
+    <div><label>Téléphone</label><input name="telephone" value="${esc(e.telephone||'')}"></div></div>
+    <label>Adresse</label><input name="adresse" value="${esc(e.adresse||'')}">
+    <div class="err" id="rg-err"></div><button class="btn">Enregistrer</button></form>
+    <div class="carte"><h3 style="margin-top:0">Abonnement</h3><p>Statut : <b>${{essai:'Essai gratuit',actif:'Actif',suspendu:'Suspendu',resilie:'Résilié'}[e.statut]}</b></p>
+    <p>Logiciels : ${CTX.logiciels.map(l=>`<span class="tag">${esc(l)}</span>`).join(' ')}</p><p>Code entreprise : <b>${esc(e.slug)}</b></p>
+    <a class="btn sec" target="_blank" href="https://wa.me/15054642331?text=${encodeURIComponent('Bonjour SACKO CONCEPT, je suis '+e.nom+' ('+e.slug+')')}">Contacter le support</a></div></div>`;
+  let nouveauLogo=null;
+  $('#rg-lz').onclick=()=>$('#rg-f').click();
+  $('#rg-f').onchange=ev=>{const f=ev.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{$('#rg-img').src=img.src;$('#rg-img').classList.remove('cache');
+    document.querySelector('#rg [name=couleur_principale]').value=couleurDuLogo(img);nouveauLogo=f};img.src=URL.createObjectURL(f)};
+  $('#rg').onsubmit=async ev=>{ev.preventDefault();const v=Object.fromEntries(new FormData(ev.target));
+    try{let logo_url=e.logo_url;
+      if(nouveauLogo){const ch=`${e.id}/logo-${Date.now()}.${nouveauLogo.type.split('/')[1].replace('jpeg','jpg')}`;
+        verif(await sb.storage.from('photos').upload(ch,nouveauLogo,{upsert:true}));logo_url=sb.storage.from('photos').getPublicUrl(ch).data.publicUrl}
+      const p=lisible(v.couleur_principale);
+      const maj=verif(await sb.from('espaces').update({nom:v.nom,telephone:v.telephone,adresse:v.adresse,couleur_principale:p,couleur_secondaire:melange(p,.9),logo_url}).eq('id',e.id).select().single());
+      CTX.espace=maj;appliquerMarque(maj);$('#m-logo').src=maj.logo_url||'/assets/sacko-logo-96.png';$('#m-nom').textContent=maj.nom;toast('Enregistré ✓');
+    }catch(er){$('#rg-err').textContent=erreurMsg(er)}};
+}
+
+/* ============ Lancement ============ */
+sb.auth.onAuthStateChange((ev)=>{if(ev==='PASSWORD_RECOVERY'){$('#v-app').classList.add('cache');$('#v-auth').classList.remove('cache');
+  $('#f-cnx').classList.add('cache');$('#f-ins').classList.add('cache');$('.onglets').classList.add('cache');$('#f-reset').classList.remove('cache')}});
+(async()=>{const{data:{session}}=await sb.auth.getSession();
+  if(session&&!location.hash.includes('type=recovery'))demarrer();else montrerAuth()})();
+</script>
+</body>
+</html>
