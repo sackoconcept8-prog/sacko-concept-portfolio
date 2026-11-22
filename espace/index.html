@@ -375,7 +375,7 @@ $("#login-form").onsubmit=ev=>{ev.preventDefault();busy($("#l-btn"),async()=>{
 })};
 function demarrerHorsLigne(){let sn=null;try{sn=JSON.parse(localStorage.getItem("sp-snap")||"null")}catch(_){}
   if(!sn)return showLogin("Pas de réseau. Réessayez quand la connexion revient.");
-  moi=sn.moi;ag=sn.ag;habiller(ag);ecran("app");$("#hd-moi").textContent=moi.nom_complet;
+  moi=sn.moi;ag=sn.ag;monAgent=monAgent||sn.monAgent;habiller(ag);ecran("app");$("#hd-moi").textContent=moi.nom_complet;
   $("#layout").classList.remove("avec");$("#side").classList.add("hide");$("#tabs").classList.remove("hide");$("#menu-btn").classList.add("hide");
   $("#tabs").innerHTML=`<button data-tab="accueil" class="on">Accueil</button>`;tab="accueil";afficherHorsLigne();
   window.addEventListener("online",()=>location.reload(),{once:true})}
@@ -403,7 +403,7 @@ async function entrer(){
   const G=estDirection()||estSupGeneral()||estCommercial()?menuDirection():null;
   const T=G?G.flatMap(g=>g[1]):moi.role==="superviseur"?MENU_SUP
     :moi.role==="agent"?[["accueil","Accueil"],["monplanning","Planning"],["mesdemandes","Demandes"],["mesdocs","Documents"],["mesmsg","Messages"],["mapaie","Paie"]]
-    :moi.role==="client"?[["client","Mon site"],["cl-incidents","Incidents"],["cl-factures","Factures"],["cl-demandes","Demandes"]]:[["accueil","Accueil"]];
+    :moi.role==="client"?[["client","Accueil"],["cl-agents","Mes agents"],["cl-incidents","Incidents"],["cl-factures","Factures"],["cl-demandes","Demandes"]]:[["accueil","Accueil"]];
   $("#layout").classList.toggle("avec",!!G);$("#side").classList.toggle("hide",!G);$("#tabs").classList.toggle("hide",!!G);$("#menu-btn").classList.toggle("hide",!G);
   $("#side").innerHTML="";$("#tabs").innerHTML="";
   if(G)dessinerMenu(G);
@@ -535,7 +535,7 @@ async function chargerConseiller(){const [s,a]=await Promise.all([sb.rpc("sites_
 async function chargerCommercial(){const [s,a]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.rpc("agents_noms")]);sites=must(s);agents=must(a).sort((x,y)=>String(x.nom).localeCompare(String(y.nom)));comptes=[]}
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button,#side button[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));menu(false);window.scrollTo(0,0);
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estConseiller())await chargerConseiller();else if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();await({accueil:moi.role==="agent"?vAgentAccueil:estConseiller()?vAccueilConseiller:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport,avis:vAvis,recos:vRecos}[t])();if(estConseiller())barreAvis(t)}
+  try{if(estConseiller())await chargerConseiller();else if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();await({accueil:moi.role==="agent"?vAgentAccueil:estConseiller()?vAccueilConseiller:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-agents":vClientAgents,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport,avis:vAvis,recos:vRecos}[t])();if(estConseiller())barreAvis(t)}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
@@ -707,17 +707,22 @@ async function appel(body){
 
 /* ---------- comptes de l'équipe ---------- */
 function vComptes(){
-  const eq=comptes.filter(c=>c.role!=="agent"),creables=moi.role_reel==="dg"?["rh","superviseur","commercial","client"]:["superviseur","client"];
+  const eq=comptes.filter(c=>c.role!=="agent"),creables=moi.role_reel==="dg"?["rh","superviseur","commercial","conseiller","client"]:["superviseur","client"];
   $("#main").innerHTML=`<div class="head"><div><h1>Comptes de l'équipe</h1><p class="muted sm" style="margin:2px 0 0">Direction, ressources humaines et superviseurs. Les accès des agents se créent depuis leur fiche.</p></div><button class="btn pri" id="c-new">+ Nouveau compte</button></div>
-  <div class="card">${eq.map(c=>{const gerable=creables.includes(c.role);return `<div class="line">${avatar(c)}<div class="grow"><b>${esc(c.nom_complet)}</b>${c.id===moi.id?' <span class="muted sm">(vous)</span>':""}<div class="muted xs">${titre(c)}${c.fonction?" · accès "+ROLES[c.role].toLowerCase():""} · dernière connexion : ${fdt(c.derniere_connexion)}</div></div><span class="pill ${c.est_actif?"p-green":"p-grey"}">${c.est_actif?"Actif":"Désactivé"}</span>${gerable?`<button class="btn sm" data-mdp="${c.id}">Nouveau mot de passe</button><button class="btn sm ${c.est_actif?"danger":""}" data-act="${c.id}" data-val="${c.est_actif?0:1}">${c.est_actif?"Désactiver":"Réactiver"}</button>`:""}</div>`}).join("")}</div>`;
+  <div class="card">${eq.map(c=>{const gerable=creables.includes(c.role);return `<div class="line">${avatar(c)}<div class="grow"><b>${esc(c.nom_complet)}</b>${c.id===moi.id?' <span class="muted sm">(vous)</span>':""}<div class="muted xs">${titre(c)}${c.fonction?" · accès "+ROLES[c.role].toLowerCase():""} · dernière connexion : ${fdt(c.derniere_connexion)}</div></div><span class="pill ${c.est_actif?"p-green":"p-grey"}">${c.est_actif?"Actif":"Désactivé"}</span>${gerable&&c.role==="client"&&moi.role_reel==="dg"?`<button class="btn sm" data-cs="${c.id}">Sites suivis</button>`:""}${gerable?`<button class="btn sm" data-mdp="${c.id}">Nouveau mot de passe</button><button class="btn sm ${c.est_actif?"danger":""}" data-act="${c.id}" data-val="${c.est_actif?0:1}">${c.est_actif?"Désactiver":"Réactiver"}</button>`:""}</div>`}).join("")}</div>`;
   $("#c-new").onclick=()=>{
-    modal("Nouveau compte",`<div class="row"><div class="field"><label class="f">Niveau d'accès</label><select class="input" id="k-role">${creables.map(k=>`<option value="${k}">${k==="client"?"Client (voit son site)":ROLES[k]}</option>`).join("")}</select></div><div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div></div>
+    modal("Nouveau compte",`<div class="row"><div class="field"><label class="f">Niveau d'accès</label><select class="input" id="k-role">${creables.map(k=>`<option value="${k}">${k==="client"?"Client (voit ses sites)":ROLES[k]}</option>`).join("")}</select></div><div class="field"><label class="f">Nom complet</label><input class="input" id="k-nom"></div></div>
     <div class="field hide" id="k-sb"><label class="f">Site du client</label><select class="input" id="k-site">${sites.map(x=>`<option value="${x.id}">${esc(x.nom)}</option>`).join("")}</select></div>
     <div class="field"><label class="f">Fonction affichée <span class="muted" style="font-weight:400">(ex. Superviseur général, Directeur commercial, Superviseur)</span></label><input class="input" id="k-fonc" maxlength="60"></div>
     <div class="field"><label class="f">Adresse e-mail (sert d'identifiant)</label><input class="input" id="k-mail" type="email" autocomplete="off"></div>
     <div class="field"><label class="f">Mot de passe provisoire (8 caractères minimum)</label><input class="input" id="k-mdp" type="text" autocomplete="off"></div>`,`<button class="btn" id="k-no">Annuler</button><button class="btn pri" id="k-ok">Créer le compte</button>`);
     $("#k-no").onclick=closeModal;$("#k-ok").onclick=()=>busy($("#k-ok"),async()=>{const rl=$("#k-role").value;if(rl==="client"&&!sites.length)throw new Error("Créez d'abord le site du client.");await appel({action:"creer",role:rl,site_id:rl==="client"?$("#k-site").value:null,fonction:$("#k-fonc").value,nom_complet:$("#k-nom").value,email:$("#k-mail").value,mot_de_passe:$("#k-mdp").value});closeModal();toast("Compte créé");await ouvrir("comptes")});
     $("#k-role").onchange=e=>$("#k-sb").classList.toggle("hide",e.target.value!=="client")};
+  $("#main").querySelectorAll("[data-cs]").forEach(b=>b.onclick=()=>busy(b,async()=>{const c=comptes.find(x=>x.id===b.dataset.cs);
+    const deja=must(await sb.from("client_sites").select("site_id").eq("profile_id",c.id)).map(x=>x.site_id);
+    modal("Sites suivis · "+esc(c.nom_complet),`<p class="muted sm" style="margin-top:0">Cochez tous les sites de ce client. Il verra leurs agents, rondes, incidents, factures et demandes.</p>${sites.map(x=>`<label style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><input type="checkbox" data-sc="${x.id}" ${x.id===c.site_id||deja.includes(x.id)?"checked":""} ${x.id===c.site_id?"disabled":""}> ${esc(x.nom)}${x.id===c.site_id?' <span class="muted xs">(site principal)</span>':""}</label>`).join("")}`,`<button class="btn" id="cs-no">Annuler</button><button class="btn pri" id="cs-ok">Enregistrer</button>`);
+    $("#cs-no").onclick=closeModal;$("#cs-ok").onclick=()=>busy($("#cs-ok"),async()=>{const choix=[...document.querySelectorAll("[data-sc]:checked:not(:disabled)")].map(i=>i.dataset.sc);
+      must(await sb.from("client_sites").delete().eq("profile_id",c.id));if(choix.length)must(await sb.from("client_sites").insert(choix.map(id=>({profile_id:c.id,site_id:id,agence_id:ag.id}))));closeModal();toast("Sites du client enregistrés")})}));
   $("#main").querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>busy(b,async()=>{await appel({action:"activer",user_id:b.dataset.act,est_actif:b.dataset.val==="1"});toast(b.dataset.val==="1"?"Compte réactivé":"Compte désactivé");await ouvrir("comptes")}));
   $("#main").querySelectorAll("[data-mdp]").forEach(b=>b.onclick=()=>{const c=comptes.find(x=>x.id===b.dataset.mdp);saisirMdp("Nouveau mot de passe · "+esc(c.nom_complet),"L'ancien mot de passe ne fonctionnera plus.","Changer",async mdp=>{await appel({action:"mot_de_passe",user_id:c.id,mot_de_passe:mdp});closeModal();toast("Mot de passe changé")},closeModal)});
 }
@@ -1349,8 +1354,13 @@ function signalerIncident(site,apres){
   $("#in-no").onclick=closeModal;
   $("#in-ok").onclick=()=>busy($("#in-ok"),async()=>{const d=$("#in-d").value.trim();if(d.length<3){$("#in-d").focus();throw new Error("Décrivez l'incident.")}
     const siteId=$("#in-s")?$("#in-s").value:site.id;let chemin=null;
-    if(photo){const b=await reduirePhoto(photo,1280);chemin=ag.id+"/incidents/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+".jpg";must(await sb.storage.from("documents_agences").upload(chemin,b,{contentType:"image/jpeg"}))}
-    must(await sb.from("incidents").insert({site_id:siteId,agent_id:moi.role==="agent"?monAgent.id:null,type:$("#in-t").value,gravite:$("#in-g").value,description:d,photo_path:chemin,visible_client:true}));
+    const ligne={site_id:siteId,agent_id:moi.role==="agent"&&monAgent?monAgent.id:null,type:$("#in-t").value,gravite:$("#in-g").value,description:d,visible_client:true};
+    const garder=async()=>{let ph=null;if(photo){try{ph=await lireBlob(await reduirePhoto(photo,900))}catch(_){}}
+      mettreEnFile({k:"inc",ligne:{...ligne,survenu_le:new Date().toISOString(),description:"[Signalé sans réseau] "+d},photo:ph});closeModal();if(apres)await apres()};
+    if(!navigator.onLine)return garder();
+    try{if(photo){const b=await reduirePhoto(photo,1280);chemin=ag.id+"/incidents/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+".jpg";must(await sb.storage.from("documents_agences").upload(chemin,b,{contentType:"image/jpeg"}))}
+      must(await sb.from("incidents").insert({...ligne,photo_path:chemin}))}
+    catch(e){if(!horsReseau(e))throw e;return garder()}
     closeModal();toast("Incident signalé à la direction");if(apres)await apres()});
 }
 function reduirePhoto(file,max){return new Promise((ok,ko)=>{const im=new Image(),u=URL.createObjectURL(file);
@@ -1362,18 +1372,28 @@ function alerteSOS(site){
   `<button class="btn" id="so-no">Annuler</button><button class="btn pri" id="so-ok" style="background:var(--red);border-color:var(--red)">Envoyer l'alerte</button>`);
   $("#so-no").onclick=closeModal;
   $("#so-ok").onclick=()=>busy($("#so-ok"),async()=>{$("#so-ok").textContent="Envoi…";const pos=await positionRapide();
-    must(await sb.from("alertes_sos").insert({agent_id:monAgent.id,site_id:site&&site.id||null,latitude:pos?pos.lat:null,longitude:pos?pos.lng:null}));
+    const ligne={agent_id:monAgent.id,site_id:site&&site.id||null,latitude:pos?pos.lat:null,longitude:pos?pos.lng:null};
+    let ok=navigator.onLine;if(ok){try{must(await sb.from("alertes_sos").insert(ligne))}catch(e){if(!horsReseau(e))throw e;ok=false}}
+    if(!ok){mettreEnFile({k:"sos",ligne:{...ligne,declenchee_le:new Date().toISOString()}});
+      modal("Pas de réseau Internet",`<p style="margin-top:0"><b>L'alerte ne peut pas partir par Internet.</b> Envoyez le SMS ci-dessous (il contient votre nom, le site et votre position) ou appelez directement. L'alerte partira aussi toute seule dès le retour du réseau.</p>${smsSOS(site,pos)||'<p class="muted">Aucun numéro d\'urgence enregistré pour l\'agence.</p>'}`,`<button class="btn" id="so-f">Fermer</button>`);$("#so-f").onclick=closeModal;if($("#hl-ecran"))afficherHorsLigne();return}
     modal("Alerte envoyée",`<p style="margin-top:0"><b>Votre direction a été prévenue.</b> Mettez-vous en sécurité.</p>${ag.telephone?`<a class="btn pri" href="tel:${esc(ag.telephone.replace(/\s/g,""))}" style="width:100%">Appeler la direction</a>`:""}`,`<button class="btn" id="so-f">Fermer</button>`);$("#so-f").onclick=closeModal});
 }
 async function faireRonde(site,vise){
-  const r=must(await sb.from("rondes").insert({site_id:site.id,agent_id:monAgent.id,date_service:vise.ds,poste:vise.poste||null,points:[]}).select("*").single());
+  const base={site_id:site.id,agent_id:monAgent.id,date_service:vise.ds,poste:vise.poste||null};
+  let r=null,local=!navigator.onLine;
+  if(!local){try{r=must(await sb.from("rondes").insert({...base,points:[]}).select("*").single())}catch(e){if(!horsReseau(e))throw e;local=true}}
+  /* sans réseau : la ronde se fait sur le téléphone et part à la fin, dès que le réseau revient */
+  if(local)r={id:null,debut:new Date().toISOString()};
+  const enregistrer=async o=>{if(local)return;try{must(await sb.from("rondes").update(o).eq("id",r.id))}catch(e){if(!horsReseau(e))throw e;local=true}};
   const pts=site.points_ronde||[],faits=[];
   const dessiner=()=>{$("#box .box-b").innerHTML=`<p class="muted sm" style="margin-top:0">${esc(site.nom)} · commencée à ${hm(r.debut)}. Touchez chaque point quand vous y êtes.</p>${pts.map((n,i)=>{const f=faits.find(x=>x.i===i);return `<div class="pt-r ${f?"ok":""}"><span style="flex:1"><b>${esc(n)}</b>${f?`<div class="muted xs">Vérifié à ${hm(f.heure)}${f.lat==null?" · sans position":""}</div>`:""}</span>${f?"✓":`<button class="btn sm pri" data-pt="${i}">Vérifié</button>`}</div>`}).join("")}`;
     $("#box").querySelectorAll("[data-pt]").forEach(b=>b.onclick=()=>busy(b,async()=>{b.textContent="…";const pos=await positionRapide();
       faits.push({i:+b.dataset.pt,nom:pts[+b.dataset.pt],heure:new Date().toISOString(),lat:pos?pos.lat:null,lng:pos?pos.lng:null});
-      must(await sb.from("rondes").update({points:faits}).eq("id",r.id));dessiner()}))};
+      await enregistrer({points:faits});dessiner()}))};
   modal("Ronde en cours","",`<button class="btn pri" id="rd-fin">Terminer la ronde</button>`);dessiner();
-  const fin=async()=>{must(await sb.from("rondes").update({fin:new Date().toISOString(),points:faits}).eq("id",r.id));closeModal();toast(`Ronde terminée · ${faits.length}/${pts.length} point(s)`)};
+  const fin=async()=>{const f=new Date().toISOString();await enregistrer({fin:f,points:faits});
+    if(local){if(r.id)await sb.from("rondes").delete().eq("id",r.id).then(()=>{},()=>{});mettreEnFile({k:"ronde",ligne:{...base,debut:r.debut,fin:f,points:faits}});closeModal();if($("#hl-ecran"))afficherHorsLigne();return}
+    closeModal();toast(`Ronde terminée · ${faits.length}/${pts.length} point(s)`)};
   $("#rd-fin").onclick=()=>busy($("#rd-fin"),fin);$("#m-x").onclick=()=>busy(null,fin);
 }
 let filtreInc={periode:"7",site:"",statut:""};
@@ -1500,34 +1520,59 @@ async function vRapports(){moisR=moisR||auj().slice(0,7);const ym=moisR,D=await 
 }
 
 /* ---------- espace client ---------- */
-let monSite=null;
-async function chargerMonSite(){if(!moi.site_id)throw new Error("Votre compte n'est relié à aucun site. Contactez votre prestataire.");
-  monSite=must(await sb.from("sites").select("*").eq("id",moi.site_id).maybeSingle());if(!monSite)throw new Error("Site introuvable.");sites=[monSite];return monSite}
+let monSite=null,siteChoisi="";
+/* un client peut suivre plusieurs sites : on les charge tous, et un sélecteur permet de filtrer */
+async function chargerMonSite(){sites=must(await sb.from("sites").select("*").order("nom"));
+  if(!sites.length)throw new Error("Votre compte n'est relié à aucun site. Contactez votre prestataire.");
+  if(siteChoisi&&!sites.some(x=>x.id===siteChoisi))siteChoisi="";
+  monSite=sites.find(x=>x.id===(siteChoisi||moi.site_id))||sites[0];return monSite}
+const surMesSites=r=>!siteChoisi||r.site_id===siteChoisi;
+function selecteurSites(){if(sites.length<2)return "";return `<select class="input" id="cl-site" style="max-width:280px"><option value="">Tous mes sites (${sites.length})</option>${sites.map(x=>`<option value="${x.id}" ${x.id===siteChoisi?"selected":""}>${esc(x.nom)}</option>`).join("")}</select>`}
+function brancherSelecteur(){const e=$("#cl-site");if(e)e.onchange=()=>{siteChoisi=e.target.value;ouvrir(tab)}}
+const titreSites=()=>siteChoisi||sites.length===1?esc((sites.find(x=>x.id===siteChoisi)||sites[0]).nom):"Mes "+sites.length+" sites";
 async function vClient(){await chargerMonSite();const ds=auj();
-  const [pr,ro,inc,fa]=await Promise.all([sb.rpc("client_presences",{p_date:ds}).then(must),sb.from("rondes").select("*").eq("date_service",ds).then(must),sb.from("incidents").select("*").order("survenu_le",{ascending:false}).limit(5).then(must),sb.from("factures").select("*").eq("statut","En attente").then(must)]);
-  $("#main").innerHTML=`<div class="head"><div><h1>${esc(monSite.nom)}</h1><p class="muted sm" style="margin:2px 0 0">Votre site surveillé par ${esc(ag.nom_agence)} · ${esc(fjour(ds))}</p></div></div>
+  let [pr,ro,inc,fa]=await Promise.all([sb.rpc("client_presences",{p_date:ds}).then(must),sb.from("rondes").select("*").eq("date_service",ds).then(must),sb.from("incidents").select("*").order("survenu_le",{ascending:false}).limit(30).then(must),sb.from("factures").select("*").eq("statut","En attente").then(must)]);
+  pr=pr.filter(surMesSites);ro=ro.filter(surMesSites);inc=inc.filter(surMesSites).slice(0,5);fa=fa.filter(surMesSites);
+  const plusieurs=sites.length>1&&!siteChoisi;
+  $("#main").innerHTML=`<div class="head"><div><h1>${titreSites()}</h1><p class="muted sm" style="margin:2px 0 0">${sites.length>1?"Vos sites surveillés":"Votre site surveillé"} par ${esc(ag.nom_agence)} · ${esc(fjour(ds))}</p></div>${selecteurSites()}</div>
   <div class="tiles"><div class="tile"><b class="ok-t">${pr.filter(x=>!x.depart).length}</b><span class="muted sm">Agent(s) en poste</span></div><div class="tile"><b>${ro.length}</b><span class="muted sm">Ronde(s) aujourd'hui</span></div><div class="tile"><b>${fa.length}</b><span class="muted sm">Facture(s) à régler</span></div></div>
-  <div class="card"><h2>Présence aujourd'hui</h2>${pr.map(x=>`<div class="line"><div class="grow"><b>${esc(x.agent)}</b><div class="muted xs">${esc(x.grade)} · poste de ${esc(POSTE(x.poste).libelle.toLowerCase())}</div></div><span class="sm">arrivé à ${hm(x.arrivee)}${x.depart?" · parti à "+hm(x.depart):""}</span><span class="pill ${x.depart?"p-grey":"p-green"}">${x.depart?"Parti":"En poste"}</span></div>`).join("")||'<p class="muted sm" style="margin:0">Aucun pointage pour le moment aujourd\'hui.</p>'}</div>
-  <div class="card"><h2>Derniers incidents</h2>${inc.map(x=>`<div class="line"><div class="grow"><b>${esc(x.type)}</b> <span class="pill ${GRAV[x.gravite]||"p-grey"}">${esc(x.gravite)}</span><div class="muted xs">${fdt(x.survenu_le)}</div><div class="sm">${esc(x.description||"")}</div></div></div>`).join("")||'<p class="muted sm" style="margin:0">Aucun incident.</p>'}</div>`;
+  <div class="card"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Présence aujourd'hui</h2><button class="btn sm" id="cl-go-ag">Voir tous mes agents</button></div>${pr.map(x=>`<div class="line"><div class="grow"><b>${esc(x.agent)}</b><div class="muted xs">${esc(x.grade)} · poste de ${esc(POSTE(x.poste).libelle.toLowerCase())}${plusieurs?" · "+esc(siteNom(x.site_id)):""}</div></div><span class="sm">arrivé à ${hm(x.arrivee)}${x.depart?" · parti à "+hm(x.depart):""}</span><span class="pill ${x.depart?"p-grey":"p-green"}">${x.depart?"Parti":"En poste"}</span></div>`).join("")||'<p class="muted sm" style="margin:0">Aucun pointage pour le moment aujourd\'hui.</p>'}</div>
+  <div class="card"><h2>Derniers incidents</h2>${inc.map(x=>`<div class="line"><div class="grow"><b>${esc(x.type)}</b> <span class="pill ${GRAV[x.gravite]||"p-grey"}">${esc(x.gravite)}</span><div class="muted xs">${fdt(x.survenu_le)}${plusieurs?" · "+esc(siteNom(x.site_id)):""}</div><div class="sm">${esc(x.description||"")}</div></div></div>`).join("")||'<p class="muted sm" style="margin:0">Aucun incident.</p>'}</div>`;
+  brancherSelecteur();$("#cl-go-ag").onclick=()=>ouvrir("cl-agents");
 }
-async function vClientIncidents(){await chargerMonSite();const l=must(await sb.from("incidents").select("*").order("survenu_le",{ascending:false}).limit(100));
-  $("#main").innerHTML=`<div class="head"><div><h1>Incidents</h1><p class="muted sm" style="margin:2px 0 0">Les incidents signalés sur votre site.</p></div></div>${l.length?`<div class="card">${l.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><b>${esc(x.type)}</b> <span class="pill ${GRAV[x.gravite]||"p-grey"}">${esc(x.gravite)}</span><div class="muted xs">${fdt(x.survenu_le)} · ${esc(x.statut)}</div><div class="sm" style="white-space:pre-wrap">${esc(x.description||"")}</div></div></div>`).join("")}</div>`:`<div class="empty">Aucun incident sur votre site.</div>`}`}
-async function vClientFactures(){await chargerMonSite();const l=must(await sb.from("factures").select("*").order("date_emission",{ascending:false}).limit(60));
-  $("#main").innerHTML=`<div class="head"><div><h1>Factures</h1></div></div>${l.length?`<div class="card">${l.filter(f=>f.statut!=="Annulée").map(f=>{const e=etatF(f);return `<div class="line click" data-vf="${f.id}"><div class="grow"><b class="n">${esc(f.numero)}</b><div class="muted xs">${esc(/^\d{4}-\d{2}$/.test(f.periode)?fmo(f.periode):f.periode)} · échéance ${fd(f.date_echeance)}</div></div><b>${fm(f.montant)}</b><span class="pill ${e[1]}">${e[0]}</span></div>`}).join("")}</div>`:`<div class="empty">Aucune facture pour le moment.</div>`}`;
-  $("#main").querySelectorAll("[data-vf]").forEach(t=>t.onclick=()=>voirFacture(l.find(f=>f.id===t.dataset.vf),monSite))}
-async function vClientDemandes(){await chargerMonSite();const l=must(await sb.from("demandes_clients").select("*").order("created_at",{ascending:false}).limit(50));
+/* les agents qui travaillent sur les sites du client, et où ils en sont aujourd'hui */
+async function vClientAgents(){await chargerMonSite();const ds=auj();
+  const l=must(await sb.rpc("client_equipe",{p_date:ds})).filter(surMesSites);
+  const etat=x=>x.arrivee&&!x.depart?["En poste depuis "+hm(x.arrivee),"p-green"]:x.depart?["Parti à "+hm(x.depart),"p-grey"]:x.repos?["Jour de repos","p-grey"]:["Pas encore arrivé","p-amber"];
+  const vus=siteChoisi?sites.filter(x=>x.id===siteChoisi):sites;
+  $("#main").innerHTML=`<div class="head"><div><h1>Mes agents</h1><p class="muted sm" style="margin:2px 0 0">Les agents affectés à ${sites.length>1&&!siteChoisi?"vos sites":"votre site"} et leur présence aujourd'hui · ${esc(fjour(ds))}</p></div>${selecteurSites()}</div>
+  <div class="tiles"><div class="tile"><b class="ok-t">${l.filter(x=>x.arrivee&&!x.depart).length}</b><span class="muted sm">En poste maintenant</span></div><div class="tile"><b>${l.length}</b><span class="muted sm">Agents affectés</span></div><div class="tile"><b>${vus.length}</b><span class="muted sm">Site(s)</span></div></div>
+  ${vus.map(st=>{const a=l.filter(x=>x.site_id===st.id);return `<div class="card"><h2>${esc(st.nom)}</h2>${a.length?a.map(x=>{const e=etat(x);return `<div class="line"><div class="grow"><b>${esc(x.agent)}</b><div class="muted xs">${esc(x.grade||"Agent")} · ${esc(x.matricule||"")} · ${x.poste?"poste de "+esc(POSTE(x.poste).libelle.toLowerCase()):"poste selon planning"}${x.role!=="Titulaire"?" · "+esc(x.role.toLowerCase()):""}</div></div><span class="pill ${e[1]}">${e[0]}</span></div>`}).join(""):'<p class="muted sm" style="margin:0">Aucun agent affecté pour le moment.</p>'}</div>`}).join("")}`;
+  brancherSelecteur()}
+async function vClientIncidents(){await chargerMonSite();const l=must(await sb.from("incidents").select("*").order("survenu_le",{ascending:false}).limit(200)).filter(surMesSites);
+  $("#main").innerHTML=`<div class="head"><div><h1>Incidents</h1><p class="muted sm" style="margin:2px 0 0">Les incidents signalés sur ${sites.length>1&&!siteChoisi?"vos sites":"votre site"}.</p></div>${selecteurSites()}</div>${l.length?`<div class="card">${l.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><b>${esc(x.type)}</b> <span class="pill ${GRAV[x.gravite]||"p-grey"}">${esc(x.gravite)}</span><div class="muted xs">${fdt(x.survenu_le)} · ${esc(x.statut)}${sites.length>1?" · "+esc(siteNom(x.site_id)):""}</div><div class="sm" style="white-space:pre-wrap">${esc(x.description||"")}</div></div></div>`).join("")}</div>`:`<div class="empty">Aucun incident.</div>`}`;brancherSelecteur()}
+async function vClientFactures(){await chargerMonSite();const l=must(await sb.from("factures").select("*").order("date_emission",{ascending:false}).limit(120)).filter(surMesSites);
+  $("#main").innerHTML=`<div class="head"><div><h1>Factures</h1></div>${selecteurSites()}</div>${l.length?`<div class="card">${l.filter(f=>f.statut!=="Annulée").map(f=>{const e=etatF(f);return `<div class="line click" data-vf="${f.id}"><div class="grow"><b class="n">${esc(f.numero)}</b><div class="muted xs">${esc(/^\d{4}-\d{2}$/.test(f.periode)?fmo(f.periode):f.periode)} · échéance ${fd(f.date_echeance)}${sites.length>1?" · "+esc(siteNom(f.site_id)):""}</div></div><b>${fm(f.montant)}</b><span class="pill ${e[1]}">${e[0]}</span></div>`}).join("")}</div>`:`<div class="empty">Aucune facture pour le moment.</div>`}`;
+  brancherSelecteur();$("#main").querySelectorAll("[data-vf]").forEach(t=>t.onclick=()=>{const f=l.find(x=>x.id===t.dataset.vf);voirFacture(f,sites.find(x=>x.id===f.site_id)||monSite)})}
+async function vClientDemandes(){await chargerMonSite();const l=must(await sb.from("demandes_clients").select("*").order("created_at",{ascending:false}).limit(100)).filter(surMesSites);
   $("#main").innerHTML=`<div class="head"><div><h1>Demandes</h1><p class="muted sm" style="margin:2px 0 0">Un renfort, un remplacement, une réclamation ? Écrivez-nous ici.</p></div></div>
-  <div class="card"><div class="row"><div class="field"><label class="f">Type de demande</label><select class="input" id="cd-t"><option>Renfort ponctuel</option><option>Remplacement d'un agent</option><option>Réclamation</option><option>Autre</option></select></div><div class="field"><label class="f">Objet</label><input class="input" id="cd-o"></div></div><div class="field"><label class="f">Message</label><textarea class="input" id="cd-m"></textarea></div><button class="btn pri" id="cd-ok">Envoyer</button></div>
+  <div class="card"><div class="row">${sites.length>1?`<div class="field"><label class="f">Site concerné</label><select class="input" id="cd-s">${sites.map(x=>`<option value="${x.id}" ${x.id===(siteChoisi||monSite.id)?"selected":""}>${esc(x.nom)}</option>`).join("")}</select></div>`:""}<div class="field"><label class="f">Type de demande</label><select class="input" id="cd-t"><option>Renfort ponctuel</option><option>Remplacement d'un agent</option><option>Réclamation</option><option>Autre</option></select></div><div class="field"><label class="f">Objet</label><input class="input" id="cd-o"></div></div><div class="field"><label class="f">Message</label><textarea class="input" id="cd-m"></textarea></div><button class="btn pri" id="cd-ok">Envoyer</button></div>
   ${l.length?`<div class="card"><h2>Vos demandes</h2>${l.map(x=>`<div class="line" style="align-items:flex-start"><div class="grow"><b>${esc(x.type)}</b>${x.objet?" · "+esc(x.objet):""}<div class="muted xs">${fdt(x.created_at)}</div><div class="sm" style="white-space:pre-wrap">${esc(x.message||"")}</div>${x.reponse?`<div class="idbox" style="margin:8px 0 0"><b>Réponse :</b> ${esc(x.reponse)}</div>`:""}</div><span class="pill ${x.statut==="Traitée"?"p-green":x.statut==="En cours"?"p-main":"p-amber"}">${esc(x.statut)}</span></div>`).join("")}</div>`:""}`;
   $("#cd-ok").onclick=()=>busy($("#cd-ok"),async()=>{const m=$("#cd-m").value.trim();if(m.length<3){$("#cd-m").focus();throw new Error("Écrivez votre message.")}
-    must(await sb.from("demandes_clients").insert({site_id:monSite.id,type:$("#cd-t").value,objet:$("#cd-o").value.trim()||null,message:m,statut:"Nouvelle"}));toast("Demande envoyée");await vClientDemandes()})}
+    must(await sb.from("demandes_clients").insert({site_id:$("#cd-s")?$("#cd-s").value:monSite.id,type:$("#cd-t").value,objet:$("#cd-o").value.trim()||null,message:m,statut:"Nouvelle"}));toast("Demande envoyée");await vClientDemandes()})}
 
 /* ---------- sans réseau : file d'attente des pointages ---------- */
 const horsReseau=e=>!navigator.onLine||/fetch|network|load failed|internet|timeout/i.test(String((e&&e.message)||e||""));
 function lireFile(){try{return JSON.parse(localStorage.getItem("sp-file")||"[]")}catch(_){return []}}
 function ecrireFile(f){try{localStorage.setItem("sp-file",JSON.stringify(f))}catch(_){}}
 function mettreEnFile(op){const f=lireFile();f.push({...op,uid:moi&&moi.id});ecrireFile(f);
-  toast(op.k==="arr"?"Pas de réseau : arrivée gardée sur le téléphone":"Pas de réseau : départ gardé sur le téléphone")}
+  toast({arr:"Pas de réseau : arrivée gardée sur le téléphone",dep:"Pas de réseau : départ gardé sur le téléphone",inc:"Pas de réseau : incident gardé sur le téléphone, il partira tout seul",ronde:"Pas de réseau : ronde gardée sur le téléphone",sos:"Pas de réseau : alerte gardée, envoyez aussi le SMS"}[op.k]||"Gardé sur le téléphone")}
+const lireBlob=b=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>ko(r.error);r.readAsDataURL(b)});
+const blobDe=d=>fetch(d).then(r=>r.blob());
+/* SOS sans Internet : SMS déjà rédigé (avec la position) et appel direct */
+function smsSOS(site,pos){const tel=ag&&ag.telephone?ag.telephone.replace(/\s/g,""):"";if(!tel)return "";
+  const a=monAgent||{},msg=`SOS ${ag.nom_agence||""} - ${[a.prenom,a.nom].filter(Boolean).join(" ")} (${a.matricule||""}) - site : ${site&&site.nom||"?"} - ${new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}${pos?" - position : https://maps.google.com/?q="+pos.lat+","+pos.lng:""}`;
+  return `<a class="sos-btn" href="sms:${esc(tel)}?&body=${encodeURIComponent(msg)}" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px">ENVOYER LE SMS D'ALERTE</a><a class="btn" href="tel:${esc(tel)}" style="width:100%">Appeler la direction</a>`}
 let envoiEnCours=false;
 async function envoyerFile(){if(envoiEnCours||!navigator.onLine)return;let f=lireFile();if(!f.length)return;envoiEnCours=true;let n=0;
   try{while(f.length){const op=f[0];
@@ -1535,10 +1580,15 @@ async function envoyerFile(){if(envoiEnCours||!navigator.onLine)return;let f=lir
       else if(op.k==="dep"){let id=op.pid;
         if(!id){const r=await sb.from("pointages").select("id").eq("agent_id",(op.agent_id||moi.agent_id)).eq("date_service",op.ds).eq("poste",op.poste).maybeSingle();if(r.error&&horsReseau(r.error))break;id=r.data&&r.data.id}
         if(id){const r=await sb.from("pointages").update({heure_depart:op.h,note:"[depart_hors_reseau]"}).eq("id",id);if(r.error&&horsReseau(r.error))break}}
+      else if(op.k==="inc"){const l={...op.ligne};
+        if(op.photo&&!l.photo_path){const ch=ag.id+"/incidents/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+".jpg";const u=await sb.storage.from("documents_agences").upload(ch,await blobDe(op.photo),{contentType:"image/jpeg"});if(u.error&&horsReseau(u.error))break;if(!u.error)l.photo_path=ch}
+        const r=await sb.from("incidents").insert(l);if(r.error&&horsReseau(r.error))break}
+      else if(op.k==="ronde"){const r=await sb.from("rondes").insert(op.ligne);if(r.error&&horsReseau(r.error))break}
+      else if(op.k==="sos"){const r=await sb.from("alertes_sos").insert(op.ligne);if(r.error&&horsReseau(r.error))break}
       f.shift();ecrireFile(f);n++}}
   catch(e){if(!horsReseau(e))noterErreur("File hors réseau : "+e.message)}
   finally{envoiEnCours=false}
-  if(n){toast(n>1?n+" pointages envoyés":"Pointage envoyé");if(moi&&moi.role==="agent"&&tab==="accueil")ouvrir("accueil")}}
+  if(n){toast(n>1?n+" éléments faits sans réseau ont été envoyés":"Élément fait sans réseau envoyé");if(moi&&moi.role==="agent"&&tab==="accueil")ouvrir("accueil")}}
 window.addEventListener("online",()=>{envoyerFile();if(moi&&moi.role==="agent"&&$("#hl-ecran"))ouvrir("accueil")});
 setInterval(()=>{if(lireFile().length)envoyerFile()},60000);
 async function afficherHorsLigne(){let sn=null;try{sn=JSON.parse(localStorage.getItem("sp-snap")||"null")}catch(_){}
@@ -1552,8 +1602,12 @@ async function afficherHorsLigne(){let sn=null;try{sn=JSON.parse(localStorage.ge
   else if(v&&!sn.fait)carte=`<div class="punch"><div class="muted">${esc(fjour(v.ds))}</div><div class="big" style="font-size:26px">${esc(lieu||"")}</div><div class="muted">Poste de ${esc(POSTE(v.poste).libelle.toLowerCase())}</div><button class="btn pri bigbtn" id="hl-arr">Pointer mon arrivée</button><p class="muted xs" style="margin:10px 0 0">Votre position est relevée même sans réseau.</p></div>`;
   else carte=`<div class="punch"><div class="big" style="font-size:22px">Pas de service à pointer</div></div>`;
   $("#main").innerHTML=`<div id="hl-ecran"><div class="head"><div><h1>Bonjour ${esc(sn.monAgent.prenom||sn.monAgent.nom)}</h1><p class="muted sm" style="margin:2px 0 0">${esc(sn.monAgent.matricule)}</p></div></div>
-  <div class="hl-bar">Pas de réseau. Vos pointages sont gardés sur le téléphone et envoyés automatiquement dès le retour du réseau.${f.length?` (${f.length} en attente)`:""}</div>${carte}
-  ${tel?`<a class="sos-btn" href="tel:${esc(tel)}" style="display:block;text-align:center;text-decoration:none">URGENCE : APPELER LA DIRECTION</a><p class="muted xs" style="text-align:center;margin:6px 0 16px">Sans réseau Internet, l'alerte SOS ne peut pas partir : appelez directement.</p>`:""}</div>`;
+  <div class="hl-bar">Pas de réseau. Pointages, rondes et incidents sont gardés sur le téléphone et envoyés automatiquement dès le retour du réseau.${f.length?` (${f.length} en attente)`:""}</div>${carte}
+  ${sn.site?`<div class="row" style="margin:14px 0"><button class="btn" id="hl-ronde" style="flex:1">🔦 Faire une ronde</button><button class="btn" id="hl-inc" style="flex:1">📕 Signaler un incident</button></div>`:""}
+  <button class="sos-btn" id="hl-sos">SOS</button><p class="muted xs" style="text-align:center;margin:6px 0 16px">Sans Internet, le SOS prépare un SMS d'alerte avec votre position, et part tout seul au retour du réseau.</p></div>`;
+  const hr=$("#hl-ronde");if(hr)hr.onclick=()=>faireRonde(sn.site,v||{ds:auj(),poste:null});
+  const hi=$("#hl-inc");if(hi)hi.onclick=()=>signalerIncident(sn.site,afficherHorsLigne);
+  $("#hl-sos").onclick=()=>alerteSOS(sn.site||null);
   const a=$("#hl-arr");if(a)a.onclick=()=>busy(a,async()=>{a.textContent="Localisation en cours…";let pos=null;try{pos=await position()}catch(_){}
     const s=sn.site||{},dist=pos?distance(pos.lat,pos.lng,s.latitude,s.longitude):null,h=new Date().toISOString();
     mettreEnFile({k:"arr",h,ligne:{agent_id:sn.monAgent.id,site_id:v.site_id,poste:v.poste,date_service:v.ds,mode:"hors_ligne",heure_arrivee:h,latitude:pos?pos.lat:null,longitude:pos?pos.lng:null,distance_m:dist}});await afficherHorsLigne()});
