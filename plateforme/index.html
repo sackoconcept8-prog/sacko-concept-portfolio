@@ -162,11 +162,12 @@ tr:last-child td{border-bottom:0}
           <input type="color" id="coul-man" title="Changer la couleur" style="width:38px;height:30px;padding:2px"></div>
         <label>Nom de l'entreprise</label><input id="i-ent" required maxlength="80">
         <div class="grille2">
-          <div><label>Secteur</label><select id="i-sect"><option>Commerce / boutique</option><option>Supermarché / alimentation</option><option>Téléphones / électronique</option><option>Quincaillerie / BTP</option><option>Pharmacie / parapharmacie</option><option>Restauration / bar</option><option>Cosmétique / mode</option><option>Autre</option></select></div>
+          <div><label>Secteur</label><select id="i-sect"><option>Commerce / boutique</option><option>Supermarché / alimentation</option><option>Téléphones / électronique</option><option>Quincaillerie / BTP</option><option>Pharmacie / parapharmacie</option><option>Restauration / bar</option><option>Cosmétique / mode</option><option data-autre="1">Sécurité / gardiennage</option><option data-autre="1">Nettoyage</option><option data-autre="1">BTP / travaux</option><option data-autre="1">Services / RH</option><option data-autre="1">Autre</option></select></div>
           <div><label>Pays</label><input id="i-pays" placeholder="Votre pays"></div>
           <div><label>Devise</label><select id="i-dev"><option value="XOF">F CFA</option><option value="EUR">Euro</option><option value="USD">Dollar</option></select></div>
           <div><label>Langue</label><select id="i-lang"><option value="fr">Français</option><option value="en">English</option></select></div>
         </div>
+        <div id="sect-info" class="cache" style="margin-top:14px;background:#FFFAEB;border:1px solid #FEDF89;border-radius:12px;padding:12px 14px;font-size:13px;color:#7A2E0E;line-height:1.5"><b>Bon à savoir :</b> votre espace démarre avec <b>Stock &amp; Ventes</b> (produits, caisse, équipe). L'application dédiée à votre secteur arrive bientôt et sera ajoutée à votre espace. <a id="sect-wa" target="_blank" rel="noopener" href="#">Parlez-nous de vos besoins sur WhatsApp</a></div>
         <button type="button" class="btn" style="width:100%;margin-top:18px" id="ins-suiv">Continuer</button>
       </div>
       <div id="ins-2" class="cache">
@@ -238,7 +239,7 @@ const I18N={
 "Logo de l'entreprise":"Company logo","Touchez pour ajouter votre logo (PNG, JPG)":"Tap to add your logo (PNG, JPG)",
 "Couleurs détectées dans votre logo":"Colors detected in your logo","Changer la couleur":"Change color","Nom de l'entreprise":"Company name",
 "Secteur":"Industry","Commerce / boutique":"Retail / shop","Supermarché / alimentation":"Supermarket / grocery","Téléphones / électronique":"Phones / electronics",
-"Quincaillerie / BTP":"Hardware / construction","Pharmacie / parapharmacie":"Pharmacy / health store","Restauration / bar":"Restaurant / bar","Cosmétique / mode":"Beauty / fashion","Autre":"Other",
+"Quincaillerie / BTP":"Hardware / construction","Pharmacie / parapharmacie":"Pharmacy / health store","Restauration / bar":"Restaurant / bar","Cosmétique / mode":"Beauty / fashion","Autre":"Other","Sécurité / gardiennage":"Security / guarding","Nettoyage":"Cleaning","BTP / travaux":"Construction / roadworks","Services / RH":"Services / HR","Bon à savoir :":"Good to know:","votre espace démarre avec":"your workspace starts with","Stock & Ventes":"Inventory & Sales","(produits, caisse, équipe). L'application dédiée à votre secteur arrive bientôt et sera ajoutée à votre espace.":"(products, checkout, team). The app for your sector is coming soon and will be added to your workspace.","Parlez-nous de vos besoins sur WhatsApp":"Tell us what you need on WhatsApp",
 "Pays":"Country","Votre pays":"Your country","Devise":"Currency","Dollar":"US Dollar","Langue":"Language","Continuer":"Continue","Votre compte":"Your account",
 "Vous serez le propriétaire de l'espace.":"You will be the owner of this workspace.","Votre nom complet":"Your full name","E-mail":"Email",
 "Téléphone / WhatsApp":"Phone / WhatsApp","Mot de passe (8 caractères minimum)":"Password (at least 8 characters)",
@@ -437,6 +438,9 @@ $('#logo-f').onchange=e=>{
 };
 function majCouleurs(){$('#pa1').style.background=COUL1;$('#pa2').style.background=melange(COUL1,.9);$('#coul-man').value=COUL1;appliquerMarque({couleur_principale:COUL1,couleur_secondaire:melange(COUL1,.9)})}
 $('#coul-man').oninput=e=>{COUL1=lisible(e.target.value);majCouleurs()};
+function majSecteur(){const o=$('#i-sect').selectedOptions[0];const autre=!!o?.dataset.autre;$('#sect-info').classList.toggle('cache',!autre);
+  $('#sect-wa').href='https://wa.me/15054642331?text='+encodeURIComponent(L('Bonjour Ilano, mon entreprise est dans le secteur : ','Hello Ilano, my business is in: ')+o.textContent+L('. J\'aimerais une application adaptée.','. I would like an app for my sector.'))}
+$('#i-sect').onchange=majSecteur;
 $('#ins-suiv').onclick=()=>{if($('#i-ent').value.trim().length<2){toast("Indiquez le nom de l'entreprise");return}
   $('#ins-1').classList.add('cache');$('#ins-2').classList.remove('cache');document.querySelectorAll('.etapes i')[1].classList.add('on')};
 $('#ins-prec').onclick=()=>{$('#ins-2').classList.add('cache');$('#ins-1').classList.remove('cache');document.querySelectorAll('.etapes i')[1].classList.remove('on')};
