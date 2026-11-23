@@ -418,7 +418,7 @@ async function entrer(){
   $("#hd-moi").textContent=moi.nom_complet+" · "+(moi.fonction||ROLES[moi.role]||moi.role);
   ecran("app");majAvatar();document.body.classList.toggle("conseiller",estConseiller());$("#hd-av").onclick=maPhoto;
   moi.role_reel=moi.role;espace="direction";moi.niveau=null;
-  if(moi.role==="dg"&&!modeTech){try{const r=await sb.from("profiles").select("niveau_direction").eq("id",moi.id).maybeSingle();moi.niveau=(r.data&&r.data.niveau_direction)||null}catch(_){}}
+  if(moi.role==="dg"){moi.niveau=moi.niveau_direction||null;if(!moi.niveau){try{const r=await sb.from("profiles").select("niveau_direction").eq("id",moi.id).maybeSingle();moi.niveau=(r.data&&r.data.niveau_direction)||null}catch(_){}}}
   if(moi.role==="dg"){try{const q=await sb.from("profiles").select("id").eq("role","rh").eq("est_actif",true).limit(1);dgGardeRH=!(q.data||[]).length}catch(_){dgGardeRH=true}
     try{espace=dgGardeRH&&!moi.niveau&&localStorage.getItem("espace-"+moi.id)==="rh"?"rh":"direction"}catch(_){}}
   else if(moi.role==="rh"){if(estSupGeneral()){try{espace=localStorage.getItem("espace-"+moi.id)==="rh"?"rh":"supervision"}catch(_){espace="supervision"}}else espace="rh"}
