@@ -39,6 +39,8 @@ for (const file of ['rhpro/index.html','rhpro/dollars/index.html','rhpro/fcfa/in
 await cp(join(root,'stockpro'),join(out,'stockpro'), {recursive:true});
 await cp(join(root,'plateforme'),join(out,'plateforme'), {recursive:true});
 await readFile(join(out,'plateforme/index.html'));
+await cp(join(root,'ilano'),join(out,'ilano'), {recursive:true});
+for (const file of ['ilano/index.html','ilano/images/hero-1280.webp','ilano/images/story-1280.webp','ilano/images/team-1280.webp']) await readFile(join(out,file));
 for (const file of ['stockpro/index.html','stockpro/dollars/index.html','stockpro/fcfa/index.html','stockpro/demo/index.html','stockpro/sacko-logo.jpg']) await readFile(join(out,file));
 await cp(join(root,'phonepro'),join(out,'phonepro'), {recursive:true});
 await cp(join(root,'pins'),join(out,'pins'), {recursive:true});
