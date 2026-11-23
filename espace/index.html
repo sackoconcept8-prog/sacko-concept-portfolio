@@ -2293,8 +2293,8 @@ async function afficherHorsLigne(){let sn=null;try{sn=JSON.parse(localStorage.ge
 /* ---------- application installable et notifications ---------- */
 let swReg=null;
 function demarrerPWA(){if(!("serviceWorker" in navigator)||location.protocol!=="https:")return;
-  navigator.serviceWorker.register("sw.js").then(r=>{swReg=r}).catch(()=>{})}
-if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").then(r=>{swReg=r}).catch(()=>{});
+  navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>{swReg=r;try{r.update()}catch(_){}}).catch(()=>{})}
+if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>{swReg=r;try{r.update()}catch(_){}}).catch(()=>{});
 const b64u=s=>{const p="=".repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))};
 const estIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent),estInstallee=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
 /* bandeau « Installer l'application » : Android / ordinateur (bouton direct), iPhone (marche à suivre) */

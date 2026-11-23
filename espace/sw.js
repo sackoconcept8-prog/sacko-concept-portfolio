@@ -1,5 +1,5 @@
 /* Service worker de l'espace de gestion : fonctionnement sans réseau et notifications. */
-const VERSION = "espace-v14";
+const VERSION = "espace-v15";
 const COQUILLE = ["./", "./index.html", "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"];
 
 self.addEventListener("install", e => {
@@ -16,7 +16,7 @@ self.addEventListener("fetch", e => {
   if (u.hostname.endsWith("supabase.co")) return; // données : jamais en cache
   const page = r.mode === "navigate";
   if (page) {
-    e.respondWith(fetch(r).then(rep => { const c = rep.clone(); caches.open(VERSION).then(x => x.put("./index.html", c)); return rep; })
+    e.respondWith(fetch(r, { cache: "no-store" }).then(rep => { const c = rep.clone(); caches.open(VERSION).then(x => x.put("./index.html", c)); return rep; })
       .catch(() => caches.match("./index.html")));
     return;
   }
