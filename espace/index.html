@@ -877,7 +877,7 @@ async function vPlanning(){jourP=jourP||auj();const ds=jourP,dir=estDirection();
     const site=actifs.find(s=>s.id===plSite),gr=P.sem.filter(g=>g.site_id===plSite&&g.semaine===lundi),autres=P.sem.filter(g=>g.site_id!==plSite&&g.semaine===lundi&&g.agent_id);
     return `<div class="card pl-sem"><div class="actions" style="justify-content:space-between;align-items:flex-end;margin-bottom:6px"><div class="actions" style="align-items:flex-end"><div class="field" style="margin:0;min-width:220px"><label class="f">Site</label><select class="input" id="pl-site">${actifs.map(s=>`<option value="${s.id}" ${s.id===plSite?"selected":""}>${esc(s.nom)}</option>`).join("")}</select></div>
       ${dir?`<div class="field" style="margin:0;min-width:200px"><label class="f">Agents proposés</label><select class="input" id="pl-filtre"><option value="site" ${plFiltre==="site"?"selected":""}>Ce site, volants et sans site</option><option value="libres" ${plFiltre==="libres"?"selected":""}>Pas encore planifiés cette semaine</option><option value="tous" ${plFiltre==="tous"?"selected":""}>Tous les agents</option></select></div>`:""}</div>
-      ${dir?`<div class="actions"><button class="btn sm" id="pl-copy">Reprendre la semaine précédente</button><button class="btn sm" id="pl-rot">Reprendre en faisant tourner les quarts</button><button class="btn sm" id="pl-vide">Vider</button></div>`:""}</div>
+      ${dir?`<div class="actions"><button class="btn sm" id="pl-copy" title="Remplit cette semaine avec les mêmes agents que la semaine d'avant, dans les mêmes quarts">Copier les agents de la semaine d'avant</button><button class="btn sm" id="pl-rot" title="Remplit cette semaine avec les agents de la semaine d'avant, en les faisant changer de quart (matin → après-midi → nuit → matin)">Copier en faisant tourner les quarts</button><button class="btn sm" id="pl-vide">Vider</button></div>`:""}</div>
       <p class="muted sm" style="margin:4px 0 12px">Semaine du <b>${fs(lundi)}</b> au <b>${fs(dim)}</b> · ${esc(site.nom)}.${gr.length?"":` <span class="wa-t">Pas encore de planning pour cette semaine : les agents travaillent à leur poste habituel.</span>`}</p>
       ${CODES().map(c=>{const q=POSTE(c),n=gr.filter(g=>g.poste===c&&g.agent_id).length;return `<div class="pl-q" data-quart="${esc(c)}"><h3>${esc(q.libelle)} <span class="muted sm" style="font-weight:500">· ${q.debut} – ${q.fin} · <span class="pl-n">${n}</span>${besoin(site,c)?" / "+besoin(site,c):""} agent(s)</span></h3>
         <table class="tbl pl-t"><thead><tr><th style="width:34px">N°</th><th>Agent</th><th style="width:110px">Matricule</th><th style="width:118px">Arrivée</th><th style="width:118px">Départ</th>${dir?'<th style="width:40px"></th>':""}</tr></thead><tbody></tbody></table>
@@ -937,10 +937,10 @@ async function vPlanning(){jourP=jourP||auj();const ds=jourP,dir=estDirection();
   $("#main").querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>{const tr=ajouterLigne(b.dataset.add);numeroter();tr.querySelector(".pl-a").focus()});
   const pf=$("#pl-filtre");if(pf)pf.onchange=()=>{plFiltre=plFiltreG=pf.value;majListe()};
   const precedente=async rot=>{const prev=ajout(lundi,-7),L=must(await sb.from("plannings_semaine").select("*").eq("site_id",plSite).eq("semaine",prev));
-    if(!L.filter(g=>g.agent_id).length)throw new Error("Aucun planning enregistré la semaine précédente pour ce site.");
+    if(!L.filter(g=>g.agent_id).length)throw new Error("Rien à copier : aucun planning n'a été enregistré pour ce site la semaine d'avant.");
     const C=CODES(),out=[];C.forEach((c,i)=>{const src=rot?C[(i-1+C.length)%C.length]:c,q=POSTE(c);
       L.filter(g=>g.poste===src&&g.agent_id).sort((x,y)=>x.rang-y.rang).forEach((g,k)=>{out.push({poste:c,rang:k+1,agent_id:g.agent_id,heure_arrivee:rot?q.debut:g.heure_arrivee,heure_depart:rot?q.fin:g.heure_depart})})});
-    remplir(out);toast(rot?"Semaine précédente reprise avec rotation des quarts · pensez à enregistrer":"Semaine précédente reprise · pensez à enregistrer")};
+    remplir(out);toast(rot?"Agents de la semaine d'avant copiés, avec rotation des quarts · vérifiez puis enregistrez":"Agents de la semaine d'avant copiés · vérifiez puis enregistrez")};
   $("#pl-copy").onclick=e=>busy(e.target,()=>precedente(false));
   $("#pl-rot").onclick=e=>busy(e.target,()=>precedente(true));
   $("#pl-vide").onclick=()=>remplir([]);
