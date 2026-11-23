@@ -132,6 +132,7 @@ body.tv .top,body.tv #side,body.tv #tabs,body.tv #menu-btn{display:none!importan
 .doc .sig{display:flex;justify-content:space-between;gap:20px;margin-top:30px;font-size:13px}
 .doc h4{margin:14px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--p)}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;padding:0 5px;margin-left:4px}
+.pl-q{margin-bottom:14px}.pl-q h3{font-size:16px;margin:0 0 6px}.pl-t td{padding:4px 6px}.pl-t .input{padding:6px 8px;font-size:13px;min-width:0}.pl-t select.input{min-width:180px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}.tbl th{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}.tbl td.r,.tbl th.r{text-align:right;white-space:nowrap}.tbl tr.click{cursor:pointer}.tbl tr.click:hover td{background:var(--bg)}
 .scroll{overflow-x:auto}.tot{display:flex;justify-content:space-between;font-weight:700;font-size:17px;border-top:2px solid var(--p);margin-top:8px;padding-top:10px}
 .layout{max-width:1320px;margin:0 auto}.layout.avec{display:grid;grid-template-columns:230px minmax(0,1fr)}
@@ -340,9 +341,16 @@ const dowOf=ds=>new Date(ds+"T12:00:00").getDay();
 const fjour=ds=>new Date(ds+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
 const fjourc=ds=>new Date(ds+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric"});
 const hm=t=>t?new Date(t).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}):"—";
-const POSTE=c=>{const p=((ag&&ag.parametres&&ag.parametres.postes)||[]).find(x=>x.code===c)||{};return {code:c,libelle:p.libelle||(c==="N"?"Nuit":"Jour"),debut:p.debut||(c==="N"?"19:00":"07:00"),fin:p.fin||(c==="N"?"07:00":"19:00")}};
-const debutPoste=(ds,c)=>new Date(ds+"T"+POSTE(c).debut+":00");
-const finPoste=(ds,c)=>{const p=POSTE(c),f=new Date(ds+"T"+p.fin+":00");if(p.fin<=p.debut)f.setDate(f.getDate()+1);return f};
+const POSTES_DEF={J:["Jour","07:00","19:00"],N:["Nuit","19:00","07:00"],M:["Matin","06:00","14:00"],S:["Après-midi","14:00","22:00"]};
+const POSTE=c=>{const p=((ag&&ag.parametres&&ag.parametres.postes)||[]).find(x=>x.code===c)||{},d=POSTES_DEF[c]||[c,"07:00","19:00"];return {code:c,libelle:p.libelle||d[0],debut:p.debut||d[1],fin:p.fin||d[2]}};
+/* quarts utilisés par l'agence (réglages), dans l'ordre de la journée */
+const CODES=()=>{const l=((ag&&ag.parametres&&ag.parametres.postes)||[]).map(x=>x.code).filter(Boolean);return l.length?l:["J","N"]};
+const hh=t=>t?String(t).slice(0,5):null;
+/* h1/h2 : horaires propres à une ligne du planning de la semaine (sinon horaires du quart) */
+const debutPoste=(ds,c,h1)=>new Date(ds+"T"+(hh(h1)||POSTE(c).debut)+":00");
+const finPoste=(ds,c,h1,h2)=>{const p=POSTE(c),d=hh(h1)||p.debut,fi=hh(h2)||p.fin,f=new Date(ds+"T"+fi+":00");if(fi<=d)f.setDate(f.getDate()+1);return f};
+const debA=x=>debutPoste(x.ds,x.poste,x.h1),finA=x=>finPoste(x.ds,x.poste,x.h1,x.h2);
+const lundiDe=ds=>ajout(ds,-((dowOf(ds)+6)%7));
 const TOL=()=>+((ag&&ag.parametres&&ag.parametres.tolerance_retard)??15);
 const nomAg=a=>a?[a.prenom,a.nom].filter(Boolean).join(" "):"Agent supprimé";
 const AG_=id=>agents.find(a=>a.id===id);
@@ -353,13 +361,20 @@ async function chargerPlanning(d1,d2,agentId){
       ab=sb.from("absences").select("*").gte("date_absence",d1).lte("date_absence",d2),
       co=sb.from("conges").select("*").eq("statut","Validée").lte("date_debut",d2).gte("date_fin",d1);
   if(agentId){p=p.eq("agent_id",agentId);ab=ab.eq("agent_id",agentId);co=co.eq("agent_id",agentId)}
-  const [a,b,c]=await Promise.all([p,ab,co]);return {plan:must(a),abs:must(b),cong:must(c)};
+  let se=sb.from("plannings_semaine").select("*").gte("semaine",lundiDe(d1)).lte("semaine",d2);if(agentId)se=se.eq("agent_id",agentId);
+  const ss=agentId?sb.rpc("semaines_planifiees",{d1:lundiDe(d1),d2}).then(r=>r,()=>({data:[]})):Promise.resolve({data:null});
+  const [a,b,c,e,f]=await Promise.all([p,ab,co,se.then(r=>r,()=>({data:[]})),ss]);return {plan:must(a),abs:must(b),cong:must(c),sem:(e&&e.data)||[],semSites:f&&f.data};
 }
 function indispo(P,id,ds){const a=P.abs.find(x=>x.agent_id===id&&x.date_absence===ds);if(a)return {t:a.type||"Absence",abs:a};
   const c=P.cong.find(x=>x.agent_id===id&&x.date_debut<=ds&&x.date_fin>=ds);if(c)return {t:c.type||"Congé"};return null}
-function affectations(ds,P,liste){const dow=dowOf(ds),out=[];
-  liste.filter(a=>a.statut==="Actif"&&a.site_id&&a.poste).forEach(a=>{if(a.jour_repos!=null&&+a.jour_repos===dow)return;if(indispo(P,a.id,ds))return;
+function affectations(ds,P,liste){const dow=dowOf(ds),out=[],lun=lundiDe(ds);
+  /* planning de la semaine : sur un site qui en a un, il remplace les affectations habituelles */
+  const gr=(P.sem||[]).filter(g=>g.semaine===lun),sitesG=new Set(gr.filter(g=>g.agent_id).map(g=>g.site_id).concat((P.semSites||[]).filter(x=>x.semaine===lun).map(x=>x.site_id))),agG=new Set(gr.filter(g=>g.agent_id).map(g=>g.agent_id));
+  liste.filter(a=>a.statut==="Actif"&&a.site_id&&a.poste&&!sitesG.has(a.site_id)&&!agG.has(a.id)).forEach(a=>{if(a.jour_repos!=null&&+a.jour_repos===dow)return;if(indispo(P,a.id,ds))return;
     out.push({agent_id:a.id,site_id:a.site_id,poste:a.poste,type:"titulaire"})});
+  gr.filter(g=>g.agent_id).sort((x,y)=>x.rang-y.rang).forEach(g=>{const a=liste.find(z=>z.id===g.agent_id);if(!a||a.statut!=="Actif")return;
+    if(a.jour_repos!=null&&+a.jour_repos===dow)return;if(indispo(P,a.id,ds))return;if(out.some(o=>o.agent_id===a.id&&o.poste===g.poste))return;
+    out.push({agent_id:a.id,site_id:g.site_id,poste:g.poste,type:"planning",h1:hh(g.heure_arrivee),h2:hh(g.heure_depart)})});
   P.plan.filter(x=>x.date_service===ds).forEach(x=>{if(indispo(P,x.agent_id,ds))return;if(out.some(o=>o.agent_id===x.agent_id&&o.poste===x.poste))return;
     out.push({agent_id:x.agent_id,site_id:x.site_id,poste:x.poste,type:"remplacement",id:x.id})});
   return out}
@@ -639,8 +654,8 @@ async function vAccueil(){
   carteNotifs($("#notif-z"));echeances().then(l=>{const z=$("#ech-z");if(z&&l.length){z.innerHTML=carteEcheances(l);brancherEcheances()}}).catch(()=>{});
   try{const ds=auj(),P=await chargerPlanning(ajout(ds,-1),ds),po=must(await sb.from("pointages").select("*").eq("date_service",ds));
     const aff=affectations(ds,P,agents),now=Date.now();let pres=0,ret=0,np=0,trou=0;
-    aff.forEach(a=>{const x=po.find(p=>p.agent_id===a.agent_id&&p.poste===a.poste);if(x){pres++;if((new Date(x.heure_arrivee)-debutPoste(ds,a.poste))/6e4>TOL())ret++}else if(now>debutPoste(ds,a.poste).getTime())np++});
-    sites.filter(s=>s.actif).forEach(s=>["J","N"].forEach(c=>{trou+=Math.max(0,(+(s.besoins||{})[c]||0)-aff.filter(a=>a.site_id===s.id&&a.poste===c).length)}));
+    aff.forEach(a=>{const x=po.find(p=>p.agent_id===a.agent_id&&p.poste===a.poste);if(x){pres++;if((new Date(x.heure_arrivee)-debutPoste(ds,a.poste,a.h1))/6e4>TOL())ret++}else if(now>debutPoste(ds,a.poste,a.h1).getTime())np++});
+    sites.filter(s=>s.actif).forEach(s=>CODES().forEach(c=>{trou+=Math.max(0,(+(s.besoins||{})[c]||0)-aff.filter(a=>a.site_id===s.id&&a.poste===c).length)}));
     const z=$("#jour-bloc");if(z)z.innerHTML=`<h2>Aujourd'hui · ${esc(fjour(ds))}</h2><div class="tiles" style="margin:8px 0 10px"><div class="tile"><b>${aff.length}</b><span class="muted sm">Agents attendus</span></div><div class="tile"><b class="ok-t">${pres}</b><span class="muted sm">Ont pointé</span></div><div class="tile"><b class="${ret?"wa-t":""}">${ret}</b><span class="muted sm">En retard</span></div><div class="tile"><b class="${np?"ko-t":""}">${np}</b><span class="muted sm">Pas encore pointé</span></div><div class="tile"><b class="${trou?"ko-t":""}">${trou}</b><span class="muted sm">Postes non couverts</span></div></div><div class="actions"><button class="btn sm" data-go2="planning">Voir le planning</button><button class="btn sm" data-go2="pointage">Voir le pointage</button></div>`;
     $("#main").querySelectorAll("[data-go2]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go2));
   }catch(e){const z=$("#jour-bloc");if(z)z.innerHTML=`<h2>Aujourd'hui</h2><p class="muted sm" style="margin:0">${esc(traduire(e.message))}</p>`}
@@ -653,10 +668,10 @@ function vSites(){
   $("#s-new").onclick=()=>ficheSite();if($("#imp-x"))$("#imp-x").onclick=importExcel;
   $("#main").querySelectorAll("[data-site]").forEach(l=>l.onclick=()=>ficheSite(sites.find(s=>s.id===l.dataset.site)));
 }
-function ficheSite(s){const n=!s;s=s||{actif:true,besoins:{J:1,N:1}};const b=s.besoins||{};
+function ficheSite(s){const n=!s;s=s||{actif:true,besoins:Object.fromEntries(CODES().map(c=>[c,1]))};const b=s.besoins||{};
   modal(n?"Nouveau site":esc(s.nom),`<div class="row"><div class="field" style="flex:2 1 240px"><label class="f">Nom du site</label><input class="input" id="s-nom" value="${esc(s.nom)}" placeholder="Ex. Pharmacie du Port"></div><div class="field"><label class="f">Type</label><input class="input" id="s-type" value="${esc(s.type)}" placeholder="Bureau, commerce, chantier…"></div></div>
   <div class="row"><div class="field" style="flex:2 1 240px"><label class="f">Adresse</label><input class="input" id="s-adr" value="${esc(s.adresse)}"></div><div class="field"><label class="f">Ville</label><input class="input" id="s-ville" value="${esc(s.ville??ag.ville)}"></div></div>
-  <div class="row"><div class="field"><label class="f">Agents nécessaires le jour</label><input class="input" id="s-bj" type="number" min="0" value="${+b.J||0}"></div><div class="field"><label class="f">La nuit</label><input class="input" id="s-bn" type="number" min="0" value="${+b.N||0}"></div><div class="field"><label class="f">Montant mensuel du contrat</label><input class="input" id="s-mt" type="number" min="0" value="${+s.montant_contrat||0}"></div></div>
+  <div class="row">${CODES().map(c=>`<div class="field"><label class="f">Agents · ${esc(POSTE(c).libelle.toLowerCase())}</label><input class="input" data-bes="${esc(c)}" type="number" min="0" value="${+b[c]||0}"></div>`).join("")}<div class="field"><label class="f">Montant mensuel du contrat</label><input class="input" id="s-mt" type="number" min="0" value="${+s.montant_contrat||0}"></div></div>
   <div class="row"><div class="field"><label class="f">Prix par agent et par mois <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" id="s-px" type="number" min="0" value="${b.prix_agent||""}" placeholder="Ex. 120000"></div><div class="field" style="flex:2 1 260px"><label class="f">Prestations en option <span class="muted" style="font-weight:400">(facultatif, une par ligne : libellé ; montant)</span></label><textarea class="input" id="s-opt" rows="2" placeholder="Maître-chien ; 150000">${esc((b.options||[]).map(o=>o.l+" ; "+o.m).join("\n"))}</textarea></div></div><p class="muted xs" id="s-calc" style="margin:-6px 0 10px"></p>
   <div class="row"><div class="field"><label class="f">Début du contrat</label><input class="input" id="s-dd" type="date" value="${s.date_debut||""}"></div><div class="field"><label class="f">Fin du contrat <span class="muted" style="font-weight:400">(rappel 60 jours avant)</span></label><input class="input" id="s-df" type="date" value="${s.date_fin_contrat||""}"></div></div>
   <div class="row"><div class="field"><label class="f">Contact sur place</label><input class="input" id="s-cn" value="${esc(s.contact_nom)}"></div><div class="field"><label class="f">Téléphone du contact</label><input class="input" id="s-ct" value="${esc(s.contact_telephone)}"></div></div>
@@ -676,7 +691,7 @@ function ficheSite(s){const n=!s;s=s||{actif:true,besoins:{J:1,N:1}};const b=s.b
   brancherPrixSite();
   $("#s-ok").onclick=()=>busy($("#s-ok"),async()=>{const nom=$("#s-nom").value.trim();if(nom.length<2){$("#s-nom").focus();throw new Error("Indiquez le nom du site.")}
     const v=x=>$(x).value.trim()||null;
-    const d={nom,date_debut:$("#s-dd").value||null,date_fin_contrat:$("#s-df").value||null,type:v("#s-type"),adresse:v("#s-adr"),ville:v("#s-ville"),besoins:{...b,J:Math.max(0,+$("#s-bj").value||0),N:Math.max(0,+$("#s-bn").value||0),prix_agent:+$("#s-px").value||null,options:$("#s-opt").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const i=Math.max(l.lastIndexOf(";"),l.lastIndexOf(":"));return {l:(i>0?l.slice(0,i):l).trim(),m:i>0?+l.slice(i+1).replace(/[^\d.]/g,"")||0:0}})},montant_contrat:+$("#s-mt").value||0,contact_nom:v("#s-cn"),contact_telephone:v("#s-ct"),consignes:v("#s-cons"),actif:$("#s-act").checked,points_ronde:$("#s-pts").value.split("\n").map(x=>x.trim()).filter(Boolean),client_nom:v("#s-cln"),client_identifiant:v("#s-cli"),client_adresse:v("#s-cla"),
+    const d={nom,date_debut:$("#s-dd").value||null,date_fin_contrat:$("#s-df").value||null,type:v("#s-type"),adresse:v("#s-adr"),ville:v("#s-ville"),besoins:{...b,...Object.fromEntries([...document.querySelectorAll("[data-bes]")].map(i=>[i.dataset.bes,Math.max(0,+i.value||0)])),prix_agent:+$("#s-px").value||null,options:$("#s-opt").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const i=Math.max(l.lastIndexOf(";"),l.lastIndexOf(":"));return {l:(i>0?l.slice(0,i):l).trim(),m:i>0?+l.slice(i+1).replace(/[^\d.]/g,"")||0:0}})},montant_contrat:+$("#s-mt").value||0,contact_nom:v("#s-cn"),contact_telephone:v("#s-ct"),consignes:v("#s-cons"),actif:$("#s-act").checked,points_ronde:$("#s-pts").value.split("\n").map(x=>x.trim()).filter(Boolean),client_nom:v("#s-cln"),client_identifiant:v("#s-cli"),client_adresse:v("#s-cla"),
       latitude:$("#s-lat").value.trim()===""?null:+$("#s-lat").value.replace(",","."),longitude:$("#s-lng").value.trim()===""?null:+$("#s-lng").value.replace(",","."),rayon_m:Math.max(30,+$("#s-ray").value||300)};
     if([d.latitude,d.longitude].some(x=>x!=null&&isNaN(x))||(d.latitude!=null)!==(d.longitude!=null))throw new Error("Coordonnées GPS invalides : remplissez la latitude et la longitude, ou laissez les deux vides.");
     must(n?await sb.from("sites").insert(d):await sb.from("sites").update(d).eq("id",s.id));closeModal();toast(n?"Site ajouté":"Site mis à jour");await ouvrir("sites")});
@@ -700,16 +715,16 @@ function vAgents(){
 function listeAgents(){const q=slugify(fAg.q);
   const l=agents.filter(a=>(!fAg.cat||catDe(a)===fAg.cat)&&(!q||slugify(a.nom+" "+(a.prenom||"")+" "+a.matricule).includes(q))&&(!fAg.statut||a.statut===fAg.statut)&&(!fAg.site||(fAg.site==="aucun"?!a.site_id:a.site_id===fAg.site)));
   const z=$("#a-liste");
-  z.innerHTML=l.length?`<div class="card">${l.map(a=>{const c=comptes.find(x=>x.agent_id===a.id),st=stA(a);return `<div class="line click" data-ag="${a.id}"><span class="av">${esc(((a.prenom||a.nom||"?")[0]+(a.prenom?a.nom[0]:(a.nom[1]||""))).toUpperCase())}</span><div class="grow"><b class="n">${esc([a.prenom,a.nom].filter(Boolean).join(" "))}</b><div class="muted xs">${esc(a.matricule)} · ${esc(a.grade)} · ${esc(siteNom(a.site_id))}${a.poste?" · "+(a.poste==="N"?"nuit":"jour"):""}</div></div>${estSecu(a)?"":`<span class="pill p-grey">${esc((CATS.find(x=>x[0]===catDe(a))||[,""])[1])}</span>`}${c?`<span class="pill p-main">Accès créé</span>`:""}<span class="pill ${st[1]}">${st[0]}</span></div>`}).join("")}</div>`:`<div class="empty">${agents.length?"Aucun agent ne correspond.":"Aucun agent pour le moment.<br>Cliquez sur « Nouvel agent » pour ajouter le premier."}</div>`;
+  z.innerHTML=l.length?`<div class="card">${l.map(a=>{const c=comptes.find(x=>x.agent_id===a.id),st=stA(a);return `<div class="line click" data-ag="${a.id}"><span class="av">${esc(((a.prenom||a.nom||"?")[0]+(a.prenom?a.nom[0]:(a.nom[1]||""))).toUpperCase())}</span><div class="grow"><b class="n">${esc([a.prenom,a.nom].filter(Boolean).join(" "))}</b><div class="muted xs">${esc(a.matricule)} · ${esc(a.grade)} · ${esc(siteNom(a.site_id))}${a.poste?" · "+POSTE(a.poste).libelle.toLowerCase():""}</div></div>${estSecu(a)?"":`<span class="pill p-grey">${esc((CATS.find(x=>x[0]===catDe(a))||[,""])[1])}</span>`}${c?`<span class="pill p-main">Accès créé</span>`:""}<span class="pill ${st[1]}">${st[0]}</span></div>`}).join("")}</div>`:`<div class="empty">${agents.length?"Aucun agent ne correspond.":"Aucun agent pour le moment.<br>Cliquez sur « Nouvel agent » pour ajouter le premier."}</div>`;
   z.querySelectorAll("[data-ag]").forEach(x=>x.onclick=()=>ficheAgent(x.dataset.ag));
 }
 function matSuivant(){const pre=(ag.slug.split("-").map(x=>x[0]).join("")||"ag").toUpperCase().slice(0,3);
   const n=agents.reduce((m,a)=>{const k=/(\d+)\s*$/.exec(a.matricule||"");return k?Math.max(m,+k[1]):m},0);return pre+"-"+String(n+1).padStart(4,"0")}
-function formAgent(a){const n=!a;a=a||{grade:(ag.parametres.grades||[])[0],poste:"J",jour_repos:0,matricule:matSuivant()};
+function formAgent(a){const n=!a;a=a||{grade:(ag.parametres.grades||[])[0],poste:CODES()[0],jour_repos:0,matricule:matSuivant()};
   const verrou=!n&&comptes.some(c=>c.agent_id===a.id);const grades=[...(ag.parametres.grades||[])];if(a.grade&&!grades.includes(a.grade))grades.push(a.grade);
   modal(n?"Nouvel employé":"Modifier · "+esc([a.prenom,a.nom].filter(Boolean).join(" ")),`<div class="field"><label class="f">Catégorie</label><select class="input" id="g-cat">${CATS.map(([k,l])=>`<option value="${k}" ${catDe(a)===k?"selected":""}>${esc(l)}</option>`).join("")}</select></div><div class="row"><div class="field"><label class="f">Nom</label><input class="input" id="g-nom" value="${esc(a.nom)}"></div><div class="field"><label class="f">Prénom</label><input class="input" id="g-pre" value="${esc(a.prenom)}"></div><div class="field" style="flex:0 1 150px"><label class="f">Matricule</label><input class="input" id="g-mat" value="${esc(a.matricule)}" ${verrou?'disabled title="Le matricule sert d\'identifiant de connexion : il ne peut plus être modifié."':""}></div></div>
   <div class="row"><div class="field"><label class="f" id="g-grl">Grade</label><select class="input" id="g-gr">${grades.map(g=>`<option ${g===a.grade?"selected":""}>${esc(g)}</option>`).join("")}</select><input class="input hide" id="g-grt" maxlength="60" value="${estSecu(a)?"":esc(a.grade)}" placeholder="Ex. Secrétaire, comptable, agent d'entretien"></div><div class="field"><label class="f">Téléphone</label><input class="input" id="g-tel" value="${esc(a.telephone)}"></div><div class="field"><label class="f">Quartier</label><input class="input" id="g-q" value="${esc(a.quartier)}"></div></div>
-  <div class="row"><div class="field"><label class="f">Site</label><select class="input" id="g-site"><option value="">Sans affectation (bureau ou volant)</option>${sites.map(s=>`<option value="${s.id}" ${a.site_id===s.id?"selected":""}>${esc(s.nom)}</option>`).join("")}</select></div><div class="field"><label class="f">Poste</label><select class="input" id="g-poste"><option value="J" ${a.poste==="J"?"selected":""}>Jour</option><option value="N" ${a.poste==="N"?"selected":""}>Nuit</option><option value="" ${!a.poste?"selected":""}>Pas de poste (horaires de bureau)</option></select></div><div class="field"><label class="f">Jour de repos</label><select class="input" id="g-rep">${JOURS.map((j,i)=>`<option value="${i}" ${+a.jour_repos===i?"selected":""}>${j}</option>`).join("")}</select></div></div>
+  <div class="row"><div class="field"><label class="f">Site</label><select class="input" id="g-site"><option value="">Sans affectation (bureau ou volant)</option>${sites.map(s=>`<option value="${s.id}" ${a.site_id===s.id?"selected":""}>${esc(s.nom)}</option>`).join("")}</select></div><div class="field"><label class="f">Poste</label><select class="input" id="g-poste">${[...new Set([...CODES(),...(a.poste?[a.poste]:[])])].map(c=>{const q=POSTE(c);return `<option value="${esc(c)}" ${a.poste===c?"selected":""}>${esc(q.libelle)} · ${q.debut}–${q.fin}</option>`}).join("")}<option value="" ${!a.poste?"selected":""}>Pas de poste (horaires de bureau)</option></select></div><div class="field"><label class="f">Jour de repos</label><select class="input" id="g-rep">${JOURS.map((j,i)=>`<option value="${i}" ${+a.jour_repos===i?"selected":""}>${j}</option>`).join("")}</select></div></div>
   <div class="row"><div class="field"><label class="f">Date d'embauche</label><input class="input" id="g-emb" type="date" value="${a.date_embauche||""}"></div><div class="field"><label class="f">Carte pro valable jusqu'au</label><input class="input" id="g-carte" type="date" value="${a.carte_pro_expiration||""}"></div><div class="field"><label class="f">Salaire de base (${esc(ag.parametres.devise||"F CFA")})</label><input class="input" id="g-sal" type="number" min="0" value="${+a.salaire_base||0}"></div></div>
   <div class="row"><div class="field"><label class="f">N° de sécurité sociale (CNSS)</label><input class="input" id="g-ss" value="${esc(a.num_securite_sociale)}"></div><div class="field"><label class="f">Personne à prévenir en cas d'urgence</label><input class="input" id="g-urg" value="${esc(a.contact_urgence)}"></div></div>
   <div class="row"><div class="field"><label class="f">Fonction affichée sur la carte <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" id="g-fct" value="${esc(a.fonction)}" placeholder="Ex. Superviseur général"></div><div class="field"><label class="f">Groupe sanguin</label><input class="input" id="g-gs" value="${esc(a.groupe_sanguin)}"></div></div>
@@ -731,7 +746,7 @@ function formAgent(a){const n=!a;a=a||{grade:(ag.parametres.grades||[])[0],poste
 function ficheAgent(id){const a=agents.find(x=>x.id===id);if(!a)return closeModal();const c=comptes.find(x=>x.agent_id===id),st=stA(a),nomC=[a.prenom,a.nom].filter(Boolean).join(" ");
   const L=(k,v)=>`<div class="line" style="padding:7px 0"><span class="muted sm" style="flex:0 0 170px">${k}</span><span class="grow">${v}</span></div>`;
   modal(esc(nomC),`<div class="actions" style="margin-bottom:12px"><img id="fa-ph" alt="" class="hide" style="width:64px;height:78px;object-fit:cover;border-radius:10px"><span class="pill ${st[1]}">${st[0]}</span><span class="pill p-main">${esc(a.matricule)}</span><span style="margin-left:auto" class="actions"><button class="btn sm" id="fa-carte">Carte professionnelle</button><button class="btn sm pri" id="fa-edit">Modifier</button></span></div>
-  ${L("Grade",esc(a.grade)+(a.fonction?" · "+esc(a.fonction):""))}${L("Affectation",esc(siteNom(a.site_id))+(a.poste?" · poste de "+(a.poste==="N"?"nuit":"jour"):""))}${L("Jour de repos",JOURS[+a.jour_repos]||"—")}${L("Téléphone",esc(a.telephone||"—"))}${L("Quartier",esc(a.quartier||"—"))}${L("Date d'embauche",fd(a.date_embauche))}${L("Carte professionnelle",a.carte_pro_expiration?"Valable jusqu'au "+fd(a.carte_pro_expiration):"—")}${L("Salaire de base",Math.round(+a.salaire_base||0).toLocaleString("fr-FR")+" "+esc(ag.parametres.devise||"F CFA"))}${L("Urgence",esc(a.contact_urgence||"—"))}
+  ${L("Grade",esc(a.grade)+(a.fonction?" · "+esc(a.fonction):""))}${L("Affectation",esc(siteNom(a.site_id))+(a.poste?" · poste de "+POSTE(a.poste).libelle.toLowerCase():""))}${L("Jour de repos",JOURS[+a.jour_repos]||"—")}${L("Téléphone",esc(a.telephone||"—"))}${L("Quartier",esc(a.quartier||"—"))}${L("Date d'embauche",fd(a.date_embauche))}${L("Carte professionnelle",a.carte_pro_expiration?"Valable jusqu'au "+fd(a.carte_pro_expiration):"—")}${L("Salaire de base",Math.round(+a.salaire_base||0).toLocaleString("fr-FR")+" "+esc(ag.parametres.devise||"F CFA"))}${L("Urgence",esc(a.contact_urgence||"—"))}
   <div class="sec">Accès à l'application</div>
   ${c?`<div class="idbox">Identifiant : <b>${esc(a.matricule)}</b> · ${c.est_actif?"accès ouvert":"<b>accès coupé</b>"}<br><span class="muted xs">Dernière connexion : ${fdt(c.derniere_connexion)}</span></div><div class="actions"><button class="btn sm" id="fa-mdp">Nouveau mot de passe</button></div>`
      :`<p class="muted sm" style="margin:0 0 8px">${estSup(a)?"Ce superviseur n'a pas encore d'accès. Créez-le : il se connectera avec son matricule et ouvrira l'espace superviseur (pointage de secours, planning, main courante, rondes).":"Cet agent n'a pas encore d'accès. Créez-le pour qu'il puisse se connecter avec son matricule."}</p><button class="btn sm pri" id="fa-acc" ${a.statut==="Actif"?"":"disabled"}>${estSup(a)?"Créer son accès superviseur":"Créer son accès"}</button>`}
@@ -813,7 +828,7 @@ function vSitesTerrain(){
   $("#main").innerHTML=`<div class="head"><div><h1>Sites : position et rondes</h1><p class="muted sm" style="margin:2px 0 0">Consultation des sites (sans prix ni coordonnées du client). Sur place, enregistrez la position du site : le pointage des agents sera contrôlé à partir de ce point. Ajoutez aussi les points que l'agent doit vérifier pendant sa ronde.</p></div></div>
   ${l.length?l.map(x=>{const ok=x.latitude!=null&&x.longitude!=null,pts=x.points_ronde||[];return `<div class="card"><div class="row" style="justify-content:space-between;align-items:flex-start"><div class="grow"><h2 style="margin:0 0 4px">${esc(x.nom)}</h2><div class="muted sm">${esc([x.adresse,x.ville].filter(Boolean).join(", "))}</div></div>
     <span class="pill ${ok?"p-green":"p-red"}">${ok?"Position enregistrée":"Position manquante"}</span></div>
-    <p class="sm" style="margin:10px 0 4px"><b>Agents :</b> ${(x.besoins||{}).J||0} de jour · ${(x.besoins||{}).N||0} de nuit demandés · ${agents.filter(g=>g.site_id===x.id&&g.statut==="Actif").length} affecté(s)</p>
+    <p class="sm" style="margin:10px 0 4px"><b>Agents :</b> ${CODES().map(c=>((x.besoins||{})[c]||0)+" "+esc(POSTE(c).libelle.toLowerCase())).join(" · ")} demandés · ${agents.filter(g=>g.site_id===x.id&&g.statut==="Actif").length} affecté(s)</p>
     ${x.consignes?`<p class="sm" style="margin:0 0 4px;white-space:pre-wrap"><b>Consignes :</b> ${esc(x.consignes)}</p>`:""}
     <p class="sm" style="margin:0 0 4px"><b>Zone de pointage :</b> ${x.rayon_m||300} m autour du site${ok?` · <a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${x.latitude},${x.longitude}">voir sur la carte</a>`:""}</p>
     <p class="sm" style="margin:0 0 10px"><b>Points de ronde :</b> ${pts.length?pts.map(esc).join(" · "):'<span class="muted">aucun</span>'}</p>
@@ -840,30 +855,88 @@ function position(){return new Promise((ok,ko)=>{if(!navigator.geolocation)retur
 
 /* ---------- planning (direction et superviseur) ---------- */
 let jourP=null;
+let plSite=null,plMode="semaine";
 async function vPlanning(){jourP=jourP||auj();const ds=jourP,dir=estDirection();
-  const lundi=ajout(ds,-((dowOf(ds)+6)%7)),dim=ajout(lundi,6),P=await chargerPlanning(lundi,dim);
+  const lundi=lundiDe(ds),dim=ajout(lundi,6),P=await chargerPlanning(lundi,dim);
   const besoin=(s,c)=>+((s.besoins||{})[c])||0,actifs=sites.filter(s=>s.actif);
-  const couv=d=>{const a=affectations(d,P,agents);let b=0,m=0;actifs.forEach(s=>["J","N"].forEach(c=>{const n=besoin(s,c);b+=n;m+=Math.max(0,n-a.filter(x=>x.site_id===s.id&&x.poste===c).length)}));return {b,m}};
+  const couv=d=>{const a=affectations(d,P,agents);let b=0,m=0;actifs.forEach(s=>CODES().forEach(c=>{const n=besoin(s,c);b+=n;m+=Math.max(0,n-a.filter(x=>x.site_id===s.id&&x.poste===c).length)}));return {b,m}};
   const aff=affectations(ds,P,agents);
-  const semaine=[...Array(7)].map((_,i)=>{const d=ajout(lundi,i),c=couv(d);return `<button data-j="${d}" class="${d===ds?"on":""}">${esc(fjourc(d))}<b class="${c.m?"ko-t":"ok-t"}">${c.m?c.m+" trou"+(c.m>1?"s":""):"OK"}</b></button>`}).join("");
+  const semaine=[...Array(7)].map((_,i)=>{const d=ajout(lundi,i),c=couv(d);return `<button data-j="${d}" class="${d===ds&&plMode==="jour"?"on":""}">${esc(fjourc(d))}<b class="${c.m?"ko-t":"ok-t"}">${c.m?c.m+" trou"+(c.m>1?"s":""):"OK"}</b></button>`}).join("");
   const libres=agents.filter(a=>a.statut==="Actif"&&!aff.some(x=>x.agent_id===a.id));
-  $("#main").innerHTML=`<div class="head"><div><h1>Planning</h1><p class="muted sm" style="margin:2px 0 0">Chaque agent travaille sur son site et à son poste habituels, sauf son jour de repos, ses absences et ses congés.</p></div></div>
-  <div class="daybar"><button class="btn sm" id="pj-prev">‹ Semaine précédente</button><input class="input" type="date" id="pj-d" value="${ds}"><button class="btn sm" id="pj-auj">Aujourd'hui</button><button class="btn sm" id="pj-next">Semaine suivante ›</button></div>
-  <div class="week">${semaine}</div><h2 style="font-size:18px;margin:0 0 10px">${esc(fjour(ds).replace(/^./,c=>c.toUpperCase()))}</h2>
+  if(!actifs.some(s=>s.id===plSite))plSite=(actifs[0]||{}).id||null;
+  const fs=d=>new Date(d+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long"});
+  const vueSemaine=()=>{if(!actifs.length)return `<div class="empty">Ajoutez d'abord vos sites et vos agents.</div>`;
+    const site=actifs.find(s=>s.id===plSite),gr=P.sem.filter(g=>g.site_id===plSite&&g.semaine===lundi),autres=P.sem.filter(g=>g.site_id!==plSite&&g.semaine===lundi&&g.agent_id);
+    const secu=agents.filter(a=>a.statut==="Actif"&&estSecu(a)).sort((a,b)=>nomAg(a).localeCompare(nomAg(b)));
+    const NL=10;
+    return `<div class="card pl-sem"><div class="actions" style="justify-content:space-between;align-items:flex-end;margin-bottom:6px"><div class="field" style="margin:0;min-width:220px"><label class="f">Site</label><select class="input" id="pl-site">${actifs.map(s=>`<option value="${s.id}" ${s.id===plSite?"selected":""}>${esc(s.nom)}</option>`).join("")}</select></div>
+      ${dir?`<div class="actions"><button class="btn sm" id="pl-copy">Reprendre la semaine précédente</button><button class="btn sm" id="pl-rot">Reprendre en faisant tourner les quarts</button><button class="btn sm" id="pl-vide">Vider</button></div>`:""}</div>
+      <p class="muted sm" style="margin:4px 0 12px">Semaine du <b>${fs(lundi)}</b> au <b>${fs(dim)}</b> · ${esc(site.nom)}. Chaque agent inscrit travaille dans ce quart toute la semaine, sauf son jour de repos, ses absences et ses congés.${gr.length?"":` <span class="wa-t">Pas encore de planning pour cette semaine : les agents travaillent à leur poste habituel.</span>`}</p>
+      ${CODES().map(c=>{const q=POSTE(c),L=gr.filter(g=>g.poste===c);return `<div class="pl-q"><h3>${esc(q.libelle)} <span class="muted sm" style="font-weight:500">· ${q.debut} – ${q.fin}${besoin(site,c)?" · "+besoin(site,c)+" agent(s) requis":""}</span></h3>
+        <div style="overflow-x:auto"><table class="tbl pl-t"><thead><tr><th style="width:34px">N°</th><th>Nom de l'agent</th><th style="width:110px">Matricule</th><th style="width:120px">Heure d'arrivée</th><th style="width:120px">Heure de départ</th></tr></thead><tbody>
+        ${[...Array(NL)].map((_,k)=>{const g=L.find(x=>x.rang===k+1)||{},a=g.agent_id?AG_(g.agent_id):null;
+          return `<tr data-q="${esc(c)}" data-r="${k+1}"><td class="muted">${k+1}</td>
+            <td>${dir?`<select class="input pl-a"><option value="">—</option>${secu.map(x=>`<option value="${x.id}" ${x.id===g.agent_id?"selected":""}>${esc(nomAg(x))}</option>`).join("")}${a&&!secu.includes(a)?`<option value="${a.id}" selected>${esc(nomAg(a))}</option>`:""}</select>`:esc(a?nomAg(a):"")}</td>
+            <td class="pl-m">${esc(a?a.matricule||"":"")}</td>
+            <td>${dir?`<input class="input pl-h1" type="time" value="${hh(g.heure_arrivee)||(a?q.debut:"")}">`:esc(hh(g.heure_arrivee)||(a?q.debut:""))}</td>
+            <td>${dir?`<input class="input pl-h2" type="time" value="${hh(g.heure_depart)||(a?q.fin:"")}">`:esc(hh(g.heure_depart)||(a?q.fin:""))}</td></tr>`}).join("")}
+        </tbody></table></div></div>`}).join("")}
+      ${autres.length?`<p class="muted xs" style="margin:0 0 10px">Déjà planifiés sur un autre site cette semaine : ${[...new Set(autres.map(g=>g.agent_id))].map(id=>esc(nomAg(AG_(id)))+" ("+esc(siteNom(autres.find(g=>g.agent_id===id).site_id))+")").join(", ")}</p>`:""}
+      ${dir?`<div class="actions"><button class="btn pri" id="pl-save">Enregistrer le planning de la semaine</button><button class="btn" id="pl-print">Imprimer</button></div>`:`<button class="btn" id="pl-print">Imprimer</button>`}</div>`};
+  const vueJour=()=>`<h2 style="font-size:18px;margin:0 0 10px">${esc(fjour(ds).replace(/^./,c=>c.toUpperCase()))}</h2>
   ${actifs.length?actifs.map(s=>`<div class="site-blk"><h3>${esc(s.nom)}</h3><div class="muted xs">${esc([s.adresse,s.ville].filter(Boolean).join(" · ")||"")}</div>
-    ${["J","N"].map(c=>{const p=POSTE(c),l=aff.filter(x=>x.site_id===s.id&&x.poste===c),m=besoin(s,c)-l.length;if(!besoin(s,c)&&!l.length)return "";
-      return `<div class="poste"><div class="actions"><b>Poste de ${esc(p.libelle.toLowerCase())}</b><span class="muted sm">${p.debut} – ${p.fin} · ${l.length} / ${besoin(s,c)}</span>${m>0?`<span class="gap">${m} poste${m>1?"s":""} non couvert${m>1?"s":""}</span>${dir?`<button class="btn sm pri" data-rempl="${s.id}|${c}">Affecter un remplaçant</button>`:""}`:""}</div>
-      <div class="chips">${l.map(x=>`<span class="chip">${esc(nomAg(AG_(x.agent_id)))}${x.type==="remplacement"?' <span class="pill p-amber">remplaçant</span>':""}${dir?(x.type==="remplacement"?`<button title="Retirer ce remplacement" data-delrempl="${x.id}">×</button>`:`<button title="Déclarer absent" data-abs="${x.agent_id}">×</button>`):""}</span>`).join("")||'<span class="muted sm">Personne</span>'}</div></div>`}).join("")}</div>`).join(""):`<div class="empty">Ajoutez d'abord vos sites et vos agents.</div>`}
+    ${CODES().map(c=>{const p=POSTE(c),l=aff.filter(x=>x.site_id===s.id&&x.poste===c),m=besoin(s,c)-l.length;if(!besoin(s,c)&&!l.length)return "";
+      return `<div class="poste"><div class="actions"><b>Quart ${esc(p.libelle.toLowerCase())}</b><span class="muted sm">${p.debut} – ${p.fin} · ${l.length} / ${besoin(s,c)}</span>${m>0?`<span class="gap">${m} poste${m>1?"s":""} non couvert${m>1?"s":""}</span>${dir?`<button class="btn sm pri" data-rempl="${s.id}|${c}">Affecter un remplaçant</button>`:""}`:""}</div>
+      <div class="chips">${l.map(x=>{const a=AG_(x.agent_id);return `<span class="chip">${esc(nomAg(a))}${a&&a.matricule?` <span class="muted xs">${esc(a.matricule)}</span>`:""}${x.h1&&(x.h1!==p.debut||x.h2!==p.fin)?` <span class="muted xs">${x.h1}–${x.h2||p.fin}</span>`:""}${x.type==="remplacement"?' <span class="pill p-amber">remplaçant</span>':""}${dir?(x.type==="remplacement"?`<button title="Retirer ce remplacement" data-delrempl="${x.id}">×</button>`:`<button title="Déclarer absent" data-abs="${x.agent_id}">×</button>`):""}</span>`}).join("")||'<span class="muted sm">Personne</span>'}</div></div>`}).join("")}</div>`).join(""):`<div class="empty">Ajoutez d'abord vos sites et vos agents.</div>`}
   <div class="card"><h2>Ne travaillent pas ce jour</h2>${libres.length?libres.map(a=>{const i=indispo(P,a.id,ds),r=a.jour_repos!=null&&+a.jour_repos===dowOf(ds);
     return `<div class="line"><div class="grow"><b>${esc(nomAg(a))}</b><div class="muted xs">${esc(a.grade)} · ${esc(siteNom(a.site_id))}</div></div><span class="pill ${i?"p-red":r?"p-grey":"p-main"}">${i?esc(i.t):r?"Repos":a.site_id?"Sans poste":"Volant disponible"}</span>${dir&&i&&i.abs?`<button class="btn sm" data-annabs="${i.abs.id}">Annuler l'absence</button>`:""}</div>`}).join(""):'<p class="muted sm" style="margin:0">Tous les agents actifs sont en poste.</p>'}</div>`;
+  $("#main").innerHTML=`<div class="head"><div><h1>Planning</h1><p class="muted sm" style="margin:2px 0 0">Organisez chaque semaine les agents de chaque site par quart, puis suivez la couverture jour par jour.</p></div></div>
+  <div class="daybar"><button class="btn sm" id="pj-prev">‹ Semaine précédente</button><input class="input" type="date" id="pj-d" value="${ds}"><button class="btn sm" id="pj-auj">Cette semaine</button><button class="btn sm" id="pj-next">Semaine suivante ›</button></div>
+  <nav class="tabs pl-tabs" style="margin-bottom:12px"><button data-pm="semaine" class="${plMode==="semaine"?"on":""}">Planning de la semaine</button><button data-pm="jour" class="${plMode==="jour"?"on":""}">Couverture jour par jour</button></nav>
+  ${plMode==="semaine"?vueSemaine():`<div class="week">${semaine}</div>${vueJour()}`}`;
   const go=d=>{jourP=d;vPlanning().catch(e=>toast(traduire(e.message),true))};
   $("#pj-prev").onclick=()=>go(ajout(ds,-7));$("#pj-next").onclick=()=>go(ajout(ds,7));$("#pj-auj").onclick=()=>go(auj());$("#pj-d").onchange=e=>e.target.value&&go(e.target.value);
+  $("#main").querySelectorAll("[data-pm]").forEach(b=>b.onclick=()=>{plMode=b.dataset.pm;go(ds)});
   $("#main").querySelectorAll("[data-j]").forEach(b=>b.onclick=()=>go(b.dataset.j));
   $("#main").querySelectorAll("[data-rempl]").forEach(b=>b.onclick=()=>{const [sid,c]=b.dataset.rempl.split("|");remplacant(ds,sid,c,libres.filter(a=>!indispo(P,a.id,ds)))});
   $("#main").querySelectorAll("[data-delrempl]").forEach(b=>b.onclick=()=>busy(b,async()=>{must(await sb.from("plannings").delete().eq("id",b.dataset.delrempl));toast("Remplacement retiré");await vPlanning()}));
   $("#main").querySelectorAll("[data-abs]").forEach(b=>b.onclick=()=>declarerAbsence(b.dataset.abs,ds,vPlanning));
   $("#main").querySelectorAll("[data-annabs]").forEach(b=>b.onclick=()=>busy(b,async()=>{must(await sb.from("absences").delete().eq("id",b.dataset.annabs));toast("Absence annulée");await vPlanning()}));
+  if(plMode!=="semaine"||!actifs.length)return;
+  const ps=$("#pl-site");if(ps)ps.onchange=()=>{plSite=ps.value;go(ds)};
+  const pr=$("#pl-print");if(pr)pr.onclick=()=>imprimerPlanning(lundi,dim);
+  if(!dir)return;
+  /* matricule et horaires remplis dès qu'on choisit l'agent */
+  $("#main").querySelectorAll(".pl-t tr[data-q]").forEach(tr=>{const sel=tr.querySelector(".pl-a");sel.onchange=()=>{const a=AG_(sel.value),q=POSTE(tr.dataset.q);tr.querySelector(".pl-m").textContent=a?a.matricule||"":"";
+    const h1=tr.querySelector(".pl-h1"),h2=tr.querySelector(".pl-h2");if(a){if(!h1.value)h1.value=q.debut;if(!h2.value)h2.value=q.fin}else{h1.value="";h2.value=""}}});
+  const remplir=L=>{$("#main").querySelectorAll(".pl-t tr[data-q]").forEach(tr=>{const g=L.find(x=>x.poste===tr.dataset.q&&x.rang===+tr.dataset.r),a=g?AG_(g.agent_id):null,q=POSTE(tr.dataset.q);
+    tr.querySelector(".pl-a").value=a?a.id:"";tr.querySelector(".pl-m").textContent=a?a.matricule||"":"";
+    tr.querySelector(".pl-h1").value=a?hh(g.heure_arrivee)||q.debut:"";tr.querySelector(".pl-h2").value=a?hh(g.heure_depart)||q.fin:""})};
+  const precedente=async rot=>{const prev=ajout(lundi,-7),L=must(await sb.from("plannings_semaine").select("*").eq("site_id",plSite).eq("semaine",prev));
+    if(!L.filter(g=>g.agent_id).length)throw new Error("Aucun planning enregistré la semaine précédente pour ce site.");
+    const C=CODES(),out=[];C.forEach((c,i)=>{const src=rot?C[(i-1+C.length)%C.length]:c,q=POSTE(c);
+      L.filter(g=>g.poste===src&&g.agent_id).sort((x,y)=>x.rang-y.rang).forEach((g,k)=>{if(k<10)out.push({poste:c,rang:k+1,agent_id:g.agent_id,heure_arrivee:rot?q.debut:g.heure_arrivee,heure_depart:rot?q.fin:g.heure_depart})})});
+    remplir(out);toast(rot?"Semaine précédente reprise avec rotation des quarts · pensez à enregistrer":"Semaine précédente reprise · pensez à enregistrer")};
+  $("#pl-copy").onclick=e=>busy(e.target,()=>precedente(false));
+  $("#pl-rot").onclick=e=>busy(e.target,()=>precedente(true));
+  $("#pl-vide").onclick=()=>remplir([]);
+  $("#pl-save").onclick=()=>busy($("#pl-save"),async()=>{const rows=[],vus={};
+    $("#main").querySelectorAll(".pl-t tr[data-q]").forEach(tr=>{const id=tr.querySelector(".pl-a").value;if(!id)return;
+      if(vus[id])throw new Error(nomAg(AG_(id))+" est inscrit deux fois cette semaine ("+POSTE(vus[id]).libelle+" et "+POSTE(tr.dataset.q).libelle+").");vus[id]=tr.dataset.q;
+      const q=POSTE(tr.dataset.q);rows.push({site_id:plSite,semaine:lundi,poste:tr.dataset.q,rang:+tr.dataset.r,agent_id:id,heure_arrivee:tr.querySelector(".pl-h1").value||q.debut,heure_depart:tr.querySelector(".pl-h2").value||q.fin})});
+    const ailleurs=rows.filter(r=>P.sem.some(g=>g.agent_id===r.agent_id&&g.site_id!==plSite&&g.semaine===lundi));
+    if(ailleurs.length&&!confirm(ailleurs.map(r=>nomAg(AG_(r.agent_id))).join(", ")+" "+(ailleurs.length>1?"sont":"est")+" déjà planifié(s) sur un autre site cette semaine. Enregistrer quand même ?"))return;
+    must(await sb.from("plannings_semaine").delete().eq("site_id",plSite).eq("semaine",lundi));
+    if(rows.length)must(await sb.from("plannings_semaine").insert(rows));
+    toast(rows.length?"Planning de la semaine enregistré · "+rows.length+" agent(s)":"Planning de la semaine vidé");await vPlanning()});
 }
+async function imprimerPlanning(lundi,dim){const P=await chargerPlanning(lundi,dim),fs=d=>new Date(d+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
+  const blocs=sites.filter(s=>s.actif&&s.id===plSite).map(s=>{const gr=P.sem.filter(g=>g.site_id===s.id&&g.semaine===lundi);
+    return `<h2 style="font-size:16px;margin:18px 0 6px">${esc(s.nom)}</h2>`+CODES().map(c=>{const q=POSTE(c),L=gr.filter(g=>g.poste===c&&g.agent_id).sort((a,b)=>a.rang-b.rang);
+      return `<h3 style="font-size:14px;margin:12px 0 4px">${esc(q.libelle)} · ${q.debut} – ${q.fin}</h3><table style="width:100%;border-collapse:collapse;font-size:12px"><tr>${["N°","Nom de l'agent","Matricule","Heure d'arrivée","Heure de départ","Jour de repos"].map(h=>`<th style="border:1px solid #ccc;padding:5px;text-align:left;background:#f3f5f8">${h}</th>`).join("")}</tr>
+      ${L.length?L.map((g,k)=>{const a=AG_(g.agent_id)||{};return `<tr>${[k+1,esc(nomAg(a)),esc(a.matricule||""),hh(g.heure_arrivee)||q.debut,hh(g.heure_depart)||q.fin,a.jour_repos!=null?JOURS[+a.jour_repos]:"—"].map(v=>`<td style="border:1px solid #ccc;padding:5px">${v}</td>`).join("")}</tr>`}).join(""):`<tr><td colspan="6" style="border:1px solid #ccc;padding:5px;color:#888">Aucun agent</td></tr>`}</table>`}).join("")}).join("");
+  const w=window.open("","_blank");if(!w)throw new Error("Autorisez les fenêtres pop-up pour imprimer.");
+  w.document.write(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Planning ${lundi}</title></head><body style="font-family:Arial,sans-serif;padding:24px;color:#111"><h1 style="font-size:20px;margin:0">${esc(ag.nom||ag.nom_agence||"")} · Planning de la semaine</h1><p style="margin:4px 0 0;color:#555">Du ${fs(lundi)} au ${fs(dim)}</p>${blocs}<script>setTimeout(()=>print(),300)<\/script></body></html>`);w.document.close()}
 function remplacant(ds,siteId,c,dispo){
   dispo.sort((a,b)=>(a.grade==="Agent volant"?0:1)-(b.grade==="Agent volant"?0:1)||nomAg(a).localeCompare(nomAg(b)));
   modal("Affecter un remplaçant",`<p class="muted sm" style="margin-top:0">${esc(siteNom(siteId))} · poste de ${esc(POSTE(c).libelle.toLowerCase())} · ${esc(fjour(ds))}</p>
@@ -891,7 +964,7 @@ async function vPointage(){jourT=jourT||auj();const ds=jourT,dir=estDirection(),
   const aff=affectations(ds,P,agents),now=Date.now();
   const lignes=aff.map(a=>({...a,pt:po.find(p=>p.agent_id===a.agent_id&&p.poste===a.poste)}));
   po.filter(p=>!lignes.some(l=>l.pt===p)).forEach(p=>lignes.push({agent_id:p.agent_id,site_id:p.site_id,poste:p.poste,type:"hors planning",pt:p}));
-  const etat=l=>{const deb=debutPoste(ds,l.poste);if(l.pt){const r=Math.round((new Date(l.pt.heure_arrivee)-deb)/6e4);return r>TOL()?["En retard de "+r+" min","p-amber","ret"]:["Présent","p-green","ok"]}
+  const etat=l=>{const deb=debutPoste(ds,l.poste,l.h1||(l.pt&&l.pt.debut_prevu));if(l.pt){const r=Math.round((new Date(l.pt.heure_arrivee)-deb)/6e4);return r>TOL()?["En retard de "+r+" min","p-amber","ret"]:["Présent","p-green","ok"]}
     return now>deb.getTime()+TOL()*6e4?["Pas pointé","p-red","np"]:["À venir","p-grey","av"]};
   const n=k=>lignes.filter(l=>etat(l)[2]===k).length;
   lignes.sort((a,b)=>siteNom(a.site_id).localeCompare(siteNom(b.site_id))||a.poste.localeCompare(b.poste));
@@ -899,16 +972,16 @@ async function vPointage(){jourT=jourT||auj();const ds=jourT,dir=estDirection(),
   <div class="daybar"><button class="btn sm" id="pt-prev">‹</button><input class="input" type="date" id="pt-d" value="${ds}"><button class="btn sm" id="pt-next">›</button><button class="btn sm" id="pt-auj">Aujourd'hui</button></div>
   <div class="tiles"><div class="tile"><b>${lignes.length}</b><span class="muted sm">Attendus</span></div><div class="tile"><b class="ok-t">${n("ok")}</b><span class="muted sm">À l'heure</span></div><div class="tile"><b class="wa-t">${n("ret")}</b><span class="muted sm">En retard</span></div><div class="tile"><b class="ko-t">${n("np")}</b><span class="muted sm">Pas pointé</span></div></div>
   ${lignes.length?`<div class="card">${lignes.map(l=>{const a=AG_(l.agent_id),e=etat(l),pt=l.pt,s=sites.find(x=>x.id===l.site_id)||{},loin=pt&&pt.distance_m!=null&&pt.distance_m>(+s.rayon_m||300);
-    return `<div class="line"><div class="grow"><b>${esc(nomAg(a))}</b><div class="muted xs">${esc(siteNom(l.site_id))} · ${esc(POSTE(l.poste).libelle.toLowerCase())} ${POSTE(l.poste).debut}–${POSTE(l.poste).fin}${l.type!=="titulaire"?" · "+esc(l.type):""}</div>
+    return `<div class="line"><div class="grow"><b>${esc(nomAg(a))}</b><div class="muted xs">${esc(siteNom(l.site_id))} · ${esc(POSTE(l.poste).libelle.toLowerCase())} ${hh(l.h1)||POSTE(l.poste).debut}–${hh(l.h2)||POSTE(l.poste).fin}${l.type!=="titulaire"&&l.type!=="planning"?" · "+esc(l.type):""}</div>
       ${pt?`<div class="xs">Arrivée <b>${hm(pt.heure_arrivee)}</b> · départ <b>${hm(pt.heure_depart)}</b>${pt.distance_m!=null?` · <span class="${loin?"ko-t":"muted"}">à ${pt.distance_m} m du site</span>`:pt.mode==="application"?' · <span class="muted">sans position</span>':""}${pt.photo_path?` · <a href="#" data-selfie="${esc(pt.photo_path)}">📷 photo</a>`:pt.mode==="application"&&mod("selfie_pointage")?' · <span class="muted">sans photo</span>':""}${pt.mode==="secours"?' · <span class="wa-t">saisie manuelle</span>':""}${pt.mode==="hors_ligne"?' · <span class="wa-t">pointé hors réseau</span>':""}${pt.note?` · <span class="muted">${esc(pt.note)}</span>`:""}</div>`:""}</div>
       <span class="pill ${e[1]}">${e[0]}</span>
-      ${dir?(pt?`<button class="btn sm" data-corr="${pt.id}">Corriger</button>`:`<button class="btn sm" data-man="${l.agent_id}|${l.site_id}|${l.poste}">Saisir</button><button class="btn sm" data-abs2="${l.agent_id}">Absent</button>`)
+      ${dir?(pt?`<button class="btn sm" data-corr="${pt.id}">Corriger</button>`:`<button class="btn sm" data-man="${l.agent_id}|${l.site_id}|${l.poste}|${l.h1||""}|${l.h2||""}">Saisir</button><button class="btn sm" data-abs2="${l.agent_id}">Absent</button>`)
         :sup?(pt?(pt.mode==="secours"&&!pt.heure_depart?`<button class="btn sm" data-sdep="${pt.id}">Pointer son départ</button>`:""):`<button class="btn sm pri" data-ssec="${l.agent_id}|${l.site_id}|${l.poste}">Pointer pour lui</button>`):""}</div>`}).join("")}</div>`
   :`<div class="empty">Aucun agent prévu ce jour-là.</div>`}`;
   const go=d=>{jourT=d;vPointage().catch(e=>toast(traduire(e.message),true))};
   $("#pt-prev").onclick=()=>go(ajout(ds,-1));$("#pt-next").onclick=()=>go(ajout(ds,1));$("#pt-auj").onclick=()=>go(auj());$("#pt-d").onchange=e=>e.target.value&&go(e.target.value);
   const Q=(sel,f)=>$("#main").querySelectorAll(sel).forEach(b=>b.onclick=()=>f(b));
-  Q("[data-man]",b=>{const [ag_,si,c]=b.dataset.man.split("|");saisieManuelle(ds,{agent_id:ag_,site_id:si,poste:c})});
+  Q("[data-man]",b=>{const [ag_,si,c,h1,h2]=b.dataset.man.split("|");saisieManuelle(ds,{agent_id:ag_,site_id:si,poste:c,h1:h1||null,h2:h2||null})});
   Q("[data-corr]",b=>saisieManuelle(ds,po.find(p=>p.id===b.dataset.corr)));
   Q("[data-abs2]",b=>declarerAbsence(b.dataset.abs2,ds,vPointage));
   Q("[data-ssec]",b=>{const [ag_,si,c]=b.dataset.ssec.split("|"),a=AG_(ag_);
@@ -922,12 +995,12 @@ function confirmerSimple(titre,texte,label,fn){modal(titre,`<p style="margin-top
   $("#cs-no").onclick=closeModal;$("#cs-ok").onclick=()=>busy($("#cs-ok"),async()=>{await fn();closeModal()})}
 function saisieManuelle(ds,pt){const nouv=!pt.id,a=AG_(pt.agent_id),hhmm=t=>t?hm(t):"";
   modal((nouv?"Saisir un pointage · ":"Corriger le pointage · ")+esc(nomAg(a)),`<p class="muted sm" style="margin-top:0">${esc(siteNom(pt.site_id))} · poste de ${esc(POSTE(pt.poste).libelle.toLowerCase())} · ${esc(fjour(ds))}</p>
-  <div class="row"><div class="field"><label class="f">Heure d'arrivée</label><input class="input" type="time" id="sm-a" value="${nouv?POSTE(pt.poste).debut:hhmm(pt.heure_arrivee)}"></div><div class="field"><label class="f">Heure de départ <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" type="time" id="sm-d" value="${hhmm(pt.heure_depart)}"></div></div>
+  <div class="row"><div class="field"><label class="f">Heure d'arrivée</label><input class="input" type="time" id="sm-a" value="${nouv?hh(pt.h1)||POSTE(pt.poste).debut:hhmm(pt.heure_arrivee)}"></div><div class="field"><label class="f">Heure de départ <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" type="time" id="sm-d" value="${hhmm(pt.heure_depart)}"></div></div>
   <div class="field"><label class="f">Motif</label><input class="input" id="sm-n" value="${esc(nouv?"":pt.note||"")}" placeholder="Ex. pointage oublié, téléphone en panne"></div>
   <p class="muted sm" style="margin:0">La saisie est marquée « manuelle » pour garder une trace.</p>`,
   `${nouv?"":'<button class="btn danger" id="sm-del" style="margin-right:auto">Supprimer</button>'}<button class="btn" id="sm-no">Annuler</button><button class="btn pri" id="sm-ok">Enregistrer</button>`);
   $("#sm-no").onclick=closeModal;
-  const ts=(h,depart)=>{if(!h)return null;const d=new Date(ds+"T"+h+":00");if(depart||(pt.poste==="N"&&h<POSTE("N").debut&&POSTE("N").fin<=POSTE("N").debut))if(d<=debutPoste(ds,pt.poste))d.setDate(d.getDate()+1);return d.toISOString()};
+  const ts=(h,depart)=>{if(!h)return null;const d=new Date(ds+"T"+h+":00");const P_=POSTE(pt.poste),d0=hh(pt.debut_prevu||pt.h1)||P_.debut,f0=hh(pt.h2)||P_.fin;if(depart||(f0<=d0&&h<d0))if(d<=debutPoste(ds,pt.poste,d0))d.setDate(d.getDate()+1);return d.toISOString()};
   $("#sm-ok").onclick=()=>busy($("#sm-ok"),async()=>{const h=$("#sm-a").value;if(!h)throw new Error("Indiquez l'heure d'arrivée.");
     const d={heure_arrivee:ts(h,false),heure_depart:ts($("#sm-d").value,true),note:$("#sm-n").value.trim()||"Saisie par la direction",mode:"secours"};
     if(d.heure_depart&&d.heure_depart<=d.heure_arrivee)throw new Error("L'heure de départ doit être après l'heure d'arrivée.");
@@ -938,7 +1011,7 @@ function saisieManuelle(ds,pt){const nouv=!pt.id,a=AG_(pt.agent_id),hhmm=t=>t?hm
 async function exporterPointages(ym){const d1=ym+"-01",d2=iso(new Date(+ym.slice(0,4),+ym.slice(5,7),0));
   const po=must(await sb.from("pointages").select("*").gte("date_service",d1).lte("date_service",d2).order("date_service"));
   const c=v=>'"'+String(v??"").replace(/"/g,'""')+'"',L=[["Date","Matricule","Agent","Site","Poste","Arrivée","Départ","Retard (min)","Distance (m)","Mode","Note"]];
-  po.forEach(p=>{const a=AG_(p.agent_id)||{},r=Math.round((new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste))/6e4);
+  po.forEach(p=>{const a=AG_(p.agent_id)||{},r=Math.round((new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste,p.debut_prevu))/6e4);
     L.push([p.date_service,a.matricule,nomAg(a),siteNom(p.site_id),POSTE(p.poste).libelle,hm(p.heure_arrivee),hm(p.heure_depart),r>0?r:0,p.distance_m??"",p.mode==="secours"?"Manuel":"Application",p.note||""])});
   const u=URL.createObjectURL(new Blob(["﻿"+L.map(r=>r.map(c).join(";")).join("\r\n")],{type:"text/csv;charset=utf-8"})),l=document.createElement("a");
   l.href=u;l.download="pointages-"+ag.slug+"-"+ym+".csv";document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast(po.length+" pointage(s) exporté(s)");
@@ -955,16 +1028,15 @@ async function donneesAgent(){
 }
 async function vAgentAccueil(){
   const {P,po}=await donneesAgent(),now=new Date(),ouvert=po.find(p=>!p.heure_depart&&now-new Date(p.heure_arrivee)<20*36e5);
-  const pN=POSTE("N"),hNow=pad(now.getHours())+":"+pad(now.getMinutes());
-  const dsServ=monAgent.poste==="N"&&pN.fin<=pN.debut&&hNow<pN.fin?ajout(auj(),-1):auj();
-  let cand=[ajout(auj(),-1),auj()].flatMap(d=>affectations(d,P,[monAgent]).map(x=>({...x,ds:d}))).filter(x=>finPoste(x.ds,x.poste)>now);
-  const vise=cand.find(x=>x.ds===dsServ)||cand[0];
+  let cand=[ajout(auj(),-1),auj()].flatMap(d=>affectations(d,P,[monAgent]).map(x=>({...x,ds:d}))).filter(x=>finPoste(x.ds,x.poste,x.h1,x.h2)>now);
+  cand.sort((x,y)=>debA(x)-debA(y));
+  const vise=cand.find(x=>!po.some(p=>p.date_service===x.ds&&p.poste===x.poste))||cand[0];
   const fait=vise&&po.find(p=>p.date_service===vise.ds&&p.poste===vise.poste);
   const S=id=>sites.find(x=>x.id===id)||{nom:"Site"};let carte;
   if(ouvert){const s=S(ouvert.site_id);
     carte=`<div class="punch"><span class="pill p-green">En poste</span><div class="big">${hm(ouvert.heure_arrivee)}</div><div class="muted">Arrivée enregistrée · ${esc(s.nom)}</div><button class="btn pri bigbtn" id="ag-dep">Pointer mon départ</button></div>`}
   else if(vise&&!fait){const s=S(vise.site_id),p=POSTE(vise.poste);
-    carte=`<div class="punch"><div class="muted">${esc(fjour(vise.ds))}</div><div class="big" style="font-size:26px">${esc(s.nom)}</div><div class="muted">Poste de ${esc(p.libelle.toLowerCase())} · ${p.debut} – ${p.fin}${vise.type==="remplacement"?" · remplacement":""}</div>
+    carte=`<div class="punch"><div class="muted">${esc(fjour(vise.ds))}</div><div class="big" style="font-size:26px">${esc(s.nom)}</div><div class="muted">Poste de ${esc(p.libelle.toLowerCase())} · ${hh(vise.h1)||p.debut} – ${hh(vise.h2)||p.fin}${vise.type==="remplacement"?" · remplacement":""}</div>
       ${s.consignes?`<div class="idbox" style="text-align:left;margin:14px 0 0"><b>Consignes :</b> ${esc(s.consignes)}</div>`:""}<button class="btn pri bigbtn" id="ag-arr">Pointer mon arrivée</button><p class="muted xs" style="margin:10px 0 0">Votre position sera vérifiée. Activez la localisation de votre téléphone.</p></div>`}
   else if(fait){carte=`<div class="punch"><span class="pill p-green">Service terminé</span><div class="big" style="font-size:24px">${hm(fait.heure_arrivee)} → ${hm(fait.heure_depart)}</div><div class="muted">Merci, bon repos.</div></div>`}
   else{const i=indispo(P,monAgent.id,auj());carte=`<div class="punch"><span class="pill ${i?"p-amber":"p-grey"}">${i?esc(i.t):monAgent.site_id?"Repos":"Pas de poste prévu"}</span><div class="big" style="font-size:24px">Pas de service prévu</div><div class="muted">Consultez « Mon planning » pour vos prochains services.</div></div>`}
@@ -1005,7 +1077,7 @@ async function vMonPlanning(){
   const {P}=await donneesAgent(),S=id=>(sites.find(x=>x.id===id)||{nom:"Site"}).nom;
   const jours=[...Array(14)].map((_,i)=>ajout(auj(),i));
   $("#main").innerHTML=`<div class="head"><div><h1>Mon planning</h1><p class="muted sm" style="margin:2px 0 0">Vos 14 prochains jours.</p></div></div><div class="card">${jours.map(d=>{const a=affectations(d,P,[monAgent]),i=indispo(P,monAgent.id,d);
-    const j=fjour(d);return `<div class="line"><div class="grow"><b>${esc(j[0].toUpperCase()+j.slice(1))}</b></div>${a.length?a.map(x=>`<span class="sm">${esc(S(x.site_id))} · ${esc(POSTE(x.poste).libelle.toLowerCase())} ${POSTE(x.poste).debut}–${POSTE(x.poste).fin}</span>${x.type==="remplacement"?'<span class="pill p-amber">remplacement</span>':""}`).join(""):`<span class="pill ${i?"p-amber":"p-grey"}">${i?esc(i.t):monAgent.site_id&&monAgent.jour_repos!=null&&+monAgent.jour_repos===dowOf(d)?"Repos":monAgent.site_id?"Pas de service":"Pas de poste prévu"}</span>`}</div>`}).join("")}</div>`;
+    const j=fjour(d);return `<div class="line"><div class="grow"><b>${esc(j[0].toUpperCase()+j.slice(1))}</b></div>${a.length?a.map(x=>`<span class="sm">${esc(S(x.site_id))} · ${esc(POSTE(x.poste).libelle.toLowerCase())} ${hh(x.h1)||POSTE(x.poste).debut}–${hh(x.h2)||POSTE(x.poste).fin}</span>${x.type==="remplacement"?'<span class="pill p-amber">remplacement</span>':""}`).join(""):`<span class="pill ${i?"p-amber":"p-grey"}">${i?esc(i.t):monAgent.site_id&&monAgent.jour_repos!=null&&+monAgent.jour_repos===dowOf(d)?"Repos":monAgent.site_id?"Pas de service":"Pas de poste prévu"}</span>`}</div>`}).join("")}</div>`;
 }
 
 /* ---------- PDF, code QR, pied de page ---------- */
@@ -1148,7 +1220,7 @@ function docHTML(d,a){const c=lireContenu(d),p=ag.parametres||{},nom=esc(ag.nom_
     +A(++n,"Engagement",`L'Employeur engage le Salarié, qui l'accepte, en qualité de <b>${emploi}</b>, sous le matricule ${esc(a.matricule)}, à compter du <b>${a.date_embauche?fdl(a.date_embauche):"……………"}</b>. ${cdd?`Le présent contrat est conclu pour une durée déterminée, du ${a.date_embauche?fdl(a.date_embauche):"……………"} au <b>${c.date_fin?fdl(c.date_fin):"……………"}</b>${t?", pour le motif suivant : "+t:""}. Il prend fin de plein droit à son terme.`:"Le présent contrat est conclu pour une durée indéterminée."}`)
     +A(++n,"Période d'essai",es?`Le présent contrat ne devient définitif qu'à l'issue d'une période d'essai de <b>${es} mois</b>. Pendant cette période, chacune des parties peut y mettre fin à tout moment, sans préavis ni indemnité, sous réserve de l'indemnité compensatrice de congés payés éventuellement due. La poursuite des services au-delà de la période d'essai vaut confirmation de l'engagement définitif à compter de la date d'entrée.`:"Le présent contrat ne comporte pas de période d'essai.")
     +A(++n,"Lieu de travail",`Le Salarié exerce ses fonctions ${st?"sur le site « "+esc(st.nom)+" »":"sur les sites confiés à l'Employeur par ses clients"}${ag.ville?", dans la zone de "+esc(ag.ville):""}. Compte tenu de la nature de l'activité de gardiennage, il peut être affecté sur un autre site selon les besoins du service, sans que cette affectation constitue une modification de son contrat.`)
-    +A(++n,"Durée du travail et repos",`La durée du travail est fixée conformément à la durée légale de quarante (40) heures par semaine. Le service est organisé par postes, selon le planning communiqué par l'Employeur (poste de jour de ${J.debut} à ${J.fin}, poste de nuit de ${N.debut} à ${N.fin}). Les heures accomplies au-delà de la durée légale ouvrent droit aux majorations prévues par la réglementation en vigueur. Le Salarié bénéficie d'un repos hebdomadaire d'au moins vingt-quatre heures consécutives${a.jour_repos!=null?", en principe le "+JOURS[+a.jour_repos].toLowerCase():""}.`)
+    +A(++n,"Durée du travail et repos",`La durée du travail est fixée conformément à la durée légale de quarante (40) heures par semaine. Le service est organisé par postes, selon le planning communiqué par l'Employeur (${CODES().map(c=>{const q=POSTE(c);return "poste « "+q.libelle+" » de "+q.debut+" à "+q.fin}).join(", ")}). Les heures accomplies au-delà de la durée légale ouvrent droit aux majorations prévues par la réglementation en vigueur. Le Salarié bénéficie d'un repos hebdomadaire d'au moins vingt-quatre heures consécutives${a.jour_repos!=null?", en principe le "+JOURS[+a.jour_repos].toLowerCase():""}.`)
     +A(++n,"Rémunération",`Le Salarié perçoit un salaire de base mensuel brut de <b>${base.toLocaleString("fr-FR")} ${dev_}</b> (${esc(enLettres(base))} francs CFA), auquel s'ajoutent, le cas échéant, les primes et indemnités en vigueur dans l'entreprise (ancienneté, nuit, panier, responsabilité). Le salaire est payé chaque mois, en monnaie ayant cours légal, au plus tard le cinquième jour suivant le mois concerné, et donne lieu à la remise d'un bulletin de paie.`)
     +A(++n,"Congés payés",`Le Salarié acquiert un droit à congé payé de deux (2) jours ouvrables par mois de service effectif, conformément au Code du travail. Les dates de congé sont fixées en accord avec l'Employeur, en tenant compte des nécessités du service.`)
     +A(++n,"Protection sociale",`Le Salarié est déclaré par l'Employeur auprès ${LEG().social}. Les cotisations salariales sont précomptées sur son salaire aux taux en vigueur.`)
@@ -1396,9 +1468,10 @@ async function vMonMateriel(){await chargerMonAgent();
 }
 
 /* ---------- réglages de l'agence (dirigeant) ---------- */
-async function vReglages(){const p=ag.parametres||{},J=POSTE("J"),N=POSTE("N"),grades=p.grades||[],pg=p.primes_grade||{};
+async function vReglages(){const p=ag.parametres||{},grades=p.grades||[],pg=p.primes_grade||{};
   $("#main").innerHTML=`<div class="head"><div><h1>Réglages de l'agence</h1><p class="muted sm" style="margin:2px 0 0">Horaires, primes et cotisations utilisés par le planning, le pointage et la paie.</p></div></div>
-  <div class="card"><h2>Horaires des postes</h2><div class="row"><div class="field"><label class="f">Jour · début</label><input class="input" type="time" id="rg-jd" value="${J.debut}"></div><div class="field"><label class="f">Jour · fin</label><input class="input" type="time" id="rg-jf" value="${J.fin}"></div><div class="field"><label class="f">Nuit · début</label><input class="input" type="time" id="rg-nd" value="${N.debut}"></div><div class="field"><label class="f">Nuit · fin</label><input class="input" type="time" id="rg-nf" value="${N.fin}"></div></div>
+  <div class="card"><h2>Quarts de travail</h2><p class="muted sm" style="margin:-4px 0 10px">Ex. 2 quarts de 12 h (jour / nuit) ou 3 quarts de 8 h (matin, après-midi, nuit). Le planning, le pointage et les retards suivent ces horaires.</p>
+  <div class="actions" style="margin-bottom:12px"><button class="btn sm" type="button" id="rg-2q">2 quarts de 12 h</button><button class="btn sm" type="button" id="rg-3q">3 quarts de 8 h</button></div><div id="rg-postes"></div><button class="btn sm" type="button" id="rg-addq" style="margin-bottom:12px">+ Ajouter un quart</button>
   <div class="field" style="max-width:260px"><label class="f">Tolérance avant retard (minutes)</label><input class="input" type="number" min="0" max="120" id="rg-tol" value="${TOL()}"></div></div>
   <div class="card"><h2>Paie</h2><div class="row"><div class="field"><label class="f">Prime de nuit (par mois)</label><input class="input" type="number" min="0" id="rg-pn" value="${+p.prime_nuit||0}"></div><div class="field"><label class="f">Prime de panier (par mois)</label><input class="input" type="number" min="0" id="rg-pp" value="${+p.prime_panier||0}"></div><div class="field"><label class="f">Cotisations sociales salariales (%)</label><input class="input" type="number" min="0" max="50" step="0.1" id="rg-cot" value="${+p.taux_cotisations||0}"></div><div class="field"><label class="f">Mode de paiement</label><input class="input" id="rg-mp" value="${esc(p.mode_paiement||"espèces")}"></div></div>
   <label style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><input type="checkbox" id="rg-anc" ${p.anciennete!==false?"checked":""}> Prime d'ancienneté automatique (1 % du salaire de base par année, à partir de 2 ans, plafonnée à 25 %)</label>
@@ -1416,10 +1489,21 @@ async function vReglages(){const p=ag.parametres||{},J=POSTE("J"),N=POSTE("N"),g
   <button class="btn pri" id="rg-ok">Enregistrer les réglages</button>`;
   $("#rg-ok").onclick=()=>busy($("#rg-ok"),async()=>{const gr=$("#rg-gr").value.split("\n").map(x=>x.trim()).filter(Boolean);if(!gr.length)throw new Error("Indiquez au moins un grade.");
     const primes={};grades.forEach((g,i)=>{const v=+$(`[data-pg="${i}"]`).value||0;if(v)primes[g]=v});
-    const autres=(p.postes||[]).filter(x=>x.code!=="J"&&x.code!=="N");
-    const n={postes:[{code:"J",libelle:"Jour",debut:$("#rg-jd").value||J.debut,fin:$("#rg-jf").value||J.fin},{code:"N",libelle:"Nuit",debut:$("#rg-nd").value||N.debut,fin:$("#rg-nf").value||N.fin},...autres],
+    const postes=lirePostes();
+    const n={postes,
       tolerance_retard:Math.max(0,Math.min(120,+$("#rg-tol").value||0)),prime_nuit:Math.max(0,+$("#rg-pn").value||0),prime_panier:Math.max(0,+$("#rg-pp").value||0),taux_cotisations:Math.max(0,Math.min(50,+$("#rg-cot").value||0)),mode_paiement:$("#rg-mp").value.trim()||"espèces",anciennete:$("#rg-anc").checked,primes_grade:primes,grades:gr,tva:Math.max(0,Math.min(50,+$("#rg-tva").value||0)),carte_champs:Object.fromEntries([...document.querySelectorAll("[data-cc]")].map(i=>[i.dataset.cc,i.checked])),delai_paiement_jours:Math.max(0,+$("#rg-del").value||0),mentions_facture:$("#rg-men").value.trim(),forme_juridique:$("#rg-fj").value.trim(),capital:$("#rg-cap").value.trim(),rccm:$("#rg-rccm").value.trim(),nif:$("#rg-nif").value.trim(),adresse_siege:$("#rg-adr").value.trim(),boite_postale:$("#rg-bp").value.trim(),telephone_contact:$("#rg-tel").value.trim(),email_contact:$("#rg-mail").value.trim(),signataire:$("#rg-sig").value.trim(),fonction_signataire:$("#rg-fsig").value.trim()};
     ag.parametres=must(await sb.rpc("maj_parametres",{p:n}));toast("Réglages enregistrés");await vReglages()});
+  let QL=CODES().map(c=>({...POSTE(c)}));
+  const dessQ=()=>{$("#rg-postes").innerHTML=QL.map((q,i)=>`<div class="row" style="align-items:flex-end"><div class="field" style="flex:0 1 90px"><label class="f">Code</label><input class="input" data-q="code" data-i="${i}" maxlength="3" value="${esc(q.code)}"></div><div class="field"><label class="f">Nom du quart</label><input class="input" data-q="libelle" data-i="${i}" value="${esc(q.libelle)}"></div><div class="field"><label class="f">Début</label><input class="input" type="time" data-q="debut" data-i="${i}" value="${q.debut}"></div><div class="field"><label class="f">Fin</label><input class="input" type="time" data-q="fin" data-i="${i}" value="${q.fin}"></div>${QL.length>1?`<button class="btn sm danger" type="button" data-qdel="${i}" style="margin-bottom:12px">Retirer</button>`:""}</div>`).join("");
+    $("#rg-postes").querySelectorAll("[data-q]").forEach(x=>x.oninput=()=>{QL[+x.dataset.i][x.dataset.q]=x.dataset.q==="code"?x.value.toUpperCase().replace(/[^A-Z0-9]/g,""):x.value});
+    $("#rg-postes").querySelectorAll("[data-qdel]").forEach(x=>x.onclick=()=>{QL.splice(+x.dataset.qdel,1);dessQ()})};
+  window.lirePostes=()=>{const l=QL.map(q=>({code:String(q.code||"").toUpperCase().trim(),libelle:String(q.libelle||"").trim(),debut:q.debut,fin:q.fin}));
+    if(!l.length)throw new Error("Indiquez au moins un quart.");if(l.some(q=>!q.code||!q.libelle||!q.debut||!q.fin))throw new Error("Chaque quart doit avoir un code, un nom, une heure de début et de fin.");
+    if(new Set(l.map(q=>q.code)).size!==l.length)throw new Error("Deux quarts ont le même code.");return l};
+  $("#rg-2q").onclick=()=>{QL=[{code:"J",libelle:"Jour",debut:"07:00",fin:"19:00"},{code:"N",libelle:"Nuit",debut:"19:00",fin:"07:00"}];dessQ()};
+  $("#rg-3q").onclick=()=>{QL=[{code:"M",libelle:"Matin",debut:"06:00",fin:"14:00"},{code:"S",libelle:"Après-midi",debut:"14:00",fin:"22:00"},{code:"N",libelle:"Nuit",debut:"22:00",fin:"06:00"}];dessQ()};
+  $("#rg-addq").onclick=()=>{QL.push({code:"Q"+(QL.length+1),libelle:"",debut:"08:00",fin:"16:00"});dessQ()};
+  dessQ();
 }
 
 /* ---------- veille : alertes SOS et compteurs ---------- */
@@ -1696,8 +1780,8 @@ const LIB_RCL={Brouillon:"Brouillon",Envoyé:"En attente du client",Validé:"Val
 const TYPES_MISSION=["Conseil en sûreté","Audit de sécurité","Formation","Intervention ponctuelle","Sécurité d'un événement","Escorte / transport de fonds","Autre"];
 let moisRC="";
 function statsSite(D,sid){const now=new Date(),po=D.po.filter(p=>p.site_id===sid);
-  const prevus=D.att.filter(x=>x.site_id===sid&&finPoste(x.ds,x.poste)<now),assures=prevus.filter(x=>po.some(p=>p.agent_id===x.agent_id&&p.date_service===x.ds&&p.poste===x.poste)).length;
-  const retards=po.filter(p=>p.heure_arrivee&&(new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste))/6e4>TOL()).length;
+  const prevus=D.att.filter(x=>x.site_id===sid&&finPoste(x.ds,x.poste,x.h1,x.h2)<now),assures=prevus.filter(x=>po.some(p=>p.agent_id===x.agent_id&&p.date_service===x.ds&&p.poste===x.poste)).length;
+  const retards=po.filter(p=>p.heure_arrivee&&(new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste,p.debut_prevu))/6e4>TOL()).length;
   const heures=Math.round(po.reduce((t,p)=>t+(p.heure_arrivee&&p.heure_depart?Math.max(0,(new Date(p.heure_depart)-new Date(p.heure_arrivee))/36e5):0),0));
   const ro=D.ro.filter(r=>r.site_id===sid),pts=ro.reduce((t,r)=>t+((r.points||[]).length),0);
   const inc=D.inc.filter(i=>i.site_id===sid&&i.visible_client!==false).sort((a,b)=>String(a.survenu_le).localeCompare(String(b.survenu_le)));
@@ -1821,7 +1905,7 @@ function importExcel(){modal("Importer depuis Excel",`<p style="margin-top:0">Po
       const so=must(await sb.from("sites").select("id,nom")),sid=n=>{const x=so.find(s=>slugify(s.nom)===slugify(n));return x?x.id:null};
       let seq=agents.length;const pre=(ag.slug.split("-").map(x=>x[0]).join("")||"ag").toUpperCase().slice(0,3);
       const catX=t=>{const k=slugify(t);return (CATS.find(([c,l])=>k&&(slugify(c)===k||slugify(l)===k||slugify(l).startsWith(k)||k.startsWith(slugify(c))))||["Sécurité"])[0]};
-      let libres=place;const lotA=nvA.filter(a=>catX(a.categorie)!=="Sécurité"||libres-->0).map(a=>{const p=slugify(a.poste);return {categorie:catX(a.categorie),matricule:String(a.matricule||"").trim()||pre+String(++seq).padStart(4,"0"),nom:String(a.nom).trim().toUpperCase(),prenom:String(a.prenom||"").trim()||null,grade:String(a.grade||"").trim()||((ag.parametres||{}).grades||["Agent de sécurité"])[0],site_id:a.site?sid(a.site):null,poste:p.startsWith("n")?"N":p.startsWith("j")?"J":null,telephone:String(a.telephone||"").trim()||null,date_embauche:isoXL(a.date_embauche),date_naissance:isoXL(a.date_naissance),lieu_naissance:String(a.lieu_naissance||"").trim()||null,salaire_base:numXL(a.salaire_base),num_securite_sociale:String(a.num_securite_sociale||"").trim()||null,banque:String(a.banque||"").trim()||null,rib:String(a.rib||"").trim()||null,quartier:String(a.quartier||"").trim()||null,statut:"Actif"}});
+      let libres=place;const lotA=nvA.filter(a=>catX(a.categorie)!=="Sécurité"||libres-->0).map(a=>{const p=slugify(a.poste);return {categorie:catX(a.categorie),matricule:String(a.matricule||"").trim()||pre+String(++seq).padStart(4,"0"),nom:String(a.nom).trim().toUpperCase(),prenom:String(a.prenom||"").trim()||null,grade:String(a.grade||"").trim()||((ag.parametres||{}).grades||["Agent de sécurité"])[0],site_id:a.site?sid(a.site):null,poste:(()=>{const C=CODES(),h=k=>C.includes(k)?k:null;return p.startsWith("n")?h("N")||C[C.length-1]:p.startsWith("m")?h("M")||C[0]:(p.startsWith("a")||p.startsWith("s"))?h("S")||C[0]:p.startsWith("j")?h("J")||C[0]:C.includes(p.toUpperCase())?p.toUpperCase():null})(),telephone:String(a.telephone||"").trim()||null,date_embauche:isoXL(a.date_embauche),date_naissance:isoXL(a.date_naissance),lieu_naissance:String(a.lieu_naissance||"").trim()||null,salaire_base:numXL(a.salaire_base),num_securite_sociale:String(a.num_securite_sociale||"").trim()||null,banque:String(a.banque||"").trim()||null,rib:String(a.rib||"").trim()||null,quartier:String(a.quartier||"").trim()||null,statut:"Actif"}});
       for(let i=0;i<lotA.length;i+=40){const lot=lotA.slice(i,i+40);must(await sb.from("agents").insert(lot));nA+=lot.length}
       closeModal();toast(nS+" site(s) et "+nA+" agent(s) importés");await charger();await ouvrir(tab)})})}}
 /* ---------- 2. selfie au pointage ---------- */
@@ -1839,15 +1923,15 @@ document.addEventListener("click",e=>{const a=e.target.closest("[data-selfie]");
 let ctlTimer=null,ctlCarte=null;
 async function etatTerrain(){const ds=auj(),hier=ajout(ds,-1),now=new Date();
   const [P,po,sos,inc]=await Promise.all([chargerPlanning(hier,ds),sb.from("pointages").select("*").gte("date_service",hier).lte("date_service",ds).then(must),sb.from("alertes_sos").select("*").eq("statut","En cours").then(must).catch(()=>[]),sb.from("incidents").select("*").gte("survenu_le",ds+"T00:00:00").then(must).catch(()=>[])]);
-  const enCours=[hier,ds].flatMap(d=>affectations(d,P,agents).map(a=>({...a,ds:d}))).filter(x=>debutPoste(x.ds,x.poste)<=now&&finPoste(x.ds,x.poste)>now)
+  const enCours=[hier,ds].flatMap(d=>affectations(d,P,agents).map(a=>({...a,ds:d}))).filter(x=>debutPoste(x.ds,x.poste,x.h1)<=now&&finPoste(x.ds,x.poste,x.h1,x.h2)>now)
     .map(x=>({...x,pt:po.find(p=>p.agent_id===x.agent_id&&p.date_service===x.ds&&p.poste===x.poste)}));
-  const manquants=enCours.filter(x=>!x.pt&&(now-debutPoste(x.ds,x.poste))/6e4>TOL());
+  const manquants=enCours.filter(x=>!x.pt&&(now-debutPoste(x.ds,x.poste,x.h1))/6e4>TOL());
   const occupes=new Set(po.filter(p=>!p.heure_depart).map(p=>p.agent_id).concat(enCours.map(x=>x.agent_id)));
   const volants=agents.filter(a=>a.statut==="Actif"&&/volant/i.test(a.grade||"")&&!occupes.has(a.id)&&!indispo(P,a.id,ds));
   return {P,po,sos,inc,enCours,manquants,volants,ds}}
 function carteManquants(T,court){if(!T.manquants.length)return "";
   return `<div class="card" style="border-color:var(--red)"><div class="actions" style="justify-content:space-between"><h2 style="margin:0;color:var(--red)">⚠ ${T.manquants.length} poste(s) non tenu(s)</h2>${court?`<button class="btn sm" data-go="controle">Salle de contrôle</button>`:""}</div>
-  ${T.manquants.map(x=>{const a=AG_(x.agent_id),r=Math.round((new Date()-debutPoste(x.ds,x.poste))/6e4);return `<div class="line"><div class="grow"><b>${esc(siteNom(x.site_id))}</b><div class="muted xs">${esc(nomAg(a))} pas arrivé · poste de ${esc(POSTE(x.poste).libelle.toLowerCase())} commencé depuis ${r>=60?Math.floor(r/60)+" h "+pad(r%60):r+" min"}${a.telephone?` · <a href="tel:${esc(String(a.telephone).replace(/\s/g,""))}">appeler</a>`:""}</div></div>${court||!estDirection()?"":T.volants.length?`<select class="input" style="width:auto" data-vol="${x.site_id}|${x.poste}|${x.ds}">${T.volants.map(v=>`<option value="${v.id}">${esc(nomAg(v))}</option>`).join("")}</select><button class="btn sm pri" data-envoi="${x.site_id}|${x.poste}|${x.ds}">Envoyer ce volant</button>`:'<span class="muted xs">Aucun agent volant libre</span>'}</div>`}).join("")}</div>`}
+  ${T.manquants.map(x=>{const a=AG_(x.agent_id),r=Math.round((new Date()-debutPoste(x.ds,x.poste,x.h1))/6e4);return `<div class="line"><div class="grow"><b>${esc(siteNom(x.site_id))}</b><div class="muted xs">${esc(nomAg(a))} pas arrivé · poste de ${esc(POSTE(x.poste).libelle.toLowerCase())} commencé depuis ${r>=60?Math.floor(r/60)+" h "+pad(r%60):r+" min"}${a.telephone?` · <a href="tel:${esc(String(a.telephone).replace(/\s/g,""))}">appeler</a>`:""}</div></div>${court||!estDirection()?"":T.volants.length?`<select class="input" style="width:auto" data-vol="${x.site_id}|${x.poste}|${x.ds}">${T.volants.map(v=>`<option value="${v.id}">${esc(nomAg(v))}</option>`).join("")}</select><button class="btn sm pri" data-envoi="${x.site_id}|${x.poste}|${x.ds}">Envoyer ce volant</button>`:'<span class="muted xs">Aucun agent volant libre</span>'}</div>`}).join("")}</div>`}
 function brancherVolants(apres){$("#main").querySelectorAll("[data-envoi]").forEach(b=>b.onclick=()=>busy(b,async()=>{const [s,p,d]=b.dataset.envoi.split("|"),sel=$(`[data-vol="${b.dataset.envoi}"]`);
   must(await sb.from("plannings").insert({date_service:d,site_id:s,poste:p,agent_id:sel.value,type:"remplacement",note:"Envoyé depuis la salle de contrôle"}));toast("Agent volant affecté au site");await apres()}));
   $("#main").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go))}
@@ -1943,7 +2027,7 @@ async function vMonProfil(){await chargerMonAgent();const a=monAgent;
   const L=(k,v)=>v?`<div class="line"><span class="muted sm" style="min-width:150px">${k}</span><b class="grow">${v}</b></div>`:"";
   $("#main").innerHTML=`<div class="head"><div><h1>Mon profil</h1><p class="muted sm" style="margin:2px 0 0">Vos informations, votre carte professionnelle et vos demandes de documents.</p></div></div>
   <div class="card"><div class="row" style="gap:14px;align-items:center;margin-bottom:8px">${moi.photo_url?`<img class="av" style="width:64px;height:64px" src="${esc(photoUrl(moi.photo_url))}" alt="">`:`<span class="av" style="width:64px;height:64px;font-size:22px">${esc(initiales(moi.nom_complet))}</span>`}<div class="grow"><h2 style="margin:0">${esc(nomAg(a))}</h2><div class="muted sm">${esc(a.grade||"")} · ${esc(a.matricule||"")}</div></div><button class="btn sm" id="pf-ph">Changer ma photo</button></div>
-    ${L("Affectation",s?esc(s.nom)+(a.poste?" · poste de "+(a.poste==="N"?"nuit":"jour"):""):"")}${L("Date d'embauche",a.date_embauche?fdl(a.date_embauche):"")}${L("Téléphone",esc(a.telephone||""))}${L("Quartier",esc(a.quartier||""))}${L("Carte professionnelle",a.carte_pro_expiration?"valable jusqu'au "+fdl(a.carte_pro_expiration):"")}${L("Banque",a.rib?esc((a.banque||"")+" · "+a.rib):"")}
+    ${L("Affectation",s?esc(s.nom)+(a.poste?" · poste de "+POSTE(a.poste).libelle.toLowerCase():""):"")}${L("Date d'embauche",a.date_embauche?fdl(a.date_embauche):"")}${L("Téléphone",esc(a.telephone||""))}${L("Quartier",esc(a.quartier||""))}${L("Carte professionnelle",a.carte_pro_expiration?"valable jusqu'au "+fdl(a.carte_pro_expiration):"")}${L("Banque",a.rib?esc((a.banque||"")+" · "+a.rib):"")}
     <p class="muted xs" style="margin:10px 0 0">Une information est fausse ? Signalez-le au service RH.</p></div>
   <div class="actions" style="margin-bottom:16px"><button class="btn" id="pf-carte">Ma carte professionnelle</button>${mod("paie")?'<button class="btn" data-go="mapaie">Mes bulletins de paie</button>':""}<button class="btn" data-go="mesdocs">Mes documents</button><button class="btn" data-go="mesdemandes">Congés et matériel</button></div>
   <div class="card"><div class="actions" style="justify-content:space-between"><h2 style="margin:0">Mes demandes de documents</h2><button class="btn pri sm" id="pf-dem">+ Demander un document</button></div>
@@ -2226,9 +2310,9 @@ async function vRapportStock(){const ym=moisStk||auj().slice(0,7),m1=ym+"-01",m2
 
 async function vRapportJour(){jourDG=jourDG||auj();const ds=jourDG,now=new Date();
   const [P,po,inc,ro,ctl,alt]=await Promise.all([chargerPlanning(ds,ds),sb.from("pointages").select("*").eq("date_service",ds).then(must),sb.from("incidents").select("*").gte("survenu_le",ds+"T00:00:00").lte("survenu_le",ds+"T23:59:59").then(must).catch(()=>[]),sb.from("rondes").select("*").eq("date_service",ds).then(must).catch(()=>[]),sb.from("controles_surprise").select("*").gte("lance_le",ds+"T00:00:00").lte("lance_le",ds+"T23:59:59").then(r=>r.data||[]).catch(()=>[]),sb.from("alertes_terrain").select("*").gte("created_at",ds+"T00:00:00").lte("created_at",ds+"T23:59:59").then(r=>r.data||[]).catch(()=>[])]);
-  const att=affectations(ds,P,agents).filter(x=>debutPoste(ds,x.poste)<=now),pt=x=>po.find(p=>p.agent_id===x.agent_id&&p.poste===x.poste);
-  const pres=att.filter(pt),abs=att.filter(x=>!pt(x)&&(now-debutPoste(ds,x.poste))/6e4>TOL());
-  const ret=pres.map(x=>({...x,m:Math.round((new Date(pt(x).heure_arrivee)-debutPoste(ds,x.poste))/6e4)})).filter(x=>x.m>TOL());
+  const att=affectations(ds,P,agents).filter(x=>debutPoste(ds,x.poste,x.h1)<=now),pt=x=>po.find(p=>p.agent_id===x.agent_id&&p.poste===x.poste);
+  const pres=att.filter(pt),abs=att.filter(x=>!pt(x)&&(now-debutPoste(ds,x.poste,x.h1))/6e4>TOL());
+  const ret=pres.map(x=>({...x,m:Math.round((new Date(pt(x).heure_arrivee)-debutPoste(ds,x.poste,x.h1))/6e4)})).filter(x=>x.m>TOL());
   const justif=agents.filter(a=>a.statut==="Actif"&&a.site_id&&a.poste&&indispo(P,a.id,ds)).map(a=>({a,i:indispo(P,a.id,ds)}));
   const remp=P.plan.filter(x=>x.date_service===ds&&x.type==="remplacement");
   const N=x=>esc(nomAg(AG_(x)));
@@ -2268,16 +2352,16 @@ async function donneesMois(ym){const m1=ym+"-01",m2=finMois(ym);
   const att=jours.flatMap(d=>affectations(d,P,agents).map(a=>({...a,ds:d})));
   return {P,po,inc,ro,docs,att,jours,notes}}
 function classement(D){const sanc=["Avertissement","Blâme","Mise à pied"];
-  return agents.filter(a=>a.statut==="Actif").map(a=>{const pts=D.po.filter(p=>p.agent_id===a.id),ret=pts.filter(p=>(new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste))/6e4>TOL()).length;
-    const prevus=D.att.filter(x=>x.agent_id===a.id),manques=prevus.filter(x=>!D.po.some(p=>p.agent_id===a.id&&p.date_service===x.ds&&p.poste===x.poste)&&finPoste(x.ds,x.poste)<new Date()).length;
+  return agents.filter(a=>a.statut==="Actif").map(a=>{const pts=D.po.filter(p=>p.agent_id===a.id),ret=pts.filter(p=>(new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste,p.debut_prevu))/6e4>TOL()).length;
+    const prevus=D.att.filter(x=>x.agent_id===a.id),manques=prevus.filter(x=>!D.po.some(p=>p.agent_id===a.id&&p.date_service===x.ds&&p.poste===x.poste)&&finPoste(x.ds,x.poste,x.h1,x.h2)<new Date()).length;
     const absNJ=D.P.abs.filter(x=>x.agent_id===a.id&&!x.justifiee).length,s=D.docs.filter(d=>d.agent_id===a.id&&sanc.includes(d.type)).length,r=D.ro.filter(x=>x.agent_id===a.id&&x.fin).length,i=D.inc.filter(x=>x.agent_id===a.id).length;
     const nt=(D.notes||[]).filter(x=>x.agent_id===a.id),moy=nt.length?Math.round(10*nt.reduce((t,x)=>t+(+x.note),0)/nt.length)/10:null;
     const score=Math.max(0,pts.length*3+r*2+i-ret*4-manques*8-absNJ*10-s*15+nt.reduce((t,x)=>t+(+x.note-3)*3,0));
     return {a,moy,nbNotes:nt.length,services:pts.length,prevus:prevus.length,ret,manques,absNJ,s,r,i,score,ponct:pts.length?Math.round(100*(pts.length-ret)/pts.length):0}}).sort((x,y)=>y.score-x.score||y.ponct-x.ponct)}
 async function vRapports(){moisR=moisR||auj().slice(0,7);const ym=moisR,D=await donneesMois(ym),C=classement(D),elig=C.filter(x=>x.services>=5&&!x.s&&!x.absNJ);
-  const parSite=sites.map(s=>{const at=D.att.filter(x=>x.site_id===s.id&&finPoste(x.ds,x.poste)<new Date()),ok=at.filter(x=>D.po.some(p=>p.agent_id===x.agent_id&&p.date_service===x.ds&&p.poste===x.poste)).length;
+  const parSite=sites.map(s=>{const at=D.att.filter(x=>x.site_id===s.id&&finPoste(x.ds,x.poste,x.h1,x.h2)<new Date()),ok=at.filter(x=>D.po.some(p=>p.agent_id===x.agent_id&&p.date_service===x.ds&&p.poste===x.poste)).length;
     return {s,att:at.length,ok,taux:at.length?Math.round(100*ok/at.length):null,inc:D.inc.filter(x=>x.site_id===s.id).length,ro:D.ro.filter(x=>x.site_id===s.id).length}});
-  const totAtt=parSite.reduce((t,x)=>t+x.att,0),totOk=parSite.reduce((t,x)=>t+x.ok,0),ret=D.po.filter(p=>(new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste))/6e4>TOL()).length;
+  const totAtt=parSite.reduce((t,x)=>t+x.att,0),totOk=parSite.reduce((t,x)=>t+x.ok,0),ret=D.po.filter(p=>(new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste,p.debut_prevu))/6e4>TOL()).length;
   $("#main").innerHTML=`<div class="head"><div><h1>Rapport · ${esc(fmo(ym))}</h1><p class="muted sm" style="margin:2px 0 0">Calculé automatiquement à partir du planning, des pointages, des rondes, des incidents et des documents RH.</p></div><div class="actions"><input class="input" type="month" id="rp-m" value="${ym}" style="width:auto"><button class="btn" id="rp-csv">Exporter (Excel)</button></div></div>
   <div class="tiles"><div class="tile"><b>${totAtt?Math.round(100*totOk/totAtt)+" %":"—"}</b><span class="muted sm">Services assurés (${totOk}/${totAtt})</span></div><div class="tile"><b>${D.po.length}</b><span class="muted sm">Pointages</span></div><div class="tile"><b class="${ret?"wa-t":""}">${ret}</b><span class="muted sm">Retards</span></div><div class="tile"><b>${D.inc.length}</b><span class="muted sm">Incidents</span></div><div class="tile"><b>${D.ro.length}</b><span class="muted sm">Rondes</span></div></div>
   <div class="card"><h2>🏆 Meilleur agent du mois</h2>${elig.length?`<div class="line"><span class="av" style="width:52px;height:52px;font-size:18px">1</span><div class="grow"><b style="font-size:17px">${esc(nomAg(elig[0].a))}</b><div class="muted sm">${esc(elig[0].a.grade)} · ${esc(siteNom(elig[0].a.site_id))} · ${elig[0].services} services · ponctualité ${elig[0].ponct} % · ${elig[0].r} ronde(s)</div></div><button class="btn pri" id="rp-cert">Certificat</button></div>${elig.slice(1,3).map((x,i)=>`<div class="line"><span class="av">${i+2}</span><div class="grow"><b>${esc(nomAg(x.a))}</b><div class="muted xs">${x.services} services · ponctualité ${x.ponct} %</div></div></div>`).join("")}`:'<p class="muted sm" style="margin:0">Pas encore assez de pointages ce mois-ci (5 services minimum, sans absence injustifiée ni sanction).</p>'}
@@ -2447,7 +2531,7 @@ $("#l-oubli").onclick=async()=>{const id=$("#l-id").value.trim(),mail=id.include
 function vEquipe(){const L=agents.filter(a=>a.statut==="Actif"&&a.id!==moi.agent_id).sort((x,y)=>siteNom(x.site_id).localeCompare(siteNom(y.site_id))||nomAg(x).localeCompare(nomAg(y)));
   $("#main").innerHTML=`<div class="head"><div><h1>Mes agents</h1><p class="muted sm" style="margin:2px 0 0">Appelez un agent, ou donnez-lui un nouveau mot de passe s'il l'a oublié.</p></div></div>
   ${L.length?`<div class="card">${L.map(a=>{const c=comptes.find(k=>k.agent_id===a.id),tel=String(a.telephone||"").replace(/[^\d+]/g,"");
-    return `<div class="line"><div class="grow"><b class="n">${esc(nomAg(a))}</b><div class="muted xs">${esc(a.matricule)} · ${esc(siteNom(a.site_id))}${a.poste?" · "+(a.poste==="N"?"nuit":"jour"):""}${c?(c.est_actif?"":" · accès coupé"):" · pas encore d'accès"}</div></div>
+    return `<div class="line"><div class="grow"><b class="n">${esc(nomAg(a))}</b><div class="muted xs">${esc(a.matricule)} · ${esc(siteNom(a.site_id))}${a.poste?" · "+POSTE(a.poste).libelle.toLowerCase():""}${c?(c.est_actif?"":" · accès coupé"):" · pas encore d'accès"}</div></div>
     <div class="actions">${tel?`<a class="btn sm" href="tel:${esc(tel)}">Appeler</a>`:""}${c&&c.est_actif?`<button class="btn sm" data-mdp="${a.id}">Nouveau mot de passe</button>`:""}</div></div>`}).join("")}</div>`:`<div class="empty">La direction n'a pas encore enregistré d'agents.</div>`}`;
   $("#main").querySelectorAll("[data-mdp]").forEach(b=>b.onclick=()=>{const a=AG_(b.dataset.mdp),c=comptes.find(k=>k.agent_id===a.id),nomC=nomAg(a);
     saisirMdp("Nouveau mot de passe · "+esc(nomC),"L'ancien mot de passe ne fonctionnera plus. Identifiant : <b>"+esc(a.matricule)+"</b>","Changer",async mdp=>{await appel({action:"mot_de_passe",user_id:c.id,mot_de_passe:mdp});toast("Mot de passe changé")},()=>{closeModal();vEquipe()},{nom:nomC,prenom:a.prenom,identifiant:a.matricule,telephone:a.telephone})});
@@ -2455,7 +2539,7 @@ function vEquipe(){const L=agents.filter(a=>a.statut==="Actif"&&a.id!==moi.agent
 
 /* ---------- supervision : visites, notes, rapports ---------- */
 const CRIT=[["presence","Présent au poste",["Oui","Non"]],["tenue","Tenue et carte",["Correcte","À revoir","Incorrecte"]],["vigilance","Vigilance",["Bonne","Moyenne","Insuffisante"]],["consignes","Connaît les consignes",["Oui","En partie","Non"]]];
-const serviceActuel=()=>{const n=new Date(),N=POSTE("N"),h=pad(n.getHours())+":"+pad(n.getMinutes()),nuitAvant=N.fin<=N.debut&&h<N.fin;return {ds:nuitAvant?ajout(auj(),-1):auj(),poste:nuitAvant||h>=N.debut?"N":"J"}};
+const serviceActuel=()=>{const n=new Date();for(const d of [auj(),ajout(auj(),-1)])for(const c of CODES())if(debutPoste(d,c)<=n&&finPoste(d,c)>n)return {ds:d,poste:c};return {ds:auj(),poste:CODES()[0]}};
 function etoiles(nom,val){return `<div class="etoiles" data-et="${nom}">${[1,2,3,4,5].map(k=>`<button type="button" data-v="${k}" class="${k<=val?"on":""}" aria-label="${k} sur 5">★</button>`).join("")}</div>`}
 function brancherEtoiles(z){z.querySelectorAll("[data-et]").forEach(e=>e.querySelectorAll("button").forEach(b=>b.onclick=()=>{e.dataset.val=b.dataset.v;e.querySelectorAll("button").forEach(x=>x.classList.toggle("on",+x.dataset.v<=+b.dataset.v))}))}
 function moiAgent(){if(!moi.agent_id)throw new Error("Votre compte superviseur n'est relié à aucune fiche agent. Demandez à la direction de créer votre accès depuis votre fiche agent.");return moi.agent_id}
