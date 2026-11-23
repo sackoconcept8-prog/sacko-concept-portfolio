@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Plateforme SACKO CONCEPT</title>
-<meta name="theme-color" content="#1f8a5b">
-<link rel="icon" href="/assets/sacko-logo-96.png">
+<title>Ilano — Sign in</title>
+<meta name="theme-color" content="#13734B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23EAF6EF'/%3E%3Crect x='26' y='26' width='12' height='28' rx='4' fill='%231B2A4A'/%3E%3Crect x='26.5' y='9' width='11' height='11' rx='2' transform='rotate(45 32 14.5)' fill='%231FA36B'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--p:#1f8a5b;--p2:#e9f6ef;--txt:#1b2430;--mut:#667085;--bord:#e6e8ec;--fond:#f7f8fa;--blanc:#fff;--rouge:#d92d20;--orange:#f79009;--r:14px}
+:root{--p:#13734B;--p2:#EAF6EF;--txt:#1B2A4A;--mut:#667085;--bord:#e6e8ec;--fond:#f7f8fa;--blanc:#fff;--rouge:#d92d20;--orange:#f79009;--r:14px}
 *{box-sizing:border-box}html,body{margin:0}
 body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--txt);background:var(--fond);font-size:15px;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit}
@@ -46,6 +46,13 @@ input:focus,select:focus,textarea:focus{outline:2px solid color-mix(in srgb,var(
 .pastille{width:28px;height:28px;border-radius:8px;border:1px solid var(--bord)}
 .etapes{display:flex;gap:6px;margin-bottom:16px}.etapes i{flex:1;height:4px;border-radius:4px;background:var(--bord)}.etapes i.on{background:var(--p)}
 .grille2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+/* ---------- Ilano ---------- */
+.ilano{display:inline-flex;align-items:flex-end;font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:34px;line-height:1;color:#1B2A4A;letter-spacing:-.5px;text-decoration:none}
+.ilano .i{position:relative;display:inline-block}.ilano .i::after{content:"";position:absolute;left:50%;top:.1em;width:.24em;height:.24em;background:#1FA36B;border-radius:.04em;transform:translateX(-50%) rotate(45deg)}
+.ilano .tm{font-family:"Plus Jakarta Sans",sans-serif;font-size:11px;font-weight:600;margin-left:2px;align-self:flex-start}
+.auth-g h1{font-family:"Playfair Display",Georgia,serif;font-weight:700}
+.lang-sw{display:flex;justify-content:flex-end;gap:4px;margin-bottom:14px;font-size:13px;font-weight:700}
+.lang-sw a{color:var(--mut);text-decoration:none;padding:6px 10px;border-radius:8px}.lang-sw a.on{background:var(--p2);color:var(--p)}
 /* ---------- Ecran logo ---------- */
 #splash{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;transition:opacity .5s}
 #splash img{max-width:160px;max-height:120px;animation:pop .8s ease}
@@ -115,9 +122,9 @@ tr:last-child td{border-bottom:0}
 <!-- ================= ACCUEIL : connexion / inscription ================= -->
 <section id="v-auth" class="auth cache">
   <div class="auth-g">
-    <div class="marque" id="auth-marque"><img src="/assets/sacko-logo-96.png" alt=""><span>SACKO CONCEPT</span></div>
+    <div class="marque" id="auth-marque"><a class="ilano" href="/ilano/" aria-label="Ilano"><span class="i">ı</span>lano<span class="tm">™</span></a></div>
     <div>
-      <h1 id="auth-titre">Votre logiciel de gestion, à votre image, en 2 minutes.</h1>
+      <h1 id="auth-titre">Inscrivez-vous. Tout est prêt.</h1>
       <p id="auth-texte">Ajoutez votre logo : vos couleurs s'appliquent partout automatiquement. Stock, ventes, caisse et équipe, sur ordinateur et téléphone.</p>
       <ul>
         <li><b>✓</b> 14 jours d'essai gratuit, sans carte bancaire</li>
@@ -126,9 +133,10 @@ tr:last-child td{border-bottom:0}
         <li><b>✓</b> Vos données sont séparées et protégées</li>
       </ul>
     </div>
-    <small style="color:var(--mut)">© SACKO CONCEPT LLC — Albuquerque, NM, USA</small>
+    <small style="color:var(--mut)">© Ilano™ · SACKO CONCEPT LLC — Albuquerque, NM, USA</small>
   </div>
   <div class="auth-d"><div class="boite">
+    <div class="lang-sw" aria-label="Language"><a href="?lang=fr" data-l="fr">FR</a><a href="?lang=en" data-l="en">EN</a></div>
     <div class="onglets"><button id="o-cnx" class="on">Se connecter</button><button id="o-ins">Créer mon espace</button></div>
 
     <!-- Connexion -->
@@ -155,7 +163,7 @@ tr:last-child td{border-bottom:0}
         <label>Nom de l'entreprise</label><input id="i-ent" required maxlength="80">
         <div class="grille2">
           <div><label>Secteur</label><select id="i-sect"><option>Commerce / boutique</option><option>Supermarché / alimentation</option><option>Téléphones / électronique</option><option>Quincaillerie / BTP</option><option>Pharmacie / parapharmacie</option><option>Restauration / bar</option><option>Cosmétique / mode</option><option>Autre</option></select></div>
-          <div><label>Pays</label><input id="i-pays" placeholder="Bénin"></div>
+          <div><label>Pays</label><input id="i-pays" placeholder="Votre pays"></div>
           <div><label>Devise</label><select id="i-dev"><option value="XOF">F CFA</option><option value="EUR">Euro</option><option value="USD">Dollar</option></select></div>
           <div><label>Langue</label><select id="i-lang"><option value="fr">Français</option><option value="en">English</option></select></div>
         </div>
@@ -210,6 +218,132 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const params = new URLSearchParams(location.search);
 let CTX = null; // {espace, membre, logiciels}
+/* ============ Langue (FR / EN) ============ */
+let LANG=(()=>{const q=params.get('lang');if(q==='en'||q==='fr'){try{localStorage.setItem('sc_lang',q)}catch{}return q}
+  try{const s=localStorage.getItem('sc_lang');if(s)return s}catch{}
+  return (navigator.language||'fr').toLowerCase().startsWith('fr')?'fr':'en'})();
+const LOC=()=>LANG==='en'?'en-US':'fr-FR';
+const L=(fr,en)=>LANG==='en'?en:fr;
+const I18N={
+"Inscrivez-vous. Tout est prêt.":"Sign up. You’re all set.",
+"Ajoutez votre logo : vos couleurs s'appliquent partout automatiquement. Stock, ventes, caisse et équipe, sur ordinateur et téléphone.":"Add your logo and your colors apply everywhere automatically. Stock, sales, checkout and team — on computer and phone.",
+"14 jours d'essai gratuit, sans carte bancaire":"14-day free trial, no credit card needed",
+"Votre logo et vos couleurs sur tout le logiciel":"Your logo and colors across the whole app",
+"Vos vendeurs se connectent avec un identifiant et un code PIN":"Your sellers sign in with a username and PIN",
+"Vos données sont séparées et protégées":"Your data is kept separate and secure",
+"Se connecter":"Sign in","Créer mon espace":"Create my workspace","Bon retour 👋":"Welcome back 👋",
+"Connectez-vous à votre espace.":"Sign in to your workspace.","E-mail ou identifiant":"Email or username",
+"Code de votre entreprise":"Your company code","ex. boutique-awa":"e.g. awa-shop","Mot de passe ou code PIN":"Password or PIN",
+"Mot de passe oublié ?":"Forgot password?","Votre entreprise":"Your business","Votre logiciel se crée à votre image.":"Your workspace is built around your brand.",
+"Logo de l'entreprise":"Company logo","Touchez pour ajouter votre logo (PNG, JPG)":"Tap to add your logo (PNG, JPG)",
+"Couleurs détectées dans votre logo":"Colors detected in your logo","Changer la couleur":"Change color","Nom de l'entreprise":"Company name",
+"Secteur":"Industry","Commerce / boutique":"Retail / shop","Supermarché / alimentation":"Supermarket / grocery","Téléphones / électronique":"Phones / electronics",
+"Quincaillerie / BTP":"Hardware / construction","Pharmacie / parapharmacie":"Pharmacy / health store","Restauration / bar":"Restaurant / bar","Cosmétique / mode":"Beauty / fashion","Autre":"Other",
+"Pays":"Country","Votre pays":"Your country","Devise":"Currency","Dollar":"US Dollar","Langue":"Language","Continuer":"Continue","Votre compte":"Your account",
+"Vous serez le propriétaire de l'espace.":"You will be the owner of this workspace.","Votre nom complet":"Your full name","E-mail":"Email",
+"Téléphone / WhatsApp":"Phone / WhatsApp","Mot de passe (8 caractères minimum)":"Password (at least 8 characters)",
+"Créer mon espace gratuit":"Create my free workspace","← Retour":"← Back","En créant un espace, vous acceptez les":"By creating a workspace, you accept the",
+"conditions":"terms","et la":"and the","politique de confidentialité":"privacy policy","Nouveau mot de passe":"New password",
+"Choisissez votre nouveau mot de passe.":"Choose your new password.","Enregistrer":"Save","Se déconnecter":"Sign out",
+"Connectez-vous à votre espace de travail.":"Sign in to your workspace.",
+"Indiquez le code de votre entreprise (donné par votre responsable).":"Enter your company code (given by your manager).",
+"Pour un identifiant avec code PIN, demandez un nouveau code à votre responsable.":"If you sign in with a username and PIN, ask your manager for a new PIN.",
+"Saisissez d'abord votre e-mail ci-dessus.":"Enter your email above first.",
+"Si un compte existe, un lien vous a été envoyé par e-mail.":"If an account exists, we’ve emailed you a link.",
+"Logo trop lourd (2 Mo maximum)":"Logo too large (2 MB max)","Changer le logo":"Change logo","Indiquez le nom de l'entreprise":"Enter your company name",
+"Création de votre espace…":"Creating your workspace…","Mot de passe modifié":"Password updated",
+"Aucun espace actif pour ce compte. Contactez le support Ilano.":"No active workspace for this account. Contact Ilano support.",
+"Identifiant ou mot de passe incorrect":"Incorrect username or password",
+"Nom d'entreprise invalide":"Invalid company name","Votre nom est requis":"Your name is required","E-mail invalide":"Invalid email",
+"Le mot de passe doit contenir au moins 8 caractères":"Password must be at least 8 characters",
+"Un compte existe déjà avec cet e-mail. Connectez-vous.":"An account already exists with this email. Please sign in.",
+"Création de l'espace impossible":"We couldn’t create the workspace. Please try again.","Erreur":"Error",
+"Votre abonnement est arrivé à échéance":"Your subscription has expired",
+"Vos données sont conservées en sécurité. Renouvelez votre abonnement pour retrouver l'accès immédiatement.":"Your data is kept safe. Renew your subscription to get access back right away.",
+"Vos données sont conservées en sécurité. Contactez votre responsable.":"Your data is kept safe. Please contact your manager.",
+"Renouveler mon abonnement":"Renew my subscription","Votre espace est prêt ! Commencez par ajouter vos articles.":"Your workspace is ready! Start by adding your products.",
+"Merci ! Votre paiement est en cours de confirmation, l'accès s'active automatiquement.":"Thank you! Your payment is being confirmed — access activates automatically.",
+"Propriétaire":"Owner","Gérant":"Manager","Vendeur":"Seller","Employé":"Employee",
+"Tableau de bord":"Dashboard","Caisse":"Checkout","Articles":"Products","Entrées / sorties":"Stock in/out","Ventes":"Sales","Clients":"Customers",
+"Équipe":"Team","Abonnement":"Subscription","Mon espace":"My workspace","⏳ Essai gratuit :":"⏳ Free trial:","Choisir ma formule":"Choose my plan",
+"Annuler":"Cancel","Chargement…":"Loading…","Bienvenue":"Welcome",
+"Aucun logiciel actif sur cet espace. Contactez le support Ilano.":"No active app on this workspace. Contact Ilano support.",
+"+ Nouvelle vente":"+ New sale","Ventes du jour":"Today’s sales","Ventes du mois":"Sales this month","Bénéfice du mois":"Profit this month",
+"Valeur du stock":"Stock value","Première étape :":"First step:","ajoutez vos articles pour commencer à vendre.":"add your products to start selling.",
+"Ajouter mes articles":"Add my products","⚠️ Stock faible":"⚠️ Low stock","Aucune alerte. Tout va bien ✓":"No alerts. All good ✓",
+"🏆 Meilleures ventes du mois":"🏆 Best sellers this month","Pas encore de ventes ce mois-ci":"No sales yet this month","Dernières ventes":"Latest sales",
+"N°":"No.","Paiement":"Payment","Statut":"Status","Aucune vente pour le moment":"No sales yet",
+"Espèces":"Cash","Carte":"Card","Virement":"Bank transfer","Crédit":"Credit","Payée":"Paid","À crédit":"On credit","Annulée":"Cancelled",
+"🔍 Rechercher un article ou scanner un code":"🔍 Search a product or scan a barcode","Panier":"Cart","Remise":"Discount","Client (facultatif)":"Customer (optional)",
+"Client de passage":"Walk-in customer","Valider la vente":"Complete sale","Aucun article.":"No products.","Ajouter des articles":"Add products",
+"Stock maximum atteint":"Maximum stock reached","Touchez un article pour l'ajouter":"Tap a product to add it","Le panier est vide":"The cart is empty",
+"Merci pour votre achat !":"Thank you for your purchase!","Fermer":"Close","Imprimer":"Print",
+"Importer (Excel/CSV)":"Import (Excel/CSV)","+ Ajouter":"+ Add","🔍 Rechercher":"🔍 Search","Article":"Product","Catégorie":"Category",
+"Prix d'achat":"Cost price","Prix de vente":"Selling price","Modifier":"Edit",
+"Aucun article. Cliquez sur « + Ajouter » ou importez votre fichier Excel.":"No products yet. Click “+ Add” or import your Excel file.",
+"Nouvel article":"New product","Modifier article":"Edit product","Nom":"Name","Référence":"Reference","Code-barres":"Barcode","Unité":"Unit",
+"Stock initial":"Opening stock","Alerte si stock ≤":"Alert when stock ≤","Retirer cet article":"Remove this product","Article enregistré":"Product saved",
+"Retirer cet article de la liste ?":"Remove this product from the list?","Stock actuel :":"Current stock:","Opération":"Operation",
+"Entrée (réception, achat)":"Stock in (delivery, purchase)","Sortie (perte, casse, usage)":"Stock out (loss, damage, use)",
+"Inventaire (stock réel compté)":"Stock count (actual quantity)","Quantité":"Quantity","ex. Livraison fournisseur":"e.g. Supplier delivery",
+"Stock mis à jour":"Stock updated","Importer vos articles":"Import your products",
+"Fichier CSV (exporté depuis Excel : « Enregistrer sous » → CSV) avec les colonnes :":"CSV file (from Excel: “Save as” → CSV) with the columns:",
+"Entrées / sorties de stock":"Stock in / out","Par":"By","Entrée":"In","Sortie":"Out","Vente":"Sale","Inventaire":"Count","Annulation":"Cancellation",
+"Aucun mouvement":"No stock movements yet","Mes ventes":"My sales","Exporter (Excel)":"Export (Excel)","Client":"Customer","Passage":"Walk-in",
+"Encaisser":"Mark as paid","Aucune vente":"No sales","Annuler cette vente ? Le stock sera remis.":"Cancel this sale? The stock will be restored.",
+"Vente annulée":"Sale cancelled","Crédit encaissé":"Credit collected","Téléphone":"Phone","Aucun client enregistré":"No customers yet",
+"Nouveau client":"New customer","Client ajouté":"Customer added","+ Ajouter un membre":"+ Add a member",
+"🔗 Lien de connexion de votre équipe (à vos couleurs) :":"🔗 Your team’s sign-in link (in your colors):","Copier":"Copy","Code entreprise :":"Company code:",
+"Rôle":"Role","Connexion":"Sign-in","Identifiant :":"Username:","E-mail + mot de passe":"Email + password","Actif":"Active","Désactivé":"Disabled",
+"Nouveau PIN":"New PIN","Désactiver":"Disable","Réactiver":"Enable","Lien copié":"Link copied","Ajouter un membre":"Add a member","Nom complet":"Full name",
+"Poste":"Job title","Caissière":"Cashier","Mode de connexion":"Sign-in method","Identifiant + code PIN (sans e-mail)":"Username + PIN (no email)",
+"Identifiant":"Username","ex. awa":"e.g. awa","Code PIN (6 chiffres)":"PIN (6 digits)","Mot de passe provisoire (8 caractères min.)":"Temporary password (min. 8 characters)",
+"Nouveau code PIN":"New PIN","✓ Accès prêt":"✓ Access ready","Envoyez ces informations au membre :":"Send these details to your team member:","Copié":"Copied",
+"Envoyer par WhatsApp":"Send via WhatsApp","Mon abonnement":"My subscription","Formule actuelle :":"Current plan:","Essai gratuit":"Free trial",
+"· valable jusqu'au":"· valid until","Si vous renouvelez avant l'échéance, la durée s'ajoute à votre date de fin.":"If you renew before it ends, the extra time is added to your end date.",
+"Employés illimités":"Unlimited employees","/mois":"/month",
+"Les formules seront bientôt disponibles. Contactez le support Ilano.":"Plans will be available soon. Contact Ilano support.",
+"Paiement sécurisé par Chariow : Mobile Money (MTN, Moov, Orange, Wave, Airtel…) ou carte bancaire. Votre accès est activé automatiquement dès le paiement.":"Secure payment by Chariow: Mobile Money (MTN, Moov, Orange, Wave, Airtel…) or card. Your access is activated automatically as soon as you pay.",
+"Pays du numéro de paiement":"Country of the payment number","Numéro de téléphone (Mobile Money ou contact)":"Phone number (Mobile Money or contact)",
+"sans l'indicatif":"without country code","Payer maintenant":"Pay now","Paiement impossible":"Payment failed","Identité de l'entreprise":"Company identity",
+"Couleur principale":"Main color","Adresse":"Address","Statut :":"Status:","Suspendu":"Suspended","Résilié":"Cancelled","Logiciels :":"Apps:",
+"Contacter le support":"Contact support","Enregistré ✓":"Saved ✓"
+};
+const PAYS_EN={"Bénin":"Benin","Mali":"Mali","Togo":"Togo","Côte d'Ivoire":"Côte d’Ivoire","Sénégal":"Senegal","Guinée":"Guinea","Cameroun":"Cameroon","Gabon":"Gabon","Congo":"Congo","RD Congo":"DR Congo","France":"France","États-Unis":"United States","Burkina Faso":"Burkina Faso","Niger":"Niger"};
+const I18P=[
+ [/^Bienvenue chez (.+)$/,(m,a)=>'Welcome to '+a],[/^Bonjour (.+) 👋$/,(m,a)=>'Hello '+a+' 👋'],
+ [/^(\d+) jours? restants?$/,(m,n)=>n+(n==='1'?' day left':' days left')],[/^(\d+) vente\(s\)$/,(m,n)=>n+(n==='1'?' sale':' sales')],
+ [/^(\d+) article\(s\)$/,(m,n)=>n+(n==='1'?' product':' products')],[/^(-?[\d.,]+) restant\(s\)$/,(m,n)=>n+' left'],
+ [/^Crédits clients : (.+)$/,(m,a)=>'Customer credit: '+a],[/^Stock : (.+)$/,(m,a)=>'Stock: '+a.replace(/pièces?/,'pcs')],
+ [/^Vente (.+) enregistrée ✓$/,(m,a)=>'Sale '+a+' recorded ✓'],[/^Reçu (.+)$/,(m,a)=>'Receipt '+a],
+ [/^(\d+) article\(s\) importé\(s\)$/,(m,n)=>n+' product(s) imported'],[/^Jusqu'à (\d+) employés$/,(m,n)=>'Up to '+n+' employees'],
+ [/^(\d+) mois — (.+)$/,(m,n,r)=>n+(n==='1'?' month — ':' months — ')+r],[/^Paiement — (.+) (\d+) mois$/,(m,f,n)=>'Payment — '+f+', '+n+(n==='1'?' month':' months')],
+ [/^(.+) \(\+(\d+)\)$/,(m,p,c)=>PAYS_EN[p]?PAYS_EN[p]+' (+'+c+')':undefined],[/^(-?[\d.,]+) pièces?$/,(m,n)=>n+' pcs']
+];
+function tr(s){
+  if(LANG!=='en'||s==null)return s;const t=String(s).trim();if(!t)return s;
+  let r=I18N[t];
+  if(r===undefined)for(const[re,f]of I18P){const m=t.match(re);if(m){r=f(...m);if(r!==undefined)break}}
+  return r===undefined?s:String(s).replace(t,r);
+}
+const ATTRS=['placeholder','title','aria-label'];
+function trArbre(n){
+  if(LANG!=='en'||!n)return;
+  if(n.nodeType===3){const p=n.parentNode;if(p&&/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName))return;const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v;return}
+  if(n.nodeType!==1)return;
+  for(const a of ATTRS){if(n.hasAttribute&&n.hasAttribute(a)){const v=tr(n.getAttribute(a));if(v!==n.getAttribute(a))n.setAttribute(a,v)}}
+  if(/^(SCRIPT|STYLE|TEXTAREA)$/.test(n.nodeName))return;
+  for(const c of n.childNodes)trArbre(c);
+}
+function appliquerLangue(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('.lang-sw a').forEach(a=>a.classList.toggle('on',a.dataset.l===LANG));
+  trArbre(document.body);
+}
+new MutationObserver(ms=>{if(LANG!=='en')return;for(const m of ms){if(m.type==='characterData')trArbre(m.target);else m.addedNodes.forEach(trArbre)}})
+  .observe(document.body,{childList:true,subtree:true,characterData:true});
+{const oc=window.confirm.bind(window);window.confirm=m=>oc(tr(m))}
+
 let VUE = 'accueil';
 
 /* ============ Couleurs de marque ============ */
@@ -223,7 +357,7 @@ function appliquerMarque(e){
   document.documentElement.style.setProperty('--p',p);
   document.documentElement.style.setProperty('--p2',e.couleur_secondaire||melange(p,.9));
   document.querySelector('meta[name=theme-color]').content=p;
-  document.title=(e.nom||'Espace')+' — Gestion';
+  document.title=(e.nom||'Ilano')+' — Ilano';
   if(e.logo_url){document.querySelector('link[rel=icon]').href=e.logo_url}
 }
 // Extraction automatique de la couleur dominante d'un logo
@@ -243,8 +377,8 @@ function couleurDuLogo(img){
 }
 
 /* ============ Format ============ */
-const fmt=v=>{const dev=CTX?.espace?.devise||'XOF';return new Intl.NumberFormat(CTX?.espace?.langue==='en'?'en-US':'fr-FR',{style:'currency',currency:dev,maximumFractionDigits:dev==='XOF'?0:2}).format(v||0)};
-const dt=v=>new Date(v).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+const fmt=v=>{const dev=CTX?.espace?.devise||'XOF';return new Intl.NumberFormat(LOC(),{style:'currency',currency:dev,maximumFractionDigits:dev==='XOF'?0:2}).format(v||0)};
+const dt=v=>new Date(v).toLocaleString(LOC(),{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
 function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
 function erreurMsg(e){const m=e?.message||String(e);if(/Invalid login/i.test(m))return'Identifiant ou mot de passe incorrect';return m}
 
@@ -325,20 +459,21 @@ $('#f-reset').onsubmit=async ev=>{ev.preventDefault();const{error}=await sb.auth
 /* ============ Démarrage de l'espace ============ */
 async function demarrer(nouveau){
   const{data,error}=await sb.rpc('mes_espaces');
-  if(error||!data?.length){await sb.auth.signOut();montrerAuth();$('#c-err').textContent=error?erreurMsg(error):'Aucun espace actif pour ce compte. Contactez SACKO CONCEPT.';return}
+  if(error||!data?.length){await sb.auth.signOut();montrerAuth();$('#c-err').textContent=error?erreurMsg(error):'Aucun espace actif pour ce compte. Contactez le support Ilano.';return}
   const choisi=data.find(x=>x.espace.id===localStorageGet('espace'))||data[0];
   CTX=choisi;localStorageSet('espace',CTX.espace.id);
+  if(CTX.espace.langue==='en'||CTX.espace.langue==='fr')LANG=CTX.espace.langue;appliquerLangue();
   appliquerMarque(CTX.espace);
   // Ecran d'ouverture au logo du client
   const sp=$('#splash');$('#sp-nom').textContent=CTX.espace.nom;
   if(CTX.espace.logo_url){$('#sp-logo').src=CTX.espace.logo_url;$('#sp-logo').classList.remove('cache')}else $('#sp-logo').classList.add('cache');
   sp.classList.remove('cache');sp.style.opacity=1;
   $('#v-auth').classList.add('cache');$('#v-app').classList.remove('cache');
-  $('#m-logo').src=CTX.espace.logo_url||'/assets/sacko-logo-96.png';$('#m-nom').textContent=CTX.espace.nom;
+  $('#m-logo').src=CTX.espace.logo_url||"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23EAF6EF'/%3E%3Crect x='26' y='26' width='12' height='28' rx='4' fill='%231B2A4A'/%3E%3Crect x='26.5' y='9' width='11' height='11' rx='2' transform='rotate(45 32 14.5)' fill='%231FA36B'/%3E%3C/svg%3E";$('#m-nom').textContent=CTX.espace.nom;
   $('#moi-nom').textContent=CTX.membre.nom_complet;$('#moi-role').textContent=ROLES[CTX.membre.role];
   construireMenu();
   if(['suspendu','resilie'].includes(CTX.espace.statut)){
-    const msg=encodeURIComponent('Bonjour SACKO CONCEPT, je souhaite renouveler mon abonnement pour '+CTX.espace.nom+' (code : '+CTX.espace.slug+')');
+    const msg=encodeURIComponent(L('Bonjour Ilano, je souhaite renouveler mon abonnement pour ','Hello Ilano, I would like to renew my subscription for ')+CTX.espace.nom+' (code: '+CTX.espace.slug+')');
     $('#nav').innerHTML='';$('#nav-mob').innerHTML='';
     C().innerHTML=`<div class="carte" style="max-width:520px;margin:40px auto;text-align:center">
       ${CTX.espace.logo_url?`<img src="${esc(CTX.espace.logo_url)}" style="max-height:70px">`:''}
@@ -378,8 +513,8 @@ function pages(){
     a&&['ventes','Ventes'],a&&['clients','Clients'],g&&['equipe','Équipe'],g&&['abonnement','Abonnement'],g&&['reglages','Mon espace']].filter(Boolean);
 }
 function construireMenu(){
-  $('#nav').innerHTML=pages().map(([k,t])=>`<button data-v="${k}">${svg(k)}${t}</button>`).join('');
-  $('#nav-mob').innerHTML=pages().filter(([k])=>['accueil','caisse','articles','ventes','equipe'].includes(k)).slice(0,5).map(([k,t])=>`<button data-v="${k}">${svg(k)}${t.split(' ')[0]}</button>`).join('');
+  $('#nav').innerHTML=pages().map(([k,t])=>[k,tr(t)]).map(([k,t])=>`<button data-v="${k}">${svg(k)}${t}</button>`).join('');
+  $('#nav-mob').innerHTML=pages().map(([k,t])=>[k,tr(t)]).filter(([k])=>['accueil','caisse','articles','ventes','equipe'].includes(k)).slice(0,5).map(([k,t])=>`<button data-v="${k}">${svg(k)}${t.split(' ')[0]}</button>`).join('');
   document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>aller(b.dataset.v));
 }
 function aller(v){VUE=v;document.querySelectorAll('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));window.scrollTo(0,0);
@@ -403,7 +538,7 @@ const verif=({data,error})=>{if(error)throw error;return data};
 /* ============ Tableau de bord ============ */
 async function vAccueil(){
   C().innerHTML=entete('Bonjour '+esc(CTX.membre.nom_complet.split(' ')[0])+' 👋')+'<div class="vide">Chargement…</div>';
-  if(!CTX.logiciels.includes('stockpro')){C().innerHTML=entete('Bienvenue')+'<div class="carte">Aucun logiciel actif sur cet espace. Contactez SACKO CONCEPT.</div>';return}
+  if(!CTX.logiciels.includes('stockpro')){C().innerHTML=entete('Bienvenue')+'<div class="carte">Aucun logiciel actif sur cet espace. Contactez le support Ilano.</div>';return}
   const r=verif(await sb.rpc('sp_resume',{p_espace:E()}));
   const{data:dern}=await sb.from('sp_ventes').select('numero,total,statut,created_at,mode_paiement').eq('espace_id',E()).order('created_at',{ascending:false}).limit(6);
   C().innerHTML=entete('Bonjour '+esc(CTX.membre.nom_complet.split(' ')[0])+' 👋','<button class="btn" onclick="aller(\'caisse\')">+ Nouvelle vente</button>')+`
@@ -590,13 +725,13 @@ async function vEquipe(){
      const corps={action:'creer',espace_id:E(),nom_complet:v.nom_complet,role:v.role,poste:v.poste,telephone:v.telephone,
        ...(v.mode==='pin'?{identifiant:v.identifiant,mot_de_passe:v.pin}:{email:v.email,mot_de_passe:v.mdp})};
      const j=await appelMembres(corps);
-     const msg=v.mode==='pin'?`Bonjour ${v.nom_complet}, voici votre accès à ${CTX.espace.nom} :\n${lien}\nIdentifiant : ${j.connexion.identifiant}\nCode PIN : ${v.pin}`:`Bonjour ${v.nom_complet}, voici votre accès à ${CTX.espace.nom} :\n${lien}\nE-mail : ${v.email}\nMot de passe provisoire : ${v.mdp}`;
+     const msg=LANG==='en'?(v.mode==='pin'?`Hello ${v.nom_complet}, here is your access to ${CTX.espace.nom}:\n${lien}\nUsername: ${j.connexion.identifiant}\nPIN: ${v.pin}`:`Hello ${v.nom_complet}, here is your access to ${CTX.espace.nom}:\n${lien}\nEmail: ${v.email}\nTemporary password: ${v.mdp}`):(v.mode==='pin'?`Bonjour ${v.nom_complet}, voici votre accès à ${CTX.espace.nom} :\n${lien}\nIdentifiant : ${j.connexion.identifiant}\nCode PIN : ${v.pin}`:`Bonjour ${v.nom_complet}, voici votre accès à ${CTX.espace.nom} :\n${lien}\nE-mail : ${v.email}\nMot de passe provisoire : ${v.mdp}`);
      setTimeout(()=>partagerAcces(msg,v.telephone),50);vEquipe()});
   document.addEventListener('change',e=>{if(e.target.id==='eq-mode'){$('#eq-pin').classList.toggle('cache',e.target.value!=='pin');$('#eq-mail').classList.toggle('cache',e.target.value==='pin')}});
   document.querySelectorAll('[data-pin]').forEach(b=>b.onclick=()=>{const x=m.find(y=>y.id===b.dataset.pin);
     modale(`<h3>${x.identifiant?'Nouveau code PIN':'Nouveau mot de passe'}</h3><p>${esc(x.nom_complet)}</p><input name="s" required value="${x.identifiant?String(Math.floor(1e5+Math.random()*9e5)):''}" ${x.identifiant?'pattern="\\d{6}" inputmode="numeric"':'minlength="8"'}>`,
      async f=>{const s=f.s.value;await appelMembres({action:'nouveau_secret',espace_id:E(),membre_id:x.id,mot_de_passe:s});
-       setTimeout(()=>partagerAcces(`Bonjour ${x.nom_complet}, votre nouveau ${x.identifiant?'code PIN':'mot de passe'} pour ${CTX.espace.nom} : ${s}\n${lien}`,x.telephone),50)})});
+       setTimeout(()=>partagerAcces(LANG==='en'?`Hello ${x.nom_complet}, your new ${x.identifiant?'PIN':'password'} for ${CTX.espace.nom}: ${s}\n${lien}`:`Bonjour ${x.nom_complet}, votre nouveau ${x.identifiant?'code PIN':'mot de passe'} pour ${CTX.espace.nom} : ${s}\n${lien}`,x.telephone),50)})});
   document.querySelectorAll('[data-act]').forEach(b=>b.onclick=async()=>{const x=m.find(y=>y.id===b.dataset.act);verif(await sb.from('membres').update({actif:!x.actif}).eq('id',x.id));vEquipe()});
 }
 async function appelMembres(corps){
@@ -620,15 +755,15 @@ async function vAbonnement(){
   const l=lic.find(x=>x.logiciel==='stockpro');
   const formules=[...new Set(t.map(x=>x.formule))];
   C().innerHTML=entete('Mon abonnement')+`
-   <div class="carte" style="margin-bottom:14px">Formule actuelle : <b>${l?(l.formule==='essai'?'Essai gratuit':FORM[l.formule]||l.formule):'—'}</b>${l?.date_fin?` · valable jusqu'au <b>${new Date(l.date_fin).toLocaleDateString('fr-FR')}</b>`:''}<br><small style="color:var(--mut)">Si vous renouvelez avant l'échéance, la durée s'ajoute à votre date de fin.</small></div>
+   <div class="carte" style="margin-bottom:14px">Formule actuelle : <b>${l?(l.formule==='essai'?'Essai gratuit':FORM[l.formule]||l.formule):'—'}</b>${l?.date_fin?` · valable jusqu'au <b>${new Date(l.date_fin).toLocaleDateString(LOC())}</b>`:''}<br><small style="color:var(--mut)">Si vous renouvelez avant l'échéance, la durée s'ajoute à votre date de fin.</small></div>
    ${t.length?`<div class="kpis" style="grid-template-columns:repeat(${Math.min(formules.length,3)},1fr)">${formules.map(f=>{const opts=t.filter(x=>x.formule===f);const m1=opts.find(x=>x.mois===1);
      return`<div class="carte"><h3 style="margin:0">${FORM[f]||f}</h3><p style="color:var(--mut);margin:4px 0 10px">${opts[0].employes_max?'Jusqu\'à '+opts[0].employes_max+' employés':'Employés illimités'}</p>
      ${m1?`<div style="font-size:24px;font-weight:800">${fmtT(m1)}<small style="font-size:13px;color:var(--mut)"> /mois</small></div>`:''}
-     <div style="display:grid;gap:8px;margin-top:12px">${opts.map(o=>`<button class="btn ${o.mois===1?'':'sec'}" data-t="${o.id}">${o.mois} mois — ${fmtT(o)}${o.mois===3?' (-10 %)':o.mois===12?' (-20 %)':''}</button>`).join('')}</div></div>`}).join('')}</div>`:'<div class="carte">Les formules seront bientôt disponibles. Contactez SACKO CONCEPT.</div>'}
+     <div style="display:grid;gap:8px;margin-top:12px">${opts.map(o=>`<button class="btn ${o.mois===1?'':'sec'}" data-t="${o.id}">${o.mois} mois — ${fmtT(o)}${o.mois===3?' (-10 %)':o.mois===12?' (-20 %)':''}</button>`).join('')}</div></div>`}).join('')}</div>`:'<div class="carte">Les formules seront bientôt disponibles. Contactez le support Ilano.</div>'}
    <p style="color:var(--mut);font-size:13px;text-align:center">Paiement sécurisé par Chariow : Mobile Money (MTN, Moov, Orange, Wave, Airtel…) ou carte bancaire. Votre accès est activé automatiquement dès le paiement.</p>`;
   document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>payer(t.find(x=>x.id===b.dataset.t)));
 }
-const fmtT=o=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:o.devise,maximumFractionDigits:o.devise==='XOF'?0:2}).format(o.prix);
+const fmtT=o=>new Intl.NumberFormat(LOC(),{style:'currency',currency:o.devise,maximumFractionDigits:o.devise==='XOF'?0:2}).format(o.prix);
 const PAYS=[['BJ','Bénin','229'],['TG','Togo','228'],['ML','Mali','223'],['CI','Côte d\'Ivoire','225'],['SN','Sénégal','221'],['BF','Burkina Faso','226'],['NE','Niger','227'],['GN','Guinée','224'],['CM','Cameroun','237'],['GA','Gabon','241'],['CG','Congo','242'],['CD','RD Congo','243'],['FR','France','33'],['US','États-Unis','1']];
 function payer(o){
   modale(`<h3>Paiement — ${FORM[o.formule]||o.formule} ${o.mois} mois</h3><p style="font-size:22px;font-weight:800;margin:6px 0">${fmtT(o)}</p>
@@ -655,7 +790,7 @@ function vReglages(){
     <div class="err" id="rg-err"></div><button class="btn">Enregistrer</button></form>
     <div class="carte"><h3 style="margin-top:0">Abonnement</h3><p>Statut : <b>${{essai:'Essai gratuit',actif:'Actif',suspendu:'Suspendu',resilie:'Résilié'}[e.statut]}</b></p>
     <p>Logiciels : ${CTX.logiciels.map(l=>`<span class="tag">${esc(l)}</span>`).join(' ')}</p><p>Code entreprise : <b>${esc(e.slug)}</b></p>
-    <a class="btn sec" target="_blank" href="https://wa.me/15054642331?text=${encodeURIComponent('Bonjour SACKO CONCEPT, je suis '+e.nom+' ('+e.slug+')')}">Contacter le support</a></div></div>`;
+    <a class="btn sec" target="_blank" href="https://wa.me/15054642331?text=${encodeURIComponent(L('Bonjour Ilano, je suis ','Hello Ilano, this is ')+e.nom+' ('+e.slug+')')}">Contacter le support</a></div></div>`;
   let nouveauLogo=null;
   $('#rg-lz').onclick=()=>$('#rg-f').click();
   $('#rg-f').onchange=ev=>{const f=ev.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{$('#rg-img').src=img.src;$('#rg-img').classList.remove('cache');
@@ -666,13 +801,14 @@ function vReglages(){
         verif(await sb.storage.from('photos').upload(ch,nouveauLogo,{upsert:true}));logo_url=sb.storage.from('photos').getPublicUrl(ch).data.publicUrl}
       const p=lisible(v.couleur_principale);
       const maj=verif(await sb.from('espaces').update({nom:v.nom,telephone:v.telephone,adresse:v.adresse,couleur_principale:p,couleur_secondaire:melange(p,.9),logo_url}).eq('id',e.id).select().single());
-      CTX.espace=maj;appliquerMarque(maj);$('#m-logo').src=maj.logo_url||'/assets/sacko-logo-96.png';$('#m-nom').textContent=maj.nom;toast('Enregistré ✓');
+      CTX.espace=maj;appliquerMarque(maj);$('#m-logo').src=maj.logo_url||"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23EAF6EF'/%3E%3Crect x='26' y='26' width='12' height='28' rx='4' fill='%231B2A4A'/%3E%3Crect x='26.5' y='9' width='11' height='11' rx='2' transform='rotate(45 32 14.5)' fill='%231FA36B'/%3E%3C/svg%3E";$('#m-nom').textContent=maj.nom;toast('Enregistré ✓');
     }catch(er){$('#rg-err').textContent=erreurMsg(er)}};
 }
 
 /* ============ Lancement ============ */
 sb.auth.onAuthStateChange((ev)=>{if(ev==='PASSWORD_RECOVERY'){$('#v-app').classList.add('cache');$('#v-auth').classList.remove('cache');
   $('#f-cnx').classList.add('cache');$('#f-ins').classList.add('cache');$('.onglets').classList.add('cache');$('#f-reset').classList.remove('cache')}});
+appliquerLangue();$('#i-lang').value=LANG;if(LANG==='en')$('#i-dev').value='USD';
 (async()=>{const{data:{session}}=await sb.auth.getSession();
   if(session&&!location.hash.includes('type=recovery'))demarrer();else montrerAuth()})();
 </script>
