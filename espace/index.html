@@ -82,6 +82,7 @@ body.tv .top,body.tv #side,body.tv #tabs,body.tv #menu-btn{display:none!importan
 .line:last-child{border-bottom:0}.line .grow{flex:1 1 180px;min-width:0}
 .line.click{cursor:pointer}.line.click:hover b.n{color:var(--p)}
 .av{width:38px;height:38px;border-radius:50%;background:var(--p-l);color:var(--p);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;object-fit:cover}
+.nf-w{position:relative}.nf-btn{position:relative;border:1px solid var(--line);background:#fff;border-radius:50%;width:40px;height:40px;font-size:18px;cursor:pointer;line-height:1}.nf-n{position:absolute;top:-4px;right:-4px;background:#d92d20;color:#fff;border-radius:10px;font-size:11px;font-weight:700;min-width:19px;height:19px;padding:0 5px;display:flex;align-items:center;justify-content:center;line-height:1}.nf-n.hide{display:none}.nf-p{position:absolute;right:0;top:48px;width:min(360px,92vw);max-height:70vh;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px -12px rgba(10,20,40,.35);z-index:60}.nf-p.hide{display:none}.nf-h{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}.nf-i{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:#fff;padding:10px 14px;cursor:pointer;font:inherit}.nf-i.nl{background:#f3f6ff}.nf-i b{display:block;font-size:14px}.nf-i span{display:block;font-size:12.5px;color:#5b677a;margin-top:2px}.nf-i i{display:block;font-size:11px;color:#8a94a6;font-style:normal;margin-top:3px}
 .avbtn{border:0;background:none;padding:0;cursor:pointer;border-radius:50%;line-height:0}.avbtn:hover .av,.avbtn:focus-visible .av{box-shadow:0 0 0 3px var(--p-l)}
 .bigav{width:120px;height:120px;font-size:38px;margin:0 auto 14px}
 .tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}.tools .input{flex:1 1 160px;width:auto}
@@ -253,6 +254,7 @@ body.tv .top,body.tv #side,body.tv #tabs,body.tv #menu-btn{display:none!importan
     <div class="brand"><img id="hd-logo" alt="" style="visibility:hidden"><div style="min-width:0"><span id="hd-nom"></span><small id="hd-moi"></small></div></div>
     <button class="btn sm hide" id="menu-btn" aria-label="Menu">☰ Menu</button>
     <nav class="tabs" id="tabs"></nav>
+    <div class="nf-w"><button class="nf-btn" id="nf-btn" title="Notifications" aria-label="Notifications">🔔<span id="nf-n" class="nf-n hide"></span></button><div id="nf-p" class="nf-p hide"></div></div>
     <button class="avbtn" id="hd-av" title="Mon profil et mon mot de passe" aria-label="Mon profil"></button>
     <button class="btn sm" id="logout">Déconnexion</button>
   </div></header>
@@ -403,7 +405,7 @@ function demarrerHorsLigne(){let sn=null;try{sn=JSON.parse(localStorage.getItem(
   $("#layout").classList.remove("avec");$("#side").classList.add("hide");$("#tabs").classList.remove("hide");$("#menu-btn").classList.add("hide");
   $("#tabs").innerHTML=`<button data-tab="accueil" class="on">Accueil</button>`;tab="accueil";afficherHorsLigne();
   window.addEventListener("online",()=>location.reload(),{once:true})}
-async function sortir(msg){clearInterval(veille);if(modeTech){try{await sb.rpc("fermer_session_technicien")}catch(_){}modeTech=false}$("#tech-bar").classList.add("hide");try{const r=swReg||await navigator.serviceWorker.getRegistration();const sub=r&&await r.pushManager.getSubscription();if(sub)await sb.from("push_abonnements").delete().eq("endpoint",sub.endpoint)}catch(_){}await sb.auth.signOut();ctx=ag=moi=null;showLogin(msg)}
+async function sortir(msg){clearInterval(veille);clearInterval(nfTimer);nfListe=[];if(modeTech){try{await sb.rpc("fermer_session_technicien")}catch(_){}modeTech=false}$("#tech-bar").classList.add("hide");try{const r=swReg||await navigator.serviceWorker.getRegistration();const sub=r&&await r.pushManager.getSubscription();if(sub)await sb.from("push_abonnements").delete().eq("endpoint",sub.endpoint)}catch(_){}await sb.auth.signOut();ctx=ag=moi=null;showLogin(msg)}
 $("#logout").onclick=()=>sortir();$("#bl-out").onclick=()=>sortir();
 async function entrer(){
   let r;try{r=await sb.rpc("contexte")}catch(e){r={error:e}}
@@ -416,7 +418,7 @@ async function entrer(){
   if(ag){slug=ag.slug;try{localStorage.setItem("espace-slug",slug)}catch(_){}habiller(ag)}
   if(!ctx.acces_ouvert)return bloquer(ctx.motif_blocage);
   $("#hd-moi").textContent=moi.nom_complet+" · "+(moi.fonction||ROLES[moi.role]||moi.role);
-  ecran("app");majAvatar();document.body.classList.toggle("conseiller",estConseiller());$("#hd-av").onclick=maPhoto;
+  ecran("app");majAvatar();demarrerNotifs();document.body.classList.toggle("conseiller",estConseiller());$("#hd-av").onclick=maPhoto;
   moi.role_reel=moi.role;espace="direction";moi.niveau=null;
   if(moi.role==="dg"){moi.niveau=moi.niveau_direction||null;if(!moi.niveau){try{const r=await sb.from("profiles").select("niveau_direction").eq("id",moi.id).maybeSingle();moi.niveau=(r.data&&r.data.niveau_direction)||null}catch(_){}}}
   if(moi.role==="dg"){try{const q=await sb.from("profiles").select("id").eq("role","rh").eq("est_actif",true).limit(1);dgGardeRH=!(q.data||[]).length}catch(_){dgGardeRH=true}
@@ -576,6 +578,24 @@ async function ouvrir(t){tab=t;document.body.classList.toggle("consult",!!(moi&&
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
   try{if(estConseiller())await chargerConseiller();else if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();else if(estComptable())await chargerComptable();await({accueil:moi.role==="agent"?vAgentAccueil:estConseiller()?vAccueilConseiller:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,"sites-terrain":vSitesTerrain,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-agents":vClientAgents,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport,avis:vAvis,recos:vRecos,compta:vCompta,journal:vJournal,tresorerie:vTresorerie,annee:vAnnee,rcl:vRapportsClients,validations:vValidations,rjour:vRapportJour,profil:vMonProfil,controle:vControle,releves:vReleves,hsup:vHeuresSup,groupe:vGroupe,"cl-rapports":vClientRapports,virements:vVirements,budget:vBudget,suivi:vSuiviClients,rstock:vRapportStock}[t])();if(estConseiller())barreAvis(t);barreSoumission(t);if(t==="documents"&&estDirection())carteDemandesRH()}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
+
+
+/* ---------- notifications dans l'application (cloche) ---------- */
+var nfListe=[],nfTimer=null;
+async function chargerNotifs(){if(!moi)return;try{const r=await sb.from("notifications").select("*").eq("destinataire",moi.id).order("created_at",{ascending:false}).limit(40);if(r.error)return;nfListe=r.data||[];
+  const n=nfListe.filter(x=>!x.lu).length,b=$("#nf-n");if(b){b.textContent=n>99?"99+":n;b.classList.toggle("hide",!n)}
+  const t=document.title.replace(/^\(\d+\+?\) /,"");document.title=n?"("+n+") "+t:t;if(!$("#nf-p").classList.contains("hide"))dessinerNotifs()}catch(_){}}
+function dessinerNotifs(){const p=$("#nf-p");
+  p.innerHTML=`<div class="nf-h"><b>Notifications</b>${nfListe.some(x=>!x.lu)?'<button class="btn sm" id="nf-all">Tout marquer comme lu</button>':""}</div>${nfListe.length?nfListe.map(x=>`<button class="nf-i ${x.lu?"":"nl"}" data-nf="${x.id}"><b>${x.lu?"":"● "}${esc(x.titre)}</b>${x.corps?`<span>${esc(x.corps)}</span>`:""}<i>${fdt(x.created_at)}</i></button>`).join(""):'<p class="muted sm" style="padding:14px;margin:0">Aucune notification pour le moment.</p>'}`;
+  const all=$("#nf-all");if(all)all.onclick=e=>{e.stopPropagation();busy(all,async()=>{await sb.from("notifications").update({lu:true}).eq("destinataire",moi.id).eq("lu",false);await chargerNotifs();dessinerNotifs()})};
+  p.querySelectorAll("[data-nf]").forEach(b=>b.onclick=async e=>{e.stopPropagation();const x=nfListe.find(y=>y.id===b.dataset.nf);p.classList.add("hide");
+    if(x&&!x.lu){try{await sb.from("notifications").update({lu:true}).eq("id",x.id)}catch(_){}}
+    if(x&&x.lien&&document.querySelector(`[data-tab="${x.lien}"]`))await ouvrir(x.lien);chargerNotifs()})}
+function demarrerNotifs(){clearInterval(nfTimer);const btn=$("#nf-btn"),p=$("#nf-p");
+  btn.onclick=e=>{e.stopPropagation();const o=p.classList.toggle("hide");if(!o){dessinerNotifs();chargerNotifs()}};
+  if(!window._nfDoc){window._nfDoc=1;document.addEventListener("click",e=>{const q=$("#nf-p");if(q&&!q.classList.contains("hide")&&!e.target.closest(".nf-w"))q.classList.add("hide")});
+    document.addEventListener("visibilitychange",()=>{if(!document.hidden)chargerNotifs()})}
+  chargerNotifs();nfTimer=setInterval(chargerNotifs,30000)}
 
 /* ---------- accueil ---------- */
 /* échéances : cartes professionnelles, fins de CDD, fins de période d'essai (30 jours) */
