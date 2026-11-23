@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" id="apple-ic" href="../assets/sacko-logo-vert-192.png">
 <script>
 /* Application installable au nom de l'agence : icône et nom de l'agence sur l'écran d'accueil ou le bureau */
-const APPS_AGENCES={"agence-speciale":{nom:"Agence Spéciale",ios:"/agence-speciale/logo-as2-ios-180.png"}};
+const APPS_AGENCES={"agence-speciale":{nom:"Agence Spéciale",ios:"/agence-speciale/logo-as2-ios-180.png"},"cdk-securite":{nom:"CDK Sécurité",ios:"/cdk-group/logo-cdk-ios-180.png"}};
 (function(){let sl=(new URLSearchParams(location.search).get("a")||document.querySelector('meta[name="agence-slug"]').content||"").toLowerCase().replace(/[^a-z0-9-]/g,"");try{if(!sl)sl=localStorage.getItem("espace-slug")||""}catch(_){}
   const A=APPS_AGENCES[sl];if(!A)return;
   document.querySelector('link[rel="manifest"]').href="manifest-"+sl+".webmanifest";
@@ -67,6 +67,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
 .head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
 .head h1{font-size:25px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.tiles.mt{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}.tiles.mt .tile b{font-size:20px;white-space:nowrap}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
 .tile b{display:block;font-size:24px;white-space:nowrap}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
@@ -268,7 +269,7 @@ const fd=d=>d?new Date(d).toLocaleDateString("fr-FR",{day:"numeric",month:"short
 const fdt=d=>d?new Date(d).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"—";
 const slugify=t=>String(t||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
 const JOURS=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
-const ROLES={dg:"Direction (rapports et pilotage)",rh:"Ressources humaines / Superviseur général",superviseur:"Superviseur",commercial:"Directeur commercial (clients)",conseiller:"Conseiller (consultation de la direction)",agent:"Agent",client:"Client"};
+const ROLES={dg:"Direction (rapports et pilotage)",rh:"Ressources humaines / Superviseur général",superviseur:"Superviseur",commercial:"Directeur commercial (clients)",conseiller:"Conseiller (consultation de la direction)",comptable:"Comptabilité",agent:"Agent",client:"Client"};
 const titre=c=>c.fonction?esc(c.fonction):(ROLES[c.role]||esc(c.role));
 let tT;function toast(m,bad){const t=$("#toast");t.textContent=m;t.className="on"+(bad?" bad":"");clearTimeout(tT);tT=setTimeout(()=>t.className="",3400)}
 function modal(title,body,foot){$("#box").innerHTML=`<div class="box-h"><h2>${title}</h2><button class="x" id="m-x" aria-label="Fermer">×</button></div><div class="box-b">${body}</div>${foot?`<div class="box-f">${foot}</div>`:""}`;$("#modal").classList.add("on");$("#m-x").onclick=closeModal;$("#modal").scrollTop=0}
@@ -398,9 +399,10 @@ async function entrer(){
     try{espace=dgGardeRH&&localStorage.getItem("espace-"+moi.id)==="rh"?"rh":"direction"}catch(_){}}
   else if(moi.role==="rh"){if(estSupGeneral()){try{espace=localStorage.getItem("espace-"+moi.id)==="rh"?"rh":"supervision"}catch(_){espace="supervision"}}else espace="rh"}
   else if(moi.role==="commercial")espace="commercial";
+  else if(moi.role==="comptable")espace="compta";
   else if(moi.role==="conseiller")moi.role="dg"; /* le conseiller voit l'interface de la direction, en consultation seulement */
   appliquerEspace();
-  const G=estDirection()||estSupGeneral()||estCommercial()?filtrerMenu(menuDirection()):null;
+  const G=estDirection()||estSupGeneral()||estCommercial()||estComptable()?filtrerMenu(menuDirection()):null;
   const T=(G?G.flatMap(g=>g[1]):moi.role==="superviseur"?MENU_SUP
     :moi.role==="agent"?[["accueil","Accueil"],["monplanning","Planning"],["mesdemandes","Demandes"],["mesdocs","Documents"],["mesmsg","Messages"],["mapaie","Paie"]]
     :moi.role==="client"?[["client","Accueil"],["cl-agents","Mes agents"],["cl-incidents","Incidents"],["cl-factures","Factures"],["cl-demandes","Demandes"]]:[["accueil","Accueil"]]).filter(ongletActif);
@@ -480,7 +482,7 @@ async function ecranTechnicien(){
 }
 async function barreTechnicien(){
   const bar=$("#tech-bar");let c=[];try{c=must(await sb.rpc("technicien_comptes"))||[]}catch(_){}
-  const RL={dg:"Direction",conseiller:"Conseiller",commercial:"Directeur commercial",rh:"RH / Superviseur général",superviseur:"Superviseur",client:"Client",agent:"Agent"};
+  const RL={dg:"Direction",conseiller:"Conseiller",commercial:"Directeur commercial",comptable:"Comptabilité",rh:"RH / Superviseur général",superviseur:"Superviseur",client:"Client",agent:"Agent"};
   const grp={};c.forEach(x=>(grp[x.role]=grp[x.role]||[]).push(x));
   bar.innerHTML=`<div class="in"><b>🛠 Mode technicien</b><span>${esc(ag?ag.nom_agence:"")}</span><span class="grow"></span><label for="tb-vue" class="sm">Interface affichée :</label>
   <select class="input" id="tb-vue"><option value="">Direction (vue complète)</option>${Object.keys(RL).filter(k=>grp[k]).map(k=>`<optgroup label="${RL[k]}">${grp[k].map(x=>`<option value="${x.id}" ${ctx.vu===x.id?"selected":""}>${esc(x.nom_complet)}${x.fonction?" · "+esc(x.fonction):""}${x.est_actif?"":" (désactivé)"}</option>`).join("")}</optgroup>`).join("")}</select>
@@ -498,7 +500,7 @@ const MENU_SUP=[["pointage","Pointage"],["visites","Visites et notes"],["rapport
 const mod=k=>((ag&&ag.modules)||{})[k]!==false;
 const MODULE_ONGLET={planning:"planning",monplanning:"planning",pointage:"pointage",conges:"conges",documents:"documents",mesdocs:"documents",messages:"messagerie",mesmsg:"messagerie",paie:"paie",mapaie:"paie",materiel:"materiel",
   factures:"facturation","cl-factures":"facturation",rapports:"rapports",incidents:"main_courante","cl-incidents":"main_courante",rondes:"rondes",supervision:"supervision",visites:"supervision",rapport:"supervision",
-  recos:"conseiller","cl-agents":"client_agents",demandes:"espace_client","cl-demandes":"espace_client"};
+  recos:"conseiller",compta:"comptabilite",journal:"comptabilite",virements:"comptabilite",budget:"comptabilite","cl-agents":"client_agents",demandes:"espace_client","cl-demandes":"espace_client"};
 const ongletActif=([k])=>!MODULE_ONGLET[k]||mod(MODULE_ONGLET[k]);
 function filtrerMenu(G){return G.map(([g,l])=>[g,l.filter(ongletActif)]).filter(([g,l])=>l.length)}
 function menuDirection(){
@@ -506,16 +508,17 @@ function menuDirection(){
   return menuDirectionBase()}
 function menuDirectionBase(){
   if(espace==="supervision")return [["Supervision",[...MENU_SUP,["sites-terrain","Sites : position et rondes"]]]];
+  if(espace==="compta")return [["",[["compta","Tableau de bord"],["journal","Recettes et dépenses"],["factures","Factures clients"],["virements","Paie et virements"],["budget","Budget"]]],["Aide",[["support","Support"]]]];
   if(espace==="commercial")return [["Clients",[["sites","Sites clients"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["support","Support"]]]];
   if(espace==="rh")return [["",[["accueil","Tableau de bord RH"]]],["Personnel",[["agents","Agents"],["conges","Congés"],["documents","Documents RH"],["messages","Messages"],["paie","Paie"],["materiel","Matériel"]]],
     ["Suivi",[["planning","Planning"],["pointage","Pointage"]]],["Aide",[["support","Support"]]]];
   return [["",[["accueil","Tableau de bord"]]],["Opérations",[["planning","Planning"],["pointage","Pointage"],["incidents","Main courante"],["rondes","Rondes"],["supervision","Supervision"]]],
-    ["Clients",[["sites","Sites"],["factures","Factures"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["recos","Avis du conseiller"],["comptes","Comptes"],["reglages","Réglages"],["support","Support"]]]];
+    ["Clients",[["sites","Sites"],["factures","Factures"],["demandes","Demandes clients"]]],["Finances",[["compta","Comptabilité"],["journal","Recettes et dépenses"],["virements","Paie et virements"],["budget","Budget"]]],["Pilotage",[["rapports","Rapports"],["recos","Avis du conseiller"],["comptes","Comptes"],["reglages","Réglages"],["support","Support"]]]];
 }
 function dessinerMenu(G){
   const sw=moi.role_reel==="dg"&&dgGardeRH?`<div class="esp"><button data-esp="direction" class="${espace==="direction"?"on":""}">Direction</button><button data-esp="rh" class="${espace==="rh"?"on":""}">Espace RH</button></div>`
     :estSupGeneral()?`<div class="esp"><button data-esp="supervision" class="${espace==="supervision"?"on":""}">Supervision</button><button data-esp="rh" class="${espace==="rh"?"on":""}">Espace RH</button></div>`
-    :`<div class="grp" style="margin-top:4px">${estConseiller()?"Espace conseiller · consultation":moi.role_reel==="dg"?"Direction":moi.role_reel==="commercial"?"Direction commerciale":"Espace RH"}</div>`;
+    :`<div class="grp" style="margin-top:4px">${estConseiller()?"Espace conseiller · consultation":moi.role_reel==="dg"?"Direction":moi.role_reel==="comptable"?"Comptabilité":moi.role_reel==="commercial"?"Direction commerciale":"Espace RH"}</div>`;
   $("#side").innerHTML=sw+G.map(([g,l])=>(g?`<div class="grp">${g}</div>`:"")+l.map(([k,x])=>`<button data-tab="${k}">${x}<span class="badge hide" data-b="${k}"></span></button>`).join("")).join("");
   $("#side").querySelectorAll("[data-esp]").forEach(b=>b.onclick=e=>{e.stopPropagation();if(espace===b.dataset.esp)return;espace=b.dataset.esp;try{localStorage.setItem("espace-"+moi.id,espace)}catch(_){}appliquerEspace();
     const mob=getComputedStyle($("#menu-btn")).display!=="none";const M=filtrerMenu(menuDirection());dessinerMenu(M);ouvrir(M[0][1][0][0]).then(()=>{if(mob)menu(true)});verifierAlertes().catch(()=>{})});
@@ -542,7 +545,7 @@ async function chargerConseiller(){const [s,a]=await Promise.all([sb.rpc("sites_
 async function chargerCommercial(){const [s,a]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.rpc("agents_noms")]);sites=must(s);agents=must(a).sort((x,y)=>String(x.nom).localeCompare(String(y.nom)));comptes=[]}
 async function ouvrir(t){tab=t;document.querySelectorAll("#tabs button,#side button[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));menu(false);window.scrollTo(0,0);
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estConseiller())await chargerConseiller();else if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();await({accueil:moi.role==="agent"?vAgentAccueil:estConseiller()?vAccueilConseiller:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,"sites-terrain":vSitesTerrain,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-agents":vClientAgents,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport,avis:vAvis,recos:vRecos}[t])();if(estConseiller())barreAvis(t)}
+  try{if(estConseiller())await chargerConseiller();else if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();else if(estComptable())await chargerComptable();await({accueil:moi.role==="agent"?vAgentAccueil:estConseiller()?vAccueilConseiller:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,"sites-terrain":vSitesTerrain,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-agents":vClientAgents,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport,avis:vAvis,recos:vRecos,compta:vCompta,journal:vJournal,virements:vVirements,budget:vBudget}[t])();if(estConseiller())barreAvis(t)}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 /* ---------- accueil ---------- */
@@ -714,7 +717,7 @@ async function appel(body){
 
 /* ---------- comptes de l'équipe ---------- */
 function vComptes(){
-  const eq=comptes.filter(c=>c.role!=="agent"),creables=(moi.role_reel==="dg"?["rh","superviseur","commercial","conseiller","client"]:["superviseur","client"]).filter(k=>k==="commercial"?mod("commercial"):k==="conseiller"?mod("conseiller"):k==="client"?mod("espace_client"):true);
+  const eq=comptes.filter(c=>c.role!=="agent"),creables=(moi.role_reel==="dg"?["rh","superviseur","commercial","conseiller","comptable","client"]:["superviseur","client"]).filter(k=>k==="commercial"?mod("commercial"):k==="conseiller"?mod("conseiller"):k==="comptable"?mod("comptabilite"):k==="client"?mod("espace_client"):true);
   $("#main").innerHTML=`<div class="head"><div><h1>Comptes de l'équipe</h1><p class="muted sm" style="margin:2px 0 0">Direction, ressources humaines et superviseurs. Les accès des agents se créent depuis leur fiche.</p></div><button class="btn pri" id="c-new">+ Nouveau compte</button></div>
   <div class="card">${eq.map(c=>{const gerable=creables.includes(c.role);return `<div class="line">${avatar(c)}<div class="grow"><b>${esc(c.nom_complet)}</b>${c.id===moi.id?' <span class="muted sm">(vous)</span>':""}<div class="muted xs">${titre(c)}${c.fonction?" · accès "+ROLES[c.role].toLowerCase():""} · dernière connexion : ${fdt(c.derniere_connexion)}</div></div><span class="pill ${c.est_actif?"p-green":"p-grey"}">${c.est_actif?"Actif":"Désactivé"}</span>${gerable&&c.role==="client"&&moi.role_reel==="dg"&&mod("client_multisites")?`<button class="btn sm" data-cs="${c.id}">Sites suivis</button>`:""}${gerable?`<button class="btn sm" data-mdp="${c.id}">Nouveau mot de passe</button><button class="btn sm ${c.est_actif?"danger":""}" data-act="${c.id}" data-val="${c.est_actif?0:1}">${c.est_actif?"Désactiver":"Réactiver"}</button>`:""}</div>`}).join("")}</div>`;
   $("#c-new").onclick=()=>{
@@ -1508,6 +1511,113 @@ async function vFactures(){moisF=moisF||auj().slice(0,7);const ym=moisF,p=ag.par
   Q("[data-pay]",b=>busy(b,async()=>{must(await sb.from("factures").update({statut:"Payée",paye_le:auj()}).eq("id",b.dataset.pay));toast("Facture marquée payée");await vFactures()}));
   Q("[data-ann]",b=>confirmerSimple("Annuler cette facture ?","Elle restera dans l'historique avec la mention « Annulée ». Son numéro ne sera pas réutilisé.","Annuler la facture",async()=>{must(await sb.from("factures").update({statut:"Annulée"}).eq("id",b.dataset.ann));toast("Facture annulée");await vFactures()}));
 }
+
+/* ---------- comptabilité (module « comptabilite ») ---------- */
+const CAT_DEP=[["Salaires et primes (hors logiciel)","661"],["Charges sociales","664"],["Uniformes et équipements","6056"],["Fournitures de bureau","6055"],["Carburant et transport","618"],["Électricité et eau","6052"],["Loyer","622"],["Entretien et réparations","624"],["Assurances","625"],["Téléphone et Internet","628"],["Honoraires","632"],["Formation du personnel","633"],["Publicité","627"],["Frais bancaires","631"],["Impôts et taxes","64"],["Autres charges","658"]];
+const CAT_REC=[["Prestation hors facture","706"],["Produits divers","758"],["Apport des associés","46"],["Emprunt","16"],["Autre recette","758"]];
+const MODES=[["Virement bancaire","521"],["Chèque","513"],["Espèces","571"],["Mobile Money","521"]];
+const compteDe=(l,c)=>((l.find(x=>x[0]===c)||[])[1])||"";
+let moisC="",fJ={sens:"",cat:""};
+const estComptable=()=>moi&&moi.role==="comptable";
+async function chargerComptable(){const [s,a]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.rpc("agents_compta")]);sites=must(s);agents=must(a)||[];comptes=[]}
+async function donneesCompta(m1,m2){
+  const [f,e,p,s]=await Promise.all([sb.from("factures").select("*").limit(2000),sb.from("compta_ecritures").select("*").gte("date_op",m1).lte("date_op",m2).order("date_op",{ascending:false}),
+    sb.from("paies").select("agent_id,mois,brut,retenues,net,valide_le").gte("mois",m1).lte("mois",m2),sb.from("stock_mouvements").select("type,quantite,prix_unitaire,created_at,note,fournisseur").gte("created_at",m1).lte("created_at",m2+"T23:59:59")]);
+  return {fac:must(f),ecr:must(e),paies:must(p),stock:(s.error?[]:s.data||[])}}
+const somme=(l,k)=>l.reduce((t,x)=>t+(+x[k]||0),0);
+async function vCompta(){moisC=moisC||auj().slice(0,7);const ym=moisC,m1=ym+"-01",m2=finMois(ym);
+  const d=await donneesCompta(m1,m2),fa=d.fac.filter(f=>f.statut!=="Annulée");
+  const factMois=fa.filter(f=>f.periode===ym),encMois=fa.filter(f=>f.statut==="Payée"&&f.paye_le&&f.paye_le>=m1&&f.paye_le<=m2);
+  const caHT=factMois.reduce((t,f)=>t+(+f.montant_ht||+f.montant||0),0),caTTC=somme(factMois,"montant"),enc=somme(encMois,"montant");
+  const ouvertes=fa.filter(f=>f.statut==="En attente"),retard=ouvertes.filter(f=>f.date_echeance&&f.date_echeance<auj());
+  const rec=d.ecr.filter(x=>x.sens==="recette"),dep=d.ecr.filter(x=>x.sens==="depense");
+  const achats=d.stock.filter(x=>/entr/i.test(x.type||"")&&+x.prix_unitaire>0).reduce((t,x)=>t+(+x.quantite||0)*(+x.prix_unitaire||0),0);
+  const brut=somme(d.paies,"brut"),net=somme(d.paies,"net"),nbP=d.paies.length,depT=somme(dep,"montant"),recT=somme(rec,"montant");
+  const resultat=caHT+recT-brut-depT-achats,treso=enc+recT-net-depT-achats;
+  const parCat={};dep.forEach(x=>parCat[x.categorie]=(parCat[x.categorie]||0)+(+x.montant||0));
+  const cats=Object.entries(parCat).sort((a,b)=>b[1]-a[1]),maxC=Math.max(1,...cats.map(c=>c[1]));
+  /* rentabilité par site : chiffre d'affaires HT du mois moins le coût brut des agents affectés au site */
+  const coutSite={};d.paies.forEach(p=>{const a=agents.find(x=>x.id===p.agent_id);const s=a&&a.site_id||"aucun";coutSite[s]=(coutSite[s]||0)+(+p.brut||0)});
+  const rent=sites.filter(s=>s.actif!==false).map(s=>{const ca=factMois.filter(f=>f.site_id===s.id).reduce((t,f)=>t+(+f.montant_ht||+f.montant||0),0),c=coutSite[s.id]||0;return {s,ca,c,m:ca-c}}).filter(x=>x.ca||x.c).sort((a,b)=>a.m-b.m);
+  $("#main").innerHTML=`<div class="head"><div><h1>Comptabilité</h1><p class="muted sm" style="margin:2px 0 0">Vue d'ensemble du mois : chiffre d'affaires, encaissements, paie, dépenses et trésorerie.</p></div><div class="actions"><input class="input" type="month" id="cp-m" value="${ym}" style="width:auto"><button class="btn" id="cp-gl">Exporter le grand livre</button><button class="btn pri" id="cp-new">+ Écriture</button></div></div>
+  <div class="tiles mt"><div class="tile"><b>${fm(caHT)}</b><span class="muted sm">Chiffre d'affaires HT · ${esc(fmo(ym))}</span></div><div class="tile"><b class="ok-t">${fm(enc+recT)}</b><span class="muted sm">Encaissé ce mois</span></div><div class="tile"><b>${fm(brut)}</b><span class="muted sm">Masse salariale brute (${nbP} bulletin${nbP>1?"s":""})</span></div><div class="tile"><b>${fm(depT+achats)}</b><span class="muted sm">Dépenses et achats</span></div>
+  <div class="tile"><b class="${resultat<0?"ko-t":"ok-t"}">${fm(resultat)}</b><span class="muted sm">Résultat estimé du mois</span></div><div class="tile"><b class="${treso<0?"ko-t":""}">${fm(treso)}</b><span class="muted sm">Variation de trésorerie</span></div><div class="tile click" data-go="factures"><b>${fm(somme(ouvertes,"montant"))}</b><span class="muted sm">Créances clients à encaisser</span></div><div class="tile click" data-go="factures"><b class="${retard.length?"ko-t":""}">${retard.length}</b><span class="muted sm">Factures en retard</span></div></div>
+  <div class="card"><h2>Compte de résultat simplifié · ${esc(fmo(ym))}</h2>
+    <div class="line"><div class="grow">Prestations de gardiennage facturées (HT)</div><b>${fm(caHT)}</b></div>
+    <div class="line"><div class="grow">Autres recettes</div><b>${fm(recT)}</b></div>
+    <div class="line"><div class="grow">Salaires bruts</div><b>− ${fm(brut)}</b></div>
+    <div class="line"><div class="grow">Dépenses enregistrées</div><b>− ${fm(depT)}</b></div>
+    <div class="line"><div class="grow">Achats de matériel (stock)</div><b>− ${fm(achats)}</b></div>
+    <div class="line" style="border:0"><div class="grow"><b>Résultat estimé</b></div><b class="${resultat<0?"ko-t":"ok-t"}">${fm(resultat)}</b></div>
+    <p class="muted xs" style="margin:6px 0 0">TVA collectée sur le mois : ${fm(caTTC-caHT)}. Estimation de gestion : elle ne remplace pas les états financiers de votre expert-comptable.</p></div>
+  <div class="card"><h2>Dépenses par catégorie</h2>${cats.length?cats.map(([c,v])=>`<div style="margin:8px 0"><div class="row"><span class="grow sm">${esc(c)}</span><b class="sm">${fm(v)}</b></div><div style="height:8px;border-radius:6px;background:var(--line);overflow:hidden"><div style="height:100%;width:${Math.round(v/maxC*100)}%;background:var(--p)"></div></div></div>`).join(""):'<p class="muted sm" style="margin:0">Aucune dépense enregistrée ce mois.</p>'}</div>
+  <div class="card"><h2>Rentabilité par site</h2><p class="muted xs" style="margin:-4px 0 8px">Chiffre d'affaires HT du site moins le salaire brut des agents qui y sont affectés.</p>${rent.length?rent.map(x=>`<div class="line"><div class="grow"><b>${esc(x.s.nom)}</b><div class="muted xs">CA ${fm(x.ca)} · coût agents ${fm(x.c)}${x.ca?" · marge "+Math.round(x.m/x.ca*100)+" %":""}</div></div><b class="${x.m<0?"ko-t":"ok-t"}">${fm(x.m)}</b></div>`).join(""):'<p class="muted sm" style="margin:0">Les marges apparaîtront dès que les factures et la paie du mois seront saisies.</p>'}</div>
+  <div class="card"><div class="actions" style="justify-content:space-between"><h2 style="margin:0">Dernières écritures</h2><button class="btn sm" data-go="journal">Tout voir</button></div>${d.ecr.slice(0,8).map(ligneEcr).join("")||'<p class="muted sm">Aucune écriture ce mois.</p>'}</div>`;
+  $("#cp-m").onchange=e=>{if(e.target.value){moisC=e.target.value;vCompta().catch(x=>toast(traduire(x.message),true))}};
+  $("#cp-new").onclick=()=>formEcriture(null,()=>vCompta());
+  $("#cp-gl").onclick=()=>busy($("#cp-gl"),()=>exporterGrandLivre(ym,d));
+  $("#main").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go))}
+function ligneEcr(x){return `<div class="line"><div class="grow"><b>${esc(x.libelle)}</b><div class="muted xs">${fd(x.date_op)} · ${esc(x.categorie)}${x.compte?" · compte "+esc(x.compte):""}${x.mode?" · "+esc(x.mode):""}${x.tiers?" · "+esc(x.tiers):""}${x.site_id?" · "+esc(siteNom(x.site_id)):""}</div></div><b class="${x.sens==="depense"?"":"ok-t"}">${x.sens==="depense"?"− ":"+ "}${fm(x.montant)}</b></div>`}
+function formEcriture(x,apres){const e=x||{sens:"depense",date_op:auj()};
+  const opts=s=>(s==="recette"?CAT_REC:CAT_DEP).map(([c])=>`<option ${c===e.categorie?"selected":""}>${esc(c)}</option>`).join("");
+  modal(x?"Modifier l'écriture":"Nouvelle écriture",`<div class="row"><div class="field"><label class="f">Type</label><select class="input" id="ec-s"><option value="depense" ${e.sens==="depense"?"selected":""}>Dépense</option><option value="recette" ${e.sens==="recette"?"selected":""}>Recette</option></select></div><div class="field"><label class="f">Date</label><input class="input" type="date" id="ec-d" value="${e.date_op}"></div></div>
+  <div class="row"><div class="field"><label class="f">Catégorie</label><select class="input" id="ec-c">${opts(e.sens)}</select></div><div class="field"><label class="f">Compte SYSCOHADA</label><input class="input" id="ec-k" value="${esc(e.compte||"")}" maxlength="12"></div></div>
+  <div class="field"><label class="f">Libellé</label><input class="input" id="ec-l" maxlength="300" value="${esc(e.libelle||"")}" placeholder="Ex. Achat de 20 tenues d'agents"></div>
+  <div class="row"><div class="field"><label class="f">Montant (${dev()})</label><input class="input" type="number" min="1" id="ec-m" value="${e.montant||""}"></div><div class="field"><label class="f">Mode de paiement</label><select class="input" id="ec-mo">${MODES.map(([m])=>`<option ${m===e.mode?"selected":""}>${m}</option>`).join("")}</select></div></div>
+  <div class="row"><div class="field"><label class="f">Fournisseur / tiers</label><input class="input" id="ec-t" maxlength="120" value="${esc(e.tiers||"")}"></div><div class="field"><label class="f">N° de pièce</label><input class="input" id="ec-r" maxlength="60" value="${esc(e.reference||"")}" placeholder="Facture, reçu…"></div></div>
+  <div class="field"><label class="f">Site concerné <span class="muted" style="font-weight:400">(facultatif)</span></label><select class="input" id="ec-si"><option value="">— Aucun —</option>${sites.map(s=>`<option value="${s.id}" ${s.id===e.site_id?"selected":""}>${esc(s.nom)}</option>`).join("")}</select></div>`,
+  `${x?'<button class="btn danger" id="ec-del">Supprimer</button>':""}<button class="btn" id="ec-no">Annuler</button><button class="btn pri" id="ec-ok">Enregistrer</button>`);
+  const majK=()=>{const s=$("#ec-s").value;$("#ec-k").value=compteDe(s==="recette"?CAT_REC:CAT_DEP,$("#ec-c").value)};
+  $("#ec-s").onchange=()=>{$("#ec-c").innerHTML=opts($("#ec-s").value);majK()};$("#ec-c").onchange=majK;if(!x)majK();
+  $("#ec-no").onclick=closeModal;
+  if(x)$("#ec-del").onclick=()=>busy($("#ec-del"),async()=>{must(await sb.from("compta_ecritures").delete().eq("id",x.id));closeModal();toast("Écriture supprimée");await apres()});
+  $("#ec-ok").onclick=()=>busy($("#ec-ok"),async()=>{const m=+$("#ec-m").value,l=$("#ec-l").value.trim();if(l.length<2){$("#ec-l").focus();throw new Error("Indiquez le libellé.")}if(!(m>0))throw new Error("Indiquez le montant.");
+    const d={sens:$("#ec-s").value,date_op:$("#ec-d").value||auj(),categorie:$("#ec-c").value,compte:$("#ec-k").value.trim()||null,libelle:l,montant:Math.round(m),mode:$("#ec-mo").value,tiers:$("#ec-t").value.trim()||null,reference:$("#ec-r").value.trim()||null,site_id:$("#ec-si").value||null};
+    must(x?await sb.from("compta_ecritures").update(d).eq("id",x.id):await sb.from("compta_ecritures").insert(d));closeModal();toast("Écriture enregistrée");await apres()})}
+async function vJournal(){moisC=moisC||auj().slice(0,7);const ym=moisC;
+  const l=must(await sb.from("compta_ecritures").select("*").gte("date_op",ym+"-01").lte("date_op",finMois(ym)).order("date_op",{ascending:false}).order("created_at",{ascending:false}));
+  const v=l.filter(x=>(!fJ.sens||x.sens===fJ.sens)&&(!fJ.cat||x.categorie===fJ.cat)),cats=[...new Set(l.map(x=>x.categorie))].sort();
+  $("#main").innerHTML=`<div class="head"><div><h1>Recettes et dépenses</h1><p class="muted sm" style="margin:2px 0 0">Tout ce qui entre et sort hors factures clients et paie (ces deux-là sont repris automatiquement).</p></div><div class="actions"><input class="input" type="month" id="jo-m" value="${ym}" style="width:auto"><button class="btn" id="jo-csv">Exporter</button><button class="btn pri" id="jo-new">+ Écriture</button></div></div>
+  <div class="tiles mt"><div class="tile"><b class="ok-t">${fm(somme(l.filter(x=>x.sens==="recette"),"montant"))}</b><span class="muted sm">Recettes</span></div><div class="tile"><b>${fm(somme(l.filter(x=>x.sens==="depense"),"montant"))}</b><span class="muted sm">Dépenses</span></div><div class="tile"><b>${l.length}</b><span class="muted sm">Écritures du mois</span></div></div>
+  <div class="actions" style="margin-bottom:12px"><select class="input" id="jo-s" style="width:auto"><option value="">Recettes et dépenses</option><option value="recette" ${fJ.sens==="recette"?"selected":""}>Recettes</option><option value="depense" ${fJ.sens==="depense"?"selected":""}>Dépenses</option></select><select class="input" id="jo-c" style="width:auto"><option value="">Toutes les catégories</option>${cats.map(c=>`<option ${c===fJ.cat?"selected":""}>${esc(c)}</option>`).join("")}</select></div>
+  <div class="card">${v.length?v.map(x=>`<div class="click" data-ec="${x.id}" style="cursor:pointer">${ligneEcr(x)}</div>`).join(""):'<p class="muted sm" style="margin:0">Aucune écriture.</p>'}</div>`;
+  $("#jo-m").onchange=e=>{if(e.target.value){moisC=e.target.value;vJournal().catch(x=>toast(traduire(x.message),true))}};
+  $("#jo-s").onchange=e=>{fJ.sens=e.target.value;vJournal()};$("#jo-c").onchange=e=>{fJ.cat=e.target.value;vJournal()};
+  $("#jo-new").onclick=()=>formEcriture(null,()=>vJournal());
+  $("#main").querySelectorAll("[data-ec]").forEach(b=>b.onclick=()=>formEcriture(l.find(x=>x.id===b.dataset.ec),()=>vJournal()));
+  $("#jo-csv").onclick=()=>telechargerCSV("journal-"+ag.slug+"-"+ym+".csv",[["Date","Type","Catégorie","Compte","Libellé","Tiers","Pièce","Mode","Site","Montant"],...v.map(x=>[x.date_op,x.sens==="depense"?"Dépense":"Recette",x.categorie,x.compte||"",x.libelle,x.tiers||"",x.reference||"",x.mode||"",x.site_id?siteNom(x.site_id):"",Math.round(x.montant)])])}
+function telechargerCSV(nom,L){const c=v=>{v=String(v??"");return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  const u=URL.createObjectURL(new Blob(["﻿"+L.map(r=>r.map(c).join(";")).join("\r\n")],{type:"text/csv;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download=nom;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast("Fichier exporté")}
+/* grand livre au format SYSCOHADA (comptes indicatifs, à valider par l'expert-comptable) */
+async function exporterGrandLivre(ym,d){const m1=ym+"-01",m2=finMois(ym),L=[["Date","Journal","Compte","Libellé","Pièce","Débit","Crédit"]],e=(dt,j,k,lb,p,de,cr)=>L.push([dt,j,k,lb,p||"",de?Math.round(de):"",cr?Math.round(cr):""]);
+  d.fac.filter(f=>f.statut!=="Annulée"&&f.periode===ym).forEach(f=>{const ht=+f.montant_ht||+f.montant,tva=(+f.montant||0)-ht;e(f.date_emission,"VE","411","Facture "+f.numero+" · "+siteNom(f.site_id),f.numero,f.montant,0);e(f.date_emission,"VE","706",f.libelle||"Prestation",f.numero,0,ht);if(tva>0)e(f.date_emission,"VE","4431","TVA collectée",f.numero,0,tva)});
+  d.fac.filter(f=>f.statut==="Payée"&&f.paye_le&&f.paye_le>=m1&&f.paye_le<=m2).forEach(f=>{e(f.paye_le,"BQ","521","Encaissement "+f.numero,f.numero,f.montant,0);e(f.paye_le,"BQ","411","Encaissement "+f.numero,f.numero,0,f.montant)});
+  const brut=somme(d.paies,"brut"),net=somme(d.paies,"net"),ret=brut-net;if(brut){e(m2,"OD","661","Salaires bruts · "+fmo(ym),"PAIE-"+ym,brut,0);e(m2,"OD","422","Salaires nets à payer","PAIE-"+ym,0,net);if(ret>0)e(m2,"OD","431","Retenues et cotisations","PAIE-"+ym,0,ret)}
+  d.ecr.slice().reverse().forEach(x=>{const tre=compteDe(MODES,x.mode)||"521",k=x.compte||(x.sens==="depense"?"658":"758"),j=tre==="571"?"CA":"BQ";if(x.sens==="depense"){e(x.date_op,j,k,x.libelle,x.reference,x.montant,0);e(x.date_op,j,tre,x.libelle,x.reference,0,x.montant)}else{e(x.date_op,j,tre,x.libelle,x.reference,x.montant,0);e(x.date_op,j,k,x.libelle,x.reference,0,x.montant)}});
+  telechargerCSV("grand-livre-"+ag.slug+"-"+ym+".csv",L)}
+/* paie et virements bancaires */
+async function vVirements(){moisC=moisC||auj().slice(0,7);const ym=moisC;
+  const p=must(await sb.from("paies").select("*").gte("mois",ym+"-01").lte("mois",finMois(ym)));
+  const A=id=>agents.find(a=>a.id===id)||{},val=p.filter(x=>x.valide_le),att=p.filter(x=>!x.valide_le),sansRib=val.filter(x=>!A(x.agent_id).rib),peutRib=["dg","rh"].includes(moi.role_reel);
+  $("#main").innerHTML=`<div class="head"><div><h1>Paie et virements</h1><p class="muted sm" style="margin:2px 0 0">Bulletins validés par la RH et fichier de virement des salaires pour la banque.</p></div><div class="actions"><input class="input" type="month" id="vi-m" value="${ym}" style="width:auto"><button class="btn pri" id="vi-csv" ${val.length?"":"disabled"}>Fichier de virement</button></div></div>
+  <div class="tiles mt"><div class="tile"><b>${fm(somme(val,"brut"))}</b><span class="muted sm">Salaires bruts validés</span></div><div class="tile"><b class="ok-t">${fm(somme(val,"net"))}</b><span class="muted sm">Net à virer</span></div><div class="tile"><b>${val.length}</b><span class="muted sm">Bulletins validés</span></div><div class="tile"><b class="${att.length?"ko-t":""}">${att.length}</b><span class="muted sm">Bulletins pas encore validés</span></div></div>
+  ${sansRib.length?`<div class="idbox sm">${sansRib.length} agent(s) sans RIB : ils ne figureront pas dans le fichier de virement. ${peutRib?"Ajoutez leur RIB ci-dessous.":"Demandez à la RH de compléter leur RIB."}</div>`:""}
+  <div class="card">${val.length?val.map(x=>{const a=A(x.agent_id);return `<div class="line"><div class="grow"><b>${esc(nomAg(a))}</b> <span class="muted xs">${esc(a.matricule||"")}</span><div class="muted xs">${a.rib?esc((a.banque||"Banque")+" · "+a.rib):"RIB manquant"} · brut ${fm(x.brut)}</div></div><b>${fm(x.net)}</b>${peutRib?`<button class="btn sm" data-rib="${a.id}">RIB</button>`:""}</div>`}).join(""):'<p class="muted sm" style="margin:0">Aucun bulletin validé pour ce mois. La RH valide les bulletins dans « Paie ».</p>'}</div>`;
+  $("#vi-m").onchange=e=>{if(e.target.value){moisC=e.target.value;vVirements().catch(x=>toast(traduire(x.message),true))}};
+  $("#vi-csv").onclick=()=>{const ok=val.filter(x=>A(x.agent_id).rib);if(!ok.length)return toast("Aucun agent n'a de RIB renseigné.",true);
+    telechargerCSV("virements-salaires-"+ag.slug+"-"+ym+".csv",[["Matricule","Nom et prénom","Banque","RIB","Montant","Libellé"],...ok.map(x=>{const a=A(x.agent_id);return [a.matricule||"",nomAg(a),a.banque||"",a.rib,Math.round(x.net),"Salaire "+fmo(ym)]})])};
+  $("#main").querySelectorAll("[data-rib]").forEach(b=>b.onclick=()=>{const a=A(b.dataset.rib);
+    modal("RIB de "+esc(nomAg(a)),`<div class="field"><label class="f">Banque</label><input class="input" id="rb-b" value="${esc(a.banque||"")}" maxlength="80"></div><div class="field"><label class="f">RIB / IBAN</label><input class="input" id="rb-r" value="${esc(a.rib||"")}" maxlength="60"></div>`,`<button class="btn" id="rb-no">Annuler</button><button class="btn pri" id="rb-ok">Enregistrer</button>`);
+    $("#rb-no").onclick=closeModal;$("#rb-ok").onclick=()=>busy($("#rb-ok"),async()=>{must(await sb.from("agents").update({banque:$("#rb-b").value.trim()||null,rib:$("#rb-r").value.trim()||null}).eq("id",a.id));closeModal();toast("RIB enregistré");await chargerComptable();await vVirements()})})}
+/* budget annuel par catégorie de dépense */
+async function vBudget(){const an=+(moisC||auj()).slice(0,4);
+  const [b,e]=await Promise.all([sb.from("compta_budgets").select("*").eq("annee",an),sb.from("compta_ecritures").select("categorie,montant,date_op").eq("sens","depense").gte("date_op",an+"-01-01").lte("date_op",an+"-12-31")]);
+  const bu=must(b),ec=must(e),moisEcoules=an<+auj().slice(0,4)?12:an>+auj().slice(0,4)?0:+auj().slice(5,7);
+  $("#main").innerHTML=`<div class="head"><div><h1>Budget ${an}</h1><p class="muted sm" style="margin:2px 0 0">Fixez un budget mensuel par catégorie et suivez ce qui est réellement dépensé depuis janvier.</p></div><button class="btn pri" id="bu-ok">Enregistrer</button></div>
+  <div class="card">${CAT_DEP.map(([c])=>{const x=bu.find(y=>y.categorie===c),bm=x?+x.montant_mensuel:0,reel=ec.filter(y=>y.categorie===c).reduce((t,y)=>t+(+y.montant||0),0),prevu=bm*moisEcoules,ecart=prevu-reel;
+    return `<div class="line"><div class="grow"><b>${esc(c)}</b><div class="muted xs">Dépensé ${fm(reel)}${bm?" · prévu à ce jour "+fm(prevu)+" · <span class='"+(ecart<0?"ko-t":"ok-t")+"'>"+(ecart<0?"dépassement ":"reste ")+fm(Math.abs(ecart))+"</span>":""}</div></div><input class="input" type="number" min="0" data-bu="${esc(c)}" value="${bm||""}" placeholder="par mois" style="width:140px"></div>`}).join("")}</div>`;
+  $("#bu-ok").onclick=()=>busy($("#bu-ok"),async()=>{const rows=[...$("#main").querySelectorAll("[data-bu]")].map(i=>({agence_id:ag.id,annee:an,categorie:i.dataset.bu,montant_mensuel:Math.max(0,+i.value||0)}));
+    must(await sb.from("compta_budgets").upsert(rows,{onConflict:"agence_id,annee,categorie"}));toast("Budget enregistré");await vBudget()})}
 
 /* ---------- demandes des clients ---------- */
 async function vDemandesClients(){

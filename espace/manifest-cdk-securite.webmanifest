@@ -1,0 +1,17 @@
+{
+  "id": "/espace/?a=cdk-securite",
+  "name": "CDK Sécurité",
+  "short_name": "CDK Sécurité",
+  "description": "Logiciel de gestion de CDK Sécurité : pointage, rondes, main courante, RH, paie, facturation et comptabilité.",
+  "start_url": "/espace/?a=cdk-securite",
+  "scope": "/espace/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "lang": "fr",
+  "icons": [
+    { "src": "/cdk-group/logo-cdk-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/cdk-group/logo-cdk-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/cdk-group/logo-cdk-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

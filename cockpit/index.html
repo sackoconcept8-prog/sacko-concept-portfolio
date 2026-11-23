@@ -150,10 +150,10 @@ async function busy(btn,fn){if(btn)btn.disabled=true;try{await fn()}catch(e){toa
 const must=r=>{if(r.error)throw new Error(r.error.message);return r.data};
 
 const OFFRES={essai:"Essai gratuit",mensuel:"Mensuel",annuel:"Annuel",licence:"Licence"};
-const ROLES={dg:"Direction (accès complet)",rh:"Ressources humaines / Superviseur général",superviseur:"Superviseur",commercial:"Directeur commercial (clients)",conseiller:"Conseiller (consultation)",agent:"Agent",client:"Client"};
+const ROLES={dg:"Direction (accès complet)",rh:"Ressources humaines / Superviseur général",superviseur:"Superviseur",commercial:"Directeur commercial (clients)",conseiller:"Conseiller (consultation)",comptable:"Comptabilité",agent:"Agent",client:"Client"};
 const titre=c=>c.fonction?esc(c.fonction)+" · "+ROLES[c.role]:(ROLES[c.role]||esc(c.role));
 const MODULES={planning:"Planning",pointage:"Pointage",conges:"Congés et absences",documents:"Documents RH",messagerie:"Messagerie",paie:"Paie",materiel:"Matériel et stock",facturation:"Facturation",rapports:"Rapports",main_courante:"Main courante",rondes:"Rondes",supervision:"Supervision",espace_client:"Espace client",sos:"Alerte SOS",
-  conseiller:"Espace Conseiller (avis au CEO)",commercial:"Espace Directeur commercial",client_agents:"Client : onglet « Mes agents »",client_multisites:"Client : plusieurs sites par compte",hors_ligne_plus:"Rondes, incidents et SOS sans réseau"};
+  conseiller:"Espace Conseiller (avis au CEO)",commercial:"Espace Directeur commercial",client_agents:"Client : onglet « Mes agents »",client_multisites:"Client : plusieurs sites par compte",hors_ligne_plus:"Rondes, incidents et SOS sans réseau",comptabilite:"Portail Comptabilité",borne:"Mode borne (poste de garde)",rapports_clients:"Rapports mensuels aux clients",alertes_sms:"Alertes SMS"};
 
 const photoUrl=p=>p?sb.storage.from("photos_profils").getPublicUrl(p).data.publicUrl:"";
 const initiales=n=>String(n||"?").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
