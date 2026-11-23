@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Candidature spontanée</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#13734B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23EAF6EF'/%3E%3Crect x='26' y='26' width='12' height='28' rx='4' fill='%231B2A4A'/%3E%3Crect x='26.5' y='9' width='11' height='11' rx='2' transform='rotate(45 32 14.5)' fill='%231FA36B'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--p:#13734B;--p2:#EAF6EF;--txt:#1B2A4A;--mut:#667085;--bord:#e6e8ec;--rouge:#d92d20}
+*{box-sizing:border-box}body{margin:0;font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--txt);background:linear-gradient(170deg,var(--p2),#fff 55%);min-height:100vh;font-size:15px}
+.cache{display:none!important}
+.wrap{max-width:560px;margin:0 auto;padding:28px 18px 60px}
+.tete{text-align:center;margin-bottom:20px}.tete img{max-height:76px;max-width:200px;object-fit:contain}
+.tete h1{font-size:24px;margin:12px 0 4px}.tete p{color:var(--mut);margin:0}
+.carte{background:#fff;border:1px solid var(--bord);border-radius:16px;padding:22px;box-shadow:0 8px 30px #1b2a4a0d}
+label{display:block;font-size:13px;font-weight:600;color:#344054;margin:12px 0 6px}
+input,textarea{width:100%;border:1px solid #d0d5dd;border-radius:10px;padding:11px 12px;font:inherit;color:var(--txt);background:#fff}
+input:focus,textarea:focus{outline:2px solid color-mix(in srgb,var(--p) 35%,transparent);border-color:var(--p)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}@media(max-width:560px){.g2{grid-template-columns:1fr}}
+.btn{background:var(--p);color:#fff;border:0;border-radius:10px;padding:13px 18px;font:inherit;font-weight:700;cursor:pointer;width:100%;margin-top:18px}
+.btn:disabled{opacity:.6;cursor:wait}
+.fichier{border:2px dashed #d0d5dd;border-radius:12px;padding:14px;text-align:center;color:var(--mut);cursor:pointer;font-size:14px}
+.err{color:var(--rouge);font-size:13px;min-height:18px;margin-top:8px}
+.ok{text-align:center;padding:20px 6px}.ok b{font-size:44px;display:block;color:var(--p)}
+.lang{display:flex;justify-content:flex-end;gap:4px;font-size:13px;font-weight:700;margin-bottom:8px}.lang a{color:var(--mut);text-decoration:none;padding:6px 10px;border-radius:8px}.lang a.on{background:#fff;color:var(--p)}
+small.pied{display:block;text-align:center;color:var(--mut);margin-top:18px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="lang"><a href="#" data-l="fr">FR</a><a href="#" data-l="en">EN</a></div>
+  <div class="tete"><img id="logo" class="cache" alt=""><h1 id="titre"></h1><p id="sous"></p></div>
+  <div class="carte" id="zone">
+    <form id="f">
+      <div class="g2"><div><label data-t="nom"></label><input name="nom" required maxlength="120" autocomplete="name"></div>
+      <div><label data-t="poste"></label><input name="poste" maxlength="120"></div>
+      <div><label data-t="email"></label><input name="email" type="email" maxlength="160" autocomplete="email"></div>
+      <div><label data-t="tel"></label><input name="tel" type="tel" maxlength="40" autocomplete="tel"></div></div>
+      <label data-t="message"></label><textarea name="message" rows="5" maxlength="4000"></textarea>
+      <label data-t="cv"></label><div class="fichier" id="fz"><span id="fn" data-t="cvzone"></span></div><input type="file" id="cv" class="cache" accept=".pdf,.doc,.docx,image/jpeg,image/png">
+      <input name="site" class="cache" tabindex="-1" autocomplete="off">
+      <div class="err" id="err"></div>
+      <button class="btn" id="btn" data-t="envoyer"></button>
+    </form>
+  </div>
+  <small class="pied">Ilano™ · SACKO CONCEPT LLC</small>
+</div>
+<script>
+const sb=supabase.createClient('https://cqbuxbchjnlhezkzzlqq.supabase.co','sb_publishable_2FhOq6XnaOlE6s0p1kExkA_FEuEoPOm');
+const $=s=>document.querySelector(s);const q=new URLSearchParams(location.search);const slug=(q.get('e')||'').toLowerCase();
+let LANG=q.get('lang')||((navigator.language||'fr').toLowerCase().startsWith('fr')?'fr':'en');let NOM='';
+const T={fr:{titre:n=>`Rejoignez ${n}`,sous:'Candidature spontanée — envoyez-nous votre profil, nous vous recontacterons.',nom:'Nom complet',poste:'Poste souhaité',email:'E-mail',tel:'Téléphone / WhatsApp',
+  message:'Votre message (présentation, expérience, disponibilité)',cv:'CV (PDF, Word ou photo — 5 Mo max.)',cvzone:'Touchez pour joindre votre CV',envoyer:'Envoyer ma candidature',
+  envoi:'Envoi en cours…',okt:'Merci ! Votre candidature a bien été envoyée.',oks:n=>`L'équipe de ${n} l'étudiera et vous recontactera si votre profil correspond.`,
+  contact:'Indiquez un e-mail ou un téléphone pour être recontacté(e).',lourd:'Fichier trop lourd (5 Mo maximum).',introuvable:"Ce lien de candidature n'est pas valide ou n'est plus actif.",erreur:'Envoi impossible. Réessayez.'},
+ en:{titre:n=>`Join ${n}`,sous:'Open application — send us your profile and we will get back to you.',nom:'Full name',poste:'Desired position',email:'Email',tel:'Phone / WhatsApp',
+  message:'Your message (introduction, experience, availability)',cv:'CV (PDF, Word or photo — 5 MB max.)',cvzone:'Tap to attach your CV',envoyer:'Send my application',
+  envoi:'Sending…',okt:'Thank you! Your application has been sent.',oks:n=>`The ${n} team will review it and contact you if your profile is a match.`,
+  contact:'Please give an email or phone number so we can reach you.',lourd:'File too large (5 MB max).',introuvable:'This application link is not valid or no longer active.',erreur:'Could not send. Please try again.'}};
+const t=k=>(T[LANG]||T.fr)[k];
+function textes(){document.documentElement.lang=LANG;document.querySelectorAll('[data-t]').forEach(x=>{if(x.id==='fn'&&FICHIER)return;x.textContent=t(x.dataset.t)});
+  $('#titre').textContent=NOM?t('titre')(NOM):'';$('#sous').textContent=t('sous');document.title=(NOM?NOM+' — ':'')+(LANG==='en'?'Open application':'Candidature spontanée');
+  document.querySelectorAll('.lang a').forEach(a=>a.classList.toggle('on',a.dataset.l===LANG))}
+document.querySelectorAll('.lang a').forEach(a=>a.onclick=e=>{e.preventDefault();LANG=a.dataset.l;textes()});
+let FICHIER=null;
+$('#fz').onclick=()=>$('#cv').click();
+$('#cv').onchange=e=>{const f=e.target.files[0];if(!f)return;if(f.size>5242880){$('#err').textContent=t('lourd');return}FICHIER=f;$('#fn').textContent='📎 '+f.name;$('#err').textContent=''};
+(async()=>{
+  const{data}=slug?await sb.rpc('rh_marque_candidature',{p_slug:slug}):{data:null};
+  if(!data){textes();$('#zone').innerHTML=`<div class="ok"><p>${t('introuvable')}</p></div>`;return}
+  NOM=data.nom;if(!q.get('lang')&&(data.langue==='en'||data.langue==='fr'))LANG=data.langue;
+  if(data.couleur_principale){document.documentElement.style.setProperty('--p',data.couleur_principale);document.querySelector('meta[name=theme-color]').content=data.couleur_principale}
+  if(data.couleur_secondaire)document.documentElement.style.setProperty('--p2',data.couleur_secondaire);
+  if(data.logo_url){$('#logo').src=data.logo_url;$('#logo').classList.remove('cache')}
+  textes();
+})();
+$('#f').onsubmit=async e=>{e.preventDefault();const f=e.target;$('#err').textContent='';
+  if(f.site.value)return;
+  if(!f.email.value.trim()&&!f.tel.value.trim()){$('#err').textContent=t('contact');return}
+  const b=$('#btn');b.disabled=true;b.textContent=t('envoi');
+  try{let chemin=null;
+    if(FICHIER){const ext=(FICHIER.name.split('.').pop()||'pdf').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5)||'pdf';
+      chemin=`${slug}/${Date.now()}-${Math.random().toString(36).slice(2,10)}.${ext}`;
+      const{error}=await sb.storage.from('rh-cv').upload(chemin,FICHIER,{contentType:FICHIER.type||'application/pdf'});if(error)throw error}
+    const{error}=await sb.rpc('rh_postuler',{p_slug:slug,p_nom:f.nom.value,p_email:f.email.value.trim()||null,p_telephone:f.tel.value.trim()||null,p_poste:f.poste.value||null,p_message:f.message.value||null,p_cv:chemin});
+    if(error)throw error;
+    $('#zone').innerHTML=`<div class="ok"><b>✓</b><h2>${t('okt')}</h2><p style="color:var(--mut)">${t('oks')(NOM.replace(/[<>&]/g,''))}</p></div>`;
+  }catch(er){$('#err').textContent=(er&&er.message)||t('erreur');b.disabled=false;b.textContent=t('envoyer')}};
+</script>
+</body>
+</html>

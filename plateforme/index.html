@@ -166,12 +166,13 @@ tr:last-child td{border-bottom:0}
           <input type="color" id="coul-man" title="Changer la couleur" style="width:38px;height:30px;padding:2px"></div>
         <label>Nom de l'entreprise</label><input id="i-ent" required maxlength="80">
         <div class="grille2">
-          <div><label>Secteur</label><select id="i-sect"><option>Commerce / boutique</option><option>Supermarché / alimentation</option><option>Téléphones / électronique</option><option>Quincaillerie / BTP</option><option>Pharmacie / parapharmacie</option><option>Restauration / bar</option><option>Cosmétique / mode</option><option data-autre="1" data-demo="/securipro/|/securipro/">Sécurité / gardiennage</option><option data-autre="1" data-demo="/nettopro/demo/|/en/nettopro/">Nettoyage</option><option data-autre="1" data-demo="/btppro/|/btppro/">BTP / travaux</option><option data-autre="1" data-demo="/rhpro/demo/|/en/hrpro/">Services / RH</option><option data-autre="1">Autre</option></select></div>
+          <div><label>Secteur</label><select id="i-sect"><option>Commerce / boutique</option><option>Supermarché / alimentation</option><option>Téléphones / électronique</option><option>Quincaillerie / BTP</option><option>Pharmacie / parapharmacie</option><option>Restauration / bar</option><option>Cosmétique / mode</option><option data-autre="1" data-demo="/securipro/|/securipro/">Sécurité / gardiennage</option><option data-autre="1" data-demo="/nettopro/demo/|/en/nettopro/">Nettoyage</option><option data-autre="1" data-demo="/btppro/|/btppro/">BTP / travaux</option><option data-logiciel="rhpro">Services / RH</option><option data-autre="1">Autre</option></select></div>
           <div><label>Pays</label><input id="i-pays" placeholder="Votre pays"></div>
           <div><label>Devise</label><select id="i-dev"><option value="XOF">F CFA</option><option value="EUR">Euro</option><option value="USD">Dollar</option></select></div>
           <div><label>Langue</label><select id="i-lang"><option value="fr">Français</option><option value="en">English</option></select></div>
         </div>
         <div id="sect-info" class="cache" style="margin-top:14px;background:#FFFAEB;border:1px solid #FEDF89;border-radius:12px;padding:12px 14px;font-size:13px;color:#7A2E0E;line-height:1.5"><b>Bon à savoir :</b> votre espace démarre avec <b>Stock &amp; Ventes</b> (produits, caisse, équipe). L'application dédiée à votre secteur arrive bientôt et sera ajoutée à votre espace. <span id="sect-demo-z" class="cache"><br><a id="sect-demo" target="_blank" rel="noopener" href="#">Voir la démo de votre secteur</a> · </span><a id="sect-wa" target="_blank" rel="noopener" href="#">Parlez-nous de vos besoins sur WhatsApp</a></div>
+        <div id="sect-rh" class="cache" style="margin-top:14px;background:var(--p2);border:1px solid #b7e3c9;border-radius:12px;padding:12px 14px;font-size:13px;color:#13734B;line-height:1.5">✓ <span>Votre espace démarre avec</span> <b>RH Pro</b> <span>(employés, congés, pointage, paie, documents officiels, badges).</span></div>
         <button type="button" class="btn" style="width:100%;margin-top:18px" id="ins-suiv">Continuer</button>
       </div>
       <div id="ins-2" class="cache">
@@ -215,6 +216,7 @@ tr:last-child td{border-bottom:0}
 
 <div id="modale-zone"></div>
 
+<script src="rhpro.js"></script>
 <script>
 /* ============ Configuration ============ */
 const SB_URL = 'https://cqbuxbchjnlhezkzzlqq.supabase.co';
@@ -326,6 +328,7 @@ const I18P=[
  [/^(\d+) mois — (.+)$/,(m,n,r)=>n+(n==='1'?' month — ':' months — ')+r],[/^Paiement — (.+) (\d+) mois$/,(m,f,n)=>'Payment — '+f+', '+n+(n==='1'?' month':' months')],
  [/^(.+) \(\+(\d+)\)$/,(m,p,c)=>PAYS_EN[p]?PAYS_EN[p]+' (+'+c+')':undefined],[/^(-?[\d.,]+) pièces?$/,(m,n)=>n+' pcs']
 ];
+Object.assign(I18N,window.RH_I18N||{});I18P.push(...(window.RH_I18P||[]));
 function tr(s){
   if(LANG!=='en'||s==null)return s;const t=String(s).trim();if(!t)return s;
   let r=I18N[t];
@@ -446,7 +449,7 @@ $('#coul-man').oninput=e=>{COUL1=lisible(e.target.value);majCouleurs()};
 function majSecteur(){const o=$('#i-sect').selectedOptions[0];const autre=!!o?.dataset.autre;$('#sect-info').classList.toggle('cache',!autre);
   $('#sect-wa').href='https://wa.me/15054642331?text='+encodeURIComponent(L('Bonjour Ilano, mon entreprise est dans le secteur : ','Hello Ilano, my business is in: ')+o.textContent+L('. J\'aimerais une application adaptée.','. I would like an app for my sector.'))}
 $('#i-sect').onchange=majSecteur;
-const _majS=majSecteur;majSecteur=function(){_majS();const o=$('#i-sect').selectedOptions[0];const d=(o?.dataset.demo||'').split('|');$('#sect-demo-z').classList.toggle('cache',!o?.dataset.demo);if(o?.dataset.demo)$('#sect-demo').href=LANG==='en'?d[1]:d[0]};$('#i-sect').onchange=majSecteur;
+const _majS=majSecteur;majSecteur=function(){_majS();const o=$('#i-sect').selectedOptions[0];const d=(o?.dataset.demo||'').split('|');$('#sect-demo-z').classList.toggle('cache',!o?.dataset.demo);if(o?.dataset.demo)$('#sect-demo').href=LANG==='en'?d[1]:d[0];$('#sect-rh').classList.toggle('cache',o?.dataset.logiciel!=='rhpro'&&params.get('logiciel')!=='rhpro')};$('#i-sect').onchange=majSecteur;
 $('#ins-suiv').onclick=()=>{if($('#i-ent').value.trim().length<2){toast("Indiquez le nom de l'entreprise");return}
   $('#ins-1').classList.add('cache');$('#ins-2').classList.remove('cache');document.querySelectorAll('.etapes i')[1].classList.add('on')};
 $('#ins-prec').onclick=()=>{$('#ins-2').classList.add('cache');$('#ins-1').classList.remove('cache');document.querySelectorAll('.etapes i')[1].classList.remove('on')};
@@ -454,7 +457,7 @@ $('#f-ins').onsubmit=async ev=>{
   ev.preventDefault();$('#i-err').textContent='';const btn=$('#i-btn');btn.disabled=true;btn.textContent='Création de votre espace…';
   const corps={entreprise:$('#i-ent').value,nom:$('#i-nom').value,email:$('#i-email').value,password:$('#i-pass').value,
     telephone:$('#i-tel').value,secteur:$('#i-sect').value,pays:$('#i-pays').value,devise:$('#i-dev').value,langue:$('#i-lang').value,
-    couleur_principale:COUL1,couleur_secondaire:melange(COUL1,.9),logo:LOGO_DATA,logiciel:params.get('logiciel')||'stockpro',site_web:$('#i-piege').value};
+    couleur_principale:COUL1,couleur_secondaire:melange(COUL1,.9),logo:LOGO_DATA,logiciel:rhLogicielInscription(),site_web:$('#i-piege').value};
   try{
     const r=await fetch(SB_URL+'/functions/v1/inscription',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY},body:JSON.stringify(corps)});
     const j=await r.json();if(!r.ok||j.erreur)throw new Error(j.erreur||'Erreur');
@@ -493,9 +496,9 @@ async function demarrer(nouveau){
     if(estGerant())$('#renouv').onclick=()=>vAbonnement();
     setTimeout(()=>{sp.style.opacity=0;setTimeout(()=>sp.classList.add('cache'),500)},900);return;
   }
-  aller(estGerant()?'accueil':'caisse');
+  aller(vueDepart());
   setTimeout(()=>{sp.style.opacity=0;setTimeout(()=>sp.classList.add('cache'),500)},1300);
-  if(nouveau)setTimeout(()=>toast('Votre espace est prêt ! Commencez par ajouter vos articles.'),1600);
+  if(nouveau)setTimeout(()=>toast(CTX.logiciels.includes('stockpro')?'Votre espace est prêt ! Commencez par ajouter vos articles.':'Votre espace est prêt ! Commencez par ajouter vos employés.'),1600);
   if(params.get('paye'))setTimeout(()=>{toast('Merci ! Votre paiement est en cours de confirmation, l\'accès s\'active automatiquement.');history.replaceState(null,'',location.pathname)},1600);
 }
 function localStorageGet(k){try{return localStorage.getItem('sc_'+k)}catch{return null}}
@@ -519,21 +522,25 @@ const IC={
 const svg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
 function pages(){
   const a=CTX.logiciels.includes('stockpro');const g=estGerant();
-  return [g&&['accueil','Tableau de bord'],a&&['caisse','Caisse'],a&&g&&['articles','Articles'],a&&g&&['mouvements','Entrées / sorties'],
-    a&&['ventes','Ventes'],a&&['clients','Clients'],g&&['equipe','Équipe'],g&&['abonnement','Abonnement'],g&&['reglages','Mon espace']].filter(Boolean);
+  const r=CTX.logiciels.includes('rhpro');const emp=CTX.membre.role==='employe'&&r;
+  return [g&&(a||!r)&&['accueil','Tableau de bord'],a&&!emp&&['caisse','Caisse'],a&&g&&['articles','Articles'],a&&g&&['mouvements','Entrées / sorties'],
+    a&&!emp&&['ventes','Ventes'],a&&!emp&&['clients','Clients'],...(r?rhPages(g):[]),g&&['equipe','Équipe'],g&&['abonnement','Abonnement'],g&&['reglages','Mon espace']].filter(Boolean);
 }
 function construireMenu(){
   $('#nav').innerHTML=pages().map(([k,t])=>[k,tr(t)]).map(([k,t])=>`<button data-v="${k}">${svg(k)}${t}</button>`).join('');
-  $('#nav-mob').innerHTML=pages().map(([k,t])=>[k,tr(t)]).filter(([k])=>['accueil','caisse','articles','ventes','equipe'].includes(k)).slice(0,5).map(([k,t])=>`<button data-v="${k}">${svg(k)}${t.split(' ')[0]}</button>`).join('');
+  const MOB=['accueil','caisse','articles','ventes','equipe','rh_accueil','rh_employes','rh_conges','rh_pointage','rh_moi','rh_mes_conges','rh_mes_docs','rh_signaler'];
+  const tout=pages(),mob=tout.filter(([k])=>MOB.includes(k)),plus=tout.length>5;
+  $('#nav-mob').innerHTML=mob.map(([k,t])=>[k,tr(t)]).slice(0,plus?4:5).map(([k,t])=>`<button data-v="${k}">${svg(k)}${RH_COURT[k]?tr(RH_COURT[k]):t.split(' ')[0]}</button>`).join('')+(plus?`<button id="mob-plus">${svg('plus')}${tr('Plus')}</button>`:'');
+  if(plus)$('#mob-plus').onclick=menuPlus;
   document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>aller(b.dataset.v));
 }
 function aller(v){VUE=v;document.querySelectorAll('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));window.scrollTo(0,0);
-  ({accueil:vAccueil,caisse:vCaisse,articles:vArticles,mouvements:vMouvements,ventes:vVentes,clients:vClients,equipe:vEquipe,abonnement:vAbonnement,reglages:vReglages}[v]||vAccueil)()}
+  ({accueil:vAccueil,caisse:vCaisse,articles:vArticles,mouvements:vMouvements,ventes:vVentes,clients:vClients,equipe:vEquipe,abonnement:vAbonnement,reglages:vReglages}[v]||(window.RH_VUES||{})[v]||vAccueil)()}
 function entete(titre,btn=''){
   const e=CTX.espace;let bandeau='';
-  if(e.statut==='essai'){const j=Math.max(0,Math.ceil((new Date(e.essai_fin)-Date.now())/864e5));
+  if(e.statut==='essai'&&estGerant()){const j=Math.max(0,Math.ceil((new Date(e.essai_fin)-Date.now())/864e5));
     bandeau=`<div class="essai">⏳ Essai gratuit : <b>${j} jour${j>1?'s':''} restant${j>1?'s':''}</b>. <a href="#" onclick="aller('abonnement');return false">Choisir ma formule</a></div>`}
-  return bandeau+`<div class="entete"><h1>${titre}</h1><div>${btn}</div></div>`;
+  return bandeau+bandeauxLicence()+`<div class="entete"><h1>${titre}</h1><div>${btn}</div></div>`;
 }
 const C=()=>$('#contenu');
 function modale(html,onOk){
@@ -548,6 +555,7 @@ const verif=({data,error})=>{if(error)throw error;return data};
 /* ============ Tableau de bord ============ */
 async function vAccueil(){
   C().innerHTML=entete('Bonjour '+esc(CTX.membre.nom_complet.split(' ')[0])+' 👋')+'<div class="vide">Chargement…</div>';
+  if(!CTX.logiciels.includes('stockpro')&&CTX.logiciels.includes('rhpro'))return rhAccueil();
   if(!CTX.logiciels.includes('stockpro')){C().innerHTML=entete('Bienvenue')+'<div class="carte">Aucun logiciel actif sur cet espace. Contactez le support Ilano.</div>';return}
   const r=verif(await sb.rpc('sp_resume',{p_espace:E()}));
   const{data:dern}=await sb.from('sp_ventes').select('numero,total,statut,created_at,mode_paiement').eq('espace_id',E()).order('created_at',{ascending:false}).limit(6);
@@ -725,7 +733,7 @@ async function vEquipe(){
   $('#eq-copie').onclick=()=>{navigator.clipboard?.writeText(lien);toast('Lien copié')};
   $('#eq-new').onclick=()=>modale(`<h3>Ajouter un membre</h3>
     <label>Nom complet</label><input name="nom_complet" required>
-    <div class="grille2"><div><label>Rôle</label><select name="role"><option value="vendeur">Vendeur</option>${CTX.membre.role==='proprietaire'?'<option value="gerant">Gérant</option>':''}</select></div>
+    <div class="grille2"><div><label>Rôle</label><select name="role">${CTX.logiciels.includes('stockpro')?'<option value="vendeur">Vendeur</option>':''}${CTX.membre.role==='proprietaire'?`<option value="gerant">${CTX.logiciels.includes('stockpro')?'Gérant':'Gérant / RH'}</option>`:''}</select></div>
     <div><label>Poste</label><input name="poste" placeholder="Caissière"></div></div>
     <label>Téléphone</label><input name="telephone">
     <label>Mode de connexion</label><select name="mode" id="eq-mode"><option value="pin">Identifiant + code PIN (sans e-mail)</option><option value="email">E-mail + mot de passe</option></select>
@@ -758,20 +766,30 @@ function partagerAcces(msg,tel){
 
 
 /* ============ Abonnement (paiement automatique) ============ */
-const FORM={starter:'Starter',business:'Business',premium:'Premium',standard:'Standard',serenite:'Sérénité'};
+const FORM={starter:'Starter',business:'Business',premium:'Premium',standard:'Standard',serenite:'Sérénité',maintenance:'Maintenance et hébergement'};
 async function vAbonnement(){
-  const t=verif(await sb.from('tarifs').select('*').eq('actif',true).eq('logiciel','stockpro').order('ordre'));
   const lic=(await sb.from('licences').select('*').eq('espace_id',E())).data||[];
-  const l=lic.find(x=>x.logiciel==='stockpro');
+  const codes=lic.map(x=>x.logiciel);
+  const LG=window._abLog&&codes.includes(window._abLog)?window._abLog:(codes.includes('stockpro')?'stockpro':codes[0]||'stockpro');window._abLog=LG;
+  const l=lic.find(x=>x.logiciel===LG);const achat=l?.type==='achat';
+  let t=verif(await sb.from('tarifs').select('*').eq('actif',true).eq('logiciel',LG).order('ordre'));
+  t=t.filter(x=>achat?x.formule==='maintenance':x.formule!=='maintenance');
+  if(!achat){const dv=CTX.espace.devise;if(t.some(x=>x.devise===dv))t=t.filter(x=>x.devise===dv);else if(t.some(x=>x.devise==='XOF'))t=t.filter(x=>x.devise==='XOF')}
   const formules=[...new Set(t.map(x=>x.formule))];
-  C().innerHTML=entete('Mon abonnement')+`
+  const onglets=codes.length>1?`<div class="chips">${codes.map(c=>`<button type="button" class="${c===LG?'on':''}" data-lg="${c}">${tr(RH_NOMS[c]||c)}</button>`).join('')}</div>`:'';
+  C().innerHTML=entete('Mon abonnement')+onglets+(achat?`
+   <div class="carte" style="margin-bottom:14px"><b>Licence achetée</b> · ${tr(RH_NOMS[LG]||LG)}<br>${esc(L('Maintenance et hébergement jusqu’au ','Maintenance & hosting until '))}<b>${l.maintenance_fin?new Date(l.maintenance_fin+'T12:00:00').toLocaleDateString(LOC()):'—'}</b>
+    ${l.statut==='lecture_seule'?`<br><span class="tag rouge" style="margin-top:6px">🔒 Lecture seule</span>`:''}<br><small style="color:var(--mut)">${esc(L('La 1re année est incluse dans le prix d’achat. Ensuite, le forfait annuel garde votre logiciel à jour, hébergé et sauvegardé. Sans renouvellement, l’espace passe en lecture seule (données visibles, ajout impossible).','The first year is included in the purchase price. After that, the annual plan keeps your software updated, hosted and backed up. Without renewal, the workspace becomes read-only (data visible, no new entries).'))}</small></div>
+   ${t.length?`<div class="kpis" style="grid-template-columns:1fr">${t.map(o=>`<div class="carte"><h3 style="margin:0">Forfait annuel de maintenance et d'hébergement</h3><div style="font-size:24px;font-weight:800;margin-top:8px">${fmtT(o)}<small style="font-size:13px;color:var(--mut)"> /an</small></div>
+     <button class="btn" style="margin-top:12px" data-t="${o.id}">Renouveler 12 mois</button></div>`).join('')}</div>`:'<div class="carte">Les formules seront bientôt disponibles. Contactez le support Ilano.</div>'}`:`
    <div class="carte" style="margin-bottom:14px">Formule actuelle : <b>${l?(l.formule==='essai'?'Essai gratuit':FORM[l.formule]||l.formule):'—'}</b>${l?.date_fin?` · valable jusqu'au <b>${new Date(l.date_fin).toLocaleDateString(LOC())}</b>`:''}<br><small style="color:var(--mut)">Si vous renouvelez avant l'échéance, la durée s'ajoute à votre date de fin.</small></div>
    ${t.length?`<div class="kpis" style="grid-template-columns:repeat(${Math.min(formules.length,3)},1fr)">${formules.map(f=>{const opts=t.filter(x=>x.formule===f);const m1=opts.find(x=>x.mois===1);
      return`<div class="carte"><h3 style="margin:0">${FORM[f]||f}</h3><p style="color:var(--mut);margin:4px 0 10px">${opts[0].employes_max?'Jusqu\'à '+opts[0].employes_max+' employés':'Employés illimités'}</p>
      ${m1?`<div style="font-size:24px;font-weight:800">${fmtT(m1)}<small style="font-size:13px;color:var(--mut)"> /mois</small></div>`:''}
-     <div style="display:grid;gap:8px;margin-top:12px">${opts.map(o=>`<button class="btn ${o.mois===1?'':'sec'}" data-t="${o.id}">${o.mois} mois — ${fmtT(o)}${o.mois===3?' (-10 %)':o.mois===12?' (-20 %)':''}</button>`).join('')}</div></div>`}).join('')}</div>`:'<div class="carte">Les formules seront bientôt disponibles. Contactez le support Ilano.</div>'}
+     <div style="display:grid;gap:8px;margin-top:12px">${opts.map(o=>`<button class="btn ${o.mois===1?'':'sec'}" data-t="${o.id}">${o.mois} mois — ${fmtT(o)}${o.mois===3?' (-10 %)':o.mois===12?' (-20 %)':''}</button>`).join('')}</div></div>`}).join('')}</div>`:'<div class="carte">Les formules seront bientôt disponibles. Contactez le support Ilano.</div>'}`)+`
    <p style="color:var(--mut);font-size:13px;text-align:center">Paiement sécurisé par Chariow : Mobile Money (MTN, Moov, Orange, Wave, Airtel…) ou carte bancaire. Votre accès est activé automatiquement dès le paiement.</p>`;
   document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>payer(t.find(x=>x.id===b.dataset.t)));
+  document.querySelectorAll('[data-lg]').forEach(b=>b.onclick=()=>{window._abLog=b.dataset.lg;vAbonnement()});
 }
 const fmtT=o=>new Intl.NumberFormat(LOC(),{style:'currency',currency:o.devise,maximumFractionDigits:o.devise==='XOF'?0:2}).format(o.prix);
 const PAYS=[['BJ','Bénin','229'],['TG','Togo','228'],['ML','Mali','223'],['CI','Côte d\'Ivoire','225'],['SN','Sénégal','221'],['BF','Burkina Faso','226'],['NE','Niger','227'],['GN','Guinée','224'],['CM','Cameroun','237'],['GA','Gabon','241'],['CG','Congo','242'],['CD','RD Congo','243'],['FR','France','33'],['US','États-Unis','1']];
@@ -821,7 +839,7 @@ sb.auth.onAuthStateChange((ev)=>{if(ev==='PASSWORD_RECOVERY'){$('#v-app').classL
 let _pi=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();_pi=e;$('#installer').classList.remove('cache')});
 $('#installer').onclick=async()=>{if(!_pi)return;_pi.prompt();await _pi.userChoice;_pi=null;$('#installer').classList.add('cache')};
 window.addEventListener('appinstalled',()=>$('#installer').classList.add('cache'));
-appliquerLangue();$('#i-lang').value=LANG;if(LANG==='en')$('#i-dev').value='USD';
+rhInscriptionInit();appliquerLangue();$('#i-lang').value=LANG;if(LANG==='en')$('#i-dev').value='USD';
 (async()=>{const{data:{session}}=await sb.auth.getSession();
   if(session&&!location.hash.includes('type=recovery'))demarrer();else montrerAuth()})();
 </script>
