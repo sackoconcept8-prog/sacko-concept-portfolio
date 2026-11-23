@@ -1,12 +1,13 @@
 /* Service worker de l'espace de gestion : fonctionnement sans réseau et notifications. */
-const VERSION = "espace-v16";
+const VERSION = "espace-v17";
+const ICONES = "espace-icones";
 const COQUILLE = ["./", "./index.html", "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(VERSION).then(c => Promise.all(COQUILLE.map(u => c.add(new Request(u, { cache: "reload" })).catch(() => {})))).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", e => {
-  e.waitUntil(caches.keys().then(k => Promise.all(k.filter(x => x !== VERSION).map(x => caches.delete(x)))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys().then(k => Promise.all(k.filter(x => x !== VERSION && x !== ICONES).map(x => caches.delete(x)))).then(() => self.clients.claim()));
 });
 
 // Page : réseau d'abord, copie en cache si pas de réseau. Bibliothèques et images : cache d'abord.
@@ -25,16 +26,22 @@ self.addEventListener("fetch", e => {
   e.respondWith(caches.match(r).then(m => m || fetch(r).then(rep => { if (rep.ok || rep.type === "opaque") { const c = rep.clone(); caches.open(VERSION).then(x => x.put(r, c)); } return rep; })));
 });
 
+// Logo de l'agence pour les notifications (envoyé par la page)
+self.addEventListener("message", e => {
+  const i = e.data && e.data.icones; if (!i || !i.icone) return;
+  e.waitUntil(caches.open(ICONES).then(c => c.put("./__icones", new Response(JSON.stringify(i), { headers: { "Content-Type": "application/json" } }))));
+});
+const iconesAgence = () => caches.open(ICONES).then(c => c.match("./__icones")).then(r => r ? r.json() : {}).catch(() => ({}));
 // Notifications (alerte SOS, incident grave)
 self.addEventListener("push", e => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch (_) { d = { titre: "Nouvelle alerte", corps: e.data ? e.data.text() : "" }; }
-  e.waitUntil(self.registration.showNotification(d.titre || "Nouvelle alerte", {
+  e.waitUntil(iconesAgence().then(I => self.registration.showNotification(d.titre || "Nouvelle alerte", {
     body: d.corps || "", tag: d.tag || "alerte", renotify: true, requireInteraction: !!d.sos,
     vibrate: d.sos ? [400, 150, 400, 150, 400, 150, 800] : [200, 100, 200],
-    icon: "../assets/sacko-logo-vert-192.png", badge: "../assets/sacko-logo-vert-96.png",
+    icon: I.icone || "../assets/sacko-logo-vert-192.png", badge: I.badge || "../assets/sacko-logo-vert-96.png",
     data: { url: d.url || "./" }
-  }));
+  })));
 });
 self.addEventListener("notificationclick", e => {
   e.notification.close();

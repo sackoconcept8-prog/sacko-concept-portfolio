@@ -15,13 +15,15 @@
 <link rel="apple-touch-icon" id="apple-ic" href="../assets/sacko-logo-vert-192.png">
 <script>
 /* Application installable au nom de l'agence : icône et nom de l'agence sur l'écran d'accueil ou le bureau */
-const APPS_AGENCES={"agence-speciale":{nom:"Agence Spéciale",ios:"/agence-speciale/logo-as2-ios-180.png"},"cdk-securite":{nom:"CDK Groupe Sécurité",ios:"/cdk-group/logo-cdk-ios-180.png"}};
+const APPS_AGENCES={"agence-speciale":{nom:"Agence Spéciale",ios:"/agence-speciale/logo-as2-ios-180.png",icone:"/agence-speciale/logo-as2-192.png",badge:"/agence-speciale/logo-as2-96.png"},"cdk-securite":{nom:"CDK Groupe Sécurité",ios:"/cdk-group/logo-cdk-ios-180.png",icone:"/cdk-group/logo-cdk-192.png",badge:"/cdk-group/logo-cdk-96.png"}};
 (function(){let sl=(new URLSearchParams(location.search).get("a")||document.querySelector('meta[name="agence-slug"]').content||"").toLowerCase().replace(/[^a-z0-9-]/g,"");try{if(!sl)sl=localStorage.getItem("espace-slug")||""}catch(_){}
   const A=APPS_AGENCES[sl];if(!A)return;
   document.querySelector('link[rel="manifest"]').href="manifest-"+sl+".webmanifest";
   document.getElementById("apple-ic").href=A.ios;
   document.querySelector('meta[name="apple-mobile-web-app-title"]').content=A.nom;
   window.__appNom=A.nom;
+  /* notifications du téléphone : logo de l'agence au lieu de celui du prestataire */
+  try{if("serviceWorker" in navigator)navigator.serviceWorker.ready.then(r=>{if(r.active)r.active.postMessage({icones:{icone:A.icone,badge:A.badge,nom:A.nom}})}).catch(()=>{})}catch(_){}
 })();
 window.__invite=null;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();window.__invite=e;if(window.proposerInstallation)window.proposerInstallation()});
 </script>
@@ -132,6 +134,7 @@ body.tv .top,body.tv #side,body.tv #tabs,body.tv #menu-btn{display:none!importan
 .doc .sig{display:flex;justify-content:space-between;gap:20px;margin-top:30px;font-size:13px}
 .doc h4{margin:14px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--p)}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;padding:0 5px;margin-left:4px}
+.qr-ov{position:fixed;inset:0;z-index:9999;background:#0B1220;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}.qr-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;color:#fff}.qr-vue{position:relative;width:min(88vw,420px);aspect-ratio:1;border-radius:18px;overflow:hidden;background:#000}.qr-vue video{width:100%;height:100%;object-fit:cover}.qr-cadre{position:absolute;inset:14%;border:3px solid #34D399;border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}.qr-msg{color:#fff;margin:0;font-size:15px}
 .pl-q{margin-bottom:14px}.pl-q h3{font-size:16px;margin:0 0 6px}.pl-t td{padding:4px 6px}.pl-t .input{padding:6px 8px;font-size:13px;min-width:0}.pl-t select.input{min-width:180px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}.tbl th{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}.tbl td.r,.tbl th.r{text-align:right;white-space:nowrap}.tbl tr.click{cursor:pointer}.tbl tr.click:hover td{background:var(--bg)}
 .scroll{overflow-x:auto}.tot{display:flex;justify-content:space-between;font-weight:700;font-size:17px;border-top:2px solid var(--p);margin-top:8px;padding-top:10px}
@@ -679,7 +682,7 @@ function ficheSite(s){const n=!s;s=s||{actif:true,besoins:Object.fromEntries(COD
   <div class="actions" style="margin:-4px 0 12px"><button class="btn sm" id="s-gps" type="button">Prendre ma position actuelle</button><a class="btn sm ${s.latitude!=null?"":"hide"}" id="s-map" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${s.latitude},${s.longitude}">Voir sur la carte</a></div>
   <p class="muted xs" style="margin:-6px 0 12px">Faites-le une fois sur place, depuis un téléphone : l'application vérifiera ensuite que l'agent pointe bien depuis le site.</p>
   <div class="field"><label class="f">Consignes pour les agents</label><textarea class="input" id="s-cons">${esc(s.consignes)}</textarea></div>
-  <div class="field"><label class="f">Points de ronde <span class="muted" style="font-weight:400">(un par ligne, dans l'ordre du parcours)</span></label><textarea class="input" id="s-pts" placeholder="Portail principal&#10;Parking&#10;Local technique">${esc((s.points_ronde||[]).join("\n"))}</textarea></div>
+  <div class="field"><label class="f">Points de ronde <span class="muted" style="font-weight:400">(un par ligne, dans l'ordre du parcours)</span></label><textarea class="input" id="s-pts" placeholder="Portail principal&#10;Parking&#10;Local technique">${esc((s.points_ronde||[]).join("\n"))}</textarea>${!n&&(s.points_ronde||[]).length?`<div class="actions" style="margin-top:6px"><button class="btn sm" type="button" id="s-qr">🔳 Imprimer les codes QR des points</button><button class="btn sm" type="button" id="s-qrn">Annuler les anciens codes</button></div>`:""}</div>
   <div class="sec">Client facturé</div>
   <div class="row"><div class="field"><label class="f">Nom ou raison sociale du client</label><input class="input" id="s-cln" value="${esc(s.client_nom)}"></div><div class="field"><label class="f">NIF / RCCM du client</label><input class="input" id="s-cli" value="${esc(s.client_identifiant)}"></div></div>
   <div class="field"><label class="f">Adresse de facturation</label><input class="input" id="s-cla" value="${esc(s.client_adresse)}"></div>
@@ -689,6 +692,9 @@ function ficheSite(s){const n=!s;s=s||{actif:true,besoins:Object.fromEntries(COD
   $("#s-gps").onclick=e=>busy(e.target,async()=>{const pos=await position();$("#s-lat").value=pos.lat.toFixed(6);$("#s-lng").value=pos.lng.toFixed(6);
     const m=$("#s-map");m.href="https://www.google.com/maps?q="+pos.lat+","+pos.lng;m.classList.remove("hide");toast("Position relevée (précision ± "+Math.round(pos.precision)+" m)")});
   brancherPrixSite();
+  if($("#s-qr"))$("#s-qr").onclick=e=>busy(e.target,()=>imprimerQRRonde(s));
+  if($("#s-qrn"))$("#s-qrn").onclick=e=>{if(!confirm("Les autocollants déjà collés sur ce site ne fonctionneront plus. Il faudra imprimer et coller les nouveaux codes. Continuer ?"))return;
+    busy(e.target,async()=>{const k=Math.random().toString(36).slice(2,12);must(await sb.from("sites").update({qr_cle:k}).eq("id",s.id));s.qr_cle=k;const x=sites.find(y=>y.id===s.id);if(x)x.qr_cle=k;toast("Nouveaux codes créés · imprimez-les et remplacez les anciens")})};
   $("#s-ok").onclick=()=>busy($("#s-ok"),async()=>{const nom=$("#s-nom").value.trim();if(nom.length<2){$("#s-nom").focus();throw new Error("Indiquez le nom du site.")}
     const v=x=>$(x).value.trim()||null;
     const d={nom,date_debut:$("#s-dd").value||null,date_fin_contrat:$("#s-df").value||null,type:v("#s-type"),adresse:v("#s-adr"),ville:v("#s-ville"),besoins:{...b,...Object.fromEntries([...document.querySelectorAll("[data-bes]")].map(i=>[i.dataset.bes,Math.max(0,+i.value||0)])),prix_agent:+$("#s-px").value||null,options:$("#s-opt").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const i=Math.max(l.lastIndexOf(";"),l.lastIndexOf(":"));return {l:(i>0?l.slice(0,i):l).trim(),m:i>0?+l.slice(i+1).replace(/[^\d.]/g,"")||0:0}})},montant_contrat:+$("#s-mt").value||0,contact_nom:v("#s-cn"),contact_telephone:v("#s-ct"),consignes:v("#s-cons"),actif:$("#s-act").checked,points_ronde:$("#s-pts").value.split("\n").map(x=>x.trim()).filter(Boolean),client_nom:v("#s-cln"),client_identifiant:v("#s-cli"),client_adresse:v("#s-cla"),
@@ -832,8 +838,9 @@ function vSitesTerrain(){
     ${x.consignes?`<p class="sm" style="margin:0 0 4px;white-space:pre-wrap"><b>Consignes :</b> ${esc(x.consignes)}</p>`:""}
     <p class="sm" style="margin:0 0 4px"><b>Zone de pointage :</b> ${x.rayon_m||300} m autour du site${ok?` · <a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${x.latitude},${x.longitude}">voir sur la carte</a>`:""}</p>
     <p class="sm" style="margin:0 0 10px"><b>Points de ronde :</b> ${pts.length?pts.map(esc).join(" · "):'<span class="muted">aucun</span>'}</p>
-    <div class="actions"><button class="btn pri" data-pos="${x.id}">📍 Enregistrer ma position ici</button><button class="btn" data-pts="${x.id}">🔦 Points de ronde et zone</button></div></div>`}).join(""):'<div class="empty">Aucun site pour le moment. La direction crée les sites.</div>'}`;
+    <div class="actions"><button class="btn pri" data-pos="${x.id}">📍 Enregistrer ma position ici</button><button class="btn" data-pts="${x.id}">🔦 Points de ronde et zone</button>${pts.length?`<button class="btn" data-qrs="${x.id}">🔳 Imprimer les codes QR</button>`:""}</div></div>`}).join(""):'<div class="empty">Aucun site pour le moment. La direction crée les sites.</div>'}`;
   const S_=id=>sites.find(x=>x.id===id);
+  $("#main").querySelectorAll("[data-qrs]").forEach(b=>b.onclick=()=>busy(b,()=>imprimerQRRonde(S_(b.dataset.qrs))));
   $("#main").querySelectorAll("[data-pos]").forEach(b=>b.onclick=()=>{const x=S_(b.dataset.pos);
     modal("Position de « "+esc(x.nom)+" »",`<p style="margin-top:0">Êtes-vous <b>sur le site</b>, à l'entrée principale ? Votre position actuelle va devenir la position du site.</p>`,`<button class="btn" id="sp-no">Annuler</button><button class="btn pri" id="sp-ok">Oui, enregistrer</button>`);
     $("#sp-no").onclick=closeModal;
@@ -1021,7 +1028,7 @@ async function exporterPointages(ym){const d1=ym+"-01",d2=iso(new Date(+ym.slice
 let monAgent=null;
 async function donneesAgent(){
   if(!moi.agent_id)throw new Error("Votre compte n'est relié à aucune fiche agent. Contactez votre responsable.");
-  const ds=auj(),[a,s,P,po]=await Promise.all([sb.from("agents").select("*").eq("id",moi.agent_id).maybeSingle(),sb.from("sites").select("id,nom,adresse,ville,latitude,longitude,rayon_m,consignes,points_ronde"),
+  const ds=auj(),[a,s,P,po]=await Promise.all([sb.from("agents").select("*").eq("id",moi.agent_id).maybeSingle(),sb.from("sites").select("id,nom,adresse,ville,latitude,longitude,rayon_m,consignes,points_ronde,qr_cle"),
     chargerPlanning(ajout(ds,-1),ajout(ds,13),moi.agent_id),sb.from("pointages").select("*").eq("agent_id",moi.agent_id).gte("date_service",ajout(ds,-30)).order("heure_arrivee",{ascending:false})]);
   monAgent=must(a);sites=must(s);if(!monAgent)throw new Error("Fiche agent introuvable. Contactez votre responsable.");
   return {P,po:must(po)};
@@ -1473,6 +1480,8 @@ async function vReglages(){const p=ag.parametres||{},grades=p.grades||[],pg=p.pr
   <div class="card"><h2>Quarts de travail</h2><p class="muted sm" style="margin:-4px 0 10px">Ex. 2 quarts de 12 h (jour / nuit) ou 3 quarts de 8 h (matin, après-midi, nuit). Le planning, le pointage et les retards suivent ces horaires.</p>
   <div class="actions" style="margin-bottom:12px"><button class="btn sm" type="button" id="rg-2q">2 quarts de 12 h</button><button class="btn sm" type="button" id="rg-3q">3 quarts de 8 h</button></div><div id="rg-postes"></div><button class="btn sm" type="button" id="rg-addq" style="margin-bottom:12px">+ Ajouter un quart</button>
   <div class="field" style="max-width:260px"><label class="f">Tolérance avant retard (minutes)</label><input class="input" type="number" min="0" max="120" id="rg-tol" value="${TOL()}"></div></div>
+  <div class="card"><h2>Rondes</h2><p class="muted sm" style="margin:-4px 0 10px">Imprimez un code QR pour chaque point de ronde (Rondes → Codes QR), plastifiez-le et collez-le sur place. L'agent le scanne avec son téléphone : la preuve de passage est horodatée et localisée.</p>
+  <div class="field" style="max-width:520px"><label class="f">Validation des points de ronde</label><select class="input" id="rg-rqr"><option value="propose" ${modeQR()==="propose"?"selected":""}>Scan du code QR proposé (l'agent peut valider sans code, c'est signalé)</option><option value="obligatoire" ${modeQR()==="obligatoire"?"selected":""}>Scan du code QR obligatoire</option><option value="non" ${modeQR()==="non"?"selected":""}>Sans code QR (l'agent touche « Vérifié »)</option></select></div></div>
   <div class="card"><h2>Paie</h2><div class="row"><div class="field"><label class="f">Prime de nuit (par mois)</label><input class="input" type="number" min="0" id="rg-pn" value="${+p.prime_nuit||0}"></div><div class="field"><label class="f">Prime de panier (par mois)</label><input class="input" type="number" min="0" id="rg-pp" value="${+p.prime_panier||0}"></div><div class="field"><label class="f">Cotisations sociales salariales (%)</label><input class="input" type="number" min="0" max="50" step="0.1" id="rg-cot" value="${+p.taux_cotisations||0}"></div><div class="field"><label class="f">Mode de paiement</label><input class="input" id="rg-mp" value="${esc(p.mode_paiement||"espèces")}"></div></div>
   <label style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><input type="checkbox" id="rg-anc" ${p.anciennete!==false?"checked":""}> Prime d'ancienneté automatique (1 % du salaire de base par année, à partir de 2 ans, plafonnée à 25 %)</label>
   <p class="f" style="font-weight:600;font-size:13px;margin:0 0 6px">Prime de responsabilité par grade (par mois)</p><div class="row">${grades.map((g,i)=>`<div class="field"><label class="f" style="font-weight:500">${esc(g)}</label><input class="input" type="number" min="0" data-pg="${i}" value="${+pg[g]||0}"></div>`).join("")}</div></div>
@@ -1490,7 +1499,7 @@ async function vReglages(){const p=ag.parametres||{},grades=p.grades||[],pg=p.pr
   $("#rg-ok").onclick=()=>busy($("#rg-ok"),async()=>{const gr=$("#rg-gr").value.split("\n").map(x=>x.trim()).filter(Boolean);if(!gr.length)throw new Error("Indiquez au moins un grade.");
     const primes={};grades.forEach((g,i)=>{const v=+$(`[data-pg="${i}"]`).value||0;if(v)primes[g]=v});
     const postes=lirePostes();
-    const n={postes,
+    const n={postes,ronde_qr:$("#rg-rqr").value,
       tolerance_retard:Math.max(0,Math.min(120,+$("#rg-tol").value||0)),prime_nuit:Math.max(0,+$("#rg-pn").value||0),prime_panier:Math.max(0,+$("#rg-pp").value||0),taux_cotisations:Math.max(0,Math.min(50,+$("#rg-cot").value||0)),mode_paiement:$("#rg-mp").value.trim()||"espèces",anciennete:$("#rg-anc").checked,primes_grade:primes,grades:gr,tva:Math.max(0,Math.min(50,+$("#rg-tva").value||0)),carte_champs:Object.fromEntries([...document.querySelectorAll("[data-cc]")].map(i=>[i.dataset.cc,i.checked])),delai_paiement_jours:Math.max(0,+$("#rg-del").value||0),mentions_facture:$("#rg-men").value.trim(),forme_juridique:$("#rg-fj").value.trim(),capital:$("#rg-cap").value.trim(),rccm:$("#rg-rccm").value.trim(),nif:$("#rg-nif").value.trim(),adresse_siege:$("#rg-adr").value.trim(),boite_postale:$("#rg-bp").value.trim(),telephone_contact:$("#rg-tel").value.trim(),email_contact:$("#rg-mail").value.trim(),signataire:$("#rg-sig").value.trim(),fonction_signataire:$("#rg-fsig").value.trim()};
     ag.parametres=must(await sb.rpc("maj_parametres",{p:n}));toast("Réglages enregistrés");await vReglages()});
   let QL=CODES().map(c=>({...POSTE(c)}));
@@ -1567,6 +1576,52 @@ function alerteSOS(site){
       modal("Pas de réseau Internet",`<p style="margin-top:0"><b>L'alerte ne peut pas partir par Internet.</b> Envoyez le SMS ci-dessous (il contient votre nom, le site et votre position) ou appelez directement. L'alerte partira aussi toute seule dès le retour du réseau.</p>${smsSOS(site,pos)||'<p class="muted">Aucun numéro d\'urgence enregistré pour l\'agence.</p>'}`,`<button class="btn" id="so-f">Fermer</button>`);$("#so-f").onclick=closeModal;if($("#hl-ecran"))afficherHorsLigne();return}
     modal("Alerte envoyée",`<p style="margin-top:0"><b>Votre direction a été prévenue.</b> Mettez-vous en sécurité.</p>${ag.telephone?`<a class="btn pri" href="tel:${esc(ag.telephone.replace(/\s/g,""))}" style="width:100%">Appeler la direction</a>`:""}`,`<button class="btn" id="so-f">Fermer</button>`);$("#so-f").onclick=closeModal});
 }
+/* ---------- codes QR des points de ronde ---------- */
+const JSQR="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";
+const modeQR=()=>{const v=((ag&&ag.parametres)||{}).ronde_qr;return v==="obligatoire"||v==="non"?v:"propose"};
+const normPt=t=>String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+const qrPoint=(st,nom)=>"SCR1|"+st.id+"|"+(st.qr_cle||"")+"|"+normPt(nom);
+function lireQrPoint(txt,st){const m=String(txt||"").trim().split("|");
+  if(m[0]!=="SCR1"||m.length<4)return {err:"Ce code QR n'est pas un point de ronde."};
+  if(m[1]!==st.id)return {err:"Ce code appartient à un autre site."};
+  if(m[2]!==(st.qr_cle||""))return {err:"Ce code n'est plus valable. Demandez à votre responsable les nouveaux codes de ce site."};
+  const i=(st.points_ronde||[]).findIndex(n=>normPt(n)===m.slice(3).join("|"));
+  return i<0?{err:"Ce point ne fait plus partie de la ronde de ce site."}:{i}}
+/* lecteur : caméra arrière, détecteur natif du téléphone sinon jsQR */
+function scannerQR(){return new Promise(async ok=>{
+  const ov=document.createElement("div");ov.className="qr-ov";ov.innerHTML=`<div class="qr-top"><b>Scannez le code du point</b><button class="btn sm" type="button">Annuler</button></div><div class="qr-vue"><video playsinline muted autoplay></video><div class="qr-cadre"></div></div><p class="qr-msg">Placez le code QR dans le cadre</p>`;
+  document.body.appendChild(ov);let flux=null,fini=false,det=null;
+  const stop=v=>{if(fini)return;fini=true;try{flux&&flux.getTracks().forEach(t=>t.stop())}catch(_){}ov.remove();ok(v)};
+  ov.querySelector(".qr-top button").onclick=()=>stop(null);
+  try{flux=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false})}catch(e){stop(null);toast("Caméra inaccessible : autorisez la caméra pour cette application dans les réglages du téléphone.",true);return}
+  const v=ov.querySelector("video");v.srcObject=flux;try{await v.play()}catch(_){}
+  try{if("BarcodeDetector" in window&&(await BarcodeDetector.getSupportedFormats()).includes("qr_code"))det=new BarcodeDetector({formats:["qr_code"]})}catch(_){}
+  if(!det){try{await chargerScript(JSQR,"jsQR")}catch(_){stop(null);toast("Connexion Internet nécessaire pour activer le lecteur de code QR.",true);return}}
+  const c=document.createElement("canvas"),cx=c.getContext("2d",{willReadFrequently:true});
+  const tour=async()=>{if(fini)return;try{if(v.readyState>=2&&v.videoWidth){
+      if(det){const r=await det.detect(v);if(r.length&&r[0].rawValue){if(navigator.vibrate)navigator.vibrate(80);return stop(r[0].rawValue)}}
+      else{const k=Math.min(1,720/Math.max(v.videoWidth,v.videoHeight));c.width=Math.round(v.videoWidth*k);c.height=Math.round(v.videoHeight*k);cx.drawImage(v,0,0,c.width,c.height);
+        const r=jsQR(cx.getImageData(0,0,c.width,c.height).data,c.width,c.height,{inversionAttempts:"dontInvert"});if(r&&r.data){if(navigator.vibrate)navigator.vibrate(80);return stop(r.data)}}}}catch(_){}
+    setTimeout(tour,150)};tour()})}
+function choisirSiteQR(){const l=sites.filter(x=>x.actif!==false&&(x.points_ronde||[]).length);
+  modal("Codes QR des points de ronde",`<p class="muted sm" style="margin-top:0">Un code par point, à imprimer, plastifier et coller à l'emplacement du point. L'agent le scanne pendant sa ronde.</p><div class="field"><label class="f">Site</label><select class="input" id="qr-s">${l.map(x=>`<option value="${x.id}">${esc(x.nom)} · ${(x.points_ronde||[]).length} point(s)</option>`).join("")}</select></div>`,`<button class="btn" id="qr-no">Annuler</button><button class="btn pri" id="qr-ok">Imprimer les codes</button>`);
+  $("#qr-no").onclick=closeModal;$("#qr-ok").onclick=()=>busy($("#qr-ok"),async()=>{await imprimerQRRonde(sites.find(x=>x.id===$("#qr-s").value));closeModal()})}
+async function imprimerQRRonde(st){if(!st)return;const pts=st.points_ronde||[];if(!pts.length)throw new Error("Ajoutez d'abord les points de ronde de ce site.");
+  if(!st.qr_cle){const r=await sb.from("sites").select("qr_cle").eq("id",st.id).maybeSingle();st.qr_cle=r.data&&r.data.qr_cle;if(!st.qr_cle)throw new Error("Code du site introuvable. Réessayez.")}
+  const w=window.open("","_blank");if(!w)throw new Error("Autorisez les fenêtres pop-up pour imprimer les codes.");
+  await chargerScript(QRJS,"qrcode");
+  const img=t=>{const q=qrcode(0,"H");q.addData(t);q.make();return q.createDataURL(10,0)},nomAg_=ag.nom_agence||ag.nom||"";
+  const cartes=pts.map((n,i)=>`<div class="c"><div class="b">${ag.logo_url?`<img class="l" src="${esc(ag.logo_url)}" alt="">`:""}<div><b>${esc(nomAg_)}</b><span>Point de ronde</span></div></div>
+    <div class="s">${esc(st.nom)}</div><div class="n"><span>${i+1}</span>${esc(n)}</div><img class="q" src="${img(qrPoint(st,n))}" alt=""><div class="i">Scannez ce code avec l'application pendant votre ronde</div><div class="f">Ne pas retirer · ne pas couvrir</div></div>`).join("");
+  w.document.write(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Codes QR · ${esc(st.nom)}</title><style>
+  @page{size:A4;margin:10mm}*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;margin:0;color:#14202E}
+  .aide{max-width:190mm;margin:0 auto 6mm;padding:4mm 5mm;background:#F3F6FA;border-radius:3mm;font-size:12px}
+  .g{display:grid;grid-template-columns:repeat(2,90mm);gap:6mm;justify-content:center}
+  .c{width:90mm;height:128mm;border:1.5px dashed #9AA4B2;border-radius:4mm;padding:5mm;display:flex;flex-direction:column;align-items:center;text-align:center;break-inside:avoid;page-break-inside:avoid}
+  .b{display:flex;gap:3mm;align-items:center;justify-content:center;width:100%;background:#EEF3FB;border-radius:3mm;padding:2.5mm}.b b{display:block;font-size:13px}.b span{font-size:10px;color:#5B6B7F;text-transform:uppercase;letter-spacing:.06em}.l{height:11mm;width:auto}
+  .s{font-size:11px;color:#5B6B7F;margin:3mm 0 1mm}.n{font-size:17px;font-weight:700;display:flex;gap:2mm;align-items:center;justify-content:center;min-height:12mm}.n span{background:#14915A;color:#fff;border-radius:50%;width:8mm;height:8mm;display:inline-flex;align-items:center;justify-content:center;font-size:13px;flex:none}
+  .q{width:62mm;height:62mm;image-rendering:pixelated;margin:2mm 0}.i{font-size:11px}.f{font-size:9px;color:#8A94A6;margin-top:auto}
+  @media print{.aide{display:none}}</style></head><body><div class="aide"><b>${pts.length} code(s) pour ${esc(st.nom)}.</b> Imprimez en couleur ou en noir et blanc, découpez le long des pointillés, plastifiez, puis collez chaque code à l'emplacement de son point, à hauteur d'yeux et à l'abri de la pluie. Si vous renommez un point, réimprimez son code.</div><div class="g">${cartes}</div><script>window.onload=()=>setTimeout(()=>print(),400)<\/script></body></html>`);w.document.close()}
 async function faireRonde(site,vise){
   const base={site_id:site.id,agent_id:monAgent.id,date_service:vise.ds,poste:vise.poste||null};
   let r=null,local=!navigator.onLine;
@@ -1575,11 +1630,15 @@ async function faireRonde(site,vise){
   /* sans réseau : la ronde se fait sur le téléphone et part à la fin, dès que le réseau revient */
   if(local)r={id:null,debut:new Date().toISOString()};
   const enregistrer=async o=>{if(local)return;try{must(await sb.from("rondes").update(o).eq("id",r.id))}catch(e){if(!horsReseau(e))throw e;local=true}};
-  const pts=site.points_ronde||[],faits=[];
-  const dessiner=()=>{$("#box .box-b").innerHTML=`<p class="muted sm" style="margin-top:0">${esc(site.nom)} · commencée à ${hm(r.debut)}. Touchez chaque point quand vous y êtes.</p>${pts.map((n,i)=>{const f=faits.find(x=>x.i===i);return `<div class="pt-r ${f?"ok":""}"><span style="flex:1"><b>${esc(n)}</b>${f?`<div class="muted xs">Vérifié à ${hm(f.heure)}${f.lat==null?" · sans position":""}</div>`:""}</span>${f?"✓":`<button class="btn sm pri" data-pt="${i}">Vérifié</button>`}</div>`}).join("")}`;
-    $("#box").querySelectorAll("[data-pt]").forEach(b=>b.onclick=()=>busy(b,async()=>{b.textContent="…";const pos=await positionRapide();
-      faits.push({i:+b.dataset.pt,nom:pts[+b.dataset.pt],heure:new Date().toISOString(),lat:pos?pos.lat:null,lng:pos?pos.lng:null});
-      await enregistrer({points:faits});dessiner()}))};
+  const pts=site.points_ronde||[],faits=[],qm=modeQR();
+  const valider=async(i,mode)=>{if(faits.some(x=>x.i===i))return toast("Ce point est déjà vérifié.");const pos=await positionRapide();
+    faits.push({i,nom:pts[i],heure:new Date().toISOString(),lat:pos?pos.lat:null,lng:pos?pos.lng:null,mode});await enregistrer({points:faits});dessiner()};
+  const dessiner=()=>{$("#box .box-b").innerHTML=`<p class="muted sm" style="margin-top:0">${esc(site.nom)} · commencée à ${hm(r.debut)}. ${qm==="non"?"Touchez chaque point quand vous y êtes.":"À chaque point, scannez le code QR collé sur place."}</p>
+    ${qm!=="non"&&faits.length<pts.length?`<button class="btn pri bigbtn" id="rd-scan" style="margin:0 0 12px">📷 Scanner le code du point</button>`:""}
+    ${pts.map((n,i)=>{const f=faits.find(x=>x.i===i);return `<div class="pt-r ${f?"ok":""}"><span style="flex:1"><b>${esc(n)}</b>${f?`<div class="muted xs">Vérifié à ${hm(f.heure)}${f.mode==="qr"?" · code scanné":qm!=="non"?" · sans code":""}${f.lat==null?" · sans position":""}</div>`:""}</span>${f?"✓":qm==="obligatoire"?'<span class="muted xs">à scanner</span>':`<button class="btn sm ${qm==="non"?"pri":""}" data-pt="${i}">${qm==="non"?"Vérifié":"Sans code"}</button>`}</div>`}).join("")}`;
+    $("#box").querySelectorAll("[data-pt]").forEach(b=>b.onclick=()=>busy(b,async()=>{b.textContent="…";await valider(+b.dataset.pt,"manuel")}));
+    const sc=$("#rd-scan");if(sc)sc.onclick=()=>busy(sc,async()=>{const t=await scannerQR();if(t==null)return;const x=lireQrPoint(t,site);if(x.err)throw new Error(x.err);
+      await valider(x.i,"qr");toast("Point vérifié : "+pts[x.i])})};
   modal("Ronde en cours","",`<button class="btn pri" id="rd-fin">Terminer la ronde</button>`);dessiner();
   const fin=async()=>{const f=new Date().toISOString();await enregistrer({fin:f,points:faits});
     if(local){if(r.id)await sb.from("rondes").delete().eq("id",r.id).then(()=>{},()=>{});mettreEnFile({k:"ronde",ligne:{...base,debut:r.debut,fin:f,points:faits}});closeModal();if($("#hl-ecran"))afficherHorsLigne();return}
@@ -1609,14 +1668,15 @@ async function vIncidents(){const d1=filtreInc.periode==="mois"?auj().slice(0,8)
 let jourR=null;
 async function vRondes(){jourR=jourR||auj();const ds=jourR;
   const l=must(await sb.from("rondes").select("*").eq("date_service",ds).order("debut"));
-  $("#main").innerHTML=`<div class="head"><div><h1>Rondes</h1><p class="muted sm" style="margin:2px 0 0">Chaque point est horodaté et localisé par le téléphone de l'agent.</p></div></div>
+  $("#main").innerHTML=`<div class="head"><div><h1>Rondes</h1><p class="muted sm" style="margin:2px 0 0">Chaque point est horodaté et localisé par le téléphone de l'agent.</p></div>${sites.some(x=>(x.points_ronde||[]).length)?'<button class="btn" id="rd-qr">🔳 Codes QR des points de ronde</button>':""}</div>
   <div class="daybar"><button class="btn sm" id="rd-prev">‹</button><input class="input" type="date" id="rd-d" value="${ds}"><button class="btn sm" id="rd-next">›</button><button class="btn sm" id="rd-auj">Aujourd'hui</button></div>
   ${l.length?`<div class="card">${l.map(x=>{const s=sites.find(y=>y.id===x.site_id)||{},tot=(s.points_ronde||[]).length,n=(x.points||[]).length;return `<div class="line click" data-rd="${x.id}"><div class="grow"><b class="n">${esc(s.nom||"Site")}</b><div class="muted xs">${esc(nomAg(AG_(x.agent_id)))} · ${hm(x.debut)} → ${x.fin?hm(x.fin):"en cours"}</div></div><span class="pill ${n>=tot&&tot?"p-green":"p-amber"}">${n} / ${tot} points</span></div>`}).join("")}</div>`:`<div class="empty">Aucune ronde ce jour-là.${sites.some(s=>(s.points_ronde||[]).length)?"":"<br>Ajoutez d'abord les points de ronde dans la fiche de chaque site."}</div>`}`;
   const go=d=>{jourR=d;vRondes().catch(e=>toast(traduire(e.message),true))};
   $("#rd-prev").onclick=()=>go(ajout(ds,-1));$("#rd-next").onclick=()=>go(ajout(ds,1));$("#rd-auj").onclick=()=>go(auj());$("#rd-d").onchange=e=>e.target.value&&go(e.target.value);
+  const rq=$("#rd-qr");if(rq)rq.onclick=()=>choisirSiteQR();
   $("#main").querySelectorAll("[data-rd]").forEach(t=>t.onclick=()=>{const x=l.find(y=>y.id===t.dataset.rd),s=sites.find(y=>y.id===x.site_id)||{};
     modal("Ronde · "+esc(s.nom||""),`<p class="muted sm" style="margin-top:0">${esc(nomAg(AG_(x.agent_id)))} · ${hm(x.debut)} → ${x.fin?hm(x.fin):"en cours"}</p>${(s.points_ronde||[]).map((n,i)=>{const f=(x.points||[]).find(p=>p.i===i),dist=f?distance(f.lat,f.lng,s.latitude,s.longitude):null;
-      return `<div class="pt-r ${f?"ok":""}"><span style="flex:1"><b>${esc(n)}</b><div class="muted xs">${f?"Vérifié à "+hm(f.heure)+(dist!=null?" · à "+dist+" m du site":f.lat==null?" · sans position":""):"Non vérifié"}</div></span>${f?"✓":"—"}</div>`}).join("")}`,`<button class="btn" id="rd-f">Fermer</button>`);$("#rd-f").onclick=closeModal});
+      return `<div class="pt-r ${f?"ok":""}"><span style="flex:1"><b>${esc(n)}</b><div class="muted xs">${f?"Vérifié à "+hm(f.heure)+(f.mode==="qr"?" · code QR scanné":f.mode==="manuel"&&modeQR()!=="non"?' · <span class="wa-t">validé sans scanner le code</span>':"")+(dist!=null?" · à "+dist+" m du site":f.lat==null?" · sans position":""):"Non vérifié"}</div></span>${f?"✓":"—"}</div>`}).join("")}`,`<button class="btn" id="rd-f">Fermer</button>`);$("#rd-f").onclick=closeModal});
 }
 
 /* ---------- factures ---------- */
