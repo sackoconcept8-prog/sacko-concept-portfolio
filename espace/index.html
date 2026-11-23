@@ -135,7 +135,7 @@ body.tv .top,body.tv #side,body.tv #tabs,body.tv #menu-btn{display:none!importan
 .doc h4{margin:14px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--p)}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;padding:0 5px;margin-left:4px}
 .qr-ov{position:fixed;inset:0;z-index:9999;background:#0B1220;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}.qr-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;color:#fff}.qr-vue{position:relative;width:min(88vw,420px);aspect-ratio:1;border-radius:18px;overflow:hidden;background:#000}.qr-vue video{width:100%;height:100%;object-fit:cover}.qr-cadre{position:absolute;inset:14%;border:3px solid #34D399;border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}.qr-msg{color:#fff;margin:0;font-size:15px}
-.pl-q{margin-bottom:14px}.pl-q h3{font-size:16px;margin:0 0 6px}.pl-t td{padding:4px 6px}.pl-t .input{padding:6px 8px;font-size:13px;min-width:0}.pl-t select.input{min-width:180px}
+.pl-q{margin-bottom:14px}.pl-q h3{font-size:16px;margin:0 0 6px}.pl-t td{padding:4px 6px}.pl-t .input{padding:6px 8px;font-size:13px;min-width:0}.pl-t .pl-a{min-width:200px}.pl-t .pl-ko{border-color:var(--red)}.pl-add{margin:6px 0 4px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}.tbl th{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}.tbl td.r,.tbl th.r{text-align:right;white-space:nowrap}.tbl tr.click{cursor:pointer}.tbl tr.click:hover td{background:var(--bg)}
 .scroll{overflow-x:auto}.tot{display:flex;justify-content:space-between;font-weight:700;font-size:17px;border-top:2px solid var(--p);margin-top:8px;padding-top:10px}
 .layout{max-width:1320px;margin:0 auto}.layout.avec{display:grid;grid-template-columns:230px minmax(0,1fr)}
@@ -862,7 +862,7 @@ function position(){return new Promise((ok,ko)=>{if(!navigator.geolocation)retur
 
 /* ---------- planning (direction et superviseur) ---------- */
 let jourP=null;
-let plSite=null,plMode="semaine";
+let plSite=null,plMode="semaine",plFiltreG="site";
 async function vPlanning(){jourP=jourP||auj();const ds=jourP,dir=estDirection();
   const lundi=lundiDe(ds),dim=ajout(lundi,6),P=await chargerPlanning(lundi,dim);
   const besoin=(s,c)=>+((s.besoins||{})[c])||0,actifs=sites.filter(s=>s.actif);
@@ -872,24 +872,18 @@ async function vPlanning(){jourP=jourP||auj();const ds=jourP,dir=estDirection();
   const libres=agents.filter(a=>a.statut==="Actif"&&!aff.some(x=>x.agent_id===a.id));
   if(!actifs.some(s=>s.id===plSite))plSite=(actifs[0]||{}).id||null;
   const fs=d=>new Date(d+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long"});
+  let plFiltre=plFiltreG;
   const vueSemaine=()=>{if(!actifs.length)return `<div class="empty">Ajoutez d'abord vos sites et vos agents.</div>`;
     const site=actifs.find(s=>s.id===plSite),gr=P.sem.filter(g=>g.site_id===plSite&&g.semaine===lundi),autres=P.sem.filter(g=>g.site_id!==plSite&&g.semaine===lundi&&g.agent_id);
-    const secu=agents.filter(a=>a.statut==="Actif"&&estSecu(a)).sort((a,b)=>nomAg(a).localeCompare(nomAg(b)));
-    const NL=10;
-    return `<div class="card pl-sem"><div class="actions" style="justify-content:space-between;align-items:flex-end;margin-bottom:6px"><div class="field" style="margin:0;min-width:220px"><label class="f">Site</label><select class="input" id="pl-site">${actifs.map(s=>`<option value="${s.id}" ${s.id===plSite?"selected":""}>${esc(s.nom)}</option>`).join("")}</select></div>
+    return `<div class="card pl-sem"><div class="actions" style="justify-content:space-between;align-items:flex-end;margin-bottom:6px"><div class="actions" style="align-items:flex-end"><div class="field" style="margin:0;min-width:220px"><label class="f">Site</label><select class="input" id="pl-site">${actifs.map(s=>`<option value="${s.id}" ${s.id===plSite?"selected":""}>${esc(s.nom)}</option>`).join("")}</select></div>
+      ${dir?`<div class="field" style="margin:0;min-width:200px"><label class="f">Agents proposés</label><select class="input" id="pl-filtre"><option value="site" ${plFiltre==="site"?"selected":""}>Ce site, volants et sans site</option><option value="libres" ${plFiltre==="libres"?"selected":""}>Pas encore planifiés cette semaine</option><option value="tous" ${plFiltre==="tous"?"selected":""}>Tous les agents</option></select></div>`:""}</div>
       ${dir?`<div class="actions"><button class="btn sm" id="pl-copy">Reprendre la semaine précédente</button><button class="btn sm" id="pl-rot">Reprendre en faisant tourner les quarts</button><button class="btn sm" id="pl-vide">Vider</button></div>`:""}</div>
-      <p class="muted sm" style="margin:4px 0 12px">Semaine du <b>${fs(lundi)}</b> au <b>${fs(dim)}</b> · ${esc(site.nom)}. Chaque agent inscrit travaille dans ce quart toute la semaine, sauf son jour de repos, ses absences et ses congés.${gr.length?"":` <span class="wa-t">Pas encore de planning pour cette semaine : les agents travaillent à leur poste habituel.</span>`}</p>
-      ${CODES().map(c=>{const q=POSTE(c),L=gr.filter(g=>g.poste===c);return `<div class="pl-q"><h3>${esc(q.libelle)} <span class="muted sm" style="font-weight:500">· ${q.debut} – ${q.fin}${besoin(site,c)?" · "+besoin(site,c)+" agent(s) requis":""}</span></h3>
-        <div style="overflow-x:auto"><table class="tbl pl-t"><thead><tr><th style="width:34px">N°</th><th>Nom de l'agent</th><th style="width:110px">Matricule</th><th style="width:120px">Heure d'arrivée</th><th style="width:120px">Heure de départ</th></tr></thead><tbody>
-        ${[...Array(NL)].map((_,k)=>{const g=L.find(x=>x.rang===k+1)||{},a=g.agent_id?AG_(g.agent_id):null;
-          return `<tr data-q="${esc(c)}" data-r="${k+1}"><td class="muted">${k+1}</td>
-            <td>${dir?`<select class="input pl-a"><option value="">—</option>${secu.map(x=>`<option value="${x.id}" ${x.id===g.agent_id?"selected":""}>${esc(nomAg(x))}</option>`).join("")}${a&&!secu.includes(a)?`<option value="${a.id}" selected>${esc(nomAg(a))}</option>`:""}</select>`:esc(a?nomAg(a):"")}</td>
-            <td class="pl-m">${esc(a?a.matricule||"":"")}</td>
-            <td>${dir?`<input class="input pl-h1" type="time" value="${hh(g.heure_arrivee)||(a?q.debut:"")}">`:esc(hh(g.heure_arrivee)||(a?q.debut:""))}</td>
-            <td>${dir?`<input class="input pl-h2" type="time" value="${hh(g.heure_depart)||(a?q.fin:"")}">`:esc(hh(g.heure_depart)||(a?q.fin:""))}</td></tr>`}).join("")}
-        </tbody></table></div></div>`}).join("")}
+      <p class="muted sm" style="margin:4px 0 12px">Semaine du <b>${fs(lundi)}</b> au <b>${fs(dim)}</b> · ${esc(site.nom)}.${gr.length?"":` <span class="wa-t">Pas encore de planning pour cette semaine : les agents travaillent à leur poste habituel.</span>`}</p>
+      ${CODES().map(c=>{const q=POSTE(c),n=gr.filter(g=>g.poste===c&&g.agent_id).length;return `<div class="pl-q" data-quart="${esc(c)}"><h3>${esc(q.libelle)} <span class="muted sm" style="font-weight:500">· ${q.debut} – ${q.fin} · <span class="pl-n">${n}</span>${besoin(site,c)?" / "+besoin(site,c):""} agent(s)</span></h3>
+        <table class="tbl pl-t"><thead><tr><th style="width:34px">N°</th><th>Agent</th><th style="width:110px">Matricule</th><th style="width:118px">Arrivée</th><th style="width:118px">Départ</th>${dir?'<th style="width:40px"></th>':""}</tr></thead><tbody></tbody></table>
+        ${dir?`<button class="btn sm pl-add" type="button" data-add="${esc(c)}">+ Ajouter un agent</button>`:""}</div>`}).join("")}
       ${autres.length?`<p class="muted xs" style="margin:0 0 10px">Déjà planifiés sur un autre site cette semaine : ${[...new Set(autres.map(g=>g.agent_id))].map(id=>esc(nomAg(AG_(id)))+" ("+esc(siteNom(autres.find(g=>g.agent_id===id).site_id))+")").join(", ")}</p>`:""}
-      ${dir?`<div class="actions"><button class="btn pri" id="pl-save">Enregistrer le planning de la semaine</button><button class="btn" id="pl-print">Imprimer</button></div>`:`<button class="btn" id="pl-print">Imprimer</button>`}</div>`};
+      ${dir?`<datalist id="pl-dl"></datalist><div class="actions"><button class="btn pri" id="pl-save">Enregistrer le planning de la semaine</button><button class="btn" id="pl-print">Imprimer</button></div>`:`<button class="btn" id="pl-print">Imprimer</button>`}</div>`};
   const vueJour=()=>`<h2 style="font-size:18px;margin:0 0 10px">${esc(fjour(ds).replace(/^./,c=>c.toUpperCase()))}</h2>
   ${actifs.length?actifs.map(s=>`<div class="site-blk"><h3>${esc(s.nom)}</h3><div class="muted xs">${esc([s.adresse,s.ville].filter(Boolean).join(" · ")||"")}</div>
     ${CODES().map(c=>{const p=POSTE(c),l=aff.filter(x=>x.site_id===s.id&&x.poste===c),m=besoin(s,c)-l.length;if(!besoin(s,c)&&!l.length&&!dir)return "";
@@ -912,25 +906,49 @@ async function vPlanning(){jourP=jourP||auj();const ds=jourP,dir=estDirection();
   if(plMode!=="semaine"||!actifs.length)return;
   const ps=$("#pl-site");if(ps)ps.onchange=()=>{plSite=ps.value;go(ds)};
   const pr=$("#pl-print");if(pr)pr.onclick=()=>imprimerPlanning(lundi,dim);
+  /* lignes : seulement les agents inscrits (+ une ligne vide pour ajouter) */
+  const libA=a=>nomAg(a)+(a.matricule?" · "+a.matricule:"");
+  const ligne=(c,g)=>{const a=g&&g.agent_id?AG_(g.agent_id):null,q=POSTE(c);
+    return dir?`<tr data-q="${esc(c)}"><td class="muted pl-r"></td><td><input class="input pl-a" list="pl-dl" autocomplete="off" placeholder="Rechercher un nom ou un matricule" value="${a?esc(libA(a)):""}" data-id="${a?a.id:""}"></td><td class="pl-m">${esc(a?a.matricule||"":"")}</td>
+      <td><input class="input pl-h1" type="time" value="${a?hh(g.heure_arrivee)||q.debut:""}"></td><td><input class="input pl-h2" type="time" value="${a?hh(g.heure_depart)||q.fin:""}"></td><td><button class="iconbtn pl-del" type="button" title="Retirer">×</button></td></tr>`
+     :`<tr><td class="muted pl-r"></td><td>${esc(nomAg(a))}</td><td>${esc(a.matricule||"")}</td><td>${hh(g.heure_arrivee)||q.debut}</td><td>${hh(g.heure_depart)||q.fin}</td></tr>`};
+  const numeroter=()=>$("#main").querySelectorAll(".pl-q").forEach(b=>{const tr=[...b.querySelectorAll("tbody tr")];tr.forEach((t,i)=>{const r=t.querySelector(".pl-r");if(r)r.textContent=i+1});
+    const n=b.querySelector(".pl-n");if(n)n.textContent=dir?tr.filter(t=>t.querySelector(".pl-a")&&t.querySelector(".pl-a").dataset.id).length:tr.length;
+    const ad=b.querySelector(".pl-add");if(ad)ad.disabled=tr.length>=30});
+  const choisis=()=>new Set([...$("#main").querySelectorAll(".pl-a")].map(i=>i.dataset.id).filter(Boolean));
+  const majListe=()=>{const dl=$("#pl-dl");if(!dl)return;const pris=choisis(),ailleurs=new Set(P.sem.filter(g=>g.semaine===lundi&&g.site_id!==plSite&&g.agent_id).map(g=>g.agent_id));
+    const L=agents.filter(a=>a.statut==="Actif"&&estSecu(a)&&!pris.has(a.id)).filter(a=>plFiltre==="tous"?true:plFiltre==="libres"?!ailleurs.has(a.id):(a.site_id===plSite||!a.site_id||/volant/i.test(a.grade||"")))
+      .sort((a,b)=>(a.site_id===plSite?0:1)-(b.site_id===plSite?0:1)||nomAg(a).localeCompare(nomAg(b)));
+    dl.innerHTML=L.map(a=>`<option value="${esc(libA(a))}">${esc((a.grade||"")+(a.site_id&&a.site_id!==plSite?" · "+siteNom(a.site_id):""))}</option>`).join("")};
+  const brancher=tr=>{if(!dir)return;const inp=tr.querySelector(".pl-a"),q=POSTE(tr.dataset.q),h1=tr.querySelector(".pl-h1"),h2=tr.querySelector(".pl-h2");
+    inp.onchange=()=>{const v=inp.value.trim().toLowerCase(),a=v?agents.find(x=>libA(x).toLowerCase()===v)||agents.find(x=>String(x.matricule||"").toLowerCase()===v)||(()=>{const m=agents.filter(x=>x.statut==="Actif"&&nomAg(x).toLowerCase().includes(v));return m.length===1?m[0]:null})():null;
+      inp.dataset.id=a?a.id:"";inp.classList.toggle("pl-ko",!!v&&!a);if(a)inp.value=libA(a);tr.querySelector(".pl-m").textContent=a?a.matricule||"":"";
+      if(a){if(!h1.value)h1.value=q.debut;if(!h2.value)h2.value=q.fin}else{h1.value="";h2.value=""}
+      const tb=tr.parentNode;if(a&&tr===tb.lastElementChild&&tb.children.length<30)ajouterLigne(tr.dataset.q);numeroter();majListe()};
+    inp.onfocus=majListe;
+    tr.querySelector(".pl-del").onclick=()=>{const tb=tr.parentNode,c=tr.dataset.q;tr.remove();if(!tb.children.length)ajouterLigne(c);numeroter();majListe()}};
+  const ajouterLigne=(c,g)=>{const tb=$(`.pl-q[data-quart="${c}"] tbody`);tb.insertAdjacentHTML("beforeend",ligne(c,g));brancher(tb.lastElementChild);return tb.lastElementChild};
+  const remplir=L=>{CODES().forEach(c=>{const tb=$(`.pl-q[data-quart="${c}"] tbody`);if(!tb)return;tb.innerHTML="";
+    const l=L.filter(g=>g.poste===c&&g.agent_id&&AG_(g.agent_id)).sort((x,y)=>x.rang-y.rang);
+    if(!dir){tb.innerHTML=l.length?l.map(g=>ligne(c,g)).join(""):'<tr><td colspan="5" class="muted sm">Aucun agent</td></tr>';return}
+    l.forEach(g=>ajouterLigne(c,g));ajouterLigne(c)});numeroter();majListe()};
+  remplir(P.sem.filter(g=>g.site_id===plSite&&g.semaine===lundi));
   if(!dir)return;
-  /* matricule et horaires remplis dès qu'on choisit l'agent */
-  $("#main").querySelectorAll(".pl-t tr[data-q]").forEach(tr=>{const sel=tr.querySelector(".pl-a");sel.onchange=()=>{const a=AG_(sel.value),q=POSTE(tr.dataset.q);tr.querySelector(".pl-m").textContent=a?a.matricule||"":"";
-    const h1=tr.querySelector(".pl-h1"),h2=tr.querySelector(".pl-h2");if(a){if(!h1.value)h1.value=q.debut;if(!h2.value)h2.value=q.fin}else{h1.value="";h2.value=""}}});
-  const remplir=L=>{$("#main").querySelectorAll(".pl-t tr[data-q]").forEach(tr=>{const g=L.find(x=>x.poste===tr.dataset.q&&x.rang===+tr.dataset.r),a=g?AG_(g.agent_id):null,q=POSTE(tr.dataset.q);
-    tr.querySelector(".pl-a").value=a?a.id:"";tr.querySelector(".pl-m").textContent=a?a.matricule||"":"";
-    tr.querySelector(".pl-h1").value=a?hh(g.heure_arrivee)||q.debut:"";tr.querySelector(".pl-h2").value=a?hh(g.heure_depart)||q.fin:""})};
+  $("#main").querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>{const tr=ajouterLigne(b.dataset.add);numeroter();tr.querySelector(".pl-a").focus()});
+  const pf=$("#pl-filtre");if(pf)pf.onchange=()=>{plFiltre=plFiltreG=pf.value;majListe()};
   const precedente=async rot=>{const prev=ajout(lundi,-7),L=must(await sb.from("plannings_semaine").select("*").eq("site_id",plSite).eq("semaine",prev));
     if(!L.filter(g=>g.agent_id).length)throw new Error("Aucun planning enregistré la semaine précédente pour ce site.");
     const C=CODES(),out=[];C.forEach((c,i)=>{const src=rot?C[(i-1+C.length)%C.length]:c,q=POSTE(c);
-      L.filter(g=>g.poste===src&&g.agent_id).sort((x,y)=>x.rang-y.rang).forEach((g,k)=>{if(k<10)out.push({poste:c,rang:k+1,agent_id:g.agent_id,heure_arrivee:rot?q.debut:g.heure_arrivee,heure_depart:rot?q.fin:g.heure_depart})})});
+      L.filter(g=>g.poste===src&&g.agent_id).sort((x,y)=>x.rang-y.rang).forEach((g,k)=>{out.push({poste:c,rang:k+1,agent_id:g.agent_id,heure_arrivee:rot?q.debut:g.heure_arrivee,heure_depart:rot?q.fin:g.heure_depart})})});
     remplir(out);toast(rot?"Semaine précédente reprise avec rotation des quarts · pensez à enregistrer":"Semaine précédente reprise · pensez à enregistrer")};
   $("#pl-copy").onclick=e=>busy(e.target,()=>precedente(false));
   $("#pl-rot").onclick=e=>busy(e.target,()=>precedente(true));
   $("#pl-vide").onclick=()=>remplir([]);
   $("#pl-save").onclick=()=>busy($("#pl-save"),async()=>{const rows=[],vus={};
-    $("#main").querySelectorAll(".pl-t tr[data-q]").forEach(tr=>{const id=tr.querySelector(".pl-a").value;if(!id)return;
-      if(vus[id])throw new Error(nomAg(AG_(id))+" est inscrit deux fois cette semaine ("+POSTE(vus[id]).libelle+" et "+POSTE(tr.dataset.q).libelle+").");vus[id]=tr.dataset.q;
-      const q=POSTE(tr.dataset.q);rows.push({site_id:plSite,semaine:lundi,poste:tr.dataset.q,rang:+tr.dataset.r,agent_id:id,heure_arrivee:tr.querySelector(".pl-h1").value||q.debut,heure_depart:tr.querySelector(".pl-h2").value||q.fin})});
+    const ko=[...$("#main").querySelectorAll(".pl-a")].find(i=>i.value.trim()&&!i.dataset.id);if(ko){ko.focus();throw new Error("Agent introuvable : « "+ko.value.trim()+" ». Choisissez-le dans la liste proposée.")}
+    CODES().forEach(c=>{let r=0;$("#main").querySelectorAll(`.pl-q[data-quart="${c}"] tbody tr`).forEach(tr=>{const id=tr.querySelector(".pl-a").dataset.id;if(!id)return;
+      if(vus[id])throw new Error(nomAg(AG_(id))+" est inscrit deux fois cette semaine ("+POSTE(vus[id]).libelle+" et "+POSTE(c).libelle+").");vus[id]=c;
+      const q=POSTE(c);rows.push({site_id:plSite,semaine:lundi,poste:c,rang:++r,agent_id:id,heure_arrivee:tr.querySelector(".pl-h1").value||q.debut,heure_depart:tr.querySelector(".pl-h2").value||q.fin})})});
     const ailleurs=rows.filter(r=>P.sem.some(g=>g.agent_id===r.agent_id&&g.site_id!==plSite&&g.semaine===lundi));
     if(ailleurs.length&&!confirm(ailleurs.map(r=>nomAg(AG_(r.agent_id))).join(", ")+" "+(ailleurs.length>1?"sont":"est")+" déjà planifié(s) sur un autre site cette semaine. Enregistrer quand même ?"))return;
     must(await sb.from("plannings_semaine").delete().eq("site_id",plSite).eq("semaine",lundi));
