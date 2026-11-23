@@ -134,6 +134,7 @@ body.tv .top,body.tv #side,body.tv #tabs,body.tv #menu-btn{display:none!importan
 .doc .sig{display:flex;justify-content:space-between;gap:20px;margin-top:30px;font-size:13px}
 .doc h4{margin:14px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--p)}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;padding:0 5px;margin-left:4px}
+.an-sv{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:6px}.an-sv label,.an-opt{display:flex;gap:6px;align-items:center;font-size:14px}.an-opt{margin:4px 0}.an-new{border-color:var(--amber)}.an-o{font-size:16px}.an-t{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 4px;font-size:15px}.an-r{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;display:flex;flex-direction:column;gap:8px}.an-ri{background:var(--bg);border-radius:10px;padding:8px 10px;font-size:14px;overflow-wrap:anywhere;white-space:pre-wrap}.an-f{display:flex;gap:8px;align-items:flex-end;margin-top:10px}.an-f textarea{flex:1;resize:none;min-height:38px}
 .qr-ov{position:fixed;inset:0;z-index:9999;background:#0B1220;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}.qr-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;color:#fff}.qr-vue{position:relative;width:min(88vw,420px);aspect-ratio:1;border-radius:18px;overflow:hidden;background:#000}.qr-vue video{width:100%;height:100%;object-fit:cover}.qr-cadre{position:absolute;inset:14%;border:3px solid #34D399;border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}.qr-msg{color:#fff;margin:0;font-size:15px}
 .pl-q{margin-bottom:14px}.pl-q h3{font-size:16px;margin:0 0 6px}.pl-t td{padding:4px 6px}.pl-t .input{padding:6px 8px;font-size:13px;min-width:0}.pl-t .pl-a{min-width:200px}.pl-t .pl-ko{border-color:var(--red)}.pl-add{margin:6px 0 4px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}.tbl th{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}.tbl td.r,.tbl th.r{text-align:right;white-space:nowrap}.tbl tr.click{cursor:pointer}.tbl tr.click:hover td{background:var(--bg)}
@@ -448,7 +449,7 @@ async function entrer(){
   appliquerEspace();
   const G=estDirection()||estSupGeneral()||estCommercial()||estComptable()||moi.role_reel==="superviseur"?filtrerMenu(menuDirection()):null;
   const T=(G?G.flatMap(g=>g[1]):moi.role==="superviseur"?MENU_SUP
-    :moi.role==="agent"?[["accueil","Accueil"],["profil","Profil"],["monplanning","Planning"],["mesdemandes","Demandes"],["mesdocs","Documents"],["mesmsg","Messages"],["mapaie","Paie"]]
+    :moi.role==="agent"?[["accueil","Accueil"],["profil","Profil"],["monplanning","Planning"],["mesdemandes","Demandes"],["mesdocs","Documents"],["mesmsg","Messages"],["annonces","Annonces"],["mapaie","Paie"]]
     :moi.role==="client"?[["client","Accueil"],["cl-agents","Mes agents"],["cl-rapports","Rapports"],["cl-incidents","Incidents"],["cl-factures","Factures"],["cl-demandes","Demandes"]]:[["accueil","Accueil"]]).filter(ongletActif);
   $("#layout").classList.toggle("avec",!!G);$("#side").classList.toggle("hide",!G);$("#tabs").classList.toggle("hide",!!G);$("#menu-btn").classList.toggle("hide",!G);
   $("#side").innerHTML="";$("#tabs").innerHTML="";
@@ -540,14 +541,14 @@ async function barreTechnicien(){
 let espace="direction";
 /* le superviseur général travaille en « superviseur » dans l'espace Supervision et en « rh » dans l'espace RH (ses droits réels restent ceux du RH) */
 function appliquerEspace(){if(estSupGeneral())moi.role=espace==="supervision"?"superviseur":"rh"}
-const MENU_SUP=[["pointage","Pointage"],["visites","Visites et notes"],["rapport","Mon rapport"],["equipe","Mes agents"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"],["releves","Relèves"]];
+const MENU_SUP=[["pointage","Pointage"],["visites","Visites et notes"],["rapport","Mon rapport"],["equipe","Mes agents"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"],["releves","Relèves"],["annonces","Annonces"]];
 /* modules activés ou non pour chaque agence (réglés dans le cockpit) */
 const mod=k=>((ag&&ag.modules)||{})[k]!==false;
 const MODULE_ONGLET={planning:"planning",monplanning:"planning",pointage:"pointage",conges:"conges",documents:"documents",mesdocs:"documents",messages:"messagerie",mesmsg:"messagerie",paie:"paie",mapaie:"paie",materiel:"materiel",rstock:"materiel",
   factures:"facturation","cl-factures":"facturation",rapports:"rapports",incidents:"main_courante","cl-incidents":"main_courante",rondes:"rondes",supervision:"supervision",visites:"supervision",rapport:"supervision",
   recos:"conseiller",compta:"comptabilite",journal:"comptabilite",virements:"comptabilite",budget:"comptabilite",tresorerie:"comptabilite",annee:"comptabilite",rcl:"rapports_clients",controle:"salle_controle",releves:"passations",hsup:"heures_sup","cl-rapports":"rapports_clients","cl-agents":"client_agents",demandes:"espace_client","cl-demandes":"espace_client"};
 const ongletActif=([k])=>k==="groupe"?!!(ag&&ag.modules&&ag.modules.vue_groupe===true):!MODULE_ONGLET[k]||mod(MODULE_ONGLET[k]);
-function filtrerMenu(G){return G.map(([g,l])=>[g,l.filter(ongletActif)]).filter(([g,l])=>l.length)}
+function filtrerMenu(G){const M=G.map(([g,l])=>[g,l.filter(ongletActif)]).filter(([g,l])=>l.length);if(M.length&&!M.some(([,l])=>l.some(([k])=>k==="annonces")))M[0][1].splice(Math.min(1,M[0][1].length),0,["annonces","Annonces"]);return M}
 function menuDirection(){
   if(estConseiller())return [["Mon espace",[["accueil","Accueil"],["avis","Mes recommandations"]]],["Rapports soumis au CEO",[["rapports","Rapport mensuel"],["supervision","Rapports de supervision"],["incidents","Main courante"]]],["Aide",[["support","Support"]]]];
   return menuDirectionBase()}
@@ -594,7 +595,7 @@ async function chargerConseiller(){const [s,a]=await Promise.all([sb.rpc("sites_
 async function chargerCommercial(){const [s,a]=await Promise.all([sb.from("sites").select("*").order("nom"),sb.rpc("agents_noms")]);sites=must(s);agents=must(a).sort((x,y)=>String(x.nom).localeCompare(String(y.nom)));comptes=[]}
 async function ouvrir(t){tab=t;document.body.classList.toggle("consult",!!(moi&&typeof estDG==="function"&&(estDG()||(estResp()&&espace!=="rh"&&!ONGLETS_CLIENTS_RESP.includes(t)))));document.querySelectorAll("#tabs button,#side button[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));menu(false);window.scrollTo(0,0);
   $("#main").innerHTML='<p class="muted">Chargement…</p>';
-  try{if(estConseiller())await chargerConseiller();else if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();else if(estComptable())await chargerComptable();await({accueil:moi.role==="agent"?vAgentAccueil:estConseiller()?vAccueilConseiller:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,"sites-terrain":vSitesTerrain,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-agents":vClientAgents,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport,avis:vAvis,recos:vRecos,compta:vCompta,journal:vJournal,tresorerie:vTresorerie,annee:vAnnee,rcl:vRapportsClients,validations:vValidations,rjour:vRapportJour,profil:vMonProfil,controle:vControle,releves:vReleves,hsup:vHeuresSup,groupe:vGroupe,"cl-rapports":vClientRapports,virements:vVirements,budget:vBudget,suivi:vSuiviClients,rstock:vRapportStock}[t])();if(estConseiller())barreAvis(t);barreSoumission(t);if(t==="rjour")carteValidationsDG();if(t==="documents"&&estDirection())carteDemandesRH()}
+  try{if(estConseiller())await chargerConseiller();else if(estEncadrement())await charger();else if(estCommercial())await chargerCommercial();else if(estComptable())await chargerComptable();await({accueil:moi.role==="agent"?vAgentAccueil:estConseiller()?vAccueilConseiller:espace==="rh"&&estDirection()?vAccueilRH:vAccueil,planning:vPlanning,pointage:vPointage,monplanning:vMonPlanning,conges:vConges,documents:vDocuments,messages:vMessages,annonces:vAnnonces,mesconges:vMesConges,mesdocs:vMesDocs,mesmsg:vMesMessages,paie:vPaie,materiel:vMateriel,reglages:vReglages,mapaie:vMaPaie,monmat:vMonMateriel,mesdemandes:vMesDemandes,incidents:vIncidents,rondes:vRondes,factures:vFactures,demandes:vDemandesClients,visites:vVisites,"sites-terrain":vSitesTerrain,equipe:vEquipe,rapport:vMonRapport,supervision:vSupervision,rapports:vRapports,client:vClient,"cl-agents":vClientAgents,"cl-incidents":vClientIncidents,"cl-factures":vClientFactures,"cl-demandes":vClientDemandes,sites:vSites,agents:vAgents,comptes:vComptes,support:vSupport,avis:vAvis,recos:vRecos,compta:vCompta,journal:vJournal,tresorerie:vTresorerie,annee:vAnnee,rcl:vRapportsClients,validations:vValidations,rjour:vRapportJour,profil:vMonProfil,controle:vControle,releves:vReleves,hsup:vHeuresSup,groupe:vGroupe,"cl-rapports":vClientRapports,virements:vVirements,budget:vBudget,suivi:vSuiviClients,rstock:vRapportStock}[t])();if(estConseiller())barreAvis(t);barreSoumission(t);if(t==="rjour")carteValidationsDG();if(t==="documents"&&estDirection())carteDemandesRH()}
   catch(e){$("#main").innerHTML=`<div class="empty">Chargement impossible : ${esc(traduire(e.message))}</div>`}}
 
 
@@ -1364,6 +1365,50 @@ async function lireDoc(d){
   $("#ld-no").onclick=()=>{closeModal();vMesDocs()};
   const ok=$("#ld-ok");if(ok)ok.onclick=()=>busy(ok,async()=>{const t=$("#ld-r").value.trim();if(t.length<3){$("#ld-r").focus();throw new Error("Écrivez votre réponse.")}
     must(await sb.rpc("repondre_document",{p_id:d.id,p_reponse:t}));closeModal();toast("Réponse envoyée");await vMesDocs()});
+}
+
+/* ---------- annonces de la direction : à tout le personnel, à des services ou à un site, avec réponses ---------- */
+const SERVICES_ROLES=[["role:dg","Direction"],["role:rh","Ressources humaines"],["role:superviseur","Superviseurs"],["role:commercial","Service commercial"],["role:comptable","Comptabilité"],["role:conseiller","Conseiller"],["role:agent","Tous les agents"]];
+const CATS_PLUR={"Sécurité":"Agents de sécurité","Administratif":"Personnel administratif","Entretien":"Agents d'entretien","Technique":"Techniciens","Chauffeur":"Chauffeurs","Prestataire":"Prestataires","Stagiaire":"Stagiaires","Autre":"Autres employés"};
+const libService=k=>{const r=SERVICES_ROLES.find(x=>x[0]===k);if(r)return r[1];return CATS_PLUR[k.slice(4)]||k.replace(/^\w+:/,"")};
+const peutAnnoncer=()=>moi&&["dg","rh"].includes(moi.role_reel)&&!estConseiller();
+const publicAnnonce=x=>x.cible==="tous"?"Tout le personnel":x.cible==="site"?"Site "+siteNom(x.site_id):(x.services||[]).map(libService).join(", ");
+async function vAnnonces(){
+  const L=must(await sb.from("annonces").select("*").order("created_at",{ascending:false}).limit(60)),ids=L.map(x=>x.id);
+  const [R,lu,st]=await Promise.all([ids.length?sb.from("annonce_reponses").select("*").in("annonce_id",ids).order("created_at").then(must):[],
+    ids.length?sb.from("annonce_lectures").select("annonce_id").eq("user_id",moi.id).then(must):[],
+    ids.length&&peutAnnoncer()?sb.rpc("annonces_stats",{p_ids:ids}).then(r=>r.data||[],()=>[]):[]]);
+  const nouv=L.filter(x=>x.auteur!==moi.id&&!lu.some(l=>l.annonce_id===x.id));
+  const roles=new Set((comptes||[]).filter(c=>c.est_actif!==false).map(c=>c.role)),cats=new Set(agents.filter(a=>a.statut==="Actif").map(catDe));
+  const servs=[...SERVICES_ROLES.filter(([k])=>!comptes||!comptes.length||roles.has(k.slice(5))),...CATS.filter(([k])=>cats.has(k)).map(([k])=>["cat:"+k,CATS_PLUR[k]||k])];
+  $("#main").innerHTML=`<div class="head"><div><h1>Annonces</h1><p class="muted sm" style="margin:2px 0 0">${peutAnnoncer()?"Informez tout le personnel, un ou plusieurs services, ou les agents d'un site. Chacun reçoit une notification et peut vous répondre.":"Les informations de votre direction. Vous pouvez y répondre."}</p></div></div>
+  ${peutAnnoncer()?`<div class="card"><h2>Nouvelle annonce</h2><div class="row"><div class="field"><label class="f">Destinataires</label><select class="input" id="an-c"><option value="tous">Tout le personnel</option><option value="services">Un ou plusieurs services</option>${sites.length?'<option value="site">Les agents d\'un site</option>':""}</select></div>
+    <div class="field hide" id="an-sb"><label class="f">Site</label><select class="input" id="an-s">${sites.filter(s=>s.actif!==false).map(s=>`<option value="${s.id}">${esc(s.nom)}</option>`).join("")}</select></div></div>
+    <div class="hide" id="an-svb" style="margin:-4px 0 12px"><label class="f">Services</label><div class="an-sv">${servs.map(([k,l])=>`<label><input type="checkbox" value="${esc(k)}"> ${esc(l)}</label>`).join("")}</div></div>
+    <div class="field"><label class="f">Objet</label><input class="input" id="an-o" maxlength="150" placeholder="Ex. Réunion générale vendredi à 10 h"></div>
+    <div class="field"><label class="f">Message</label><textarea class="input" id="an-t" rows="4"></textarea></div>
+    <label class="an-opt"><input type="checkbox" id="an-rep" checked> Les destinataires peuvent répondre</label>
+    <label class="an-opt"><input type="checkbox" id="an-pub"> Les réponses sont visibles par tous les destinataires (discussion de groupe)</label>
+    <button class="btn pri" id="an-ok" style="margin-top:8px">📢 Envoyer l'annonce</button></div>`:""}
+  ${L.length?L.map(x=>{const rep=R.filter(r=>r.annonce_id===x.id),s=st.find(y=>y.annonce_id===x.id),moiAuteur=x.auteur===moi.id,neuf=nouv.includes(x);
+    return `<div class="card an-c${neuf?" an-new":""}"><div class="actions" style="justify-content:space-between;align-items:flex-start"><div style="min-width:0"><b class="an-o">📢 ${esc(x.objet||"Annonce de la direction")}</b> ${neuf?'<span class="pill p-amber">Nouveau</span>':""}
+        <div class="muted xs">${esc(x.auteur_nom||"Direction")} · ${fdt(x.created_at)} · à : ${esc(publicAnnonce(x))}</div></div>
+      <div class="actions">${s?`<span class="pill ${s.lus>=s.destinataires&&s.destinataires?"p-green":"p-amber"}">Lu par ${s.lus} / ${s.destinataires}</span>`:""}${moiAuteur||moi.role_reel==="dg"?`<button class="btn sm danger" data-andel="${x.id}" title="Supprimer l'annonce">×</button>`:""}</div></div>
+      <div class="an-t">${esc(x.contenu)}</div>
+      ${rep.length?`<div class="an-r">${rep.map(r=>`<div class="an-ri"><b>${esc(r.auteur===moi.id?"Vous":r.auteur_nom||"")}</b> <span class="muted xs">· ${fdt(r.created_at)}</span><div>${esc(r.contenu)}</div></div>`).join("")}</div>`:""}
+      ${x.reponses?`<div class="an-f"><textarea class="input" rows="1" data-antx="${x.id}" placeholder="${moiAuteur?"Ajouter un complément ou répondre (visible par tous les destinataires)…":"Votre réponse…"}"></textarea><button class="btn sm pri" data-anrep="${x.id}">Répondre</button></div>${!moiAuteur&&!x.reponses_publiques?'<p class="muted xs" style="margin:4px 0 0">Votre réponse n\'est visible que par l\'expéditeur.</p>':""}`:""}</div>`}).join("")
+  :`<div class="empty">Aucune annonce pour le moment.</div>`}`;
+  if(nouv.length)sb.from("annonce_lectures").insert(nouv.map(x=>({annonce_id:x.id}))).then(()=>{},()=>{});
+  const c=$("#an-c");if(c)c.onchange=()=>{$("#an-sb").classList.toggle("hide",c.value!=="site");$("#an-svb").classList.toggle("hide",c.value!=="services")};
+  const rp=$("#an-rep");if(rp)rp.onchange=()=>{$("#an-pub").disabled=!rp.checked;if(!rp.checked)$("#an-pub").checked=false};
+  const ok=$("#an-ok");if(ok)ok.onclick=()=>busy(ok,async()=>{const t=$("#an-t").value.trim(),v=c.value;if(t.length<2){$("#an-t").focus();throw new Error("Écrivez votre message.")}
+    const sv=[...document.querySelectorAll("#an-svb input:checked")].map(i=>i.value);if(v==="services"&&!sv.length)throw new Error("Cochez au moins un service.");
+    must(await sb.from("annonces").insert({cible:v,services:v==="services"?sv:[],site_id:v==="site"?$("#an-s").value:null,objet:$("#an-o").value.trim()||null,contenu:t,reponses:$("#an-rep").checked,reponses_publiques:$("#an-pub").checked}));
+    toast("Annonce envoyée · les destinataires sont notifiés");await vAnnonces()});
+  $("#main").querySelectorAll("[data-anrep]").forEach(b=>b.onclick=()=>busy(b,async()=>{const ta=$(`[data-antx="${b.dataset.anrep}"]`),t=ta.value.trim();if(!t){ta.focus();throw new Error("Écrivez votre réponse.")}
+    must(await sb.from("annonce_reponses").insert({annonce_id:b.dataset.anrep,contenu:t}));toast("Réponse envoyée");await vAnnonces()}));
+  $("#main").querySelectorAll("[data-andel]").forEach(b=>b.onclick=()=>{if(!confirm("Supprimer cette annonce et ses réponses pour tout le monde ?"))return;busy(b,async()=>{must(await sb.from("annonces").delete().eq("id",b.dataset.andel));toast("Annonce supprimée");await vAnnonces()})});
+  $("#main").querySelectorAll("[data-antx]").forEach(ta=>ta.oninput=()=>{ta.style.height="auto";ta.style.height=Math.min(160,ta.scrollHeight)+"px"});
 }
 
 /* ---------- messages ---------- */
