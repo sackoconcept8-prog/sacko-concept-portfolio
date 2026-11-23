@@ -420,7 +420,7 @@ async function entrer(){
   const voulu=new URLSearchParams(location.search).get("t");
   await ouvrir(voulu&&T.some(x=>x[0]===voulu)?voulu:T[0][0]);
   demarrerVeille();demarrerPWA();
-  if(moi.role==="agent"&&!modeTech)envoyerFile();
+  if(moi.role==="agent"&&!modeTech){envoyerFile();veilleAgent()}
   if(modeTech)barreTechnicien();
 }
 /* ---------- espace conseiller : rapports et recommandations au CEO ---------- */
@@ -931,6 +931,8 @@ async function vAgentAccueil(){
   $("#main").innerHTML=`<div class="head"><div><h1>Bonjour ${esc(monAgent.prenom||monAgent.nom)}</h1><p class="muted sm" style="margin:2px 0 0">${esc(monAgent.matricule)} · ${esc(monAgent.grade)}</p></div></div>${carte}${terrain}
   <div class="card"><h2>Mes derniers pointages</h2>${po.slice(0,10).map(p=>`<div class="line"><div class="grow"><b>${esc(fjourc(p.date_service))}</b> <span class="muted sm">· ${esc(S(p.site_id).nom)}</span></div><span class="sm">${hm(p.heure_arrivee)} → ${hm(p.heure_depart)}</span>${p.mode==="secours"?'<span class="pill p-amber">manuel</span>':""}${p.mode==="hors_ligne"?'<span class="pill p-amber">hors réseau</span>':""}</div>`).join("")||'<p class="muted sm" style="margin:0">Aucun pointage pour le moment.</p>'}</div>`;
   const arr=$("#ag-arr");if(arr)arr.onclick=()=>pointerArrivee(arr,vise,S(vise.site_id));
+  if(ouvert){demarrerSuivi(S(ouvert.site_id));if(mod("suivi_position")&&!$("#suivi-z"))$("#main .punch").insertAdjacentHTML("afterend",`<div class="idbox sm" id="suivi-z" style="margin:10px 0">📍 Suivi de position actif pendant votre service.</div>`)}else arreterSuivi();
+  if(mod("controle_surprise")&&!modeTech)etatNotifs().then(e=>{if(e!=="inactif"||$("#ntf-ag"))return;$("#main .head").insertAdjacentHTML("afterend",`<div class="card" id="ntf-ag" style="border-color:var(--amber)"><b>🔔 Activez les notifications</b><p class="muted sm" style="margin:4px 0 10px">Indispensable pour recevoir les contrôles de présence de votre direction.</p><button class="btn pri" id="ntf-ok">Activer</button></div>`);$("#ntf-ok").onclick=()=>busy($("#ntf-ok"),async()=>{await activerNotifs();$("#ntf-ag").remove()})}).catch(()=>{});
   if(siteTerrain&&siteTerrain.id)blocReleve(siteTerrain,!!ouvert).then(h=>{if(!h||!$("#main .punch")||$("#rel-z"))return;const t=$("#main .terrain")||$("#main .punch");t.insertAdjacentHTML("afterend",h);brancherReleve(siteTerrain)}).catch(()=>{});
   nouveautesAgent().then(n=>{if(!n.docs&&!n.msg)return;const c=document.createElement("div");c.className="card";
     c.innerHTML=`<h2>À lire</h2><div class="actions">${n.docs?`<button class="btn" data-go3="mesdocs">${n.docs} document(s) non lu(s)</button>`:""}${n.msg?`<button class="btn" data-go3="mesmsg">${n.msg} message(s) non lu(s)</button>`:""}</div>`;
@@ -1800,30 +1802,36 @@ function carteManquants(T,court){if(!T.manquants.length)return "";
 function brancherVolants(apres){$("#main").querySelectorAll("[data-envoi]").forEach(b=>b.onclick=()=>busy(b,async()=>{const [s,p,d]=b.dataset.envoi.split("|"),sel=$(`[data-vol="${b.dataset.envoi}"]`);
   must(await sb.from("plannings").insert({date_service:d,site_id:s,poste:p,agent_id:sel.value,type:"remplacement",note:"Envoyé depuis la salle de contrôle"}));toast("Agent volant affecté au site");await apres()}));
   $("#main").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>ouvrir(b.dataset.go))}
-async function vControle(){clearInterval(ctlTimer);const T=await etatTerrain(),act=sites.filter(s=>s.actif!==false);
+async function vControle(){clearInterval(ctlTimer);const T=await etatTerrain(),act=sites.filter(s=>s.actif!==false),S=mod("suivi_position")||mod("controle_surprise")?await donneesSuivi():{pos:[],alertes:[],ctl:[]};
   const parSite=act.map(s=>{const att=T.enCours.filter(x=>x.site_id===s.id),pres=att.filter(x=>x.pt).length,ma=T.manquants.filter(x=>x.site_id===s.id).length,so=T.sos.filter(x=>x.site_id===s.id).length;
     return {s,att:att.length,pres,ma,so,c:so?"#D2362B":ma?"#E07B00":att.length?"#14915A":"#9AA4B2",e:so?"SOS":ma?ma+" poste(s) non tenu(s)":att.length?"Tous en poste":"Pas de poste en cours"}});
   $("#main").innerHTML=`<div class="head"><div><h1>Carte en direct</h1><p class="muted sm" style="margin:2px 0 0">${esc(fjour(T.ds))} · <span id="ctl-h">${hm(new Date())}</span> · mise à jour automatique chaque minute</p></div><div class="actions"><button class="btn" id="ctl-fs">⛶ Plein écran</button></div></div>
   <div class="tiles"><div class="tile"><b>${act.length}</b><span class="muted sm">Sites actifs</span></div><div class="tile"><b class="ok-t">${T.enCours.filter(x=>x.pt).length}</b><span class="muted sm">Agents en poste</span></div><div class="tile"><b class="${T.manquants.length?"ko-t":""}">${T.manquants.length}</b><span class="muted sm">Postes non tenus</span></div><div class="tile"><b class="${T.sos.length?"ko-t":""}">${T.sos.length}</b><span class="muted sm">SOS en cours</span></div><div class="tile"><b>${T.inc.length}</b><span class="muted sm">Incidents du jour</span></div></div>
   ${T.sos.length?`<div class="card ctl-sos"><h2 style="color:#fff;margin:0 0 6px">🚨 ALERTE SOS</h2>${T.sos.map(x=>`<div class="sm">${esc(nomAg(AG_(x.agent_id)))} · ${esc(siteNom(x.site_id))} · ${hm(x.declenchee_le)}${x.latitude?` · <a style="color:#fff" target="_blank" rel="noopener" href="https://maps.google.com/?q=${x.latitude},${x.longitude}">position</a>`:""}</div>`).join("")}<button class="btn sm" style="margin-top:8px" data-go="incidents">Prendre en charge</button></div>`:""}
-  ${carteManquants(T,false)}
-  <div class="card" style="padding:0;overflow:hidden"><div id="ctl-map" style="height:440px"></div><div class="muted xs" style="padding:8px 14px"><span style="color:#14915A">📍</span> site couvert · <span style="color:#E07B00">📍</span> poste non tenu · <span style="color:#D2362B">📍</span> SOS · <span style="color:#1D5FD1">📍</span> agent en poste (lieu de son pointage)</div></div>
+  ${carteManquants(T,false)}${carteSuivi(S)}
+  <div class="card" style="padding:0;overflow:hidden"><div id="ctl-map" style="height:440px"></div><div class="muted xs" style="padding:8px 14px"><span style="color:#14915A">📍</span> site couvert · <span style="color:#E07B00">📍</span> poste non tenu · <span style="color:#D2362B">📍</span> SOS · <span style="color:#1D5FD1">📍</span> agent en poste · <span style="color:#8E24AA">📍</span> agent hors du site · <span style="color:#8A94A6">📍</span> position perdue</div></div>
   <div class="card"><h2>Sites en direct</h2>${parSite.sort((a,b)=>(b.so-a.so)||(b.ma-a.ma)).map(x=>`<div class="line"><span style="width:12px;height:12px;border-radius:50%;background:${x.c};flex:none"></span><div class="grow"><b>${esc(x.s.nom)}</b><div class="muted xs">${x.pres}/${x.att} agent(s) en poste</div></div><span class="sm" style="color:${x.c};font-weight:600">${esc(x.e)}</span></div>`).join("")||'<p class="muted sm" style="margin:0">Aucun site actif.</p>'}</div>`;
   brancherVolants(vControle);
+  $("#main").querySelectorAll("[data-atr]").forEach(b=>b.onclick=()=>busy(b,async()=>{must(await sb.from("alertes_terrain").update({statut:"Traitée",traitee_par:moi.id,traitee_le:new Date().toISOString()}).eq("id",b.dataset.atr));toast("Alerte traitée");await vControle()}));
+  if($("#cs-new"))$("#cs-new").onclick=()=>lancerControle(T);
   $("#ctl-fs").onclick=()=>{document.body.classList.toggle("tv");try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(_){}};
   try{if(!document.getElementById("lf-css")){const l=document.createElement("link");l.id="lf-css";l.rel="stylesheet";l.href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";document.head.appendChild(l)}
     await chargerJS("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",()=>window.L&&window.L.map);
     const pts=parSite.filter(x=>x.s.latitude&&x.s.longitude);if(ctlCarte){try{ctlCarte.remove()}catch(_){}}
     ctlCarte=L.map("ctl-map",{zoomControl:true});L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(ctlCarte);
     if(pts.length){const g=[];pts.forEach(x=>{const m=L.marker([x.s.latitude,x.s.longitude],{icon:epingle(x.c,x.so||x.ma?44:36,x.so)}).addTo(ctlCarte).bindPopup(`<b>${esc(x.s.nom)}</b><br>${x.pres}/${x.att} en poste<br>${esc(x.e)}`);g.push([x.s.latitude,x.s.longitude])});
-      T.enCours.filter(x=>x.pt&&x.pt.latitude&&!x.pt.heure_depart).forEach(x=>{L.marker([x.pt.latitude,x.pt.longitude],{icon:epinglePerso()}).addTo(ctlCarte).bindPopup(`<b>${esc(nomAg(AG_(x.agent_id)))}</b><br>Pointé à ${hm(x.pt.heure_arrivee)}${x.pt.distance_m!=null?" · à "+x.pt.distance_m+" m du site":""}`);g.push([x.pt.latitude,x.pt.longitude])});
+      T.enCours.filter(x=>x.pt&&!x.pt.heure_depart).forEach(x=>{const lv=S.pos.find(p=>p.agent_id===x.agent_id),vieux=lv&&(Date.now()-new Date(lv.maj_le))>20*6e4;
+        const la=lv?lv.latitude:x.pt.latitude,lo=lv?lv.longitude:x.pt.longitude;if(!la)return;
+        const c=lv&&lv.hors_site&&!vieux?"#8E24AA":vieux?"#8A94A6":"#1D5FD1";
+        const info=lv?(vieux?"Position perdue depuis "+hm(lv.maj_le):"Position à "+hm(lv.maj_le))+(lv.distance_m!=null?" · à "+lv.distance_m+" m du site":"")+(lv.hors_site&&!vieux?" · <b style='color:#8E24AA'>HORS DU SITE</b>":""):"Pointé à "+hm(x.pt.heure_arrivee)+(x.pt.distance_m!=null?" · à "+x.pt.distance_m+" m du site":"");
+        L.marker([la,lo],{icon:epinglePerso(c)}).addTo(ctlCarte).bindPopup(`<b>${esc(nomAg(AG_(x.agent_id)))}</b><br>${info}`);g.push([la,lo])});
       ctlCarte.fitBounds(g,{padding:[40,40],maxZoom:15})}
     else{ctlCarte.setView([6.1319,1.2228],12);$("#ctl-map").insertAdjacentHTML("beforeend",`<div style="position:absolute;z-index:500;left:12px;bottom:12px;background:#fff;padding:8px 12px;border-radius:10px;font-size:13px">Placez vos sites sur la carte (fiche du site → position) pour les voir ici.</div>`)}}
   catch(e){$("#ctl-map").innerHTML=`<div class="empty" style="margin:0">Carte indisponible : ${esc(e.message)}</div>`}
   ctlTimer=setInterval(()=>{if(tab!=="controle"||!$("#ctl-map"))return clearInterval(ctlTimer);if(!$("#modal").classList.contains("on"))vControle().catch(()=>{})},60000)}
 /* épingles de carte (icône de localisation) */
 function epingle(c,t,anim){const h=Math.round(t*1.3);return L.divIcon({className:"pin"+(anim?" pin-sos":""),iconSize:[t,h],iconAnchor:[t/2,h],popupAnchor:[0,-h+6],html:`<svg viewBox="0 0 24 31" width="${t}" height="${h}"><path d="M12 30.5S1.5 18.9 1.5 11.6A10.5 10.5 0 0 1 22.5 11.6C22.5 18.9 12 30.5 12 30.5z" fill="${c}" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="11.3" r="4.2" fill="#fff"/></svg>`})}
-function epinglePerso(){return L.divIcon({className:"pin",iconSize:[28,36],iconAnchor:[14,36],popupAnchor:[0,-32],html:`<svg viewBox="0 0 24 31" width="28" height="36"><path d="M12 30.5S1.5 18.9 1.5 11.6A10.5 10.5 0 0 1 22.5 11.6C22.5 18.9 12 30.5 12 30.5z" fill="#1D5FD1" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="8.6" r="2.6" fill="#fff"/><path d="M7.3 15.6c.6-2.4 2.4-3.6 4.7-3.6s4.1 1.2 4.7 3.6" fill="#fff"/></svg>`})}
+function epinglePerso(c){c=c||"#1D5FD1";return L.divIcon({className:"pin",iconSize:[28,36],iconAnchor:[14,36],popupAnchor:[0,-32],html:`<svg viewBox="0 0 24 31" width="28" height="36"><path d="M12 30.5S1.5 18.9 1.5 11.6A10.5 10.5 0 0 1 22.5 11.6C22.5 18.9 12 30.5 12 30.5z" fill="${c}" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="8.6" r="2.6" fill="#fff"/><path d="M7.3 15.6c.6-2.4 2.4-3.6 4.7-3.6s4.1 1.2 4.7 3.6" fill="#fff"/></svg>`})}
 /* ---------- 5. heures supplémentaires ---------- */
 let moisH="";
 async function vHeuresSup(){moisH=moisH||auj().slice(0,7);const ym=moisH,p=ag.parametres||{},hs=+p.heures_semaine||40,t1=+p.taux_hs1||15,t2=+p.taux_hs2||50,seuil=+p.seuil_hs1||8;
@@ -1971,6 +1979,48 @@ function brancherPrixSite(){const z=$("#s-px"),o=$("#s-opt"),mt=$("#s-mt");if(!z
   const calc=()=>{const pa=+z.value||0,J=+$("#s-bj").value||0,N=+$("#s-bn").value||0,op=o.value.split("\n").map(l=>+(l.split(/[;:=]/).pop()||"").replace(/[^\d.]/g,"")||0).reduce((a,b)=>a+b,0);
     const t=pa*(J+N)+op;$("#s-calc").textContent=pa||op?"Calcul : "+(pa?fm(pa)+" × "+(J+N)+" agent(s)":"")+(pa&&op?" + ":"")+(op?fm(op)+" d'options":"")+" = "+fm(t):"";if(pa||op)mt.value=Math.round(t)};
   [z,o,$("#s-bj"),$("#s-bn")].forEach(e=>e.addEventListener("input",calc));calc()}
+
+/* ---------- suivi de position pendant le service (agent) ---------- */
+let suiviW=null,suiviDernier=0,suiviPos=null,suiviSite=null;
+function arreterSuivi(){if(suiviW!=null){try{navigator.geolocation.clearWatch(suiviW)}catch(_){}suiviW=null}}
+function demarrerSuivi(site){if(!mod("suivi_position")||!navigator.geolocation||modeTech||!site||!site.id)return;suiviSite=site;if(suiviW!=null)return;
+  const envoyer=async(p,force)=>{const now=Date.now(),lat=p.coords.latitude,lng=p.coords.longitude,bouge=suiviPos?distance(lat,lng,suiviPos[0],suiviPos[1]):999;
+    if(!force&&now-suiviDernier<120000&&bouge<60)return;suiviDernier=now;suiviPos=[lat,lng];
+    const d=distance(lat,lng,suiviSite.latitude,suiviSite.longitude),hors=d!=null&&d>(+suiviSite.rayon_m||300)+100;
+    try{await sb.from("positions_live").upsert({agent_id:monAgent.id,site_id:suiviSite.id,latitude:lat,longitude:lng,precision_m:Math.round(p.coords.accuracy||0),distance_m:d,hors_site:hors,maj_le:new Date().toISOString()},{onConflict:"agent_id"})}catch(_){}
+    const z=$("#suivi-z");if(z)z.innerHTML=`📍 Suivi de position actif pendant votre service${d!=null?` · vous êtes à <b>${d} m</b> du site`:""}${hors?' · <b style="color:var(--red)">hors du site</b>':""}`;
+    if(hors){let last=0;try{last=+localStorage.getItem("hors-"+monAgent.id)||0}catch(_){}if(now-last>30*6e4){try{localStorage.setItem("hors-"+monAgent.id,String(now))}catch(_){}
+      try{await sb.from("alertes_terrain").insert({agent_id:monAgent.id,site_id:suiviSite.id,type:"Agent hors de son poste",detail:"À "+d+" m du site",latitude:lat,longitude:lng})}catch(_){}}}};
+  try{suiviW=navigator.geolocation.watchPosition(p=>envoyer(p,false),()=>{},{enableHighAccuracy:true,maximumAge:60000,timeout:30000})}catch(_){}
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&suiviW!=null)navigator.geolocation.getCurrentPosition(p=>envoyer(p,true),()=>{},{enableHighAccuracy:true,maximumAge:30000,timeout:20000})})}
+/* ---------- contrôle de présence surprise ---------- */
+let ctlVeille=null,ctlOuvert=null;
+async function verifierControle(){if(!mod("controle_surprise")||modeTech||!monAgent)return;let l=[];
+  try{l=must(await sb.from("controles_surprise").select("*").eq("agent_id",monAgent.id).eq("statut","En attente").gt("expire_le",new Date(Date.now()-60000).toISOString()).order("lance_le",{ascending:false}).limit(1))}catch(_){return}
+  const c=l[0];if(!c||ctlOuvert===c.id)return;ctlOuvert=c.id;
+  modal("🔔 Contrôle de présence",`<p style="margin-top:0;font-size:16px">Votre direction vérifie que vous êtes à votre poste.<br><b>Répondez avant ${hm(c.expire_le)}.</b></p><p class="muted sm">Votre position et une photo seront envoyées.</p><button class="btn pri bigbtn" id="ct-ok" style="width:100%">Je suis à mon poste</button>`,"");
+  $("#ct-ok").onclick=()=>busy($("#ct-ok"),async()=>{let pos=null;try{pos=await position()}catch(_){}
+    let photo=null;
+    if(mod("selfie_pointage")){const b=await prendreSelfie();if(b){const p=ag.id+"/pointages/"+monAgent.id+"/controle-"+Date.now()+".jpg";try{const u=await sb.storage.from("documents_agences").upload(p,b,{contentType:"image/jpeg"});if(!u.error)photo=p}catch(_){}}}
+    const r=must(await sb.rpc("repondre_controle",{p_id:c.id,p_lat:pos?pos.lat:null,p_lng:pos?pos.lng:null,p_photo:photo}));closeModal();ctlOuvert=null;
+    toast(r.statut==="Présent"?"Merci, présence confirmée":"Réponse envoyée : vous semblez loin du site",r.statut!=="Présent")})}
+function veilleAgent(){clearInterval(ctlVeille);if(moi.role!=="agent"||modeTech)return;verifierControle();ctlVeille=setInterval(()=>{if(document.visibilityState==="visible")verifierControle()},45000);
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")verifierControle()})}
+async function lancerControle(T){const enPoste=T.enCours.filter(x=>x.pt&&!x.pt.heure_depart);if(!enPoste.length)return toast("Aucun agent en poste en ce moment.",true);
+  modal("Contrôle de présence surprise",`<p class="muted sm" style="margin-top:0">Les agents choisis reçoivent une notification : ils ont <b>10 minutes</b> pour confirmer leur présence avec leur position et une photo.</p>
+  <div class="field"><label class="f">Qui contrôler ?</label><select class="input" id="cs-q"><option value="hasard">3 agents au hasard</option><option value="tous">Tous les agents en poste (${enPoste.length})</option>${[...new Set(enPoste.map(x=>x.site_id))].map(s=>`<option value="s:${s}">Tout le site ${esc(siteNom(s))}</option>`).join("")}${enPoste.map(x=>`<option value="a:${x.agent_id}">${esc(nomAg(AG_(x.agent_id)))} · ${esc(siteNom(x.site_id))}</option>`).join("")}</select></div>`,`<button class="btn" id="cs-no">Annuler</button><button class="btn pri" id="cs-ok">Lancer le contrôle</button>`);
+  $("#cs-no").onclick=closeModal;$("#cs-ok").onclick=()=>busy($("#cs-ok"),async()=>{const q=$("#cs-q").value;
+    let l=q==="tous"?enPoste:q==="hasard"?enPoste.slice().sort(()=>Math.random()-.5).slice(0,3):q.startsWith("s:")?enPoste.filter(x=>x.site_id===q.slice(2)):enPoste.filter(x=>x.agent_id===q.slice(2));
+    must(await sb.from("controles_surprise").insert(l.map(x=>({agent_id:x.agent_id,site_id:x.site_id}))));closeModal();toast(l.length+" agent(s) contrôlé(s) · réponses attendues sous 10 min");await vControle()})}
+async function donneesSuivi(){const ds=auj();
+  const [p,a,c]=await Promise.all([sb.from("positions_live").select("*").then(r=>r.data||[]).catch(()=>[]),sb.from("alertes_terrain").select("*").eq("statut","Nouvelle").order("created_at",{ascending:false}).limit(30).then(r=>r.data||[]).catch(()=>[]),sb.from("controles_surprise").select("*").gte("lance_le",ds+"T00:00:00").order("lance_le",{ascending:false}).then(r=>r.data||[]).catch(()=>[])]);
+  /* contrôles expirés sans réponse : on les clôt et on crée l'alerte */
+  for(const x of c.filter(x=>x.statut==="En attente"&&new Date(x.expire_le)<new Date())){x.statut="Sans réponse";
+    try{await sb.from("controles_surprise").update({statut:"Sans réponse"}).eq("id",x.id).eq("statut","En attente");await sb.from("alertes_terrain").insert({agent_id:x.agent_id,site_id:x.site_id,type:"Contrôle sans réponse",detail:"Contrôle lancé à "+hm(x.lance_le)})}catch(_){}}
+  return {pos:p,alertes:a,ctl:c}}
+function carteSuivi(S){const ST={"En attente":"p-amber",Présent:"p-green","Hors site":"p-red","Sans réponse":"p-red"};
+  return `${S.alertes.length?`<div class="card" style="border-color:var(--red)"><h2 style="color:var(--red)">⚠ Alertes terrain (${S.alertes.length})</h2>${S.alertes.map(x=>`<div class="line"><div class="grow"><b>${esc(x.type)}</b> · ${esc(nomAg(AG_(x.agent_id)))}<div class="muted xs">${esc(siteNom(x.site_id))} · ${fdt(x.created_at)}${x.detail?" · "+esc(x.detail):""}${x.latitude?` · <a target="_blank" rel="noopener" href="https://maps.google.com/?q=${x.latitude},${x.longitude}">voir la position</a>`:""}</div></div><button class="btn sm" data-atr="${x.id}">Traitée</button></div>`).join("")}</div>`:""}
+  ${mod("controle_surprise")?`<div class="card"><div class="actions" style="justify-content:space-between"><h2 style="margin:0">Contrôles surprise du jour</h2><button class="btn sm pri" id="cs-new">🔔 Lancer un contrôle</button></div>${S.ctl.map(x=>`<div class="line"><div class="grow"><b>${esc(nomAg(AG_(x.agent_id)))}</b><div class="muted xs">${esc(siteNom(x.site_id))} · lancé à ${hm(x.lance_le)}${x.repondu_le?" · répondu à "+hm(x.repondu_le):""}${x.distance_m!=null?" · à "+x.distance_m+" m du site":""}${x.photo_path?` · <a href="#" data-selfie="${esc(x.photo_path)}">📷 photo</a>`:""}</div></div><span class="pill ${ST[x.statut]||"p-grey"}">${esc(x.statut)}</span></div>`).join("")||'<p class="muted sm" style="margin:8px 0 0">Aucun contrôle aujourd\'hui. Un contrôle surprise par nuit suffit à garder tout le monde vigilant.</p>'}</div>`:""}`}
 
 /* ---------- demandes des clients ---------- */
 async function vDemandesClients(){
