@@ -16,6 +16,7 @@ const P_TPL = {
 };
 P_TPL.relance2={n:"Relance 2",d:"Avec le lien de la démo",t:"Bonjour,\nJe me permets de vous relancer au sujet de SécuriPro.\nVous pouvez tester la démo vous-même, gratuitement : https://www.sackoconcept.com/securipro/\nDites-moi ce que vous en pensez.\nHawa Sacko · SACKO CONCEPT"};
 P_TPL.relance3={n:"Dernière relance",d:"Dernier message, sans insister",t:"Bonjour,\nJe ne veux pas vous déranger davantage. Si la gestion de vos agents redevient un sujet, la démo de SécuriPro reste ouverte : https://www.sackoconcept.com/securipro/\nBelle continuation à {agence}.\nHawa Sacko · SACKO CONCEPT"};
+P_TPL.ci={n:"Côte d'Ivoire",d:"Agences ivoiriennes : preuves pour les clients et les appels d'offres",t:"Bonjour,\nJ'aimerais m'entretenir avec la direction de {agence} au sujet du suivi de vos agents.\nNous avons conçu SécuriPro, un logiciel pour les sociétés de gardiennage : pointage GPS, rondes par QR code, contrôle de présence de nuit et paie avec la CNPS.\nVos clients reçoivent la preuve de chaque ronde : un vrai atout pour garder vos contrats et remporter les appels d'offres des banques et des entreprises.\nJe peux vous le présenter en 15 minutes. Démo : https://www.sackoconcept.com/securipro/\nHawa Sacko · SACKO CONCEPT"};
 /* ---------- Une liste de prospects par application (colonne « Application » de la feuille) ---------- */
 const P_REL_KEY = "sc_pros_rel";
 const P_APPS = {
@@ -36,7 +37,7 @@ const P_TPLX = {
   nettopro:pMk("nettopro","la gestion de vos agents et de vos sites","les sociétés de nettoyage","planning des agents, pointage, contrôles qualité, devis et factures","managing your cleaning teams","a software for cleaning companies, with staff scheduling, check-in, quality checks, quotes and invoices")
 };
 function pApp(r){const a=String(r.Application||"").toLowerCase();return a.includes("btp")?"btppro":a.includes("nett")?"nettopro":"securipro"}
-function pTplBase(k,app){return app&&app!=="securipro"?P_TPLX[app][k]:P_TPL[k].t}
+function pTplBase(k,app){return app&&app!=="securipro"?(P_TPLX[app][k]||P_TPL[k].t):P_TPL[k].t}
 function pTplKey(k,app){return app&&app!=="securipro"?app+":"+k:k}
 function pSubj(r,tk){const a=P_APPS[pApp(r)];return tk==="en"?a.en:a.subj}
 function pWaiting(r){return ["Contacté","Relancé"].includes(r.Statut)}
@@ -48,7 +49,7 @@ function pTpl(k,app){const o=pJSON(P_TPL_KEY);return o[pTplKey(k,app)]||pTplBase
 function pContactAt(r){return pJSON(P_DONE_KEY)[pKey(r)]}
 function pKey(r){return digits(r["Téléphone"])||r.Agence}
 function pDue(r){const t=pContactAt(r);return pWaiting(r)&&!!t&&(Date.now()-t)>=7*864e5&&pRel(r)<3}
-function pAuto(r){if(pWaiting(r))return pRelTk(r);if(/Buea|Bamenda/i.test(r.Ville||""))return"en";return r.Taille==="Grande"?"grandes":"premier"}
+function pAuto(r){if(pWaiting(r))return pRelTk(r);if(/Buea|Bamenda/i.test(r.Ville||""))return"en";if(r.Pays==="Côte d'Ivoire"&&pApp(r)==="securipro")return"ci";return r.Taille==="Grande"?"grandes":"premier"}
 function pWa(r){if(r.Statut==="Pas sur WhatsApp")return"";return digits(r.WhatsApp)||(r.Type==="Mobile"?digits(r["Téléphone"]):"")}
 function pMobile(r){return r.Type==="Mobile"?digits(r["Téléphone"]):digits(r.WhatsApp)}
 function pFb(r){const v=String(r.Facebook||"").trim();if(!v)return"";return /^https?:/.test(v)?v:"https://www.facebook.com/"+v.replace(/^@/,"")}
