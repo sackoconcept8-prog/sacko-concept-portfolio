@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ilano — Sign in</title>
 <meta name="theme-color" content="#13734B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="ilano-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ilano">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23EAF6EF'/%3E%3Crect x='26' y='26' width='12' height='28' rx='4' fill='%231B2A4A'/%3E%3Crect x='26.5' y='9' width='11' height='11' rx='2' transform='rotate(45 32 14.5)' fill='%231FA36B'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
@@ -202,6 +206,7 @@ tr:last-child td{border-bottom:0}
   <aside class="menu">
     <div class="marque"><img id="m-logo" alt=""><span id="m-nom"></span></div>
     <nav id="nav"></nav>
+    <button class="btn sec cache" id="installer" style="width:100%;margin-bottom:12px">⬇ Installer l'application</button>
     <div class="moi"><b id="moi-nom"></b><small id="moi-role"></small><br><button class="btn lien" id="deco" style="padding:6px 0">Se déconnecter</button></div>
   </aside>
   <main class="contenu" id="contenu"></main>
@@ -308,7 +313,7 @@ const I18N={
 "Pays du numéro de paiement":"Country of the payment number","Numéro de téléphone (Mobile Money ou contact)":"Phone number (Mobile Money or contact)",
 "sans l'indicatif":"without country code","Payer maintenant":"Pay now","Paiement impossible":"Payment failed","Identité de l'entreprise":"Company identity",
 "Couleur principale":"Main color","Adresse":"Address","Statut :":"Status:","Suspendu":"Suspended","Résilié":"Cancelled","Logiciels :":"Apps:",
-"Contacter le support":"Contact support","Enregistré ✓":"Saved ✓"
+"Contacter le support":"Contact support","Enregistré ✓":"Saved ✓","⬇ Installer l'application":"⬇ Install the app"
 };
 const PAYS_EN={"Bénin":"Benin","Mali":"Mali","Togo":"Togo","Côte d'Ivoire":"Côte d’Ivoire","Sénégal":"Senegal","Guinée":"Guinea","Cameroun":"Cameroon","Gabon":"Gabon","Congo":"Congo","RD Congo":"DR Congo","France":"France","États-Unis":"United States","Burkina Faso":"Burkina Faso","Niger":"Niger"};
 const I18P=[
@@ -813,6 +818,9 @@ function vReglages(){
 /* ============ Lancement ============ */
 sb.auth.onAuthStateChange((ev)=>{if(ev==='PASSWORD_RECOVERY'){$('#v-app').classList.add('cache');$('#v-auth').classList.remove('cache');
   $('#f-cnx').classList.add('cache');$('#f-ins').classList.add('cache');$('.onglets').classList.add('cache');$('#f-reset').classList.remove('cache')}});
+let _pi=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();_pi=e;$('#installer').classList.remove('cache')});
+$('#installer').onclick=async()=>{if(!_pi)return;_pi.prompt();await _pi.userChoice;_pi=null;$('#installer').classList.add('cache')};
+window.addEventListener('appinstalled',()=>$('#installer').classList.add('cache'));
 appliquerLangue();$('#i-lang').value=LANG;if(LANG==='en')$('#i-dev').value='USD';
 (async()=>{const{data:{session}}=await sb.auth.getSession();
   if(session&&!location.hash.includes('type=recovery'))demarrer();else montrerAuth()})();

@@ -1,0 +1,28 @@
+{
+ "name": "Ilano",
+ "short_name": "Ilano",
+ "description": "Your business workspace — stock, sales and team.",
+ "start_url": "/plateforme/",
+ "scope": "/plateforme/",
+ "display": "standalone",
+ "background_color": "#FBFAF6",
+ "theme_color": "#13734B",
+ "icons": [
+  {
+   "src": "ilano-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "ilano-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "ilano-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
