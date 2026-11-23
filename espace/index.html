@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" id="apple-ic" href="../assets/sacko-logo-vert-192.png">
 <script>
 /* Application installable au nom de l'agence : icône et nom de l'agence sur l'écran d'accueil ou le bureau */
-const APPS_AGENCES={"agence-speciale":{nom:"Agence Spéciale",ios:"/agence-speciale/logo-as2-ios-180.png"},"cdk-securite":{nom:"CDK Sécurité",ios:"/cdk-group/logo-cdk-ios-180.png"}};
+const APPS_AGENCES={"agence-speciale":{nom:"Agence Spéciale",ios:"/agence-speciale/logo-as2-ios-180.png"},"cdk-securite":{nom:"CDK Groupe Sécurité",ios:"/cdk-group/logo-cdk-ios-180.png"}};
 (function(){let sl=(new URLSearchParams(location.search).get("a")||document.querySelector('meta[name="agence-slug"]').content||"").toLowerCase().replace(/[^a-z0-9-]/g,"");try{if(!sl)sl=localStorage.getItem("espace-slug")||""}catch(_){}
   const A=APPS_AGENCES[sl];if(!A)return;
   document.querySelector('link[rel="manifest"]').href="manifest-"+sl+".webmanifest";
@@ -73,9 +73,9 @@ body.consult :is(#tr-ouv,#tr-vir,[data-rempl],[data-delrempl],[data-abs],[data-a
 .ctl-sos{background:#D2362B;color:#fff;border-color:#D2362B;animation:clign 1.2s infinite}@keyframes clign{50%{opacity:.75}}
 body.tv .top,body.tv #side,body.tv #tabs,body.tv #menu-btn{display:none!important}body.tv #layout{display:block}body.tv #main{max-width:none;padding:18px 26px}body.tv #ctl-map{height:62vh!important}
 .grp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}.grp.off{opacity:.72}.grp-i{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:var(--bg);flex:none}
-.stars button{background:none;border:0;font-size:30px;cursor:pointer;color:#cfd6e0;padding:0 3px}.stars button.on{color:#E5A500}.tiles.mt .tile b{font-size:20px;white-space:nowrap}
+.stars button{background:none;border:0;font-size:30px;cursor:pointer;color:#cfd6e0;padding:0 3px}.stars button.on{color:#E5A500}.tiles.mt .tile b{font-size:clamp(16px,1.5vw,20px)}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
-.tile b{display:block;font-size:24px;white-space:nowrap}
+.tile{min-width:0}.tile b{display:block;font-size:clamp(17px,1.7vw,24px);line-height:1.2;white-space:normal;overflow-wrap:break-word}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
 .card h2{font-size:17px;margin-bottom:8px}
 .line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:11px 0}
@@ -195,7 +195,7 @@ body.tv .top,body.tv #side,body.tv #tabs,body.tv #menu-btn{display:none!importan
 .carte .ti b{display:block;font-size:17px;letter-spacing:2.6px;font-weight:800;line-height:1.1}
 .carte .ti span{display:block;color:#c8971f;font-size:9.5px;letter-spacing:1.8px;font-weight:700;margin-top:5px}
 .carte .ti i{display:flex;height:2.5px;width:150px;margin:6px auto 0}.carte .ti i u{flex:1}.carte .ti i u:nth-child(1){background:#13213a}.carte .ti i u:nth-child(2){background:#c8971f}.carte .ti i u:nth-child(3){background:#8a94a6}
-.carte .wm{position:absolute;left:47%;top:58%;width:120px;height:160px;transform:translate(-50%,-50%);opacity:.1;object-fit:contain}
+.carte .wm{position:absolute;left:47%;top:58%;width:120px;height:160px;transform:translate(-50%,-50%);opacity:.1;object-fit:contain}.carte.wm-c .wm{left:50%;top:50%;width:130px;height:130px}.carte.long .ti b{font-size:14px!important;letter-spacing:1.6px}
 .carte .ch{position:absolute;left:18px;top:94px;width:255px;font-size:9.6px;line-height:1.25}
 .carte .ch div{margin-bottom:8.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.carte .ch em{font-style:normal;color:#3d4a5e;font-weight:500}.carte .ch strong{font-weight:800;text-transform:uppercase;letter-spacing:.3px}
 .carte .ch .or{color:#c8971f}
@@ -1023,11 +1023,12 @@ const champCarte=k=>((ag&&ag.parametres||{}).carte_champs||{})[k]!==false;
 function carteHTML(a,photo){const p=ag.parametres||{},nomA=esc(String(ag.nom_agence||"").toUpperCase()),lg=(p.logo_carte||ag.logo_url)?esc(p.logo_carte||ag.logo_url):"";
   const url=location.origin+location.pathname+"?verif="+a.id,qr=window.qrcode?qrSVG(url):"";
   const ini=esc(((a.prenom||" ")[0]+(a.nom||" ")[0]).toUpperCase());
-  const recto=`<div class="carte face-recto"><div class="bh"></div>${lg?`<img class="wm" src="${lg}" alt="" crossorigin="anonymous"><img class="lg" src="${lg}" alt="" crossorigin="anonymous">`:""}<div class="qr">${qr}</div>
+  const cl=(ag.slug!=="agence-speciale"?" wm-c":"")+(String(ag.nom_agence||"").length>14?" long":"");
+  const recto=`<div class="carte face-recto${cl}"><div class="bh"></div>${lg?`<img class="wm" src="${lg}" alt="" crossorigin="anonymous"><img class="lg" src="${lg}" alt="" crossorigin="anonymous">`:""}<div class="qr">${qr}</div>
     <div class="ti"><b>${nomA}</b><span>CARTE PROFESSIONNELLE</span><i><u></u><u></u><u></u></i></div>
     <div class="ch"><div><em>Nom :</em> <strong>${esc(a.nom||"")}</strong></div><div><em>Prénom :</em> <strong>${esc(a.prenom||"")}</strong></div><div><em>Fonction :</em> <strong class="or">${esc(a.fonction||a.grade||"")}</strong></div><div><em>Matricule :</em> <strong>${esc(a.matricule)}</strong></div>${champCarte("telephone")?`<div><em>Contact :</em> <strong>${esc(a.telephone||"—")}</strong></div>`:""}</div>
     ${photo?`<img class="ph" src="${photo}" alt="">`:`<div class="phv">${ini}</div>`}<div class="bb">CARTE PROFESSIONNELLE STRICTEMENT PERSONNELLE</div></div>`;
-  const verso=`<div class="carte face-verso"><div class="bh"></div>${lg?`<img class="wm" src="${lg}" alt="" crossorigin="anonymous"><img class="lg" src="${lg}" alt="" crossorigin="anonymous" style="width:44px;height:62px">`:""}
+  const verso=`<div class="carte face-verso${cl}"><div class="bh"></div>${lg?`<img class="wm" src="${lg}" alt="" crossorigin="anonymous"><img class="lg" src="${lg}" alt="" crossorigin="anonymous" style="width:44px;height:62px">`:""}
     <div class="ti" style="top:24px"><b style="font-size:14px">${nomA}</b><span>${esc(p.forme_juridique||ag.raison_sociale||"SÉCURITÉ ET GARDIENNAGE")}</span></div>
     <div class="vs"><div class="g"><div><em>N° de carte</em><strong>${esc(a.matricule)}</strong></div>${champCarte("groupe_sanguin")?`<div><em>Groupe sanguin</em><strong>${esc(a.groupe_sanguin||"—")}</strong></div>`:""}${champCarte("delivree")?`<div><em>Délivrée le</em><strong>${fd(auj())}</strong></div>`:""}${champCarte("validite")?`<div><em>Valable jusqu'au</em><strong>${a.carte_pro_expiration?fd(a.carte_pro_expiration):"—"}</strong></div>`:""}${champCarte("urgence")?`<div style="grid-column:span 2"><em>En cas d'urgence</em><strong>${esc(a.contact_urgence||"—")}</strong></div>`:""}</div>
     <div class="enc">Cette carte est la propriété de ${esc(ag.nom_agence)}. Elle doit être restituée en fin de contrat. En cas de perte, merci de la remettre à : ${esc([...new Set([p.adresse_siege||ag.adresse,ag.ville].filter(Boolean))].join(", ")||ag.nom_agence)}${(p.telephone_contact||ag.telephone)?" · Tél. "+esc(p.telephone_contact||ag.telephone):""}.</div></div>

@@ -1,8 +1,8 @@
 {
   "id": "/espace/?a=cdk-securite",
-  "name": "CDK Sécurité",
-  "short_name": "CDK Sécurité",
-  "description": "Logiciel de gestion de CDK Sécurité : pointage, rondes, main courante, RH, paie, facturation et comptabilité.",
+  "name": "CDK Groupe Sécurité",
+  "short_name": "CDK Groupe Sécurité",
+  "description": "Logiciel de gestion de CDK Groupe Sécurité : pointage, rondes, main courante, RH, paie, facturation et comptabilité.",
   "start_url": "/espace/?a=cdk-securite",
   "scope": "/espace/",
   "display": "standalone",
