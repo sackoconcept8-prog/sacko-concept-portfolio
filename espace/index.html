@@ -141,6 +141,7 @@ body.tv .top,body.tv #side,body.tv #tabs,body.tv #menu-btn{display:none!importan
 .doc .sig{display:flex;justify-content:space-between;gap:20px;margin-top:30px;font-size:13px}
 .doc h4{margin:14px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--p)}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;padding:0 5px;margin-left:4px}
+.rm-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.rm-h{font-size:11px;color:var(--muted);text-align:center;font-weight:600}.rm-j{border:1px solid var(--line);border-radius:8px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;cursor:pointer;min-height:54px;background:#fff}.rm-j b{font-size:14px}.rm-j span{font-size:9px;color:var(--muted);line-height:1.1;text-align:center}.rm-j input{margin:0 0 2px}.rm-j:has(input:checked){background:#E7F5EE;border-color:#14915A}.rm-rep{background:#F6F7F9}.rm-pointe{background:#E7F5EE;opacity:.8;cursor:default}.rm-absent{background:#FDECEC;cursor:default}.rm-futur{opacity:.35;cursor:default}
 .fp-t{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:8px}.fp-t>div{background:var(--bg);border-radius:10px;padding:8px 10px}.fp-t b{display:block;font-size:18px}.fp-t span{font-size:12px;color:var(--muted)}.fp-l{max-height:320px;overflow:auto}
 .an-sv{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:6px}.an-sv label,.an-opt{display:flex;gap:6px;align-items:center;font-size:14px}.an-opt{margin:4px 0}.an-new{border-color:var(--amber)}.an-o{font-size:16px}.an-t{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 4px;font-size:15px}.an-r{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;display:flex;flex-direction:column;gap:8px}.an-ri{background:var(--bg);border-radius:10px;padding:8px 10px;font-size:14px;overflow-wrap:anywhere;white-space:pre-wrap}.an-f{display:flex;gap:8px;align-items:flex-end;margin-top:10px}.an-f textarea{flex:1;resize:none;min-height:38px}
 .qrp{position:fixed;inset:0;z-index:10050;background:#fff;overflow:auto;padding:0 0 30px}.qrp-bar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;flex-wrap:wrap;z-index:1}
@@ -830,7 +831,7 @@ async function presenceAgent(a){const ym=faMois=faMois||auj().slice(0,7),m1=ym+"
   const R_=pt.filter(retard),nj=ab.filter(x=>!x.justifiee).length,sansDep=pt.filter(p=>!p.heure_depart&&p.date_service<auj()).length;
   const ev=[...pt.map(p=>({d:p.date_service,p})),...ab.map(x=>({d:x.date_absence,x}))].sort((u,v)=>v.d.localeCompare(u.d));
   const rouvrir=()=>{ficheAgent(a.id)};
-  z().innerHTML=`<div class="actions" style="margin-bottom:10px"><input class="input" type="month" id="fp-m" value="${ym}" style="width:auto">${dir?`<button class="btn sm" id="fp-add">+ Ajouter une présence</button><button class="btn sm" id="fp-abs">Déclarer une absence</button>`:""}</div>
+  z().innerHTML=`<div class="actions" style="margin-bottom:10px"><input class="input" type="month" id="fp-m" value="${ym}" style="width:auto">${dir?`<button class="btn sm pri" id="fp-mois">📅 Remplir le mois</button><button class="btn sm" id="fp-add">+ Ajouter une présence</button><button class="btn sm" id="fp-abs">Déclarer une absence</button>`:""}</div>
     <div class="fp-t"><div><b>${pt.length}</b><span>jour(s) pointé(s)</span></div><div><b class="${R_.length?"wa-t":""}">${R_.length}</b><span>retard(s)${R_.length?" · "+R_.reduce((t,p)=>t+retard(p),0)+" min":""}</span></div><div><b class="${nj?"ko-t":""}">${nj}</b><span>absence(s) non justifiée(s)</span></div><div><b>${ab.length-nj}</b><span>absence(s) justifiée(s)</span></div>${sansDep?`<div><b class="wa-t">${sansDep}</b><span>sans départ pointé</span></div>`:""}</div>
     ${ev.length?`<div class="fp-l">${ev.map(e=>{if(e.p){const p=e.p,r=retard(p);return `<div class="line" style="padding:7px 0"><div class="grow"><b class="sm">${esc(fjourc(p.date_service))}</b> <span class="muted xs">· ${esc(POSTE(p.poste).libelle.toLowerCase())} · ${esc(siteNom(p.site_id))}</span>
         <div class="sm">Arrivée ${p.heure_arrivee?hm(p.heure_arrivee):"—"} · départ ${p.heure_depart?hm(p.heure_depart):"<span class='wa-t'>non pointé</span>"}${p.mode==="secours"||/manuel|direction/i.test(p.note||"")?' <span class="muted xs">· saisie manuelle</span>':""}</div></div>
@@ -844,6 +845,7 @@ async function presenceAgent(a){const ym=faMois=faMois||auj().slice(0,7),m1=ym+"
   Q("data-fpj",b=>busy(b,async()=>{const x=ab.find(y=>y.id===b.dataset.fpj);must(await sb.from("absences").update({justifiee:!x.justifiee}).eq("id",x.id));toast("Absence mise à jour");await presenceAgent(a)}));
   Q("data-fpd",b=>busy(b,async()=>{must(await sb.from("absences").delete().eq("id",b.dataset.fpd));toast("Absence retirée");await presenceAgent(a)}));
   $("#fp-abs").onclick=()=>declarerAbsence(a.id,ym===auj().slice(0,7)?auj():m1,async()=>rouvrir());
+  $("#fp-mois").onclick=()=>remplirMois(a,ym,pt,ab,rouvrir);
   $("#fp-add").onclick=()=>{const ss=sites.filter(x=>x.actif!==false);
     modal("Ajouter une présence · "+esc(nomAg(a)),`<div class="row"><div class="field"><label class="f">Date</label><input class="input" type="date" id="fa-d" value="${ym===auj().slice(0,7)?auj():m1}" max="${auj()}"></div><div class="field"><label class="f">Quart</label><select class="input" id="fa-q">${CODES().map(c=>`<option value="${esc(c)}" ${c===a.poste?"selected":""}>${esc(POSTE(c).libelle)} · ${POSTE(c).debut}–${POSTE(c).fin}</option>`).join("")}</select></div></div>
       <div class="field"><label class="f">Site</label><select class="input" id="fa-s">${ss.map(x=>`<option value="${x.id}" ${x.id===a.site_id?"selected":""}>${esc(x.nom)}</option>`).join("")}</select></div>`,
@@ -851,6 +853,31 @@ async function presenceAgent(a){const ym=faMois=faMois||auj().slice(0,7),m1=ym+"
     $("#fa-x").onclick=rouvrir;$("#fa-go").onclick=()=>{const d=$("#fa-d").value;if(!d)return toast("Choisissez la date.",true);if(!$("#fa-s").value)return toast("Ajoutez d'abord un site.",true);
       if(pt.some(p=>p.date_service===d&&p.poste===$("#fa-q").value))return toast("Un pointage existe déjà ce jour-là pour ce quart : utilisez « Corriger ».",true);
       saisieManuelle(d,{agent_id:a.id,site_id:$("#fa-s").value,poste:$("#fa-q").value},rouvrir)}};
+}
+/* saisie groupée : cocher dans un calendrier les jours travaillés du mois */
+function remplirMois(a,ym,pt,ab,apres){const m1=ym+"-01",nj=+finMois(ym).slice(8),ss=sites.filter(x=>x.actif!==false),lim=auj();
+  if(!ss.length)return toast("Ajoutez d'abord un site.",true);
+  const jours=[...Array(nj)].map((_,i)=>ajout(m1,i)),dec=(dowOf(m1)+6)%7;
+  const etat=d=>d>lim?"futur":ab.some(x=>x.date_absence===d)?"absent":pt.some(p=>p.date_service===d)?"pointe":"";
+  modal("Remplir le mois · "+esc(nomAg(a)),`<p class="muted sm" style="margin-top:0">Cochez les jours où <b>${esc(nomAg(a))}</b> a travaillé en ${esc(fmo(ym))}. Les jours déjà pointés ou en absence ne sont pas modifiés.</p>
+    <div class="row"><div class="field"><label class="f">Quart</label><select class="input" id="rm-q">${CODES().map(c=>`<option value="${esc(c)}" ${c===a.poste?"selected":""}>${esc(POSTE(c).libelle)}</option>`).join("")}</select></div>
+      <div class="field"><label class="f">Arrivée</label><input class="input" type="time" id="rm-a"></div><div class="field"><label class="f">Départ</label><input class="input" type="time" id="rm-d"></div></div>
+    <div class="field"><label class="f">Site</label><select class="input" id="rm-s">${ss.map(x=>`<option value="${x.id}" ${x.id===a.site_id?"selected":""}>${esc(x.nom)}</option>`).join("")}</select></div>
+    <div class="actions" style="margin-bottom:8px"><button class="btn sm" type="button" id="rm-all">Tout cocher (sauf repos)</button><button class="btn sm" type="button" id="rm-none">Tout décocher</button><span class="muted sm" id="rm-n" style="margin-left:auto"></span></div>
+    <div class="rm-cal">${["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].map(j=>`<div class="rm-h">${j}</div>`).join("")}${'<div></div>'.repeat(dec)}${jours.map(d=>{const e=etat(d),rep=a.jour_repos!=null&&+a.jour_repos===dowOf(d);
+      return `<label class="rm-j ${e?"rm-"+e:""} ${rep?"rm-rep":""}" title="${e==="pointe"?"Déjà pointé":e==="absent"?"Absence enregistrée":e==="futur"?"Jour à venir":rep?"Jour de repos":""}"><input type="checkbox" value="${d}" ${e?"disabled":""}><b>${+d.slice(8)}</b><span>${e==="pointe"?"✓ pointé":e==="absent"?"absent":rep?"repos":""}</span></label>`}).join("")}</div>`,
+    `<button class="btn" id="rm-no">Annuler</button><button class="btn pri" id="rm-ok">Enregistrer</button>`);
+  const q=$("#rm-q"),hs=()=>{$("#rm-a").value=POSTE(q.value).debut;$("#rm-d").value=POSTE(q.value).fin};q.onchange=hs;hs();
+  const cases=()=>[...document.querySelectorAll(".rm-cal input:not(:disabled)")],compte=()=>{const n=cases().filter(c=>c.checked).length;$("#rm-n").textContent=n+" jour(s) coché(s)";$("#rm-ok").disabled=!n};
+  cases().forEach(c=>c.onchange=compte);compte();
+  $("#rm-all").onclick=()=>{cases().forEach(c=>c.checked=!(a.jour_repos!=null&&+a.jour_repos===dowOf(c.value)));compte()};
+  $("#rm-none").onclick=()=>{cases().forEach(c=>c.checked=false);compte()};
+  $("#rm-no").onclick=apres;
+  $("#rm-ok").onclick=()=>busy($("#rm-ok"),async()=>{const ds=cases().filter(c=>c.checked).map(c=>c.value),c=q.value,h1=$("#rm-a").value,h2=$("#rm-d").value;
+    if(!ds.length)throw new Error("Cochez au moins un jour.");if(!h1||!h2)throw new Error("Indiquez les heures d'arrivée et de départ.");
+    const rows=ds.map(d=>{const deb=new Date(d+"T"+h1+":00"),fin=new Date(d+"T"+h2+":00");if(fin<=deb)fin.setDate(fin.getDate()+1);
+      return {agent_id:a.id,site_id:$("#rm-s").value,poste:c,date_service:d,heure_arrivee:deb.toISOString(),heure_depart:fin.toISOString(),mode:"secours",note:"Saisie groupée par la direction"}});
+    must(await sb.from("pointages").insert(rows));toast(rows.length+" jour(s) de présence enregistré(s)");await apres()});
 }
 function ficheAgent(id){const a=agents.find(x=>x.id===id);if(!a)return closeModal();const c=comptes.find(x=>x.agent_id===id),st=stA(a),nomC=[a.prenom,a.nom].filter(Boolean).join(" ");
   const L=(k,v)=>`<div class="line" style="padding:7px 0"><span class="muted sm" style="flex:0 0 170px">${k}</span><span class="grow">${v}</span></div>`;
@@ -1805,7 +1832,7 @@ function scannerQR(){return new Promise(async ok=>{
       else{const k=Math.min(1,720/Math.max(v.videoWidth,v.videoHeight));c.width=Math.round(v.videoWidth*k);c.height=Math.round(v.videoHeight*k);cx.drawImage(v,0,0,c.width,c.height);
         const r=jsQR(cx.getImageData(0,0,c.width,c.height).data,c.width,c.height,{inversionAttempts:"dontInvert"});if(r&&r.data){if(navigator.vibrate)navigator.vibrate(80);return stop(r.data)}}}}catch(_){}
     setTimeout(tour,150)};tour()})}
-function choisirSiteQR(){const l=sites.filter(x=>x.actif!==false);const edit=estDirection()||(typeof estSupGeneral==="function"&&estSupGeneral());
+function choisirSiteQR(){const l=sites.filter(x=>x.actif!==false);const edit=estDirection()||moi.role==="superviseur"||moi.role_reel==="superviseur";
   if(!l.length)return toast("Ajoutez d'abord un site.",true);
   modal("Codes QR des points de ronde",`<p class="muted sm" style="margin-top:0">Un code par point de ronde, à imprimer, plastifier et coller sur place. L'agent le scanne pendant sa ronde.</p>
     <div class="field"><label class="f">Site</label><select class="input" id="qr-s">${l.map(x=>`<option value="${x.id}">${esc(x.nom)}</option>`).join("")}</select></div>
@@ -1815,7 +1842,7 @@ function choisirSiteQR(){const l=sites.filter(x=>x.actif!==false);const edit=est
   $("#qr-no").onclick=closeModal;
   $("#qr-ok").onclick=()=>busy($("#qr-ok"),async()=>{const st=l.find(y=>y.id===sel.value),pts=[...new Set(ta.value.split("\n").map(t=>t.trim()).filter(Boolean))].slice(0,60);
     if(!pts.length){ta.focus();throw new Error("Écrivez au moins un point de ronde (un par ligne).")}
-    if(edit&&pts.join("\n")!==(st.points_ronde||[]).join("\n")){must(await sb.from("sites").update({points_ronde:pts}).eq("id",st.id));st.points_ronde=pts;toast("Points de ronde enregistrés")}
+    if(edit&&pts.join("\n")!==(st.points_ronde||[]).join("\n")){must(await sb.rpc("maj_points_ronde",{p_site:st.id,p_points:pts}));st.points_ronde=pts;toast("Points de ronde enregistrés")}
     closeModal();await imprimerQRRonde(st)})}
 async function imprimerQRRonde(st){if(!st)return;const pts=st.points_ronde||[];if(!pts.length)throw new Error("Ajoutez d'abord les points de ronde de ce site.");
   if(!st.qr_cle){const r=await sb.from("sites").select("qr_cle").eq("id",st.id).maybeSingle();st.qr_cle=r.data&&r.data.qr_cle;if(!st.qr_cle)throw new Error("Code du site introuvable. Réessayez.")}
