@@ -141,6 +141,7 @@ body.tv .top,body.tv #side,body.tv #tabs,body.tv #menu-btn{display:none!importan
 .doc .sig{display:flex;justify-content:space-between;gap:20px;margin-top:30px;font-size:13px}
 .doc h4{margin:14px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--p)}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;padding:0 5px;margin-left:4px}
+.fp-t{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:8px}.fp-t>div{background:var(--bg);border-radius:10px;padding:8px 10px}.fp-t b{display:block;font-size:18px}.fp-t span{font-size:12px;color:var(--muted)}.fp-l{max-height:320px;overflow:auto}
 .an-sv{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:6px}.an-sv label,.an-opt{display:flex;gap:6px;align-items:center;font-size:14px}.an-opt{margin:4px 0}.an-new{border-color:var(--amber)}.an-o{font-size:16px}.an-t{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 4px;font-size:15px}.an-r{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;display:flex;flex-direction:column;gap:8px}.an-ri{background:var(--bg);border-radius:10px;padding:8px 10px;font-size:14px;overflow-wrap:anywhere;white-space:pre-wrap}.an-f{display:flex;gap:8px;align-items:flex-end;margin-top:10px}.an-f textarea{flex:1;resize:none;min-height:38px}
 .qrp{position:fixed;inset:0;z-index:10050;background:#fff;overflow:auto;padding:0 0 30px}.qrp-bar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;flex-wrap:wrap;z-index:1}
 .qrp-g{display:grid;grid-template-columns:repeat(auto-fill,90mm);gap:6mm;justify-content:center;padding:16px}.qc{width:90mm;height:128mm;border:1.5px dashed #9AA4B2;border-radius:4mm;padding:5mm;display:flex;flex-direction:column;align-items:center;text-align:center;background:#fff;color:#14202E;break-inside:avoid;page-break-inside:avoid;font-family:Arial,Helvetica,sans-serif}
@@ -819,6 +820,38 @@ const telIntl=t=>{let x=String(t||"").trim();if(!x)return "";if(/^(\+|00)/.test(
   const ind=String(ag&&ag.telephone||"").match(/^\+(\d{3})/);x=x.replace(/\D/g,"").replace(/^0/,"");return (ind?ind[1]:"")+x};
 function boutonsContact(t,nom){const n=telIntl(t);if(!n)return "";const msg=encodeURIComponent("Bonjour "+(nom||"")+", ");
   return `<span class="actions" style="display:inline-flex;gap:6px;margin-left:8px"><a class="btn sm" href="tel:+${n}">📞 Appeler</a><a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/${n}?text=${msg}">WhatsApp</a><a class="btn sm" href="sms:+${n}?body=${msg}">SMS</a></span>`}
+/* présence d'un agent sur un mois : pointages, retards, absences, avec correction */
+let faMois=null;
+async function presenceAgent(a){const ym=faMois=faMois||auj().slice(0,7),m1=ym+"-01",m2=finMois(ym),z=()=>$("#fa-pres"),dir=estDirection();if(!z())return;
+  const [pt,ab]=await Promise.all([sb.from("pointages").select("*").eq("agent_id",a.id).gte("date_service",m1).lte("date_service",m2).order("date_service",{ascending:false}).then(must),
+    sb.from("absences").select("*").eq("agent_id",a.id).gte("date_absence",m1).lte("date_absence",m2).order("date_absence",{ascending:false}).then(must)]);
+  if(!z())return;
+  const retard=p=>{if(!p.heure_arrivee)return 0;const m=Math.round((new Date(p.heure_arrivee)-debutPoste(p.date_service,p.poste,p.debut_prevu))/60000);return m>TOL()?m:0};
+  const R_=pt.filter(retard),nj=ab.filter(x=>!x.justifiee).length,sansDep=pt.filter(p=>!p.heure_depart&&p.date_service<auj()).length;
+  const ev=[...pt.map(p=>({d:p.date_service,p})),...ab.map(x=>({d:x.date_absence,x}))].sort((u,v)=>v.d.localeCompare(u.d));
+  const rouvrir=()=>{ficheAgent(a.id)};
+  z().innerHTML=`<div class="actions" style="margin-bottom:10px"><input class="input" type="month" id="fp-m" value="${ym}" style="width:auto">${dir?`<button class="btn sm" id="fp-add">+ Ajouter une présence</button><button class="btn sm" id="fp-abs">Déclarer une absence</button>`:""}</div>
+    <div class="fp-t"><div><b>${pt.length}</b><span>jour(s) pointé(s)</span></div><div><b class="${R_.length?"wa-t":""}">${R_.length}</b><span>retard(s)${R_.length?" · "+R_.reduce((t,p)=>t+retard(p),0)+" min":""}</span></div><div><b class="${nj?"ko-t":""}">${nj}</b><span>absence(s) non justifiée(s)</span></div><div><b>${ab.length-nj}</b><span>absence(s) justifiée(s)</span></div>${sansDep?`<div><b class="wa-t">${sansDep}</b><span>sans départ pointé</span></div>`:""}</div>
+    ${ev.length?`<div class="fp-l">${ev.map(e=>{if(e.p){const p=e.p,r=retard(p);return `<div class="line" style="padding:7px 0"><div class="grow"><b class="sm">${esc(fjourc(p.date_service))}</b> <span class="muted xs">· ${esc(POSTE(p.poste).libelle.toLowerCase())} · ${esc(siteNom(p.site_id))}</span>
+        <div class="sm">Arrivée ${p.heure_arrivee?hm(p.heure_arrivee):"—"} · départ ${p.heure_depart?hm(p.heure_depart):"<span class='wa-t'>non pointé</span>"}${p.mode==="secours"||/manuel|direction/i.test(p.note||"")?' <span class="muted xs">· saisie manuelle</span>':""}</div></div>
+        ${r?`<span class="pill p-amber">Retard ${r} min</span>`:'<span class="pill p-green">À l\'heure</span>'}${dir?`<button class="btn sm" data-fpc="${p.id}">Corriger</button>`:""}</div>`}
+      const x=e.x;return `<div class="line" style="padding:7px 0"><div class="grow"><b class="sm">${esc(fjourc(x.date_absence))}</b> <span class="muted xs">· ${esc(x.type||"Absence")}${x.note?" · "+esc(x.note):""}</span></div><span class="pill ${x.justifiee?"p-grey":"p-red"}">${x.justifiee?"Absence justifiée":"Absence non justifiée"}</span>${dir?`<button class="btn sm" data-fpj="${x.id}">${x.justifiee?"Non justifiée":"Justifiée"}</button><button class="btn sm danger" data-fpd="${x.id}">Retirer</button>`:""}</div>`}).join("")}</div>`
+     :`<p class="muted sm" style="margin:0">Aucun pointage ni absence en ${esc(fmo(ym))}.</p>`}`;
+  $("#fp-m").onchange=e=>{if(e.target.value){faMois=e.target.value;presenceAgent(a)}};
+  if(!dir)return;
+  const Q=(k,f)=>z().querySelectorAll("["+k+"]").forEach(b=>b.onclick=()=>f(b));
+  Q("data-fpc",b=>{const p=pt.find(y=>y.id===b.dataset.fpc);saisieManuelle(p.date_service,p,rouvrir)});
+  Q("data-fpj",b=>busy(b,async()=>{const x=ab.find(y=>y.id===b.dataset.fpj);must(await sb.from("absences").update({justifiee:!x.justifiee}).eq("id",x.id));toast("Absence mise à jour");await presenceAgent(a)}));
+  Q("data-fpd",b=>busy(b,async()=>{must(await sb.from("absences").delete().eq("id",b.dataset.fpd));toast("Absence retirée");await presenceAgent(a)}));
+  $("#fp-abs").onclick=()=>declarerAbsence(a.id,ym===auj().slice(0,7)?auj():m1,async()=>rouvrir());
+  $("#fp-add").onclick=()=>{const ss=sites.filter(x=>x.actif!==false);
+    modal("Ajouter une présence · "+esc(nomAg(a)),`<div class="row"><div class="field"><label class="f">Date</label><input class="input" type="date" id="fa-d" value="${ym===auj().slice(0,7)?auj():m1}" max="${auj()}"></div><div class="field"><label class="f">Quart</label><select class="input" id="fa-q">${CODES().map(c=>`<option value="${esc(c)}" ${c===a.poste?"selected":""}>${esc(POSTE(c).libelle)} · ${POSTE(c).debut}–${POSTE(c).fin}</option>`).join("")}</select></div></div>
+      <div class="field"><label class="f">Site</label><select class="input" id="fa-s">${ss.map(x=>`<option value="${x.id}" ${x.id===a.site_id?"selected":""}>${esc(x.nom)}</option>`).join("")}</select></div>`,
+      `<button class="btn" id="fa-x">Annuler</button><button class="btn pri" id="fa-go">Continuer</button>`);
+    $("#fa-x").onclick=rouvrir;$("#fa-go").onclick=()=>{const d=$("#fa-d").value;if(!d)return toast("Choisissez la date.",true);if(!$("#fa-s").value)return toast("Ajoutez d'abord un site.",true);
+      if(pt.some(p=>p.date_service===d&&p.poste===$("#fa-q").value))return toast("Un pointage existe déjà ce jour-là pour ce quart : utilisez « Corriger ».",true);
+      saisieManuelle(d,{agent_id:a.id,site_id:$("#fa-s").value,poste:$("#fa-q").value},rouvrir)}};
+}
 function ficheAgent(id){const a=agents.find(x=>x.id===id);if(!a)return closeModal();const c=comptes.find(x=>x.agent_id===id),st=stA(a),nomC=[a.prenom,a.nom].filter(Boolean).join(" ");
   const L=(k,v)=>`<div class="line" style="padding:7px 0"><span class="muted sm" style="flex:0 0 170px">${k}</span><span class="grow">${v}</span></div>`;
   modal(esc(nomC),`<div class="actions" style="margin-bottom:12px"><img id="fa-ph" alt="" class="hide" style="width:64px;height:78px;object-fit:cover;border-radius:10px"><span class="pill ${st[1]}">${st[0]}</span><span class="pill p-main">${esc(a.matricule)}</span><span style="margin-left:auto" class="actions"><button class="btn sm" id="fa-carte">Carte professionnelle</button><button class="btn sm pri" id="fa-edit">Modifier</button></span></div>
@@ -826,6 +859,7 @@ function ficheAgent(id){const a=agents.find(x=>x.id===id);if(!a)return closeModa
   <div class="sec">Accès à l'application</div>
   ${c?`<div class="idbox">Identifiant : <b>${esc(a.matricule)}</b> · ${c.est_actif?"accès ouvert":"<b>accès coupé</b>"}<br><span class="muted xs">Dernière connexion : ${fdt(c.derniere_connexion)}</span></div><div class="actions"><button class="btn sm" id="fa-mdp">Nouveau mot de passe</button></div>`
      :`<p class="muted sm" style="margin:0 0 8px">${estSup(a)?"Ce superviseur n'a pas encore d'accès. Créez-le : il se connectera avec son matricule et ouvrira l'espace superviseur (pointage de secours, planning, main courante, rondes).":"Cet agent n'a pas encore d'accès. Créez-le pour qu'il puisse se connecter avec son matricule."}</p><button class="btn sm pri" id="fa-acc" ${a.statut==="Actif"?"":"disabled"}>${estSup(a)?"Créer son accès superviseur":"Créer son accès"}</button>`}
+  <div class="sec">Présence et ponctualité</div><div id="fa-pres"><p class="muted sm" style="margin:0">Chargement…</p></div>
   <div class="sec">Notes de supervision</div><div id="fa-notes"><p class="muted sm" style="margin:0">Chargement…</p></div>
   <div class="sec">Documents RH</div><div class="actions"><button class="btn sm" id="fa-doc">Créer un document pour cet agent</button></div>
   <div class="sec">Effectif</div>
@@ -833,6 +867,7 @@ function ficheAgent(id){const a=agents.find(x=>x.id===id);if(!a)return closeModa
   `<button class="btn" id="fa-no">Fermer</button>`);
   $("#fa-no").onclick=closeModal;$("#fa-edit").onclick=()=>formAgent(a);$("#fa-doc").onclick=()=>nouveauDoc(id);$("#fa-carte").onclick=()=>voirCarte(a);
   photoAgent(a).then(u=>{const i=$("#fa-ph");if(u&&i){i.src=u;i.classList.remove("hide")}});
+  presenceAgent(a).catch(e=>{const z=$("#fa-pres");if(z)z.innerHTML='<p class="muted sm">'+esc(traduire(e.message))+'</p>'});
   sb.from("visites_supervision").select("visite_le,site_id,constats").order("visite_le",{ascending:false}).limit(100).then(r=>{const z=$("#fa-notes");if(!z)return;
     const l=(r.data||[]).flatMap(v=>((v.constats||{}).agents||[]).filter(x=>x.agent_id===id).map(x=>({...x,quand:v.visite_le,site:v.site_id}))).slice(0,6);
     z.innerHTML=l.length?l.map(x=>`<div class="line" style="padding:6px 0"><span class="grow sm">${fd(x.quand)} · ${esc(siteNom(x.site))}${x.observation?` · <span class="muted">${esc(x.observation)}</span>`:""}</span><b class="sm">★ ${x.note}/5</b></div>`).join(""):'<p class="muted sm" style="margin:0">Pas encore noté.</p>'});
@@ -1089,7 +1124,7 @@ async function vPointage(){jourT=jourT||auj();const ds=jourT,dir=estDirection(),
 }
 function confirmerSimple(titre,texte,label,fn){modal(titre,`<p style="margin-top:0">${texte}</p>`,`<button class="btn" id="cs-no">Annuler</button><button class="btn pri" id="cs-ok">${label}</button>`);
   $("#cs-no").onclick=closeModal;$("#cs-ok").onclick=()=>busy($("#cs-ok"),async()=>{await fn();closeModal()})}
-function saisieManuelle(ds,pt){const nouv=!pt.id,a=AG_(pt.agent_id),hhmm=t=>t?hm(t):"";
+function saisieManuelle(ds,pt,apres){apres=apres||vPointage;const nouv=!pt.id,a=AG_(pt.agent_id),hhmm=t=>t?hm(t):"";
   modal((nouv?"Saisir un pointage · ":"Corriger le pointage · ")+esc(nomAg(a)),`<p class="muted sm" style="margin-top:0">${esc(siteNom(pt.site_id))} · poste de ${esc(POSTE(pt.poste).libelle.toLowerCase())} · ${esc(fjour(ds))}</p>
   <div class="row"><div class="field"><label class="f">Heure d'arrivée</label><input class="input" type="time" id="sm-a" value="${nouv?hh(pt.h1)||POSTE(pt.poste).debut:hhmm(pt.heure_arrivee)}"></div><div class="field"><label class="f">Heure de départ <span class="muted" style="font-weight:400">(facultatif)</span></label><input class="input" type="time" id="sm-d" value="${hhmm(pt.heure_depart)}"></div></div>
   <div class="field"><label class="f">Motif</label><input class="input" id="sm-n" value="${esc(nouv?"":pt.note||"")}" placeholder="Ex. pointage oublié, téléphone en panne"></div>
@@ -1101,8 +1136,8 @@ function saisieManuelle(ds,pt){const nouv=!pt.id,a=AG_(pt.agent_id),hhmm=t=>t?hm
     const d={heure_arrivee:ts(h,false),heure_depart:ts($("#sm-d").value,true),note:$("#sm-n").value.trim()||"Saisie par la direction",mode:"secours"};
     if(d.heure_depart&&d.heure_depart<=d.heure_arrivee)throw new Error("L'heure de départ doit être après l'heure d'arrivée.");
     must(nouv?await sb.from("pointages").insert({...d,agent_id:pt.agent_id,site_id:pt.site_id,poste:pt.poste,date_service:ds}):await sb.from("pointages").update(d).eq("id",pt.id));
-    closeModal();toast("Pointage enregistré");await vPointage()});
-  const del=$("#sm-del");if(del)del.onclick=()=>busy(del,async()=>{must(await sb.from("pointages").delete().eq("id",pt.id));closeModal();toast("Pointage supprimé");await vPointage()});
+    closeModal();toast("Pointage enregistré");await apres()});
+  const del=$("#sm-del");if(del)del.onclick=()=>busy(del,async()=>{must(await sb.from("pointages").delete().eq("id",pt.id));closeModal();toast("Pointage supprimé");await apres()});
 }
 async function exporterPointages(ym){const d1=ym+"-01",d2=iso(new Date(+ym.slice(0,4),+ym.slice(5,7),0));
   const po=must(await sb.from("pointages").select("*").gte("date_service",d1).lte("date_service",d2).order("date_service"));
