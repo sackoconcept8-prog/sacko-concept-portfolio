@@ -96,7 +96,11 @@ async function pSave(r,ch){
   if(!saved){const ed=pJSON(P_EDIT_KEY);ed[r._row]=Object.assign(ed[r._row]||{},ch,{Agence:r.Agence});store.set(P_EDIT_KEY,JSON.stringify(ed))}
   return saved;
 }
-function pMsg(r,k){const a=pApp(r);return pTpl(k,a).split("{agence}").join(r.Agence||(a==="securipro"?"votre agence":"votre entreprise"))}
+const P_LV="v=3"; // changer ce numéro force WhatsApp à recharger l'aperçu des liens
+function pLinkFix(t,a){t=String(t).replace(/https?:\/\/(www\.)?sackoconcept\.com\/(securipro|btppro|nettopro)\/?(\?[^\s]*)?/g,(m,w,app)=>"https://www.sackoconcept.com/"+app+"/?"+P_LV);
+  if(!/sackoconcept\.com\/(securipro|btppro|nettopro)/.test(t)){const u=P_APPS[a].url+"?"+P_LV,lb=/^Hello/.test(t)?"Free demo: ":"Démo gratuite : ";t=/\nHawa Sacko/.test(t)?t.replace(/\nHawa Sacko/,"\n"+lb+u+"\nHawa Sacko"):t+"\n"+lb+u}
+  return t.replace(/ de le /g," du ")}
+function pMsg(r,k){const a=pApp(r);return pLinkFix(pTpl(k,a).split("{agence}").join(r.Agence||(a==="securipro"?"votre agence":"votre entreprise")),a)}
 const P_SAMPLE = [
   ["2026-11-05","Sénégal","DIS – Dakar Intérim Sécurité","Dakar","+221 33 825 58 34","Fixe","Grande","Plus de 1 000 agents, convoyage de fonds.","","À contacter","","","contact@exemple-dis.sn",""],
   ["2026-11-05","Guinée","G4S Guinée","Conakry, Kipé","+224 669 40 00 02","Mobile","Grande","Filiale du groupe mondial G4S.","","Contacté",""],
