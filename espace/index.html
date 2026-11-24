@@ -546,7 +546,7 @@ async function barreTechnicien(){
   const bar=$("#tech-bar");let c=[];try{c=must(await sb.rpc("technicien_comptes"))||[]}catch(_){}
   const RL={dgg:"Direction générale",dg:"Direction",conseiller:"Conseiller",commercial:"Directeur commercial",comptable:"Comptabilité",rh:"RH / Superviseur général",superviseur:"Superviseur",client:"Client",agent:"Agent"};
   const grp={};c.forEach(x=>{const k=x.role==="dg"&&x.niveau_direction==="general"?"dgg":x.role;(grp[k]=grp[k]||[]).push(x)});RL.dgg="Direction générale";
-  bar.innerHTML=`<div class="in"><b>🛠 Mode technicien</b><span class="xs" style="opacity:.7">version du 24/11 · 21 h 30</span><span>${esc(ag?ag.nom_agence:"")}</span><span class="grow"></span><label for="tb-vue" class="sm">Interface affichée :</label>
+  bar.innerHTML=`<div class="in"><b>🛠 Mode technicien</b><span class="xs" style="opacity:.7">version du 24/11 · 21 h 45</span><span>${esc(ag?ag.nom_agence:"")}</span><span class="grow"></span><label for="tb-vue" class="sm">Interface affichée :</label>
   <select class="input" id="tb-vue"><option value="">Direction (vue complète)</option>${Object.keys(RL).filter(k=>grp[k]).map(k=>`<optgroup label="${RL[k]}">${grp[k].map(x=>`<option value="${x.id}" ${ctx.vu===x.id?"selected":""}>${esc(x.nom_complet)}${x.fonction?" · "+esc(x.fonction):""}${x.est_actif?"":" (désactivé)"}</option>`).join("")}</optgroup>`).join("")}</select>
   ${lectureSeuleTech()?'<span class="pill p-amber">Consultation seulement</span>':""}<button class="btn sm" id="tb-jr">📋 Journal d'activité</button><button class="btn sm" id="tb-ag">Changer d'agence</button><button class="btn sm" id="tb-fin">Fermer la session</button></div>`;
   bar.classList.remove("hide");
@@ -557,7 +557,7 @@ async function barreTechnicien(){
 let espace="direction";
 /* le superviseur général travaille en « superviseur » dans l'espace Supervision et en « rh » dans l'espace RH (ses droits réels restent ceux du RH) */
 function appliquerEspace(){if(estSupGeneral())moi.role=espace==="supervision"?"superviseur":"rh"}
-const MENU_SUP=[["pointage","Pointage"],["visites","Visites et notes"],["rapport","Mon rapport"],["equipe","Mes agents"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"],["releves","Relèves"],["annonces","Annonces"]];
+const MENU_SUP=[["pointage","Pointage"],["sites-terrain","Sites : position et rondes"],["visites","Visites et notes"],["rapport","Mon rapport"],["equipe","Mes agents"],["planning","Planning"],["incidents","Main courante"],["rondes","Rondes"],["releves","Relèves"],["annonces","Annonces"]];
 /* modules activés ou non pour chaque agence (réglés dans le cockpit) */
 const mod=k=>((ag&&ag.modules)||{})[k]!==false;
 const MODULE_ONGLET={planning:"planning",monplanning:"planning",pointage:"pointage",conges:"conges",documents:"documents",mesdocs:"documents",messages:"messagerie",mesmsg:"messagerie",paie:"paie",mapaie:"paie",materiel:"materiel",rstock:"materiel",
@@ -569,7 +569,7 @@ function menuDirection(){
   if(estConseiller())return [["Mon espace",[["accueil","Accueil"],["avis","Mes recommandations"]]],["Rapports soumis au CEO",[["rapports","Rapport mensuel"],["supervision","Rapports de supervision"],["incidents","Main courante"]]],["Aide",[["support","Support"]]]];
   return menuDirectionBase()}
 function menuDirectionBase(){
-  if(espace==="supervision")return [["Supervision",[...MENU_SUP,["sites-terrain","Sites : position et rondes"]]]];
+  if(espace==="supervision")return [["Supervision",[...MENU_SUP]]];
   if(moi.role_reel==="superviseur")return [["Terrain",[...MENU_SUP,["controle","Carte en direct"]]],...(moi.agent_id?[["Mon espace",[["profil","Mon profil"],["mapaie","Ma paie"],["mesdocs","Mes documents"],["mesdemandes","Mes demandes"],["mesmsg","Messages"]]]]:[]),["Aide",[["support","Support"]]]];
   if(espace==="compta")return [["",[["compta","Tableau de bord"],["tresorerie","Trésorerie"],["journal","Recettes et dépenses"],["factures","Factures clients"],["virements","Paie et virements"],["budget","Budget"],["annee","Synthèse annuelle"],["rstock","Stock et matériel"]]],["Réglages",[["pfin","Paramètres"],["support","Support"]]]];
   if(espace==="commercial")return [["Clients",[["sites","Sites clients"],["factures","Factures"],["rcl","Rapports clients"],["demandes","Demandes clients"]]],["Pilotage",[["rapports","Rapports"],["support","Support"]]]];
@@ -1010,7 +1010,7 @@ function vSitesTerrain(){
     modal("Position de « "+esc(x.nom)+" »",`<p style="margin-top:0">Êtes-vous <b>sur le site</b>, à l'entrée principale ? Votre position actuelle va devenir la position du site.</p>`,`<button class="btn" id="sp-no">Annuler</button><button class="btn pri" id="sp-ok">Oui, enregistrer</button>`);
     $("#sp-no").onclick=closeModal;
     $("#sp-ok").onclick=()=>busy($("#sp-ok"),async()=>{$("#sp-ok").textContent="Localisation…";const pos=await position();
-      must(await sb.from("sites").update({latitude:+pos.lat.toFixed(6),longitude:+pos.lng.toFixed(6)}).eq("id",x.id));
+      must(await sb.rpc("site_terrain",{p_site:x.id,p_lat:+pos.lat.toFixed(6),p_lng:+pos.lng.toFixed(6)}));
       x.latitude=+pos.lat.toFixed(6);x.longitude=+pos.lng.toFixed(6);closeModal();toast("Position du site enregistrée");vSitesTerrain()})});
   $("#main").querySelectorAll("[data-pts]").forEach(b=>b.onclick=()=>{const x=S_(b.dataset.pts);
     modal("Points de ronde · "+esc(x.nom),`<div class="field"><label class="f">Un point par ligne, dans l'ordre de la ronde</label><textarea class="input" id="sp-pts" rows="7" placeholder="Portail principal&#10;Parking&#10;Arrière du bâtiment">${esc((x.points_ronde||[]).join("\n"))}</textarea></div>
@@ -1018,7 +1018,7 @@ function vSitesTerrain(){
       `<button class="btn" id="sp-no">Annuler</button><button class="btn pri" id="sp-ok">Enregistrer</button>`);
     $("#sp-no").onclick=closeModal;
     $("#sp-ok").onclick=()=>busy($("#sp-ok"),async()=>{const pts=$("#sp-pts").value.split("\n").map(t=>t.trim()).filter(Boolean).slice(0,30),r=+$("#sp-r").value;
-      must(await sb.from("sites").update({points_ronde:pts,rayon_m:r}).eq("id",x.id));x.points_ronde=pts;x.rayon_m=r;closeModal();toast("Points de ronde enregistrés");vSitesTerrain()})});
+      must(await sb.rpc("site_terrain",{p_site:x.id,p_points:pts,p_rayon:r}));x.points_ronde=pts;x.rayon_m=r;closeModal();toast("Points de ronde enregistrés");vSitesTerrain()})});
 }
 function position(){return new Promise((ok,ko)=>{if(!navigator.geolocation)return ko(new Error("Ce téléphone ne permet pas la localisation."));
   navigator.geolocation.getCurrentPosition(p=>ok({lat:p.coords.latitude,lng:p.coords.longitude,precision:p.coords.accuracy}),
