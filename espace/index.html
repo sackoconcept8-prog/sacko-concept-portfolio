@@ -135,6 +135,12 @@ body.tv .top,body.tv #side,body.tv #tabs,body.tv #menu-btn{display:none!importan
 .doc h4{margin:14px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--p)}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;padding:0 5px;margin-left:4px}
 .an-sv{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:6px}.an-sv label,.an-opt{display:flex;gap:6px;align-items:center;font-size:14px}.an-opt{margin:4px 0}.an-new{border-color:var(--amber)}.an-o{font-size:16px}.an-t{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 4px;font-size:15px}.an-r{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;display:flex;flex-direction:column;gap:8px}.an-ri{background:var(--bg);border-radius:10px;padding:8px 10px;font-size:14px;overflow-wrap:anywhere;white-space:pre-wrap}.an-f{display:flex;gap:8px;align-items:flex-end;margin-top:10px}.an-f textarea{flex:1;resize:none;min-height:38px}
+.qrp{position:fixed;inset:0;z-index:10050;background:#fff;overflow:auto;padding:0 0 30px}.qrp-bar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;flex-wrap:wrap;z-index:1}
+.qrp-g{display:grid;grid-template-columns:repeat(auto-fill,90mm);gap:6mm;justify-content:center;padding:16px}.qc{width:90mm;height:128mm;border:1.5px dashed #9AA4B2;border-radius:4mm;padding:5mm;display:flex;flex-direction:column;align-items:center;text-align:center;background:#fff;color:#14202E;break-inside:avoid;page-break-inside:avoid;font-family:Arial,Helvetica,sans-serif}
+.qb{display:flex;gap:3mm;align-items:center;justify-content:center;width:100%;background:#EEF3FB;border-radius:3mm;padding:2.5mm}.qb b{display:block;font-size:13px}.qb span{font-size:10px;color:#5B6B7F;text-transform:uppercase;letter-spacing:.06em}.ql{height:11mm;width:auto}
+.qs{font-size:11px;color:#5B6B7F;margin:3mm 0 1mm}.qn{font-size:17px;font-weight:700;display:flex;gap:2mm;align-items:center;justify-content:center;min-height:12mm}.qn span{background:#14915A;color:#fff;border-radius:50%;width:8mm;height:8mm;display:inline-flex;align-items:center;justify-content:center;font-size:13px;flex:none}
+.qq{width:62mm;height:62mm;image-rendering:pixelated;margin:2mm 0}.qi{font-size:11px}.qf{font-size:9px;color:#8A94A6;margin-top:auto}
+@media print{@page{size:A4;margin:10mm}body.qr-print{background:#fff!important}body.qr-print>*:not(.qrp){display:none!important}body.qr-print .qrp{position:static;overflow:visible;padding:0}.qrp-bar{display:none!important}.qrp-g{grid-template-columns:repeat(2,90mm);padding:0}.qc{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 .qr-ov{position:fixed;inset:0;z-index:9999;background:#0B1220;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}.qr-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;color:#fff}.qr-vue{position:relative;width:min(88vw,420px);aspect-ratio:1;border-radius:18px;overflow:hidden;background:#000}.qr-vue video{width:100%;height:100%;object-fit:cover}.qr-cadre{position:absolute;inset:14%;border:3px solid #34D399;border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}.qr-msg{color:#fff;margin:0;font-size:15px}
 .pl-q{margin-bottom:14px}.pl-q h3{font-size:16px;margin:0 0 6px}.pl-t td{padding:4px 6px}.pl-t .input{padding:6px 8px;font-size:13px;min-width:0}.pl-t .pl-a{min-width:200px}.pl-t .pl-ko{border-color:var(--red)}.pl-add{margin:6px 0 4px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}.tbl th{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}.tbl td.r,.tbl th.r{text-align:right;white-space:nowrap}.tbl tr.click{cursor:pointer}.tbl tr.click:hover td{background:var(--bg)}
@@ -211,7 +217,7 @@ body.tv .top,body.tv #side,body.tv #tabs,body.tv #menu-btn{display:none!importan
 .carte .vs .g{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;margin-bottom:9px}.carte .vs .g div em{display:block;font-style:normal;color:#5b677a;font-size:8px}.carte .vs .g div strong{font-weight:800}
 .carte .vs .enc{border-left:3px solid #c8971f;background:#f7f8fa;padding:6px 8px;font-size:8.6px;color:#2b3648}
 .carte .sg{position:absolute;right:18px;bottom:30px;text-align:right;font-size:8.4px;color:#3d4a5e}
-@media print{body>*:not(#modal){display:none!important}#modal{position:static;display:block;background:none;padding:0}.box{box-shadow:none;max-width:none}.box-h,.box-f{display:none}.box-b{padding:0}}
+@media print{body:not(.qr-print)>*:not(#modal){display:none!important}body:not(.qr-print) #modal{position:static;display:block;background:none;padding:0}.box{box-shadow:none;max-width:none}.box-h,.box-f{display:none}.box-b{padding:0}}
 @media(max-width:560px){.head h1{font-size:21px}.week{grid-template-columns:repeat(7,minmax(40px,1fr));overflow-x:auto}.brand small{display:none}}
 </style>
 </head>
@@ -1722,27 +1728,30 @@ function scannerQR(){return new Promise(async ok=>{
       else{const k=Math.min(1,720/Math.max(v.videoWidth,v.videoHeight));c.width=Math.round(v.videoWidth*k);c.height=Math.round(v.videoHeight*k);cx.drawImage(v,0,0,c.width,c.height);
         const r=jsQR(cx.getImageData(0,0,c.width,c.height).data,c.width,c.height,{inversionAttempts:"dontInvert"});if(r&&r.data){if(navigator.vibrate)navigator.vibrate(80);return stop(r.data)}}}}catch(_){}
     setTimeout(tour,150)};tour()})}
-function choisirSiteQR(){const l=sites.filter(x=>x.actif!==false&&(x.points_ronde||[]).length),sans=sites.filter(x=>x.actif!==false&&!(x.points_ronde||[]).length);
-  if(!l.length){modal("Codes QR des points de ronde",`<p style="margin-top:0"><b>Aucun point de ronde n'est encore enregistré.</b></p><p class="sm">Pour créer les codes :</p><ol class="sm" style="padding-left:18px;margin:0 0 10px"><li>Ouvrez le site concerné (${estDirection()?"menu <b>Sites</b>, cliquez sur le site":"menu <b>Sites : position et rondes</b>"}).</li><li>Dans <b>Points de ronde</b>, écrivez un point par ligne, dans l'ordre du parcours (ex. Portail principal, Parking, Local technique).</li><li>Enregistrez, puis revenez ici : vous pourrez imprimer un code par point.</li></ol>`,`<button class="btn" id="qr-no">Fermer</button>${estDirection()&&sans.length?`<button class="btn pri" id="qr-go">Ajouter les points de ${esc(sans[0].nom)}</button>`:""}`);
-    $("#qr-no").onclick=closeModal;const g=$("#qr-go");if(g)g.onclick=()=>{closeModal();ficheSite(sans[0])};return}
-  modal("Codes QR des points de ronde",`<p class="muted sm" style="margin-top:0">Un code par point, à imprimer, plastifier et coller à l'emplacement du point. L'agent le scanne pendant sa ronde.</p><div class="field"><label class="f">Site</label><select class="input" id="qr-s">${l.map(x=>`<option value="${x.id}">${esc(x.nom)} · ${(x.points_ronde||[]).length} point(s)</option>`).join("")}</select></div>`,`<button class="btn" id="qr-no">Annuler</button><button class="btn pri" id="qr-ok">Imprimer les codes</button>`);
-  $("#qr-no").onclick=closeModal;$("#qr-ok").onclick=()=>busy($("#qr-ok"),async()=>{await imprimerQRRonde(sites.find(x=>x.id===$("#qr-s").value));closeModal()})}
+function choisirSiteQR(){const l=sites.filter(x=>x.actif!==false);const edit=estDirection()||(typeof estSupGeneral==="function"&&estSupGeneral());
+  if(!l.length)return toast("Ajoutez d'abord un site.",true);
+  modal("Codes QR des points de ronde",`<p class="muted sm" style="margin-top:0">Un code par point de ronde, à imprimer, plastifier et coller sur place. L'agent le scanne pendant sa ronde.</p>
+    <div class="field"><label class="f">Site</label><select class="input" id="qr-s">${l.map(x=>`<option value="${x.id}">${esc(x.nom)}</option>`).join("")}</select></div>
+    <div class="field"><label class="f">Points de ronde <span class="muted" style="font-weight:400">(un par ligne, dans l'ordre du parcours)</span></label><textarea class="input" id="qr-p" rows="6" ${edit?"":"readonly"} placeholder="Portail principal&#10;Parking&#10;Local technique"></textarea></div>`,
+    `<button class="btn" id="qr-no">Annuler</button><button class="btn pri" id="qr-ok">Afficher les codes</button>`);
+  const sel=$("#qr-s"),ta=$("#qr-p"),rem=()=>{const x=l.find(y=>y.id===sel.value);ta.value=((x&&x.points_ronde)||[]).join("\n")};sel.onchange=rem;rem();
+  $("#qr-no").onclick=closeModal;
+  $("#qr-ok").onclick=()=>busy($("#qr-ok"),async()=>{const st=l.find(y=>y.id===sel.value),pts=[...new Set(ta.value.split("\n").map(t=>t.trim()).filter(Boolean))].slice(0,60);
+    if(!pts.length){ta.focus();throw new Error("Écrivez au moins un point de ronde (un par ligne).")}
+    if(edit&&pts.join("\n")!==(st.points_ronde||[]).join("\n")){must(await sb.from("sites").update({points_ronde:pts}).eq("id",st.id));st.points_ronde=pts;toast("Points de ronde enregistrés")}
+    closeModal();await imprimerQRRonde(st)})}
 async function imprimerQRRonde(st){if(!st)return;const pts=st.points_ronde||[];if(!pts.length)throw new Error("Ajoutez d'abord les points de ronde de ce site.");
   if(!st.qr_cle){const r=await sb.from("sites").select("qr_cle").eq("id",st.id).maybeSingle();st.qr_cle=r.data&&r.data.qr_cle;if(!st.qr_cle)throw new Error("Code du site introuvable. Réessayez.")}
-  const w=window.open("","_blank");if(!w)throw new Error("Autorisez les fenêtres pop-up pour imprimer les codes.");
   await chargerScript(QRJS,"qrcode");
   const img=t=>{const q=qrcode(0,"H");q.addData(t);q.make();return q.createDataURL(10,0)},nomAg_=ag.nom_agence||ag.nom||"";
-  const cartes=pts.map((n,i)=>`<div class="c"><div class="b">${ag.logo_url?`<img class="l" src="${esc(ag.logo_url)}" alt="">`:""}<div><b>${esc(nomAg_)}</b><span>Point de ronde</span></div></div>
-    <div class="s">${esc(st.nom)}</div><div class="n"><span>${i+1}</span>${esc(n)}</div><img class="q" src="${img(qrPoint(st,n))}" alt=""><div class="i">Scannez ce code avec l'application pendant votre ronde</div><div class="f">Ne pas retirer · ne pas couvrir</div></div>`).join("");
-  w.document.write(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Codes QR · ${esc(st.nom)}</title><style>
-  @page{size:A4;margin:10mm}*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;margin:0;color:#14202E}
-  .aide{max-width:190mm;margin:0 auto 6mm;padding:4mm 5mm;background:#F3F6FA;border-radius:3mm;font-size:12px}
-  .g{display:grid;grid-template-columns:repeat(2,90mm);gap:6mm;justify-content:center}
-  .c{width:90mm;height:128mm;border:1.5px dashed #9AA4B2;border-radius:4mm;padding:5mm;display:flex;flex-direction:column;align-items:center;text-align:center;break-inside:avoid;page-break-inside:avoid}
-  .b{display:flex;gap:3mm;align-items:center;justify-content:center;width:100%;background:#EEF3FB;border-radius:3mm;padding:2.5mm}.b b{display:block;font-size:13px}.b span{font-size:10px;color:#5B6B7F;text-transform:uppercase;letter-spacing:.06em}.l{height:11mm;width:auto}
-  .s{font-size:11px;color:#5B6B7F;margin:3mm 0 1mm}.n{font-size:17px;font-weight:700;display:flex;gap:2mm;align-items:center;justify-content:center;min-height:12mm}.n span{background:#14915A;color:#fff;border-radius:50%;width:8mm;height:8mm;display:inline-flex;align-items:center;justify-content:center;font-size:13px;flex:none}
-  .q{width:62mm;height:62mm;image-rendering:pixelated;margin:2mm 0}.i{font-size:11px}.f{font-size:9px;color:#8A94A6;margin-top:auto}
-  @media print{.aide{display:none}}</style></head><body><div class="aide"><b>${pts.length} code(s) pour ${esc(st.nom)}.</b> Imprimez en couleur ou en noir et blanc, découpez le long des pointillés, plastifiez, puis collez chaque code à l'emplacement de son point, à hauteur d'yeux et à l'abri de la pluie. Si vous renommez un point, réimprimez son code.</div><div class="g">${cartes}</div><script>window.onload=()=>setTimeout(()=>print(),400)<\/script></body></html>`);w.document.close()}
+  const cartes=pts.map((n,i)=>`<div class="qc"><div class="qb">${ag.logo_url?`<img class="ql" src="${esc(ag.logo_url)}" alt="">`:""}<div><b>${esc(nomAg_)}</b><span>Point de ronde</span></div></div>
+    <div class="qs">${esc(st.nom)}</div><div class="qn"><span>${i+1}</span>${esc(n)}</div><img class="qq" src="${img(qrPoint(st,n))}" alt=""><div class="qi">Scannez ce code avec l'application pendant votre ronde</div><div class="qf">Ne pas retirer · ne pas couvrir</div></div>`).join("");
+  const old=document.querySelector(".qrp");if(old)old.remove();
+  const ov=document.createElement("div");ov.className="qrp";
+  ov.innerHTML=`<div class="qrp-bar"><div><b>Codes QR · ${esc(st.nom)}</b><div class="muted xs">${pts.length} code(s). Imprimez, découpez le long des pointillés, plastifiez et collez chaque code à son point, à l'abri de la pluie.</div></div><div class="actions"><button class="btn pri" id="qrp-print">🖨️ Imprimer / PDF</button><button class="btn" id="qrp-x">Fermer</button></div></div><div class="qrp-g">${cartes}</div>`;
+  document.body.appendChild(ov);document.body.classList.add("qr-print");window.scrollTo(0,0);
+  ov.querySelector("#qrp-x").onclick=()=>{ov.remove();document.body.classList.remove("qr-print")};
+  ov.querySelector("#qrp-print").onclick=()=>window.print()}
 async function faireRonde(site,vise){
   const base={site_id:site.id,agent_id:monAgent.id,date_service:vise.ds,poste:vise.poste||null};
   let r=null,local=!navigator.onLine;
