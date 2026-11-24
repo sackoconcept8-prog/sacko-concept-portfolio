@@ -96,7 +96,7 @@ async function pSave(r,ch){
   if(!saved){const ed=pJSON(P_EDIT_KEY);ed[r._row]=Object.assign(ed[r._row]||{},ch,{Agence:r.Agence});store.set(P_EDIT_KEY,JSON.stringify(ed))}
   return saved;
 }
-const P_LV="v=3"; // changer ce numéro force WhatsApp à recharger l'aperçu des liens
+const P_LV="v=4"; // changer ce numéro force WhatsApp à recharger l'aperçu des liens
 function pLinkFix(t,a){t=String(t).replace(/https?:\/\/(www\.)?sackoconcept\.com\/(securipro|btppro|nettopro)\/?(\?[^\s]*)?/g,(m,w,app)=>"https://www.sackoconcept.com/"+app+"/?"+P_LV);
   if(!/sackoconcept\.com\/(securipro|btppro|nettopro)/.test(t)){const u=P_APPS[a].url+"?"+P_LV,lb=/^Hello/.test(t)?"Free demo: ":"Démo gratuite : ";t=/\nHawa Sacko/.test(t)?t.replace(/\nHawa Sacko/,"\n"+lb+u+"\nHawa Sacko"):t+"\n"+lb+u}
   return t.replace(/ de le /g," du ")}
