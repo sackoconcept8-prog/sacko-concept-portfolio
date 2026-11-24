@@ -1633,7 +1633,7 @@ setInterval(()=>{if(["dir","rh","client"].includes(role))renderTop()},30000);
 /* ===== Bandeau essai gratuit ===== */
 (function(){
   const wa=t=>"https://wa.me/15054642331?text="+encodeURIComponent(t);
-  const TRY=wa("Bonjour, je dirige une agence de sécurité de moins de 50 agents et je souhaite profiter du mois d'essai gratuit du logiciel.");
+  const TRY="../configuration-securipro.html";
   const QUOTE=wa("Bonjour, je souhaite recevoir un devis pour le logiciel de gestion de mon agence de sécurité. Nombre d'agents : ");
   const t=document.getElementById("offerTry"),c=document.getElementById("offerCond");
   if(!t||!c)return;
@@ -1642,7 +1642,7 @@ setInterval(()=>{if(["dir","rh","client"].includes(role))renderTop()},30000);
     <li><b>Pour qui ?</b><span>Les agences de sécurité et de gardiennage de moins de 50 agents. Au-delà de 50 agents, nous préparons un devis sur mesure.</span></li>
     <li><b>Combien de temps ?</b><span>Un mois complet, gratuit, sans paiement à l'avance.</span></li>
     <li><b>Ce que vous recevez</b><span>Le logiciel préparé au nom de votre agence, avec votre logo, pour le tester avec vos propres sites et vos propres agents.</span></li>
-    <li><b>Comment commencer ?</b><span>Vous nous écrivez sur WhatsApp, vous remplissez une courte fiche de configuration, puis nous vous remettons votre accès.</span></li>
+    <li><b>Comment commencer ?</b><span>Vous remplissez directement la fiche de configuration en ligne (2 minutes), puis nous préparons le logiciel à votre nom et vous remettons votre accès.</span></li>
     <li><b>Et après le mois gratuit ?</b><span>Si le logiciel vous convient, vous continuez avec un abonnement mensuel ou annuel. Le tarif dépend de votre nombre d'agents et vous est communiqué par devis avant le début de l'essai. Sinon, vous arrêtez et vous ne payez rien.</span></li>
   </ul>`,`<a class="of-btn alt" href="${QUOTE}" target="_blank" rel="noopener">Demander un devis</a><a class="of-btn" href="${TRY}" target="_blank" rel="noopener">Demander mon essai gratuit</a>`);
 })();
