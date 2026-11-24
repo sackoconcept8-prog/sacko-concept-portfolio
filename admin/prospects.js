@@ -123,7 +123,7 @@ function renderPros(){
   const F={"À faire":r=>(r.Statut||"À contacter")==="À contacter","Tâches du jour":pTaskDue,"À relancer":pDue,"À appeler":r=>!pWa(r)&&!pClient(r)&&r.Statut!=="Pas intéressé","En cours":r=>["Contacté","Relancé","A répondu","Intéressé","Démo faite","Devis envoyé","En discussion"].includes(r.Statut),"Clients":pClient,"Tous":()=>true};
   const cnt=k=>all.filter(F[k]).length;
   const rank={"Grande":0,"Moyenne":1,"À qualifier":2};
-  const rs=all.filter(r=>F[pFilter](r)&&(!pCountry||r.Pays===pCountry)&&(!pSize||r.Taille===pSize)&&(!pMob||!!pWa(r))&&(!q||[r.Agence,r.Ville,r.Pays,r.Infos].join(" ").toLowerCase().includes(q))).sort((a,b)=>(pTaskDue(b)-pTaskDue(a))||(pDue(b)-pDue(a))||((rank[a.Taille]??3)-(rank[b.Taille]??3)));
+  const rs=all.filter(r=>F[pFilter](r)&&(!pCountry||r.Pays===pCountry)&&(!pSize||r.Taille===pSize)&&(!pMob||!!pWa(r))&&(!q||[r.Agence,r.Ville,r.Pays,r.Infos].join(" ").toLowerCase().includes(q))).sort((a,b)=>(pTaskDue(b)-pTaskDue(a))||(pDue(b)-pDue(a))||String(b.Date||"").localeCompare(String(a.Date||""))||((rank[a.Taille]??3)-(rank[b.Taille]??3)));
   const done=all.filter(r=>(r.Statut||"À contacter")!=="À contacter").length;
   el.innerHTML='<div class="toolbar"><h1>Prospects</h1><button class="btn sm dark" id="pAddBtn">+ Ajouter</button><button class="btn sm" id="pTplBtn">Mes messages</button><input class="search" id="prosq" type="search" placeholder="Agence, ville, pays…" value="'+esc(q)+'"></div>'+
     '<div class="chips">'+[["","Toutes"]].concat(Object.keys(P_APPS).map(k=>[k,P_APPS[k].n])).map(x=>'<button class="chip" data-pa="'+x[0]+'" aria-pressed="'+(x[0]===pAppF)+'">'+esc(x[1])+' · '+(x[0]?allApps.filter(r=>pApp(r)===x[0]).length:allApps.length)+'</button>').join("")+'</div>'+
