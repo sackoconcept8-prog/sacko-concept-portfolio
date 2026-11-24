@@ -58,6 +58,13 @@ label.f{display:block;font-size:13px;font-weight:600;margin:0 0 5px}
 .lien{display:block;margin:12px auto 0;background:none;border:0;color:var(--p);font:inherit;font-size:14px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .by{margin-top:18px;font-size:12px;color:var(--muted)}
 header.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+/* 2e couleur de l'agence : filets et repères (ex. or de CDK) */
+body.bicolore header.top{border-bottom:3px solid var(--s)}
+body.bicolore #side button.on{box-shadow:inset 3px 0 0 var(--s)}
+body.bicolore .tile{border-top:3px solid var(--s)}
+body.bicolore .head h1:after{content:"";display:block;width:46px;height:3px;background:var(--s);border-radius:2px;margin-top:7px}
+body.bicolore .btn.pri{box-shadow:inset 0 -2px 0 var(--s)}
+body.bicolore .nf-btn{border-color:var(--s)}
 .top-in{max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;margin-right:auto;min-width:0}
 .brand img{width:40px;height:40px;object-fit:contain;flex:none}
@@ -406,7 +413,7 @@ const emailAgent=mat=>slugify(mat)+"@"+ag.slug+".agents.sackoconcept.com";
 const siteNom=id=>(sites.find(s=>s.id===id)||{}).nom||"Sans affectation";
 
 function habiller(a){if(!a)return;
-  const r=document.documentElement.style;if(/^#[0-9a-f]{6}$/i.test(a.couleur_principale||"")){r.setProperty("--p",a.couleur_principale);r.setProperty("--p-l",a.couleur_principale+"1c")}if(/^#[0-9a-f]{6}$/i.test(a.couleur_secondaire||"")&&!/^#0{6}$/.test(a.couleur_secondaire))r.setProperty("--s",a.couleur_secondaire);
+  const r=document.documentElement.style;if(/^#[0-9a-f]{6}$/i.test(a.couleur_principale||"")){r.setProperty("--p",a.couleur_principale);r.setProperty("--p-l",a.couleur_principale+"1c")}if(/^#[0-9a-f]{6}$/i.test(a.couleur_secondaire||"")&&!/^#0{6}$/.test(a.couleur_secondaire))r.setProperty("--s",a.couleur_secondaire);document.body.classList.add("bicolore");
   if(a.logo_url)montrerLogo(a.logo_url);else montrerLogo(LOGO_DEFAUT);
   const nom=a.nom||a.nom_agence;if(nom){$("#lg-nom").textContent=nom;$("#hd-nom").textContent=nom;document.title=nom+" · Espace de gestion"}
   if(a.devise||a.raison_sociale)$("#lg-sous").textContent=a.devise||a.raison_sociale;
@@ -536,7 +543,7 @@ async function barreTechnicien(){
   const bar=$("#tech-bar");let c=[];try{c=must(await sb.rpc("technicien_comptes"))||[]}catch(_){}
   const RL={dgg:"Direction générale",dg:"Direction",conseiller:"Conseiller",commercial:"Directeur commercial",comptable:"Comptabilité",rh:"RH / Superviseur général",superviseur:"Superviseur",client:"Client",agent:"Agent"};
   const grp={};c.forEach(x=>{const k=x.role==="dg"&&x.niveau_direction==="general"?"dgg":x.role;(grp[k]=grp[k]||[]).push(x)});RL.dgg="Direction générale";
-  bar.innerHTML=`<div class="in"><b>🛠 Mode technicien</b><span class="xs" style="opacity:.7">version du 24/11 · 17 h 50</span><span>${esc(ag?ag.nom_agence:"")}</span><span class="grow"></span><label for="tb-vue" class="sm">Interface affichée :</label>
+  bar.innerHTML=`<div class="in"><b>🛠 Mode technicien</b><span class="xs" style="opacity:.7">version du 24/11 · 19 h 45</span><span>${esc(ag?ag.nom_agence:"")}</span><span class="grow"></span><label for="tb-vue" class="sm">Interface affichée :</label>
   <select class="input" id="tb-vue"><option value="">Direction (vue complète)</option>${Object.keys(RL).filter(k=>grp[k]).map(k=>`<optgroup label="${RL[k]}">${grp[k].map(x=>`<option value="${x.id}" ${ctx.vu===x.id?"selected":""}>${esc(x.nom_complet)}${x.fonction?" · "+esc(x.fonction):""}${x.est_actif?"":" (désactivé)"}</option>`).join("")}</optgroup>`).join("")}</select>
   ${lectureSeuleTech()?'<span class="pill p-amber">Consultation seulement</span>':""}<button class="btn sm" id="tb-jr">📋 Journal d'activité</button><button class="btn sm" id="tb-ag">Changer d'agence</button><button class="btn sm" id="tb-fin">Fermer la session</button></div>`;
   bar.classList.remove("hide");
