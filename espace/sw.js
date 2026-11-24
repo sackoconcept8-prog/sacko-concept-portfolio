@@ -1,5 +1,5 @@
 /* Service worker de l'espace de gestion : fonctionnement sans réseau et notifications. */
-const VERSION = "espace-v19";
+const VERSION = "espace-v20";
 const ICONES = "espace-icones";
 const COQUILLE = ["./", "./index.html", "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"];
 
