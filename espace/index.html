@@ -536,7 +536,7 @@ async function barreTechnicien(){
   const bar=$("#tech-bar");let c=[];try{c=must(await sb.rpc("technicien_comptes"))||[]}catch(_){}
   const RL={dgg:"Direction générale",dg:"Direction",conseiller:"Conseiller",commercial:"Directeur commercial",comptable:"Comptabilité",rh:"RH / Superviseur général",superviseur:"Superviseur",client:"Client",agent:"Agent"};
   const grp={};c.forEach(x=>{const k=x.role==="dg"&&x.niveau_direction==="general"?"dgg":x.role;(grp[k]=grp[k]||[]).push(x)});RL.dgg="Direction générale";
-  bar.innerHTML=`<div class="in"><b>🛠 Mode technicien</b><span>${esc(ag?ag.nom_agence:"")}</span><span class="grow"></span><label for="tb-vue" class="sm">Interface affichée :</label>
+  bar.innerHTML=`<div class="in"><b>🛠 Mode technicien</b><span class="xs" style="opacity:.7">version du 24/11 · 17 h 30</span><span>${esc(ag?ag.nom_agence:"")}</span><span class="grow"></span><label for="tb-vue" class="sm">Interface affichée :</label>
   <select class="input" id="tb-vue"><option value="">Direction (vue complète)</option>${Object.keys(RL).filter(k=>grp[k]).map(k=>`<optgroup label="${RL[k]}">${grp[k].map(x=>`<option value="${x.id}" ${ctx.vu===x.id?"selected":""}>${esc(x.nom_complet)}${x.fonction?" · "+esc(x.fonction):""}${x.est_actif?"":" (désactivé)"}</option>`).join("")}</optgroup>`).join("")}</select>
   ${lectureSeuleTech()?'<span class="pill p-amber">Consultation seulement</span>':""}<button class="btn sm" id="tb-jr">📋 Journal d'activité</button><button class="btn sm" id="tb-ag">Changer d'agence</button><button class="btn sm" id="tb-fin">Fermer la session</button></div>`;
   bar.classList.remove("hide");
