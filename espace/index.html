@@ -774,7 +774,7 @@ function confirmer(titre,texte,label,fn,mot){
 /* ---------- agents ---------- */
 const stA=a=>a.statut==="Actif"?["Actif","p-green"]:a.statut==="Sorti"?["Sorti de l'effectif","p-grey"]:["Accès retiré","p-amber"];
 function vAgents(){
-  $("#main").innerHTML=`<div class="head"><div><h1>Personnel</h1><p class="muted sm" style="margin:2px 0 0">${agents.filter(a=>a.statut!=="Sorti"&&estSecu(a)).length} agent(s) de sécurité sur ${+ag.nb_agents_max} autorisés par votre offre${agents.some(a=>a.statut!=="Sorti"&&!estSecu(a))?" · "+agents.filter(a=>a.statut!=="Sorti"&&!estSecu(a)).length+" autre(s) employé(s), hors limite":""}.</p></div><div class="actions">${modeTech||["dg","rh"].includes(moi.role)?'<button class="btn" id="imp-x">Importer Excel</button>':""}${estDirection()?'<button class="btn" id="a-lot">📅 Présences en lot</button>':""}<button class="btn pri" id="a-new">+ Nouvel employé</button></div></div>
+  $("#main").innerHTML=`<div class="head"><div><h1>Personnel</h1><p class="muted sm" style="margin:2px 0 0">${agents.filter(a=>a.statut!=="Sorti"&&estSecu(a)).length} agent(s) de sécurité sur ${+ag.nb_agents_max} autorisés par votre offre${agents.some(a=>a.statut!=="Sorti"&&!estSecu(a))?" · "+agents.filter(a=>a.statut!=="Sorti"&&!estSecu(a)).length+" autre(s) employé(s), hors limite":""}.</p></div><div class="actions">${modeTech||["dg","rh"].includes(moi.role)?'<button class="btn" id="imp-x">Importer Excel</button>':""}${estDirection()&&lotOuvert()?'<button class="btn" id="a-lot">📅 Présences en lot</button>':""}<button class="btn pri" id="a-new">+ Nouvel employé</button></div></div>
   <div class="tools"><select class="input" id="a-cat" style="flex:1 1 170px"><option value="">Tout le personnel</option>${CATS.map(([k,l])=>`<option value="${k}">${k==="Sécurité"?"Agents de sécurité":esc(l)}</option>`).join("")}</select><input class="input" id="a-q" type="search" placeholder="Rechercher un nom, un matricule…" value="${esc(fAg.q)}" style="flex:3 1 220px"><select class="input" id="a-site"><option value="">Tous les sites</option>${sites.map(s=>`<option value="${s.id}">${esc(s.nom)}</option>`).join("")}<option value="aucun">Sans affectation</option></select><select class="input" id="a-st"><option value="Actif">Actifs</option><option value="Suspendu">Accès retiré</option><option value="Sorti">Sortis</option><option value="">Tous</option></select></div>
   <div id="a-liste"></div>`;
   $("#a-site").value=fAg.site;$("#a-st").value=fAg.statut;$("#a-cat").value=fAg.cat;$("#a-cat").onchange=e=>{fAg.cat=e.target.value;listeAgents()};
@@ -832,7 +832,7 @@ async function presenceAgent(a){const ym=faMois=faMois||auj().slice(0,7),m1=ym+"
   const R_=pt.filter(retard),nj=ab.filter(x=>!x.justifiee).length,sansDep=pt.filter(p=>!p.heure_depart&&p.date_service<auj()).length;
   const ev=[...pt.map(p=>({d:p.date_service,p})),...ab.map(x=>({d:x.date_absence,x}))].sort((u,v)=>v.d.localeCompare(u.d));
   const rouvrir=()=>{ficheAgent(a.id)};
-  z().innerHTML=`<div class="actions" style="margin-bottom:10px"><input class="input" type="month" id="fp-m" value="${ym}" style="width:auto">${dir?`<button class="btn sm pri" id="fp-mois">📅 Remplir le mois</button><button class="btn sm" id="fp-add">+ Ajouter une présence</button><button class="btn sm" id="fp-abs">Déclarer une absence</button>`:""}</div>
+  z().innerHTML=`<div class="actions" style="margin-bottom:10px"><input class="input" type="month" id="fp-m" value="${ym}" style="width:auto">${dir&&(!DEBUT_PT()||ym<DEBUT_PT().slice(0,7))?`<button class="btn sm pri" id="fp-mois">📅 Remplir le mois</button><button class="btn sm" id="fp-add">+ Ajouter une présence</button><button class="btn sm" id="fp-abs">Déclarer une absence</button>`:""}</div>
     <div class="fp-t"><div><b>${pt.length}</b><span>jour(s) pointé(s)</span></div><div><b class="${R_.length?"wa-t":""}">${R_.length}</b><span>retard(s)${R_.length?" · "+R_.reduce((t,p)=>t+retard(p),0)+" min":""}</span></div><div><b class="${nj?"ko-t":""}">${nj}</b><span>absence(s) non justifiée(s)</span></div><div><b>${ab.length-nj}</b><span>absence(s) justifiée(s)</span></div>${sansDep?`<div><b class="wa-t">${sansDep}</b><span>sans départ pointé</span></div>`:""}</div>
     ${ev.length?`<div class="fp-l">${ev.map(e=>{if(e.p){const p=e.p,r=retard(p);return `<div class="line" style="padding:7px 0"><div class="grow"><b class="sm">${esc(fjourc(p.date_service))}</b> <span class="muted xs">· ${esc(POSTE(p.poste).libelle.toLowerCase())} · ${esc(siteNom(p.site_id))}</span>
         <div class="sm">Arrivée ${p.heure_arrivee?hm(p.heure_arrivee):"—"} · départ ${p.heure_depart?hm(p.heure_depart):"<span class='wa-t'>non pointé</span>"}${p.mode==="secours"||/manuel|direction/i.test(p.note||"")?' <span class="muted xs">· saisie manuelle</span>':""}</div></div>
@@ -846,7 +846,7 @@ async function presenceAgent(a){const ym=faMois=faMois||auj().slice(0,7),m1=ym+"
   Q("data-fpj",b=>busy(b,async()=>{const x=ab.find(y=>y.id===b.dataset.fpj);must(await sb.from("absences").update({justifiee:!x.justifiee}).eq("id",x.id));toast("Absence mise à jour");await presenceAgent(a)}));
   Q("data-fpd",b=>busy(b,async()=>{must(await sb.from("absences").delete().eq("id",b.dataset.fpd));toast("Absence retirée");await presenceAgent(a)}));
   $("#fp-abs").onclick=()=>declarerAbsence(a.id,ym===auj().slice(0,7)?auj():m1,async()=>rouvrir());
-  $("#fp-mois").onclick=()=>remplirMois(a,ym,pt,ab,rouvrir);
+  {const b=$("#fp-mois");if(b)b.onclick=()=>remplirMois(a,ym,pt,ab,rouvrir)}
   $("#fp-add").onclick=()=>{const ss=sites.filter(x=>x.actif!==false);
     modal("Ajouter une présence · "+esc(nomAg(a)),`<div class="row"><div class="field"><label class="f">Date</label><input class="input" type="date" id="fa-d" value="${ym===auj().slice(0,7)?auj():m1}" max="${auj()}"></div><div class="field"><label class="f">Quart</label><select class="input" id="fa-q">${CODES().map(c=>`<option value="${esc(c)}" ${c===a.poste?"selected":""}>${esc(POSTE(c).libelle)} · ${POSTE(c).debut}–${POSTE(c).fin}</option>`).join("")}</select></div></div>
       <div class="field"><label class="f">Site</label><select class="input" id="fa-s">${ss.map(x=>`<option value="${x.id}" ${x.id===a.site_id?"selected":""}>${esc(x.nom)}</option>`).join("")}</select></div>`,
@@ -855,10 +855,16 @@ async function presenceAgent(a){const ym=faMois=faMois||auj().slice(0,7),m1=ym+"
       if(pt.some(p=>p.date_service===d&&p.poste===$("#fa-q").value))return toast("Un pointage existe déjà ce jour-là pour ce quart : utilisez « Corriger ».",true);
       saisieManuelle(d,{agent_id:a.id,site_id:$("#fa-s").value,poste:$("#fa-q").value},rouvrir)}};
 }
+/* date à partir de laquelle chaque agent doit pointer lui-même (réglage de l'agence) */
+const DEBUT_PT=()=>((ag&&ag.parametres)||{}).debut_pointage||null;
+const limiteLot=()=>{const d=DEBUT_PT(),h=auj();return d&&d<=h?ajout(d,-1):h};
+const lotOuvert=()=>{const d=DEBUT_PT();return !d||auj()<ajout(d,45)};
 /* présences de plusieurs agents sur une période, en une fois */
-function presencesEnLot(apres){const L=agents.filter(a=>a.statut==="Actif"&&a.categorie!=="Prestataire").sort((x,y)=>nomAg(x).localeCompare(nomAg(y))),hier=ajout(auj(),-1),m1=auj().slice(0,8)+"01";
+function presencesEnLot(apres){const LIM=limiteLot(),D0=DEBUT_PT();if(D0&&auj()>=D0&&LIM<ajout(auj(),-62))return toast("Depuis le "+fd(D0)+", chaque agent pointe lui-même avec l'application.",true);
+  const L=agents.filter(a=>a.statut==="Actif"&&a.categorie!=="Prestataire").sort((x,y)=>nomAg(x).localeCompare(nomAg(y))),hier=ajout(auj(),-1),m1=auj().slice(0,8)+"01";
   modal("Présences en lot",`<p class="muted sm" style="margin-top:0">Enregistre en une fois les agents cochés comme <b>présents</b> sur toute la période, à leur site et à leur quart habituels. Les jours déjà pointés et les absences ne sont pas modifiés. Ensuite, il suffit de déclarer les absences.</p>
-    <div class="row"><div class="field"><label class="f">Du</label><input class="input" type="date" id="pl-d1" value="${m1}" max="${auj()}"></div><div class="field"><label class="f">Au</label><input class="input" type="date" id="pl-d2" value="${hier<m1?auj():hier}" max="${auj()}"></div></div>
+    <div class="row"><div class="field"><label class="f">Du</label><input class="input" type="date" id="pl-d1" value="${m1>LIM?LIM.slice(0,8)+"01":m1}" max="${LIM}"></div><div class="field"><label class="f">Au</label><input class="input" type="date" id="pl-d2" value="${hier<m1?(auj()>LIM?LIM:auj()):hier>LIM?LIM:hier}" max="${LIM}"></div></div>
+    ${D0?`<p class="sm wa-t" style="margin:-4px 0 8px">À partir du ${fd(D0)}, chaque agent pointe lui-même avec l'application : la saisie en lot n'est possible que jusqu'au ${fd(ajout(D0,-1))}.</p>`:""}
     <label class="an-opt"><input type="checkbox" id="pl-rep" checked> Ne pas compter le jour de repos de chaque agent</label>
     <div class="actions" style="margin:10px 0 6px"><button class="btn sm" type="button" id="pl-all">Tout cocher</button><button class="btn sm" type="button" id="pl-none">Tout décocher</button><span class="muted sm" id="pl-n" style="margin-left:auto"></span></div>
     <div class="pl-lst">${L.map(a=>{const ok=a.site_id&&a.poste;return `<label class="pl-ag ${ok?"":"pl-agko"}"><input type="checkbox" value="${a.id}" ${ok?"checked":"disabled"}><span class="grow"><b>${esc(nomAg(a))}</b> <span class="muted xs">${esc(a.matricule||"")}</span><div class="muted xs">${ok?esc(siteNom(a.site_id))+" · "+esc(POSTE(a.poste).libelle.toLowerCase())+" "+POSTE(a.poste).debut+"–"+POSTE(a.poste).fin+(a.jour_repos!=null?" · repos le "+JOURS[+a.jour_repos].toLowerCase():""):"Sans site ou sans quart : à compléter dans sa fiche"}</div></span></label>`}).join("")}</div>`,
@@ -868,7 +874,7 @@ function presencesEnLot(apres){const L=agents.filter(a=>a.statut==="Actif"&&a.ca
   $("#pl-all").onclick=()=>{cs().forEach(c=>c.checked=true);cpt()};$("#pl-none").onclick=()=>{cs().forEach(c=>c.checked=false);cpt()};
   $("#pl-no").onclick=closeModal;
   $("#pl-ok").onclick=()=>busy($("#pl-ok"),async()=>{const d1=$("#pl-d1").value,d2=$("#pl-d2").value,ids=cs().filter(c=>c.checked).map(c=>c.value),rep=$("#pl-rep").checked;
-    if(!d1||!d2||d2<d1)throw new Error("Vérifiez les dates.");if(d2>auj())throw new Error("On ne peut pas enregistrer de présence pour un jour à venir.");
+    if(!d1||!d2||d2<d1)throw new Error("Vérifiez les dates.");if(d2>auj())throw new Error("On ne peut pas enregistrer de présence pour un jour à venir.");if(D0&&d2>=D0)throw new Error("À partir du "+fd(D0)+", chaque agent pointe lui-même : choisissez une date de fin avant le "+fd(D0)+".");
     const nb=Math.round((new Date(d2)-new Date(d1))/864e5)+1;if(nb>62)throw new Error("Choisissez au maximum 2 mois à la fois.");
     const [pt,ab]=await Promise.all([sb.from("pointages").select("agent_id,date_service").gte("date_service",d1).lte("date_service",d2).then(must),sb.from("absences").select("agent_id,date_absence").gte("date_absence",d1).lte("date_absence",d2).then(must)]);
     const deja=new Set(pt.map(p=>p.agent_id+p.date_service).concat(ab.map(x=>x.agent_id+x.date_absence))),rows=[];
@@ -884,7 +890,7 @@ function presencesEnLot(apres){const L=agents.filter(a=>a.statut==="Actif"&&a.ca
 function remplirMois(a,ym,pt,ab,apres){const m1=ym+"-01",nj=+finMois(ym).slice(8),ss=sites.filter(x=>x.actif!==false),lim=auj();
   if(!ss.length)return toast("Ajoutez d'abord un site.",true);
   const jours=[...Array(nj)].map((_,i)=>ajout(m1,i)),dec=(dowOf(m1)+6)%7;
-  const etat=d=>d>lim?"futur":ab.some(x=>x.date_absence===d)?"absent":pt.some(p=>p.date_service===d)?"pointe":"";
+  const D0=DEBUT_PT(),etat=d=>d>lim||(D0&&d>=D0)?"futur":ab.some(x=>x.date_absence===d)?"absent":pt.some(p=>p.date_service===d)?"pointe":"";
   modal("Remplir le mois · "+esc(nomAg(a)),`<p class="muted sm" style="margin-top:0">Cochez les jours où <b>${esc(nomAg(a))}</b> a travaillé en ${esc(fmo(ym))}. Les jours déjà pointés ou en absence ne sont pas modifiés.</p>
     <div class="row"><div class="field"><label class="f">Quart</label><select class="input" id="rm-q">${CODES().map(c=>`<option value="${esc(c)}" ${c===a.poste?"selected":""}>${esc(POSTE(c).libelle)}</option>`).join("")}</select></div>
       <div class="field"><label class="f">Arrivée</label><input class="input" type="time" id="rm-a"></div><div class="field"><label class="f">Départ</label><input class="input" type="time" id="rm-d"></div></div>
@@ -1152,7 +1158,7 @@ async function vPointage(){jourT=jourT||auj();const ds=jourT,dir=estDirection(),
     return now>deb.getTime()+TOL()*6e4?["Pas pointé","p-red","np"]:["À venir","p-grey","av"]};
   const n=k=>lignes.filter(l=>etat(l)[2]===k).length;
   lignes.sort((a,b)=>siteNom(a.site_id).localeCompare(siteNom(b.site_id))||a.poste.localeCompare(b.poste));
-  $("#main").innerHTML=`<div class="head"><div><h1>Pointage</h1><p class="muted sm" style="margin:2px 0 0">Les heures sont celles du serveur : un agent ne peut pas les modifier.</p></div>${dir?'<div class="actions"><button class="btn pri" id="pt-lot">📅 Présences en lot</button><button class="btn" id="pt-csv">Exporter le mois (Excel / PDF)</button></div>':""}</div>
+  $("#main").innerHTML=`<div class="head"><div><h1>Pointage</h1><p class="muted sm" style="margin:2px 0 0">Les heures sont celles du serveur : un agent ne peut pas les modifier.</p></div>${dir?'<div class="actions">'+(lotOuvert()?'<button class="btn pri" id="pt-lot">📅 Présences en lot</button>':"")+'<button class="btn" id="pt-csv">Exporter le mois (Excel / PDF)</button></div>':""}</div>
   <div class="daybar"><button class="btn sm" id="pt-prev">‹</button><input class="input" type="date" id="pt-d" value="${ds}"><button class="btn sm" id="pt-next">›</button><button class="btn sm" id="pt-auj">Aujourd'hui</button></div>
   <div class="tiles"><div class="tile"><b>${lignes.length}</b><span class="muted sm">Attendus</span></div><div class="tile"><b class="ok-t">${n("ok")}</b><span class="muted sm">À l'heure</span></div><div class="tile"><b class="wa-t">${n("ret")}</b><span class="muted sm">En retard</span></div><div class="tile"><b class="ko-t">${n("np")}</b><span class="muted sm">Pas pointé</span></div></div>
   ${lignes.length?`<div class="card">${lignes.map(l=>{const a=AG_(l.agent_id),e=etat(l),pt=l.pt,s=sites.find(x=>x.id===l.site_id)||{},loin=pt&&pt.distance_m!=null&&pt.distance_m>(+s.rayon_m||300);
