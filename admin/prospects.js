@@ -16,7 +16,7 @@ const P_TPL = {
 };
 P_TPL.relance2={n:"Relance 2",d:"Avec le lien de la démo",t:"Bonjour,\nJe me permets de vous relancer au sujet de SécuriPro.\nVous pouvez tester la démo vous-même, gratuitement : https://www.sackoconcept.com/securipro/\nDites-moi ce que vous en pensez.\nHawa Sacko · SACKO CONCEPT"};
 P_TPL.relance3={n:"Dernière relance",d:"Dernier message, sans insister",t:"Bonjour,\nJe ne veux pas vous déranger davantage. Si la gestion de vos agents redevient un sujet, la démo de SécuriPro reste ouverte : https://www.sackoconcept.com/securipro/\nBelle continuation à {agence}.\nHawa Sacko · SACKO CONCEPT"};
-P_TPL.ci={n:"Côte d'Ivoire",d:"Agences ivoiriennes : preuves pour les clients et les appels d'offres",t:"Bonjour,\nJ'aimerais m'entretenir avec la direction de {agence} au sujet du suivi de vos agents.\nNous avons conçu SécuriPro, un logiciel pour les sociétés de gardiennage : pointage GPS, rondes par QR code, contrôle de présence de nuit et paie avec la CNPS.\nVos clients reçoivent la preuve de chaque ronde : un vrai atout pour garder vos contrats et remporter les appels d'offres des banques et des entreprises.\nJe peux vous le présenter en 15 minutes. Démo : https://www.sackoconcept.com/securipro/\nHawa Sacko · SACKO CONCEPT"};
+P_TPL.ci={n:"Côte d'Ivoire",d:"Agences ivoiriennes : message court avec la démo",t:"Bonjour,\nJ'aimerais échanger avec la direction de {agence} au sujet du suivi de vos agents.\nSécuriPro, notre logiciel pour sociétés de gardiennage, prouve chaque ronde à vos clients.\nDémo gratuite : https://www.sackoconcept.com/securipro/?d=ci\nHawa Sacko · SACKO CONCEPT"};
 /* ---------- Une liste de prospects par application (colonne « Application » de la feuille) ---------- */
 const P_REL_KEY = "sc_pros_rel";
 const P_APPS = {
