@@ -13,7 +13,7 @@
 <link rel="icon" href="assets/sacko-logo-96.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <meta name="robots" content="noindex">
-<style>.lab{display:block;font-weight:500;font-size:14px;margin-bottom:8px}.hint{font-size:12.5px;color:var(--muted);margin-top:6px}.colors{display:flex;gap:16px;flex-wrap:wrap;align-items:center}.colors label{display:flex;align-items:center;gap:10px;font-size:14px}.colors input[type=color]{width:52px;height:40px;padding:2px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer}.drop.small{padding:16px}.drop.done{border-style:solid;border-color:#2F7D52;background:#F1F8F3}.drop.done b{color:#1F5A3A}.dl{display:inline-flex;gap:8px;align-items:center;font-weight:600}</style>
+<style>.lab{display:block;font-weight:500;font-size:14px;margin-bottom:8px}.hint{font-size:12.5px;color:var(--muted);margin-top:6px}.colors{display:flex;gap:16px;flex-wrap:wrap;align-items:center}.colors label{display:flex;align-items:center;gap:10px;font-size:14px}.colors input[type=color]{width:52px;height:40px;padding:2px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer}.drop.small{padding:16px}.drop.done{border-style:solid;border-color:#2F7D52;background:#F1F8F3}.drop.done b{color:#1F5A3A}.dl{display:inline-flex;gap:8px;align-items:center;font-weight:600}.f-bad{outline:2px solid #DC2626;outline-offset:6px;border-radius:10px;background:#FEF2F2}.f-bad input:not([type=radio]):not([type=checkbox]){border-color:#DC2626}</style>
 </head>
 <body>
 <nav>
@@ -96,7 +96,7 @@
     <div class="f"><label for="fonction">Votre fonction</label><input id="fonction" name="fonction" type="text"></div>
     <div class="f"><label for="whatsapp">Votre WhatsApp <i>*</i></label><input id="whatsapp" name="whatsapp" type="tel" required placeholder="Avec l'indicatif du pays, ex. +225 …" autocomplete="tel"></div>
   </fieldset>
-  <label class="consent"><input type="checkbox" id="consent" name="consent" required> <span>J'autorise SACKO CONCEPT à utiliser ces informations pour configurer notre logiciel. Elles restent confidentielles. <i style="color:#C2410C;font-style:normal">*</i></span></label>
+  <label class="consent"><input type="checkbox" id="consent" name="consent" required> <span><b>À cocher :</b> j'autorise SACKO CONCEPT à utiliser ces informations pour configurer notre logiciel. Elles restent confidentielles. <i style="color:#C2410C;font-style:normal">*</i></span></label>
   <div class="submit-row"><button class="btn btn-gold" type="submit" id="send">Envoyer ma fiche</button><span class="msg" id="msg" aria-live="polite"></span></div>
 </form>
 <aside class="side-card">
@@ -133,9 +133,20 @@ document.querySelectorAll("[data-up]").forEach(d=>{const k=d.dataset.up,inp=docu
 });
 function b64(file){return new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=ko;r.readAsDataURL(file)})}
 const LABELS={raison:"Raison sociale",forme:"Forme juridique",pays:"Pays et ville",adresse:"Adresse",tel:"Téléphone entreprise",email:"E-mail entreprise",ifu:"Identifiant fiscal",rccm:"Immatriculation",cnss:"Sécurité sociale employeur",web:"Site web",taille:"Nombre d'agents",sites:"Nombre de sites",superviseurs:"Superviseurs",smartphone:"Agents avec smartphone",couleur1:"Couleur principale",couleur2:"Couleur secondaire",dg:"Directeur général",dg_tel:"Tél. DG",dg_email:"E-mail DG",dga:"Directeur adjoint / associé",rh:"Responsable RH",rh_contact:"Contact RH",compta:"Comptabilité",compta_contact:"Contact comptabilité",jour:"Poste de jour",nuit:"Poste de nuit",grades:"Grades",pointage:"Pointage souhaité",paie:"Paiement des salaires",mecef:"Facture normalisée",nologo:"Création de logo demandée",besoins_txt:"Besoins particuliers",demarrage:"Démarrage souhaité",fonction:"Fonction du déclarant"};
+f.addEventListener("input",e=>{const b=e.target.closest(".f-bad");if(b&&e.target.checkValidity())b.classList.remove("f-bad")});
+f.addEventListener("change",e=>{const b=e.target.closest(".f-bad");if(b&&e.target.checkValidity())b.classList.remove("f-bad")});
 f.addEventListener("submit",async e=>{
  e.preventDefault();msg.className="msg";
- if(!f.checkValidity()){const bad=f.querySelector(":invalid");msg.className="msg err";msg.textContent="Remplissez les champs marqués d'une étoile.";bad&&bad.focus();return}
+ f.querySelectorAll(".f-bad").forEach(x=>{x.classList.remove("f-bad")});
+ f.querySelectorAll("input[type=email]").forEach(x=>{x.value=x.value.trim().replace(/\s+/g,"")});
+ if(!f.checkValidity()){
+  const NAMES={entreprise:"Nom commercial",pays:"Pays et ville",taille:"Nombre d'agents",nom:"Votre nom",whatsapp:"Votre WhatsApp",consent:"la case d'autorisation tout en bas",email:"E-mail de l'entreprise (format invalide, ou laissez vide)",dg_email:"E-mail du directeur (format invalide, ou laissez vide)"};
+  const seen=[],bads=[...f.querySelectorAll(":invalid")].filter(x=>x.name&&!seen.includes(x.name)&&seen.push(x.name));
+  bads.forEach(x=>{const box=x.closest(".f")||x.closest(".consent");box&&box.classList.add("f-bad")});
+  const first=bads[0];
+  msg.className="msg err";msg.textContent="À compléter : "+bads.map(x=>NAMES[x.name]||x.name).join(" · ");
+  if(first){(first.closest(".f")||first.closest(".consent")||first).scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>first.focus({preventScroll:true}),400)}
+  return}
  if(!UP.logo.length&&!document.getElementById("nologo").checked){msg.className="msg err";msg.textContent="Ajoutez le logo de votre entreprise, ou cochez la case si vous n'en avez pas.";document.querySelector('[data-up="logo"]').focus();return}
  if(total()>MAX){msg.className="msg err";msg.textContent="Les fichiers dépassent 15 Mo au total.";return}
  const fd=new FormData(f),vals={};for(const [k,v] of fd.entries()){if(k==="consent")continue;vals[k]=vals[k]?vals[k]+", "+v:v}
