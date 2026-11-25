@@ -1,0 +1,17 @@
+{
+  "id": "/espace/?a=sipsgui",
+  "name": "SIPSGUI",
+  "short_name": "SIPSGUI",
+  "description": "Logiciel de gestion de SIPSGUI : pointage, rondes, main courante, RH, paie, facturation et comptabilité.",
+  "start_url": "/espace/?a=sipsgui",
+  "scope": "/espace/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "lang": "fr",
+  "icons": [
+    { "src": "/sipsgui/logo-sipsgui-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/sipsgui/logo-sipsgui-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/sipsgui/logo-sipsgui-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

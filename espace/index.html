@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" id="apple-ic" href="../assets/sacko-logo-vert-192.png">
 <script>
 /* Application installable au nom de l'agence : icône et nom de l'agence sur l'écran d'accueil ou le bureau */
-const APPS_AGENCES={"agence-speciale":{nom:"Agence Spéciale",ios:"/agence-speciale/logo-as2-ios-180.png",icone:"/agence-speciale/logo-as2-192.png",badge:"/agence-speciale/logo-as2-96.png"},"cdk-securite":{nom:"CDK Groupe Sécurité",ios:"/cdk-group/logo-cdk-ios-180.png",icone:"/cdk-group/logo-cdk-192.png",badge:"/cdk-group/logo-cdk-96.png"}};
+const APPS_AGENCES={"agence-speciale":{nom:"Agence Spéciale",ios:"/agence-speciale/logo-as2-ios-180.png",icone:"/agence-speciale/logo-as2-192.png",badge:"/agence-speciale/logo-as2-96.png"},"cdk-securite":{nom:"CDK Groupe Sécurité",ios:"/cdk-group/logo-cdk-ios-180.png",icone:"/cdk-group/logo-cdk-192.png",badge:"/cdk-group/logo-cdk-96.png"},"sipsgui":{nom:"SIPSGUI",ios:"/sipsgui/logo-sipsgui-ios-180.png",icone:"/sipsgui/logo-sipsgui-192.png",badge:"/sipsgui/logo-sipsgui-96.png"}};
 (function(){let sl=(new URLSearchParams(location.search).get("a")||document.querySelector('meta[name="agence-slug"]').content||"").toLowerCase().replace(/[^a-z0-9-]/g,"");try{if(!sl)sl=localStorage.getItem("espace-slug")||""}catch(_){}
   const A=APPS_AGENCES[sl];if(!A)return;
   document.querySelector('link[rel="manifest"]').href="manifest-"+sl+".webmanifest";
