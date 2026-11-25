@@ -3011,10 +3011,11 @@ $("#l-oubli").onclick=async()=>{const id=$("#l-id").value.trim(),mail=id.include
 
 /* ---------- superviseur : mes agents ---------- */
 function vEquipe(){const L=agents.filter(a=>a.statut==="Actif"&&a.id!==moi.agent_id).sort((x,y)=>siteNom(x.site_id).localeCompare(siteNom(y.site_id))||nomAg(x).localeCompare(nomAg(y)));
-  $("#main").innerHTML=`<div class="head"><div><h1>Mes agents</h1><p class="muted sm" style="margin:2px 0 0">Appelez un agent, ou donnez-lui un nouveau mot de passe s'il l'a oublié.</p></div></div>
+  $("#main").innerHTML=`<div class="head"><div><h1>Mes agents</h1><p class="muted sm" style="margin:2px 0 0">Notez un agent avec la justification, appelez-le, ou donnez-lui un nouveau mot de passe s'il l'a oublié.</p></div></div>
   ${L.length?`<div class="card">${L.map(a=>{const c=comptes.find(k=>k.agent_id===a.id),tel=String(a.telephone||"").replace(/[^\d+]/g,"");
     return `<div class="line"><div class="grow"><b class="n">${esc(nomAg(a))}</b><div class="muted xs">${esc(a.matricule)} · ${esc(siteNom(a.site_id))}${a.poste?" · "+POSTE(a.poste).libelle.toLowerCase():""}${c?(c.est_actif?"":" · accès coupé"):" · pas encore d'accès"}</div></div>
-    <div class="actions">${tel?`<a class="btn sm" href="tel:${esc(tel)}">Appeler</a>`:""}${c&&c.est_actif?`<button class="btn sm" data-mdp="${a.id}">Nouveau mot de passe</button>`:""}</div></div>`}).join("")}</div>`:`<div class="empty">La direction n'a pas encore enregistré d'agents.</div>`}`;
+    <div class="actions">${mod("supervision")?`<button class="btn sm pri" data-noter="${a.id}">⭐ Noter</button>`:""}${tel?`<a class="btn sm" href="tel:${esc(tel)}">Appeler</a>`:""}${c&&c.est_actif?`<button class="btn sm" data-mdp="${a.id}">Nouveau mot de passe</button>`:""}</div></div>`}).join("")}</div>`:`<div class="empty">La direction n'a pas encore enregistré d'agents.</div>`}`;
+  $("#main").querySelectorAll("[data-noter]").forEach(b=>b.onclick=()=>busy(b,async()=>{moiAgent();const a=AG_(b.dataset.noter);await nouvelleVisite(a&&a.site_id&&sites.some(s=>s.id===a.site_id&&s.actif)?a.site_id:null,a&&a.id)}));
   $("#main").querySelectorAll("[data-mdp]").forEach(b=>b.onclick=()=>{const a=AG_(b.dataset.mdp),c=comptes.find(k=>k.agent_id===a.id),nomC=nomAg(a);
     saisirMdp("Nouveau mot de passe · "+esc(nomC),"L'ancien mot de passe ne fonctionnera plus. Identifiant : <b>"+esc(a.matricule)+"</b>","Changer",async mdp=>{await appel({action:"mot_de_passe",user_id:c.id,mot_de_passe:mdp});toast("Mot de passe changé")},()=>{closeModal();vEquipe()},{nom:nomC,prenom:a.prenom,identifiant:a.matricule,telephone:a.telephone})});
 }
@@ -3035,12 +3036,13 @@ async function vVisites(){
   const nb=$("#vs-new");if(nb)nb.onclick=()=>busy(nb,async()=>{moiAgent();await nouvelleVisite()});
   $("#main").querySelectorAll("[data-vi]").forEach(x=>x.onclick=()=>voirVisite(vi.find(v=>v.id===x.dataset.vi)));
 }
-async function nouvelleVisite(siteId){const sv=serviceActuel(),P=await chargerPlanning(ajout(sv.ds,-1),sv.ds),po=must(await sb.from("pointages").select("*").gte("date_service",ajout(sv.ds,-1)));
+async function nouvelleVisite(siteId,agentCible){const sv=serviceActuel(),P=await chargerPlanning(ajout(sv.ds,-1),sv.ds),po=must(await sb.from("pointages").select("*").gte("date_service",ajout(sv.ds,-1)));
   siteId=siteId||(sites.find(s=>s.actif)||sites[0]).id;
   const prevus=[...new Set([...affectations(sv.ds,P,agents).filter(x=>x.site_id===siteId&&x.poste===sv.poste).map(x=>x.agent_id),...po.filter(p=>p.site_id===siteId&&p.date_service===sv.ds&&(p.poste||sv.poste)===sv.poste).map(p=>p.agent_id)])].filter(id=>id!==moi.agent_id);
+  if(agentCible&&!prevus.includes(agentCible))prevus.unshift(agentCible);
   const bloc=a=>`<div class="eval" data-ev="${a.id}"><div class="actions" style="justify-content:space-between"><h3>${esc(nomAg(a))} <span class="muted xs" style="font-weight:500">${esc(a.matricule)} · ${esc(a.fonction||a.grade)}</span></h3><button type="button" class="btn sm" data-rm="${a.id}">Retirer</button></div>
     ${CRIT.map(([k,l,o])=>`<div class="xs muted">${l}</div><div class="choix">${o.map((v,i)=>`<label><input type="radio" name="${k}-${a.id}" value="${esc(v)}" ${i===0?"checked":""}><span>${esc(v)}</span></label>`).join("")}</div>`).join("")}
-    <div class="xs muted">Note globale</div>${etoiles("note-"+a.id,0)}<input class="input" data-obs="${a.id}" placeholder="Observation (facultatif)" style="margin-top:8px"></div>`;
+    <div class="xs muted">Note globale</div>${etoiles("note-"+a.id,0)}<input class="input" data-obs="${a.id}" placeholder="Justification de la note (obligatoire) : ce que vous avez constaté" style="margin-top:8px"></div>`;
   modal("Nouvelle visite",`<div class="field"><label class="f">Site visité</label><select class="input" id="nv-s">${sites.filter(s=>s.actif).map(s=>`<option value="${s.id}" ${s.id===siteId?"selected":""}>${esc(s.nom)}</option>`).join("")}</select></div>
   <p class="muted sm" style="margin:0 0 10px">Agents prévus ou ayant pointé sur ce site pour le ${esc(POSTE(sv.poste).libelle.toLowerCase())} du ${fd(sv.ds)}. Vous pouvez en ajouter un autre.</p>
   <div id="nv-ag">${prevus.map(id=>AG_(id)).filter(Boolean).map(bloc).join("")||'<p class="muted sm" id="nv-vide">Aucun agent prévu sur ce site en ce moment.</p>'}</div>
@@ -3058,6 +3060,7 @@ async function nouvelleVisite(siteId){const sv=serviceActuel(),P=await chargerPl
   $("#nv-no").onclick=closeModal;
   $("#nv-ok").onclick=()=>busy($("#nv-ok"),async()=>{const ev=[...z.querySelectorAll("[data-ev]")];if(!ev.length)throw new Error("Ajoutez au moins un agent contrôlé.");
     const sansNote=ev.filter(e=>!+(e.querySelector("[data-et]").dataset.val||0));if(sansNote.length)throw new Error("Donnez une note (étoiles) à chaque agent contrôlé.");
+    const sansJustif=ev.filter(e=>!e.querySelector("[data-obs]").value.trim());if(sansJustif.length){sansJustif.forEach(e=>e.querySelector("[data-obs]").classList.add("pl-ko"));throw new Error("Justifiez la note de chaque agent : écrivez ce que vous avez constaté.")}
     const pos=await positionRapide(),val=n=>(z.querySelector(`input[name="${n}"]:checked`)||{}).value;
     const constats={agents:ev.map(e=>{const id=e.dataset.ev,o={agent_id:id,nom:nomAg(AG_(id)),note:+e.querySelector("[data-et]").dataset.val,observation:e.querySelector("[data-obs]").value.trim()||null};CRIT.forEach(([k])=>o[k]=val(k+"-"+id));return o}),
       main_courante:val("mc"),materiel:val("mat"),remarque_client:$("#nv-cl").value.trim()||null,latitude:pos?pos.lat:null,longitude:pos?pos.lng:null};
