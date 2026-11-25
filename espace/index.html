@@ -3010,16 +3010,34 @@ $("#l-oubli").onclick=async()=>{const id=$("#l-id").value.trim(),mail=id.include
   $("#ob-ok").onclick=closeModal};
 
 /* ---------- superviseur : mes agents ---------- */
-function vEquipe(){const L=agents.filter(a=>a.statut==="Actif"&&a.id!==moi.agent_id).sort((x,y)=>siteNom(x.site_id).localeCompare(siteNom(y.site_id))||nomAg(x).localeCompare(nomAg(y)));
-  $("#main").innerHTML=`<div class="head"><div><h1>Mes agents</h1><p class="muted sm" style="margin:2px 0 0">Notez un agent avec la justification, appelez-le, ou donnez-lui un nouveau mot de passe s'il l'a oublié.</p></div></div>
-  ${L.length?`<div class="card">${L.map(a=>{const c=comptes.find(k=>k.agent_id===a.id),tel=String(a.telephone||"").replace(/[^\d+]/g,"");
-    return `<div class="line"><div class="grow"><b class="n">${esc(nomAg(a))}</b><div class="muted xs">${esc(a.matricule)} · ${esc(siteNom(a.site_id))}${a.poste?" · "+POSTE(a.poste).libelle.toLowerCase():""}${c?(c.est_actif?"":" · accès coupé"):" · pas encore d'accès"}</div></div>
-    <div class="actions">${mod("supervision")?`<button class="btn sm pri" data-noter="${a.id}">⭐ Noter</button>`:""}${tel?`<a class="btn sm" href="tel:${esc(tel)}">Appeler</a>`:""}${c&&c.est_actif?`<button class="btn sm" data-mdp="${a.id}">Nouveau mot de passe</button>`:""}</div></div>`}).join("")}</div>`:`<div class="empty">La direction n'a pas encore enregistré d'agents.</div>`}`;
-  $("#main").querySelectorAll("[data-noter]").forEach(b=>b.onclick=()=>busy(b,async()=>{moiAgent();const a=AG_(b.dataset.noter);await nouvelleVisite(a&&a.site_id&&sites.some(s=>s.id===a.site_id&&s.actif)?a.site_id:null,a&&a.id)}));
-  $("#main").querySelectorAll("[data-mdp]").forEach(b=>b.onclick=()=>{const a=AG_(b.dataset.mdp),c=comptes.find(k=>k.agent_id===a.id),nomC=nomAg(a);
-    saisirMdp("Nouveau mot de passe · "+esc(nomC),"L'ancien mot de passe ne fonctionnera plus. Identifiant : <b>"+esc(a.matricule)+"</b>","Changer",async mdp=>{await appel({action:"mot_de_passe",user_id:c.id,mot_de_passe:mdp});toast("Mot de passe changé")},()=>{closeModal();vEquipe()},{nom:nomC,prenom:a.prenom,identifiant:a.matricule,telephone:a.telephone})});
+function vEquipe(q){const tous=agents.filter(a=>a.statut==="Actif"&&a.id!==moi.agent_id).sort((x,y)=>siteNom(x.site_id).localeCompare(siteNom(y.site_id))||nomAg(x).localeCompare(nomAg(y)));
+  $("#main").innerHTML=`<div class="head"><div><h1>Mes agents</h1><p class="muted sm" style="margin:2px 0 0">Touchez un agent pour ouvrir sa fiche. Notez-le avec la justification, appelez-le ou écrivez-lui.</p></div></div>
+  ${tous.length?`<div class="card"><input class="input" id="eq-q" type="search" placeholder="🔍 Rechercher : nom, matricule, téléphone ou site" autocomplete="off" value="${esc(q||"")}" style="margin-bottom:6px"><div class="muted xs" id="eq-n"></div><div id="eq-l"></div></div>`:`<div class="empty">La direction n'a pas encore enregistré d'agents.</div>`}`;
+  if(!tous.length)return;
+  const ligne=a=>{const c=comptes.find(k=>k.agent_id===a.id);
+    return `<div class="line click" data-fiche="${a.id}"><div class="grow"><b class="n">${esc(nomAg(a))}</b><div class="muted xs">${esc(a.matricule)} · ${esc(siteNom(a.site_id))}${a.poste?" · "+POSTE(a.poste).libelle.toLowerCase():""}${c?(c.est_actif?"":" · accès coupé"):" · pas encore d'accès"}</div></div>
+    <div class="actions">${mod("supervision")?`<button class="btn sm pri" data-noter="${a.id}">⭐ Noter</button>`:""}${boutonsContact(a.telephone,a.prenom||a.nom)}</div></div>`};
+  const afficher=()=>{const t=slugify($("#eq-q").value||"").replace(/-/g," ").trim(),L=t?tous.filter(a=>slugify([a.prenom,a.nom,a.matricule,a.telephone,String(a.telephone||"").replace(/\D/g,""),siteNom(a.site_id),a.fonction].join(" ")).replace(/-/g," ").includes(t)):tous;
+    const M=L.slice(0,60);$("#eq-n").textContent=t?L.length+" résultat(s)":tous.length+" agent(s)"+(tous.length>60?" · tapez un nom ou un matricule pour trouver un agent":"");
+    $("#eq-l").innerHTML=M.length?M.map(ligne).join(""):'<p class="muted sm">Aucun agent ne correspond.</p>';
+    $("#eq-l").querySelectorAll("[data-noter]").forEach(b=>b.onclick=e=>{e.stopPropagation();noterAgent(b.dataset.noter,b)});
+    $("#eq-l").querySelectorAll(".actions a").forEach(x=>x.addEventListener("click",e=>e.stopPropagation()));
+    $("#eq-l").querySelectorAll("[data-fiche]").forEach(x=>x.onclick=()=>ficheEquipe(x.dataset.fiche))};
+  $("#eq-q").oninput=afficher;afficher();
 }
-
+function noterAgent(id,b){return busy(b||null,async()=>{moiAgent();const a=AG_(id);await nouvelleVisite(a&&a.site_id&&sites.some(s=>s.id===a.site_id&&s.actif)?a.site_id:null,a&&a.id)})}
+function ficheEquipe(id){const a=AG_(id);if(!a)return;const c=comptes.find(k=>k.agent_id===a.id),nomC=nomAg(a),L=(l,v)=>`<dt>${l}</dt><dd>${v}</dd>`;
+  modal(esc(nomC),`<div class="doc" style="padding:0;border:0"><dl>${L("Matricule",esc(a.matricule))}${L("Grade",esc(a.grade||"—")+(a.fonction?" · "+esc(a.fonction):""))}${L("Affectation",esc(siteNom(a.site_id))+(a.poste?" · poste de "+POSTE(a.poste).libelle.toLowerCase():""))}${L("Téléphone",esc(a.telephone||"—"))}${L("Accès au logiciel",c?(c.est_actif?"Actif":"Coupé"):"Pas encore d'accès")}</dl></div>
+  ${a.telephone?`<div class="actions" style="margin:4px 0 12px">${boutonsContact(a.telephone,a.prenom||a.nom).replace('margin-left:8px','')}</div>`:""}
+  <div class="sec">Dernières notes</div><div id="fe-notes"><p class="muted sm">Chargement…</p></div>`,
+  `<button class="btn" id="fe-x">Fermer</button>${c&&c.est_actif?`<button class="btn" id="fe-mdp">Nouveau mot de passe</button>`:""}${mod("supervision")?`<button class="btn pri" id="fe-note">⭐ Noter cet agent</button>`:""}`);
+  $("#fe-x").onclick=closeModal;
+  const n=$("#fe-note");if(n)n.onclick=()=>{closeModal();noterAgent(id)};
+  const m=$("#fe-mdp");if(m)m.onclick=()=>saisirMdp("Nouveau mot de passe · "+esc(nomC),"L'ancien mot de passe ne fonctionnera plus. Identifiant : <b>"+esc(a.matricule)+"</b>","Changer",async mdp=>{await appel({action:"mot_de_passe",user_id:c.id,mot_de_passe:mdp});toast("Mot de passe changé")},()=>{closeModal();ficheEquipe(id)},{nom:nomC,prenom:a.prenom,identifiant:a.matricule,telephone:a.telephone});
+  sb.from("visites_supervision").select("visite_le,site_id,constats").order("visite_le",{ascending:false}).limit(150).then(r=>{const z=$("#fe-notes");if(!z)return;
+    const l=(r.data||[]).flatMap(v=>((v.constats||{}).agents||[]).filter(x=>x.agent_id===id).map(x=>({...x,quand:v.visite_le,site:v.site_id}))).slice(0,6);
+    z.innerHTML=l.length?l.map(x=>`<div class="line" style="padding:6px 0"><span class="grow sm">${fd(x.quand)} · ${esc(siteNom(x.site))}${x.observation?`<div class="muted xs">${esc(x.observation)}</div>`:""}</span><b class="sm">★ ${x.note}/5</b></div>`).join(""):'<p class="muted sm" style="margin:0">Pas encore noté.</p>'});
+}
 /* ---------- supervision : visites, notes, rapports ---------- */
 const CRIT=[["presence","Présent au poste",["Oui","Non"]],["tenue","Tenue et carte",["Correcte","À revoir","Incorrecte"]],["vigilance","Vigilance",["Bonne","Moyenne","Insuffisante"]],["consignes","Connaît les consignes",["Oui","En partie","Non"]]];
 const serviceActuel=()=>{const n=new Date();for(const d of [auj(),ajout(auj(),-1)])for(const c of CODES())if(debutPoste(d,c)<=n&&finPoste(d,c)>n)return {ds:d,poste:c};return {ds:auj(),poste:CODES()[0]}};
