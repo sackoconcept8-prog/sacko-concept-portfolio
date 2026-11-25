@@ -468,8 +468,11 @@ async function entrer(){
   else if(moi.role==="comptable")espace="compta";
   else if(moi.role==="conseiller")moi.role="dg"; /* le conseiller voit l'interface de la direction, en consultation seulement */
   appliquerEspace();
+  /* personnel hors sécurité (chauffeur, administratif, entretien…) : pas de poste ni de ronde, il pointe sa journée */
+  moi.bureau=false;if(moi.role==="agent"&&moi.agent_id){try{const r=await sb.from("agents").select("categorie").eq("id",moi.agent_id).maybeSingle();moi.bureau=!!(r.data&&r.data.categorie&&r.data.categorie!=="Sécurité")}catch(_){}}
   const G=estDirection()||estSupGeneral()||estCommercial()||estComptable()||moi.role_reel==="superviseur"?filtrerMenu(menuDirection()):null;
   const T=(G?G.flatMap(g=>g[1]):moi.role==="superviseur"?MENU_SUP
+    :moi.role==="agent"&&moi.bureau?[["mapresence","Ma présence"],["profil","Profil"],["mesdemandes","Demandes"],["mesdocs","Documents"],["mesmsg","Messages"],["annonces","Annonces"],["mapaie","Paie"]]
     :moi.role==="agent"?[["accueil","Accueil"],["profil","Profil"],["monplanning","Planning"],["mesdemandes","Demandes"],["mesdocs","Documents"],["mesmsg","Messages"],["annonces","Annonces"],["mapaie","Paie"]]
     :moi.role==="client"?[["client","Accueil"],["cl-agents","Mes agents"],["cl-rapports","Rapports"],["cl-incidents","Incidents"],["cl-factures","Factures"],["cl-demandes","Demandes"]]:[["accueil","Accueil"]]).filter(ongletActif);
   $("#layout").classList.toggle("avec",!!G);$("#side").classList.toggle("hide",!G);$("#tabs").classList.toggle("hide",!!G);$("#menu-btn").classList.toggle("hide",!G);
@@ -753,10 +756,10 @@ async function vMaPresence(){const l=must(await sb.from("presences_personnel").s
   if($("#mp-arr"))$("#mp-arr").onclick=()=>busy($("#mp-arr"),go("arrivee"));if($("#mp-dep"))$("#mp-dep").onclick=()=>busy($("#mp-dep"),go("depart"))}
 let moisPP=null;
 async function vPresencePersonnel(){moisPP=moisPP||auj().slice(0,7);const ym=moisPP;
-  const [l,c]=await Promise.all([sb.from("presences_personnel").select("*").gte("jour",ym+"-01").lte("jour",finMois(ym)).order("jour",{ascending:false}).then(must),sb.from("profiles").select("id,nom_complet,role,fonction").neq("role","agent").neq("role","client").then(r=>r.data||[])]);
-  const P=id=>c.find(x=>x.id===id)||{},RLp={dg:"Direction",rh:"RH",superviseur:"Superviseur",comptable:"Comptabilité",commercial:"Commercial",conseiller:"Conseiller"},jd=l.filter(x=>x.jour===auj());
+  const [l,c]=await Promise.all([sb.from("presences_personnel").select("*").gte("jour",ym+"-01").lte("jour",finMois(ym)).order("jour",{ascending:false}).then(must),sb.from("profiles").select("id,nom_complet,role,fonction").neq("role","client").then(r=>r.data||[])]);
+  const P=id=>c.find(x=>x.id===id)||{},RLp={dg:"Direction",rh:"RH",superviseur:"Superviseur",comptable:"Comptabilité",commercial:"Commercial",conseiller:"Conseiller",agent:"Personnel"},jd=l.filter(x=>x.jour===auj());
   const parP={};l.forEach(x=>{(parP[x.profil_id]=parP[x.profil_id]||[]).push(x)});
-  $("#main").innerHTML=`<div class="head"><div><h1>Présence du personnel</h1><p class="muted sm" style="margin:2px 0 0">Journées pointées par les superviseurs. Les agents de sécurité pointent, eux, sur leur poste (voir « Pointage »).</p></div><div class="actions"><input class="input" type="month" id="pp-m" value="${ym}" style="width:auto"></div></div>
+  $("#main").innerHTML=`<div class="head"><div><h1>Présence du personnel</h1><p class="muted sm" style="margin:2px 0 0">Journées pointées par les superviseurs et le personnel hors sécurité (chauffeurs, administratif, entretien…). Les agents de sécurité pointent, eux, sur leur poste (voir « Pointage »).</p></div><div class="actions"><input class="input" type="month" id="pp-m" value="${ym}" style="width:auto"></div></div>
   <div class="card"><h2>Aujourd'hui (${jd.length})</h2>${jd.length?jd.map(x=>`<div class="line"><div class="grow"><b>${esc(P(x.profil_id).nom_complet||"—")}</b><div class="muted xs">${esc(P(x.profil_id).fonction||RLp[P(x.profil_id).role]||"")}</div></div><span class="sm">${hmS(x.arrivee)} → ${x.depart?hmS(x.depart):"…"}</span><span class="pill ${x.depart?"p-grey":"p-green"}">${x.depart?dureeP(x):"Présent"}</span></div>`).join(""):'<p class="muted sm" style="margin:0">Aucune présence enregistrée aujourd’hui.</p>'}</div>
   <div class="card scroll"><h2>Récapitulatif du mois</h2>${Object.keys(parP).length?`<table class="tbl"><thead><tr><th>Personne</th><th class="r">Jours de présence</th><th class="r">Heures</th><th>Arrivée moyenne</th></tr></thead><tbody>${Object.entries(parP).map(([id,L])=>{const h=L.filter(x=>x.depart).reduce((t,x)=>t+(new Date(x.depart)-new Date(x.arrivee))/36e5,0),mn=Math.round(L.reduce((t,x)=>{const d=new Date(x.arrivee);return t+d.getHours()*60+d.getMinutes()},0)/L.length);
     return `<tr><td><b>${esc(P(id).nom_complet||"—")}</b></td><td class="r">${L.length}</td><td class="r">${Math.round(h)}</td><td>${String(Math.floor(mn/60)).padStart(2,"0")}:${String(mn%60).padStart(2,"0")}</td></tr>`}).join("")}</tbody></table>`:'<p class="muted sm" style="margin:0">Aucune présence ce mois.</p>'}</div>`;
