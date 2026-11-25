@@ -55,6 +55,8 @@ await cp(join(root,'cockpit'),join(out,'cockpit'), {recursive:true});
 await readFile(join(out,'cockpit/index.html'));
 await cp(join(root,'espace'),join(out,'espace'), {recursive:true});
 await cp(join(root,'cdk-group'),join(out,'cdk-group'), {recursive:true});
+await cp(join(root,'sipsgui'),join(out,'sipsgui'), {recursive:true});
+for (const file of ['sipsgui/logo-sipsgui-96.png','sipsgui/logo-sipsgui-192.png','sipsgui/logo-sipsgui-512.png','sipsgui/logo-sipsgui-ios-180.png','sipsgui/logo-sipsgui-maskable-512.png']) await readFile(join(out,file));
 for (const file of ['cdk-group/index.html','cdk-group/logo-cdk-96.png','cdk-group/logo-cdk-512.png']) await readFile(join(out,file));
 await readFile(join(out,'espace/index.html'));
 for (const file of ['agence-speciale/index.html','agence-speciale/logo-as-96.png','agence-speciale/logo-as-256.png','agence-speciale/icon-192.png']) await readFile(join(out,file));
