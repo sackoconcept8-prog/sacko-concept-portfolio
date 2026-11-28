@@ -36,9 +36,9 @@ main{max-width:1200px;margin:0 auto;padding:22px 18px 60px}
 <body>
 <section id="v-cnx" class="cache" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
   <form class="carte" id="f-cnx" style="width:100%;max-width:380px">
-    <img src="/assets/sacko-logo-96.png" style="width:52px"><h2 style="margin:10px 0 2px">Admin plateforme</h2><p style="color:var(--mut);margin:0 0 8px">Réservé à SACKO CONCEPT</p>
+    <img src="/assets/sacko-logo-96.png" style="width:52px"><h2 style="margin:10px 0 2px">Admin plateforme</h2><p style="color:var(--mut);margin:0 0 8px">Réservé à SACKO CONCEPT et à son équipe</p>
     <label>E-mail</label><input id="c-mail" type="email" required><label>Mot de passe</label><input id="c-pass" type="password" required>
-    <div class="err" id="c-err"></div><button class="btn" style="width:100%">Se connecter</button>
+    <div class="err" id="c-err"></div><button class="btn" style="width:100%">Se connecter</button><button type="button" class="btn sec" id="c-oubli" style="width:100%;margin-top:8px">Mot de passe oublié ?</button>
   </form>
 </section>
 <section id="v-admin" class="cache">
@@ -46,7 +46,9 @@ main{max-width:1200px;margin:0 auto;padding:22px 18px 60px}
   <main>
     <div class="kpis" id="kpis"></div>
     <div class="carte cache" id="rappels" style="margin-bottom:16px"></div>
+    <div class="carte cache" id="support" style="margin-bottom:16px"></div>
     <div class="carte cache" id="demandes" style="margin-bottom:16px"></div>
+    <div class="carte cache" id="equipe" style="margin-bottom:16px"></div>
     <div class="carte">
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px">
         <input id="rech" placeholder="🔍 Rechercher un client" style="max-width:320px">
@@ -64,21 +66,25 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const fmt=(v,d='XOF')=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:d,maximumFractionDigits:d==='XOF'?0:2}).format(v||0);
 const jours=d=>Math.ceil((new Date(d)-Date.now())/864e5);
 const ST={essai:['Essai','o'],actif:['Actif',''],suspendu:['Suspendu','r'],resilie:['Résilié','g']};
-let DATA=[];
+let DATA=[],ROLE='admin';
 
 $('#f-cnx').onsubmit=async e=>{e.preventDefault();const{error}=await sb.auth.signInWithPassword({email:$('#c-mail').value.trim(),password:$('#c-pass').value});
   if(error){$('#c-err').textContent='Identifiants incorrects';return}charger()};
+$('#c-oubli').onclick=async()=>{const m=$('#c-mail').value.trim();if(!m){$('#c-err').textContent='Saisissez d’abord votre e-mail.';return}
+  try{await fetch('https://cqbuxbchjnlhezkzzlqq.supabase.co/functions/v1/notifier',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_2FhOq6XnaOlE6s0p1kExkA_FEuEoPOm'},body:JSON.stringify({action:'reset',email:m,retour:location.origin+location.pathname})})}catch{}
+  $('#c-err').innerHTML='<span style="color:var(--p)">Si ce compte existe, un lien vient de vous être envoyé par e-mail.</span>'};
 $('#deco').onclick=async()=>{await sb.auth.signOut();location.reload()};
 
 async function charger(){
+  const{data:ro}=await sb.rpc('ilano_mon_role');ROLE=ro?.role||'admin';
   const{data,error}=await sb.rpc('admin_espaces');
-  if(data){setTimeout(rappels,0);setTimeout(demandes,0)}
+  if(data){setTimeout(rappels,0);setTimeout(demandes,0);setTimeout(support,0);setTimeout(equipe,0)}
   if(error||data===null){$('#v-cnx').classList.remove('cache');$('#v-admin').classList.add('cache');if(!error&&data===null){$('#c-err').textContent="Ce compte n'est pas administrateur.";await sb.auth.signOut()}return}
   DATA=data;$('#v-cnx').classList.add('cache');$('#v-admin').classList.remove('cache');
   const n=s=>DATA.filter(x=>x.statut===s).length;
   const enc=DATA.reduce((a,x)=>a+(+x.encaisse||0),0);
   $('#kpis').innerHTML=`<div class="carte kpi"><small>Clients</small><div>${DATA.length}</div></div><div class="carte kpi"><small>Abonnés actifs</small><div>${n('actif')}</div></div>
-   <div class="carte kpi"><small>En essai</small><div>${n('essai')}</div></div><div class="carte kpi"><small>Encaissé (total)</small><div>${fmt(enc)}</div></div>`;
+   <div class="carte kpi"><small>En essai</small><div>${n('essai')}</div></div>${ROLE==='admin'?`<div class="carte kpi"><small>Encaissé (total)</small><div>${fmt(enc)}</div></div>`:`<div class="carte kpi"><small>Conversations</small><div>${SUP.length||'—'}</div></div>`}`;
   dessiner();
 }
 function dessiner(){
@@ -89,10 +95,10 @@ function dessiner(){
     const tel=(x.proprietaire?.telephone||x.telephone||'').replace(/\D/g,'');
     return`<div class="esp">${x.logo_url?`<img src="${esc(x.logo_url)}" alt="">`:'<div class="ph"></div>'}
      <div><b>${esc(x.nom)}</b> <span class="tag ${st[1]}">${st[0]}</span>${x.statut==='essai'?`<small>${jours(x.essai_fin)} j restants</small>`:''}<br>
-     <small>${esc(x.proprietaire?.nom||'')} · ${esc(x.proprietaire?.email||'')} · ${esc(x.pays||'')} · ${esc(x.secteur||'')}${x.modele?' ['+esc(x.modele)+']':''}${x.effectif?' · '+esc(x.effectif)+' pers.':''} · ${x.nb_membres} membre(s) · code : ${esc(x.slug)}</small><br>${lic}<small>Encaissé : ${fmt(x.encaisse,x.devise)}</small></div>
-     <div class="acts"><button class="btn pt" data-act="${x.id}">Activer / renouveler</button><button class="btn sec pt" data-essai="${x.id}">+7 j d'essai</button><button class="btn sec pt" data-achat="${x.id}">Licence achetée</button>${x.licences.some(li=>li.type==='achat')?`<button class="btn sec pt" data-maint="${x.id}">Renouveler maintenance</button>`:''}
+     <small>${esc(x.proprietaire?.nom||'')} · ${esc(x.proprietaire?.email||'')} · ${esc(x.pays||'')} · ${esc(x.secteur||'')}${x.modele?' ['+esc(x.modele)+']':''}${x.effectif?' · '+esc(x.effectif)+' pers.':''} · ${x.nb_membres} membre(s) · code : ${esc(x.slug)}</small><br>${lic}${ROLE==='admin'?`<small>Encaissé : ${fmt(x.encaisse,x.devise)}</small>`:''}</div>
+     <div class="acts">${ROLE!=='admin'?'':`<button class="btn pt" data-act="${x.id}">Activer / renouveler</button><button class="btn sec pt" data-essai="${x.id}">+7 j d'essai</button><button class="btn sec pt" data-achat="${x.id}">Licence achetée</button>${x.licences.some(li=>li.type==='achat')?`<button class="btn sec pt" data-maint="${x.id}">Renouveler maintenance</button>`:''}
      ${x.statut==='suspendu'||x.statut==='resilie'?`<button class="btn sec pt" data-st="${x.id}:actif">Réactiver</button>`:`<button class="btn rouge pt" data-st="${x.id}:suspendu">Suspendre</button>`}
-     ${tel?`<a class="btn sec pt" target="_blank" href="https://wa.me/${tel}">WhatsApp</a>`:''}</div></div>`}).join('')||'<p style="color:var(--mut);text-align:center;padding:24px">Aucun client</p>';
+     `}${tel?`<a class="btn sec pt" target="_blank" href="https://wa.me/${tel}">WhatsApp</a>`:''}</div></div>`}).join('')||'<p style="color:var(--mut);text-align:center;padding:24px">Aucun client</p>';
   document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>activer(DATA.find(x=>x.id===b.dataset.act)));
   document.querySelectorAll('[data-achat]').forEach(b=>b.onclick=()=>licenceAchat(DATA.find(x=>x.id===b.dataset.achat)));
   document.querySelectorAll('[data-maint]').forEach(b=>b.onclick=()=>renouvelerMaintenance(DATA.find(x=>x.id===b.dataset.maint)));
@@ -169,7 +175,11 @@ function rappels(){const auj=new Date();auj.setHours(0,0,0,0);const L=[];
      <div class="acts">${tel?`<a class="btn pt" target="_blank" href="https://wa.me/${tel}?text=${encodeURIComponent(msg)}">Relancer (WhatsApp)</a>`:''}${x.proprietaire?.email?`<a class="btn sec pt" href="mailto:${esc(x.proprietaire.email)}?subject=${encodeURIComponent('Ilano — renouvellement '+li.logiciel)}&body=${encodeURIComponent(msg)}">E-mail</a>`:''}${r?`<button class="btn sec pt" data-rt="${r.id}">Traité</button>`:''}</div></div>`}).join('');
   document.querySelectorAll('[data-rt]').forEach(b=>b.onclick=()=>appel('admin_rappel_traite',{p_id:b.dataset.rt}));
 }
-(async()=>{const{data:{session}}=await sb.auth.getSession();if(session)charger();else $('#v-cnx').classList.remove('cache')})();
+sb.auth.onAuthStateChange(ev=>{if(ev!=='PASSWORD_RECOVERY')return;
+  $('#mz').innerHTML=`<div class="voile"><form class="modale"><h3 style="margin:0">Choisissez votre mot de passe</h3><label>Nouveau mot de passe (8 caractères minimum)</label><input name="p" type="password" minlength="8" required><label>Confirmer</label><input name="p2" type="password" minlength="8" required><div class="err" id="m-err"></div><div style="display:flex;justify-content:flex-end;margin-top:14px"><button class="btn">Enregistrer</button></div></form></div>`;
+  $('#mz form').onsubmit=async e=>{e.preventDefault();const v=Object.fromEntries(new FormData(e.target));if(v.p!==v.p2){$('#m-err').textContent='Les deux mots de passe ne sont pas identiques.';return}
+    const{error}=await sb.auth.updateUser({password:v.p});if(error){$('#m-err').textContent=error.message;return}$('#mz').innerHTML='';history.replaceState(null,'',location.pathname);charger()}});
+(async()=>{const{data:{session}}=await sb.auth.getSession();if(session&&!location.hash.includes('type=recovery'))charger();else if(!location.hash.includes('type=recovery'))$('#v-cnx').classList.remove('cache')})();
 
 /* ===== Demandes de fonctionnalités sur mesure ===== */
 const DST={nouvelle:['Nouvelle','o'],en_etude:['À l’étude','o'],devis_envoye:['Devis envoyé',''],acceptee:['Acceptée',''],refusee:['Refusée','g'],livree:['Livrée','']};
@@ -192,6 +202,48 @@ function repondre(d){$('#mz').innerHTML=`<div class="voile"><form class="modale"
   $('#m-ann').onclick=()=>$('#mz').innerHTML='';
   $('#mz form').onsubmit=async e=>{e.preventDefault();const v=Object.fromEntries(new FormData(e.target));const{error}=await sb.rpc('admin_demande_maj',{p_id:d.id,p_statut:v.s,p_reponse:v.r||null,p_montant:v.m?+v.m:null});
     if(error){$('#m-err').textContent=error.message;return}$('#mz').innerHTML='';demandes()}}
+
+/* ===== Support : conversations avec les clients (l'IA répond d'abord) ===== */
+const SST={ia:['IA','g'],attente:['Conseiller demandé','r'],humain:['Pris en main',''],resolu:['Résolu','g']};
+let SUP=[],SUP_T=null;
+async function support(){const{data}=await sb.rpc('support_admin_fils');SUP=data||[];const z=$('#support');z.classList.remove('cache');
+  const att=SUP.filter(f=>f.statut==='attente').length,nl=SUP.reduce((a,f)=>a+(f.non_lus_equipe||0),0);
+  z.innerHTML=`<h3 style="margin:0 0 8px">💬 Support clients ${att?`<span class="tag r">${att} conseiller demandé</span>`:''} ${nl?`<span class="tag o">${nl} non lu(s)</span>`:''}</h3>
+   ${SUP.length?SUP.slice(0,40).map(f=>{const st=SST[f.statut]||[f.statut,''];return`<div class="esp" style="grid-template-columns:1fr auto;cursor:pointer" data-fil="${f.espace_id}"><div><b>${esc(f.espace_nom)}</b> <span class="tag ${st[1]}">${st[0]}</span>${f.non_lus_equipe?`<span class="tag o">${f.non_lus_equipe} nouveau(x)</span>`:''}${f.pris_par&&f.statut==='humain'?`<small> · ${esc(f.pris_par)}</small>`:''}<br><small>${esc(f.dernier_message||'')}</small></div><small>${new Date(f.maj_le).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</small></div>`}).join('')
+   :'<p style="color:var(--mut);margin:0">Aucune conversation pour le moment. Les clients écrivent depuis le bouton 💬 de leur espace.</p>'}`;
+  document.querySelectorAll('[data-fil]').forEach(d=>d.onclick=()=>conversation(SUP.find(f=>f.espace_id===d.dataset.fil)));
+  if(location.hash==='#support')z.scrollIntoView({behavior:'smooth'});
+}
+setInterval(()=>{if(!$('#v-admin').classList.contains('cache')&&!$('#mz').innerHTML)support()},30000);
+async function conversation(f){clearInterval(SUP_T);
+  $('#mz').innerHTML=`<div class="voile"><div class="modale" style="max-width:640px;display:flex;flex-direction:column;max-height:90vh;padding:0;overflow:hidden">
+   <div style="padding:14px 18px;border-bottom:1px solid var(--bord)"><b>${esc(f.espace_nom)}</b> <small>(${esc(f.espace_slug)} · ${esc(f.modele||'')})</small><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+    <button class="btn pt" data-st="humain">Je prends la main</button><button class="btn sec pt" data-st="ia">Rendre à l'IA</button><button class="btn sec pt" data-st="resolu">Résolu ✓</button>
+    ${f.telephone?`<a class="btn sec pt" target="_blank" href="https://wa.me/${String(f.telephone).replace(/\D/g,'')}">WhatsApp</a>`:''}<button class="btn sec pt" id="cv-x">Fermer</button></div></div>
+   <div id="cv-l" style="flex:1;overflow:auto;padding:14px 18px;background:var(--fond);min-height:260px"></div>
+   <form id="cv-f" style="display:flex;gap:8px;padding:12px;border-top:1px solid var(--bord)"><textarea id="cv-m" rows="2" style="font:inherit;flex:1;border:1px solid #d0d5dd;border-radius:10px;padding:10px;resize:none" placeholder="Votre réponse (l'IA s'arrête dès que vous répondez)…"></textarea><button class="btn">Envoyer</button></form></div></div>`;
+  const ch=async()=>{const{data}=await sb.from('support_messages').select('*').eq('espace_id',f.espace_id).order('created_at').limit(300);
+    $('#cv-l').innerHTML=(data||[]).map(m=>{const c=m.auteur==='client';const col={client:'#fff',ia:'#EEF4FF',equipe:'#E9F6EF',systeme:'#F2F4F7'}[m.auteur];
+      return`<div style="display:flex;justify-content:${c?'flex-start':'flex-end'};margin-bottom:8px"><div style="max-width:82%;background:${col};border:1px solid var(--bord);border-radius:12px;padding:9px 12px;font-size:14px;white-space:pre-wrap"><small style="display:block;font-weight:700;color:${c?'#344054':'var(--p)'}">${esc(m.auteur==='ia'?'🤖 IA':m.auteur_nom||m.auteur)}</small>${esc(m.message)}<small style="display:block;color:var(--mut);font-size:11px;text-align:right">${new Date(m.created_at).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</small></div></div>`}).join('')||'<p style="color:var(--mut)">—</p>';
+    $('#cv-l').scrollTop=1e6};
+  const fin=()=>{clearInterval(SUP_T);$('#mz').innerHTML='';support()};$('#cv-x').onclick=fin;
+  document.querySelectorAll('#mz [data-st]').forEach(b=>b.onclick=async()=>{const{error}=await sb.rpc('support_equipe_statut',{p_espace:f.espace_id,p_statut:b.dataset.st});if(error)alert(error.message);else{f.statut=b.dataset.st;if(b.dataset.st==='resolu')fin()}});
+  $('#cv-m').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('#cv-f').requestSubmit()}};
+  $('#cv-f').onsubmit=async e=>{e.preventDefault();const t=$('#cv-m').value.trim();if(!t)return;const{error}=await sb.rpc('support_equipe_repondre',{p_espace:f.espace_id,p_message:t});if(error){alert(error.message);return}$('#cv-m').value='';ch()};
+  await sb.rpc('support_equipe_statut',{p_espace:f.espace_id,p_statut:f.statut==='attente'?'attente':f.statut});
+  await ch();SUP_T=setInterval(()=>{if(!$('#cv-l')){clearInterval(SUP_T);return}ch()},5000);
+}
+/* ===== Équipe Ilano : assistants du support (réservé à l'administratrice) ===== */
+async function equipe(){const z=$('#equipe');if(ROLE!=='admin'){z.classList.add('cache');return}z.classList.remove('cache');
+  const{data}=await sb.from('equipe_ilano').select('*').order('created_at');const l=data||[];
+  z.innerHTML=`<h3 style="margin:0 0 4px">👥 Équipe support</h3><p style="color:var(--mut);margin:0 0 8px;font-size:14px">Vos assistants répondent aux clients et aux demandes sur mesure. Ils ne peuvent pas activer de licence, suspendre un client ni voir les paiements.</p>
+   ${l.map(x=>`<div class="esp" style="grid-template-columns:1fr auto"><div><b>${esc(x.nom)}</b> ${x.actif?'<span class="tag">Actif</span>':'<span class="tag g">Désactivé</span>'}<br><small>${esc(x.email)}</small></div><div class="acts"><button class="btn rouge pt" data-ret="${x.user_id}">Retirer</button></div></div>`).join('')}
+   <form id="eq-f" class="grille2" style="margin-top:10px;align-items:end"><div><label>Nom</label><input name="nom" required></div><div><label>E-mail</label><input name="email" type="email" required></div>
+   <div style="grid-column:1/-1"><div class="err" id="eq-err"></div><button class="btn">+ Ajouter un assistant</button> <small style="color:var(--mut)">Il reçoit un e-mail pour choisir son mot de passe.</small></div></form>`;
+  const appel=async corps=>{const{data:{session}}=await sb.auth.getSession();const r=await fetch('https://cqbuxbchjnlhezkzzlqq.supabase.co/functions/v1/support',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_2FhOq6XnaOlE6s0p1kExkA_FEuEoPOm',Authorization:'Bearer '+session.access_token},body:JSON.stringify(corps)});const j=await r.json();if(!r.ok||j.erreur)throw new Error(j.erreur||'Erreur');return j};
+  $('#eq-f').onsubmit=async e=>{e.preventDefault();const v=Object.fromEntries(new FormData(e.target));try{await appel({action:'equipe_ajouter',nom:v.nom,email:v.email});alert('Assistant ajouté : il a reçu un e-mail pour choisir son mot de passe.');equipe()}catch(er){$('#eq-err').textContent=er.message}};
+  document.querySelectorAll('[data-ret]').forEach(b=>b.onclick=async()=>{if(!confirm('Retirer cet assistant ? Il n’aura plus accès à l’espace admin.'))return;try{await appel({action:'equipe_retirer',user_id:b.dataset.ret});equipe()}catch(er){alert(er.message)}});
+}
 </script>
 </body>
 </html>

@@ -1,0 +1,9 @@
+-- Ilano — équipe support (assistants) et aide en ligne (l'IA répond d'abord, puis un humain).
+-- Appliqué sur sacko-plateforme le 28/11/2026 (migration « ilano_equipe_support »).
+-- Tables : equipe_ilano, support_fils, support_messages.
+-- Fonctions : est_equipe_ilano(), ilano_mon_role(), support_lu_client(), support_admin_fils(),
+--   support_equipe_repondre(), support_equipe_statut() ; admin_espaces / admin_demandes /
+--   admin_demande_maj ouverts aux assistants (les autres fonctions admin restent réservées
+--   à l'administratrice via est_super_admin()).
+-- Fonction Edge « support » (fonctions/support.ts) : messages clients, réponse IA
+--   (secret ANTHROPIC_API_KEY ; sans clé, réponse d'attente et alerte e-mail), ajout/retrait d'assistants.

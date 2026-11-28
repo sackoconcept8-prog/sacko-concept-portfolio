@@ -48,6 +48,9 @@
 @media(max-width:900px){.co-etapes{grid-template-columns:1fr}.co-grille3{grid-template-columns:1fr 1fr}.co-rdv .h{min-width:70px}.co-barre .co-txt{display:none}}
 `;document.head.appendChild(s)})();
 
+/* SMS désactivés pour l'instant : WhatsApp d'abord (mettre à true quand les crédits Brevo seront achetés) */
+const CO_SMS=false;
+
 /* ---------- Modèle du secteur ---------- */
 const CO_IC={
  co_accueil:'<path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/>',
@@ -103,12 +106,42 @@ function vueDepart(){const s=CTX.logiciels.includes('stockpro'),r=CTX.logiciels.
 function coTitreMenu(k,t){const R=coS().renommer||{};return R[k]?coL(R[k]):t}
 
 /* ---------- Barre d'outils : notifications + demande sur mesure ---------- */
-let CO_NB_NOTIFS=0;
+let CO_NB_NOTIFS=0,CO_NB_SUP=0;
 function coOutils(){if(!CTX)return'';return`<span class="co-barre"><button type="button" class="co-ico" title="${esc(L('Notifications','Notifications'))}" onclick="aller('co_notifs')">${svg('co_notifs')}${CO_NB_NOTIFS?`<b>${CO_NB_NOTIFS>99?'99+':CO_NB_NOTIFS}</b>`:''}</button>
-  <button type="button" class="btn sec pt" onclick="coDemander()" title="${esc(L('Demander une fonctionnalité','Request a feature'))}">💡 <span class="co-txt">${esc(L('Demander une fonctionnalité','Request a feature'))}</span></button></span>`}
+  <button type="button" class="co-ico" title="${esc(L('Aide et support','Help & support'))}" onclick="coSupport()" id="co-sup-b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1121 12z"/><path d="M9.5 9.5a2.5 2.5 0 014.6 1.3c0 1.7-2.1 2-2.1 3.2M12 17h.01"/></svg>${CO_NB_SUP?`<b>${CO_NB_SUP}</b>`:''}</button>
+    <button type="button" class="btn sec pt" onclick="coDemander()" title="${esc(L('Demander une fonctionnalité','Request a feature'))}">💡 <span class="co-txt">${esc(L('Demander une fonctionnalité','Request a feature'))}</span></button></span>`}
 async function coCompterNotifs(){if(!CTX)return;try{const{count}=await sb.from('co_notifications').select('id',{count:'exact',head:true}).eq('espace_id',E()).eq('lu',false);
   const n=count||0;if(n!==CO_NB_NOTIFS){CO_NB_NOTIFS=n;document.querySelectorAll('.co-ico b').forEach(b=>b.textContent=n);if(!document.querySelector('.co-ico b')&&n&&document.querySelector('.co-ico'))document.querySelector('.co-ico').insertAdjacentHTML('beforeend',`<b>${n}</b>`)}}catch{}}
 setInterval(coCompterNotifs,60000);
+async function coCompterSupport(){if(!CTX)return;try{const{data}=await sb.from('support_fils').select('non_lus_client').eq('espace_id',E()).maybeSingle();CO_NB_SUP=data?.non_lus_client||0;
+  const b=document.getElementById('co-sup-b');if(b){b.querySelector('b')?.remove();if(CO_NB_SUP)b.insertAdjacentHTML('beforeend',`<b>${CO_NB_SUP}</b>`)}}catch{}}
+setInterval(coCompterSupport,60000);
+
+/* ---------- Aide en ligne : l'assistant Ilano répond, puis un conseiller prend le relais ---------- */
+let CO_SUP_T=null;
+async function coSupport(){clearInterval(CO_SUP_T);
+  $('#modale-zone').innerHTML=`<div class="voile"><div class="modale large" style="display:flex;flex-direction:column;max-height:88vh;padding:0;overflow:hidden">
+   <div style="padding:16px 20px;border-bottom:1px solid var(--bord);display:flex;justify-content:space-between;align-items:center;gap:10px"><div><b>💬 ${esc(L('Aide et support Ilano','Ilano help & support'))}</b><br><small style="color:var(--mut)" id="sup-st">${esc(L('Notre assistant vous répond tout de suite. Un conseiller prend le relais si besoin.','Our assistant answers right away. An advisor takes over if needed.'))}</small></div><button class="btn sec pt" id="sup-x">✕</button></div>
+   <div id="sup-l" style="flex:1;overflow:auto;padding:16px 20px;background:var(--fond);min-height:260px"></div>
+   <form id="sup-f" style="display:flex;gap:8px;padding:12px;border-top:1px solid var(--bord)"><textarea id="sup-m" rows="2" maxlength="2000" placeholder="${esc(L('Écrivez votre question…','Type your question…'))}" style="flex:1;resize:none"></textarea><button class="btn" id="sup-ok">${esc(L('Envoyer','Send'))}</button></form>
+   <div style="padding:0 14px 10px;font-size:12px;color:var(--mut);text-align:center">${esc(L('Urgent ?','Urgent?'))} <a target="_blank" href="https://wa.me/15054642331?text=${encodeURIComponent(L('Bonjour Ilano, j’ai besoin d’aide pour ','Hello Ilano, I need help with ')+CTX.espace.nom+' ('+CTX.espace.slug+')')}">WhatsApp</a></div></div></div>`;
+  const fermerSup=()=>{clearInterval(CO_SUP_T);fermer()};$('#sup-x').onclick=fermerSup;
+  let dernier='';
+  const charger=async()=>{const{data}=await sb.from('support_messages').select('*').eq('espace_id',E()).order('created_at').limit(200);const l=data||[];
+    const cle=l.length+(l[l.length-1]?.id||'');if(cle===dernier)return;dernier=cle;
+    const{data:f}=await sb.from('support_fils').select('statut,pris_par').eq('espace_id',E()).maybeSingle();
+    if(f&&$('#sup-st'))$('#sup-st').textContent=f.statut==='humain'?L(`${f.pris_par||'Un conseiller'} vous répond.`,`${f.pris_par||'An advisor'} is replying.`):f.statut==='attente'?L('Un conseiller a été prévenu et vous répond ici très vite.','An advisor has been notified and will reply here soon.'):L('Notre assistant vous répond tout de suite. Un conseiller prend le relais si besoin.','Our assistant answers right away. An advisor takes over if needed.');
+    $('#sup-l').innerHTML=l.length?l.map(m=>{const moi=m.auteur==='client';return`<div style="display:flex;justify-content:${moi?'flex-end':'flex-start'};margin-bottom:10px"><div style="max-width:82%;background:${moi?'var(--p)':'#fff'};color:${moi?'#fff':'var(--txt)'};border:1px solid ${moi?'var(--p)':'var(--bord)'};border-radius:14px;padding:10px 13px;font-size:14px;line-height:1.5;white-space:pre-wrap">${moi?'':`<small style="display:block;font-weight:700;color:var(--p);margin-bottom:2px">${esc(m.auteur==='ia'?L('Assistant Ilano','Ilano assistant'):m.auteur_nom||'Ilano')}</small>`}${esc(m.message)}<small style="display:block;opacity:.65;font-size:11px;margin-top:4px;text-align:right">${coHeure(m.created_at)}</small></div></div>`}).join('')
+      :`<div class="vide">${esc(L('Bonjour 👋 Posez votre question : comment ajouter un client, envoyer une facture, inviter votre équipe…','Hello 👋 Ask your question: how to add a customer, send an invoice, invite your team…'))}</div>`;
+    $('#sup-l').scrollTop=1e6;sb.rpc('support_lu_client',{p_espace:E()}).then(()=>{CO_NB_SUP=0;document.querySelector('#co-sup-b b')?.remove()})};
+  $('#sup-m').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('#sup-f').requestSubmit()}};
+  $('#sup-f').onsubmit=async ev=>{ev.preventDefault();const t=$('#sup-m').value.trim();if(!t)return;const b=$('#sup-ok');b.disabled=true;$('#sup-m').value='';
+    $('#sup-l').insertAdjacentHTML('beforeend',`<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><div style="max-width:82%;background:var(--p);color:#fff;border-radius:14px;padding:10px 13px;font-size:14px;white-space:pre-wrap">${esc(t)}</div></div><div class="vide" id="sup-att" style="padding:6px">${esc(L('L’assistant écrit…','The assistant is typing…'))}</div>`);$('#sup-l').scrollTop=1e6;
+    try{const{data:{session}}=await sb.auth.getSession();const r=await fetch(SB_URL+'/functions/v1/support',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+session.access_token},body:JSON.stringify({action:'envoyer',espace_id:E(),message:t})});
+      const j=await r.json();if(!r.ok||j.erreur)throw new Error(j.erreur||'Erreur')}catch(e){toast(erreurMsg(e));$('#sup-m').value=t}
+    b.disabled=false;dernier='';await charger()};
+  await charger();CO_SUP_T=setInterval(()=>{if(!$('#sup-l')){clearInterval(CO_SUP_T);return}charger()},6000);
+}
 
 /* Bandeau : la taille de l'équipe dépasse le pack */
 const CO_PACKS=[['demarrage',10,'Démarrage','Starter'],['pme',50,'PME','SME'],['croissance',500,'Croissance','Growth'],['entreprise',null,'Entreprise','Enterprise']];
@@ -441,7 +474,7 @@ async function coVoirRdv(id){const S=coS(),sej=S.agenda.mode==='sejour';await co
    ${c&&coChamps('client').filter(f=>f.alerte&&c.champs?.[f.k]).map(f=>`<div class="co-alerte">⚠️ <b>${esc(coL(f.l))} :</b> ${esc(c.champs[f.k])}</div>`).join('')}
    ${x.note?`<div class="rh-texte">${esc(x.note)}</div>`:''}
    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">${btn.map(([s,t,cl])=>`<button class="btn ${cl==='rouge'?'rouge':s==='termine'||s==='confirme'?'':'sec'} pt" data-s="${s}">${esc(t)}</button>`).join('')}</div>
-   <div class="actions" style="flex-wrap:wrap">${tel?`<a class="btn sec" target="_blank" href="https://wa.me/${coTel(tel)}?text=${rappel}">💬 ${esc(L('Rappel WhatsApp','WhatsApp reminder'))}</a><button class="btn sec" id="rv-sms">SMS</button>`:''}
+   <div class="actions" style="flex-wrap:wrap">${tel?`<a class="btn sec" target="_blank" href="https://wa.me/${coTel(tel)}?text=${rappel}">💬 ${esc(L('Rappel WhatsApp','WhatsApp reminder'))}</a>${CO_SMS?`<button class="btn sec" id="rv-sms">SMS</button>`:''}`:''}
     ${!ro&&coMod('factures')?(x.facture_id?`<button class="btn sec" id="rv-vf">${esc(L('Voir la facture','View invoice'))}</button>`:`<button class="btn sec" id="rv-fac">${esc(L('Facturer','Invoice'))}</button>`):''}
     ${!ro?`<button class="btn sec" id="rv-mod">${esc(L('Modifier','Edit'))}</button>`:''}<button class="btn sec" onclick="fermer()">${esc(L('Fermer','Close'))}</button></div></div></div>`;
   $('.voile').onclick=e=>{if(e.target.classList.contains('voile'))fermer()};
@@ -558,7 +591,7 @@ async function coVoirFacture(f){const S=coS();await coRef();const c=coCli(f.clie
     ${f.type==='devis'&&!f.converti_en&&!ro&&f.statut!=='refuse'?`<button class="btn" id="vf-conv">${esc(L('Transformer en facture','Convert to invoice'))}</button><button class="btn sec" id="vf-ref">${esc(L('Refusé','Declined'))}</button>`:''}
     <button class="btn sec" id="vf-pdf">🖨 PDF</button>
     ${tel?`<a class="btn sec" id="vf-wa" target="_blank" href="https://wa.me/${coTel(tel)}?text=${encodeURIComponent(msg)}">💬 WhatsApp</a>`:''}
-    ${c?.email?`<button class="btn sec" id="vf-mail">✉️ ${esc(L('E-mail','Email'))}</button>`:''}${tel?`<button class="btn sec" id="vf-sms">SMS</button>`:''}
+    ${c?.email?`<button class="btn sec" id="vf-mail">✉️ ${esc(L('E-mail','Email'))}</button>`:''}${tel&&CO_SMS?`<button class="btn sec" id="vf-sms">SMS</button>`:''}
     ${!ro&&!['payee','annulee','accepte'].includes(f.statut)&&!f.paye?`<button class="btn sec" id="vf-mod">${esc(L('Modifier','Edit'))}</button>`:''}
     ${!ro&&estGerant()&&!['annulee'].includes(f.statut)&&!f.paye?`<button class="btn rouge" id="vf-ann">${esc(L('Annuler','Cancel'))}</button>`:''}</div>
    <div class="actions"><button class="btn sec" onclick="fermer()">${esc(L('Fermer','Close'))}</button></div></div></div>`;
@@ -742,11 +775,12 @@ async function coEnvoyerSMS(tel,msg){return new Promise(ok=>{
    async f=>{const j=await coNotifier({action:'sms',to:f.to.value,message:f.m.value});toast(L(`SMS envoyé ✓ (${j.quota.utilises}/${j.quota.quota} ce mois)`,`SMS sent ✓ (${j.quota.utilises}/${j.quota.quota} this month)`));ok(true)});
   $('#m-ok').textContent=L('Envoyer','Send');$('#m-ann').addEventListener('click',()=>ok(false));
   coNotifier({action:'quota_sms'}).then(j=>{if($('#sms-q'))$('#sms-q').textContent=L(`SMS utilisés ce mois : ${j.quota.utilises} / ${j.quota.quota}`,`SMS used this month: ${j.quota.utilises} / ${j.quota.quota}`)}).catch(()=>{})})}
-const CO_LIENS={agenda:'co_agenda',factures:'co_factures',ressources:'co_ressources',demandes:'co_demandes',clients:'co_clients'};
+const CO_LIENS={support:'co_support',agenda:'co_agenda',factures:'co_factures',ressources:'co_ressources',demandes:'co_demandes',clients:'co_clients'};
 async function coNotifs(){const l=verif(await sb.from('co_notifications').select('*').eq('espace_id',E()).order('created_at',{ascending:false}).limit(100));
   C().innerHTML=entete(esc(L('Notifications','Notifications')),l.some(n=>!n.lu)?`<button class="btn sec" id="cn-tout">${esc(L('Tout marquer comme lu','Mark all as read'))}</button>`:'')+`<div class="carte">${l.length?l.map(n=>`<div class="co-notif ${n.lu?'':'nonlu'}" data-n="${n.id}"><span class="co-pt"></span><div style="flex:1"><b>${esc(n.titre)}</b>${n.message?`<br><small>${esc(n.message)}</small>`:''}<br><small>${dt(n.created_at)}</small></div></div>`).join(''):`<div class="vide">${esc(L('Aucune notification','No notifications'))}</div>`}</div>`;
   if($('#cn-tout'))$('#cn-tout').onclick=async()=>{await sb.from('co_notifications').update({lu:true}).eq('espace_id',E()).eq('lu',false);CO_NB_NOTIFS=0;coNotifs()};
   document.querySelectorAll('[data-n]').forEach(d=>d.onclick=async()=>{const n=l.find(x=>x.id===d.dataset.n);if(!n.lu){await sb.from('co_notifications').update({lu:true}).eq('id',n.id);CO_NB_NOTIFS=Math.max(0,CO_NB_NOTIFS-1)}
+    if(n.lien==='support')return coSupport();
     const v=CO_LIENS[n.lien];if(v&&(v==='co_demandes'||coActif())){if(v==='co_agenda'&&n.type==='reservation')window._coFiltre='demandes';aller(v)}else coNotifs()});
 }
 
