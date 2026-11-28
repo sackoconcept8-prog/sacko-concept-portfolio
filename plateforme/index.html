@@ -237,7 +237,7 @@ tr:last-child td{border-bottom:0}
     <div class="marque"><img id="m-logo" alt=""><span id="m-nom"></span></div>
     <nav id="nav"></nav>
     <button class="btn sec cache" id="installer" style="width:100%;margin-bottom:12px">⬇ Installer l'application</button>
-    <div class="moi"><b id="moi-nom"></b><small id="moi-role"></small><br><button class="btn lien" id="deco" style="padding:6px 0">Se déconnecter</button></div>
+    <div class="moi"><select id="m-esp" class="cache" style="width:100%;margin-bottom:8px;padding:8px;font-size:13px" title="Changer d'espace"></select><b id="moi-nom"></b><small id="moi-role"></small><br><button class="btn lien" id="deco" style="padding:6px 0">Se déconnecter</button></div>
   </aside>
   <main class="contenu" id="contenu"></main>
   <div class="bas-mobile" id="nav-mob"></div>
@@ -511,11 +511,13 @@ $('#f-reset').onsubmit=async ev=>{ev.preventDefault();if($('#r-pass').value!==$(
   if(error){$('#r-err').textContent=erreurMsg(error);return}toast('Mot de passe modifié');history.replaceState(null,'',location.pathname);demarrer()};
 
 /* ============ Démarrage de l'espace ============ */
+let ESPACES=[];
 async function demarrer(nouveau){
   const{data,error}=await sb.rpc('mes_espaces');
   if(error||!data?.length){await sb.auth.signOut();montrerAuth();$('#c-err').textContent=error?erreurMsg(error):'Aucun espace actif pour ce compte. Contactez le support Ilano.';return}
   const choisi=data.find(x=>x.espace.id===localStorageGet('espace'))||data[0];
-  CTX=choisi;localStorageSet('espace',CTX.espace.id);
+  CTX=choisi;localStorageSet('espace',CTX.espace.id);ESPACES=data;
+  const se=$('#m-esp');se.classList.toggle('cache',data.length<2);se.innerHTML=data.map(x=>`<option value="${x.espace.id}" ${x.espace.id===CTX.espace.id?'selected':''}>${esc(x.espace.nom)}</option>`).join('');se.onchange=()=>{localStorageSet('espace',se.value);demarrer()};
   if(CTX.espace.langue==='en'||CTX.espace.langue==='fr')LANG=CTX.espace.langue;appliquerLangue();
   appliquerMarque(CTX.espace);
   // Ecran d'ouverture au logo du client
@@ -862,7 +864,7 @@ function payer(o){
 /* ============ Mon espace (marque) ============ */
 function vReglages(){
   const e=CTX.espace;
-  C().innerHTML=entete('Mon espace')+`<div class="deux"><form class="carte" id="rg">
+  C().innerHTML=entete('Mon espace')+(ESPACES.length>1?`<div class="carte" style="margin-bottom:14px"><h3 style="margin-top:0">${esc(L('Mes espaces','My workspaces'))}</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${ESPACES.map(x=>`<button type="button" class="btn ${x.espace.id===e.id?'':'sec'} pt" onclick="localStorageSet('espace','${x.espace.id}');demarrer()">${esc(x.espace.nom)}</button>`).join('')}</div></div>`:'')+`<div class="deux"><form class="carte" id="rg">
     <h3 style="margin-top:0">Identité de l'entreprise</h3>
     <label>Logo</label><div class="logo-zone" id="rg-lz"><img src="${esc(e.logo_url||'')}" class="${e.logo_url?'':'cache'}" id="rg-img"><span>Changer le logo</span></div><input type="file" id="rg-f" class="cache" accept="image/png,image/jpeg,image/webp">
     <label>Nom</label><input name="nom" value="${esc(e.nom)}" required>

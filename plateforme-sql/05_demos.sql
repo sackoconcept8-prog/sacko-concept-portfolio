@@ -1,0 +1,3 @@
+-- Espaces de démonstration (un par secteur, slugs demo-*), rattachés au compte de l'administratrice.
+-- Fonctions appliquées sur sacko-plateforme le 28/11/2026 : ilano_creer_demos(p_user) et ilano_reinitialiser_demos()
+-- (migrations « ilano_espaces_demo » et « ilano_demos_reglements »). Bouton « Remettre les démos à zéro » dans l'espace admin.

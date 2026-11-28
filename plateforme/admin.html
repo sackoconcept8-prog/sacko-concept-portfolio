@@ -46,6 +46,7 @@ main{max-width:1200px;margin:0 auto;padding:22px 18px 60px}
   <main>
     <div class="kpis" id="kpis"></div>
     <div class="carte cache" id="rappels" style="margin-bottom:16px"></div>
+    <div class="carte" id="demos" style="margin-bottom:16px"></div>
     <div class="carte cache" id="support" style="margin-bottom:16px"></div>
     <div class="carte cache" id="demandes" style="margin-bottom:16px"></div>
     <div class="carte cache" id="equipe" style="margin-bottom:16px"></div>
@@ -66,7 +67,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const fmt=(v,d='XOF')=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:d,maximumFractionDigits:d==='XOF'?0:2}).format(v||0);
 const jours=d=>Math.ceil((new Date(d)-Date.now())/864e5);
 const ST={essai:['Essai','o'],actif:['Actif',''],suspendu:['Suspendu','r'],resilie:['Résilié','g']};
-let DATA=[],ROLE='admin';
+let DATA=[],DEMOS=[],ROLE='admin';
 
 $('#f-cnx').onsubmit=async e=>{e.preventDefault();const{error}=await sb.auth.signInWithPassword({email:$('#c-mail').value.trim(),password:$('#c-pass').value});
   if(error){$('#c-err').textContent='Identifiants incorrects';return}charger()};
@@ -80,12 +81,13 @@ async function charger(){
   const{data,error}=await sb.rpc('admin_espaces');
   if(data){setTimeout(rappels,0);setTimeout(demandes,0);setTimeout(support,0);setTimeout(equipe,0)}
   if(error||data===null){$('#v-cnx').classList.remove('cache');$('#v-admin').classList.add('cache');if(!error&&data===null){$('#c-err').textContent="Ce compte n'est pas administrateur.";await sb.auth.signOut()}return}
+  DEMOS=data.filter(x=>String(x.slug).startsWith('demo-'));data=data.filter(x=>!String(x.slug).startsWith('demo-'));
   DATA=data;$('#v-cnx').classList.add('cache');$('#v-admin').classList.remove('cache');
   const n=s=>DATA.filter(x=>x.statut===s).length;
   const enc=DATA.reduce((a,x)=>a+(+x.encaisse||0),0);
   $('#kpis').innerHTML=`<div class="carte kpi"><small>Clients</small><div>${DATA.length}</div></div><div class="carte kpi"><small>Abonnés actifs</small><div>${n('actif')}</div></div>
    <div class="carte kpi"><small>En essai</small><div>${n('essai')}</div></div>${ROLE==='admin'?`<div class="carte kpi"><small>Encaissé (total)</small><div>${fmt(enc)}</div></div>`:`<div class="carte kpi"><small>Conversations</small><div>${SUP.length||'—'}</div></div>`}`;
-  dessiner();
+  dessiner();demos();
 }
 function dessiner(){
   const q=$('#rech').value.toLowerCase(),f=$('#filtre').value;
@@ -243,6 +245,18 @@ async function equipe(){const z=$('#equipe');if(ROLE!=='admin'){z.classList.add(
   const appel=async corps=>{const{data:{session}}=await sb.auth.getSession();const r=await fetch('https://cqbuxbchjnlhezkzzlqq.supabase.co/functions/v1/support',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_2FhOq6XnaOlE6s0p1kExkA_FEuEoPOm',Authorization:'Bearer '+session.access_token},body:JSON.stringify(corps)});const j=await r.json();if(!r.ok||j.erreur)throw new Error(j.erreur||'Erreur');return j};
   $('#eq-f').onsubmit=async e=>{e.preventDefault();const v=Object.fromEntries(new FormData(e.target));try{await appel({action:'equipe_ajouter',nom:v.nom,email:v.email});alert('Assistant ajouté : il a reçu un e-mail pour choisir son mot de passe.');equipe()}catch(er){$('#eq-err').textContent=er.message}};
   document.querySelectorAll('[data-ret]').forEach(b=>b.onclick=async()=>{if(!confirm('Retirer cet assistant ? Il n’aura plus accès à l’espace admin.'))return;try{await appel({action:'equipe_retirer',user_id:b.dataset.ret});equipe()}catch(er){alert(er.message)}});
+}
+
+/* ===== Espaces de démonstration : voir Ilano comme un client, secteur par secteur ===== */
+const DEMO_IC={hotel:'🏨',ecole:'🎓',clinique:'🩺',immobilier:'🏠',transport:'🚚',beaute:'💇🏾‍♀️',nettoyage:'🧽',commerce:'🛍️',rh:'👥'};
+function demos(){const z=$('#demos');
+  z.innerHTML=`<h3 style="margin:0 0 4px">👁 Espaces de démonstration</h3><p style="color:var(--mut);margin:0 0 10px;font-size:14px">Un espace par secteur, rempli d'exemples. Ouvrez-le pour voir exactement ce que voit votre client, et pour faire vos démonstrations.</p>
+   ${DEMOS.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">${DEMOS.map(x=>`<button class="btn sec" style="justify-content:flex-start;text-align:left;padding:12px" data-demo="${x.id}">${DEMO_IC[x.modele]||'✨'} <span><b>${esc(x.nom)}</b><br><small>${esc(x.modele)}</small></span></button>`).join('')}</div>`
+    :'<p style="color:var(--mut)">Aucun espace de démonstration.</p>'}
+   ${ROLE==='admin'?`<button class="btn lien pt" id="dm-reset" style="margin-top:10px">↻ ${DEMOS.length?'Remettre les démos à zéro':'Créer les espaces de démonstration'}</button>`:''}`;
+  document.querySelectorAll('[data-demo]').forEach(b=>b.onclick=()=>{try{localStorage.setItem('sc_espace',b.dataset.demo)}catch{}window.open('/plateforme/','_blank')});
+  if($('#dm-reset'))$('#dm-reset').onclick=async()=>{if(DEMOS.length&&!confirm('Remettre toutes les démos à leur état de départ ? Ce que vous y avez ajouté sera effacé.'))return;
+    $('#dm-reset').disabled=true;const{error}=await sb.rpc('ilano_reinitialiser_demos');if(error)alert(error.message);charger()};
 }
 </script>
 </body>
