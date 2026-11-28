@@ -93,11 +93,11 @@ const CO_PAGE_MOD={co_agenda:'agenda',co_clients:'clients',co_ressources:'ressou
 /* ---------- Menu ---------- */
 function coPages(g){Object.assign(IC,CO_IC);
   if(coPrincipal()){ROLES.vendeur=L('Collaborateur','Team member');ROLES.gerant=L('Gérant','Manager')}
-  const T=CO_TITRES(),S=coS();
-  Object.assign(RH_COURT,{co_accueil:L('Accueil','Home'),co_agenda:coM('rdvs').split(' ')[0],co_clients:coM('clients').split(' ')[0],co_factures:L('Factures','Invoices'),co_mes:L('Mes tâches','My jobs'),co_ressources:coM('ressources').split(' ')[0]});
+  const S=coS(),T={...CO_TITRES(),...(S.titres?S.titres():{})};
+  Object.assign(RH_COURT,S.courts?S.courts():{});Object.assign(RH_COURT,{co_accueil:L('Accueil','Home'),co_agenda:coM('rdvs').split(' ')[0],co_clients:coM('clients').split(' ')[0],co_factures:L('Factures','Invoices'),co_mes:L('Mes tâches','My jobs'),co_ressources:coM('ressources').split(' ')[0]});
   if(!coActif())return [];
   if(CTX.membre.role==='employe')return coMod('agenda')?[['co_mes',T.co_mes]]:[];
-  return S.pages.filter(k=>k==='co_accueil'||coMod(CO_PAGE_MOD[k])).filter(k=>g||k!=='co_depenses').map(k=>[k,T[k]]);
+  return S.pages.filter(k=>k==='co_accueil'||coMod(CO_PAGE_MOD[k]||k)).filter(k=>g||!['co_depenses',...(S.pagesGestion||[])].includes(k)).map(k=>[k,T[k]]);
 }
 function coPagesFin(g){const T=CO_TITRES();return [g&&['co_modules',T.co_modules],['co_demandes',T.co_demandes]].filter(Boolean)}
 function vueDepart(){const s=CTX.logiciels.includes('stockpro'),r=CTX.logiciels.includes('rhpro');
@@ -210,6 +210,7 @@ async function coAccueil(){
         ${r.recette_ressource.slice(0,8).map(x=>`<tr><td>${esc(x.nom)}</td><td style="text-align:right">${fmt(x.montant)}</td><td style="text-align:right">${fmt(x.depenses)}</td><td style="text-align:right"><b>${fmt(x.montant-x.depenses)}</b></td></tr>`).join('')}</table>`:''}
     </div></div>`;
   document.querySelectorAll('[data-rdv]').forEach(b=>b.onclick=()=>coVoirRdv(b.dataset.rdv));
+  if(S.accueilExtra&&window[S.accueilExtra]){const z=document.createElement('div');z.id='co-metier';document.querySelector('#contenu .kpis')?.after(z);window[S.accueilExtra](z)}
 }
 const coLibCle=k=>{const t=String(k).replace(/^p_/,'').replace(/_fin$/,'').replace(/_/g,' ');return t.charAt(0).toUpperCase()+t.slice(1)+L(' (échéance)',' (expiry)')};
 const CO_ST_RDV={demande:['À confirmer','To confirm','orange'],prevu:['Prévu','Planned','gris'],confirme:['Confirmé','Confirmed',''],en_cours:['En cours','In progress',''],termine:['Terminé','Done','gris'],annule:['Annulé','Cancelled','rouge'],absent:['Absent','No-show','rouge']};
@@ -277,6 +278,7 @@ async function coFicheClient(id){const S=coS();await coRef();const c=coCli(id)||
    ${S.fidelite?`<div class="carte" style="margin-bottom:12px"><b>${esc(L('Carte de fidélité','Loyalty card'))}</b> · ${visites} ${esc(L('visite(s)','visit(s)'))}<div class="co-fid" style="margin-top:8px">${Array.from({length:seuil},(_,i)=>`<i class="${i<visites%seuil||(visites>0&&visites%seuil===0)?'on':''}"></i>`).join('')}</div>
      <small style="color:var(--mut)">${visites>0&&visites%seuil===0?esc(L('🎁 Récompense à offrir : ','🎁 Reward due: ')+(coReg('fidelite_cadeau')||L('une prestation offerte','a free service'))):esc(L(`Encore ${seuil-visites%seuil} visite(s) avant la récompense`,`${seuil-visites%seuil} more visit(s) before the reward`))}</small></div>`:''}
    ${c.note?`<div class="rh-texte" style="margin-bottom:12px">${esc(c.note)}</div>`:''}
+   <div id="fc-metier"></div>
    ${coMod('factures')?`<h4 style="margin:10px 0 4px">${esc(L('Factures et devis','Invoices & quotes'))}</h4>${fa.length?`<div class="rh-liste">${fa.slice(0,12).map(f=>`<div><span><b>${esc(f.numero)}</b> · ${coDateL(f.date_emission)}<br><small>${esc(f.objet||'')}</small></span><span style="text-align:right">${fmt(f.total)}<br>${coTagFacture(f)}</span></div>`).join('')}</div>`:`<div class="vide" style="padding:10px">—</div>`}`:''}
    ${coMod('agenda')?`<h4 style="margin:14px 0 4px">${esc(L('Historique','History'))}</h4>${rd.length?`<div class="rh-liste">${rd.slice(0,10).map(x=>`<div><span>${coDateL(x.debut)} · ${esc(x.titre||'')}</span>${coTagRdv(x.statut)}</div>`).join('')}</div>`:`<div class="vide" style="padding:10px">—</div>`}`:''}
    <div class="actions" style="flex-wrap:wrap">${tel?`<a class="btn sec" target="_blank" href="https://wa.me/${coTel(tel)}">WhatsApp</a>`:''}${coRO()?'':`<button class="btn sec" id="fc-mod">${esc(L('Modifier','Edit'))}</button>
@@ -284,6 +286,7 @@ async function coFicheClient(id){const S=coS();await coRef();const c=coCli(id)||
   $('.voile').onclick=e=>{if(e.target.classList.contains('voile'))fermer()};
   if($('#fc-mod'))$('#fc-mod').onclick=()=>coFormClient(c);if($('#fc-rdv'))$('#fc-rdv').onclick=()=>coFormRdv({client_id:c.id});
   if($('#fc-fac'))$('#fc-fac').onclick=()=>coFormFacture({type:'facture',client_id:c.id,taux_assurance:+c.champs?.taux_assurance||0});
+  if(S.ficheExtra&&window[S.ficheExtra])window[S.ficheExtra](c,$('#fc-metier'));
 }
 /* Import Excel / CSV */
 async function coLireTableur(file){
@@ -792,7 +795,7 @@ async function coModules(){const S=coS(),e=CTX.espace,reg=e.reglages||{},co=coAc
     ['ressources',coM('ressources'),L('Ce que vous louez, réservez ou utilisez','What you rent, book or use')],['prestations',coM('prestations'),L('Catalogue, prix, durées','Catalogue, prices, durations')],
     ['factures',L('Devis et factures','Quotes & invoices'),L('Devis → facture → reçu, relances','Quote → invoice → receipt, reminders')],['echeanciers',coM('echeanciers'),L('Paiement en plusieurs fois','Pay in instalments')],
     ['depenses',L('Dépenses','Expenses'),L('Achats, fournisseurs, budget, bilan','Purchases, suppliers, budget, result')],['reservation',L('Réservation en ligne','Online booking'),L('Lien public pour vos clients','Public link for your customers')],
-    ['stock',L('Stock & Ventes','Inventory & Sales'),L('Articles, caisse, ventes','Products, checkout, sales')],['rh',L('RH Pro','HR Pro'),L('Employés, congés, pointage, paie','Employees, leave, time clock, payroll')]];
+    ['stock',L('Stock & Ventes','Inventory & Sales'),L('Articles, caisse, ventes','Products, checkout, sales')],['rh',L('RH Pro','HR Pro'),L('Employés, congés, pointage, paie','Employees, leave, time clock, payroll')],...(S.modulesMetier||[]).map(m=>[m[0],coL(m[1]),coL(m[2])])];
   const lienRes=location.origin+location.pathname.replace(/[^/]*$/,'')+'reserver.html?e='+e.slug;
   const libs=[['clients',L('Rubrique des clients','Customers section')],['client',L('Un client','One customer')],['ressources',L('Rubrique des ressources','Resources section')],['ressource',L('Une ressource','One resource')],['rdvs',L('Rubrique de l’agenda','Calendar section')],['rdv',L('Un rendez-vous','One appointment')],['prestations',L('Rubrique des prestations','Services section')],['membre',L('Un collaborateur','One team member')]];
   const perso=e.champs_perso||{};

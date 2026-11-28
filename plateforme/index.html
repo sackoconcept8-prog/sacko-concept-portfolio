@@ -248,6 +248,7 @@ tr:last-child td{border-bottom:0}
 <script src="rhpro.js"></script>
 <script src="secteurs/generique.js"></script><script src="secteurs/commerce.js"></script><script src="secteurs/hotel.js"></script><script src="secteurs/ecole.js"></script><script src="secteurs/clinique.js"></script><script src="secteurs/immobilier.js"></script><script src="secteurs/transport.js"></script><script src="secteurs/beaute.js"></script><script src="secteurs/nettoyage.js"></script>
 <script src="socle.js"></script>
+<script src="metiers/clinique.js"></script>
 <script>
 /* ============ Configuration ============ */
 const SB_URL = 'https://cqbuxbchjnlhezkzzlqq.supabase.co';
@@ -573,7 +574,8 @@ function pages(){
 function construireMenu(){
   $('#nav').innerHTML=pages().map(([k,t])=>[k,tr(t)]).map(([k,t])=>`<button data-v="${k}">${svg(k)}${t}</button>`).join('');
   const MOB=['co_accueil','co_agenda','co_clients','co_factures','co_mes','co_ressources','accueil','caisse','articles','ventes','equipe','rh_accueil','rh_employes','rh_conges','rh_pointage','rh_moi','rh_mes_conges','rh_mes_docs','rh_signaler'];
-  const tout=pages(),mob=tout.filter(([k])=>MOB.includes(k)),plus=tout.length>5;
+  const SM=(CTX&&typeof coS==='function'&&coS().mob)||null;
+  const tout=pages(),mob=SM?SM.map(k=>tout.find(p=>p[0]===k)).filter(Boolean).concat(tout.filter(([k])=>MOB.includes(k)&&!SM.includes(k))):tout.filter(([k])=>MOB.includes(k)),plus=tout.length>5;
   $('#nav-mob').innerHTML=mob.map(([k,t])=>[k,tr(t)]).slice(0,plus?4:5).map(([k,t])=>`<button data-v="${k}">${svg(k)}${RH_COURT[k]?tr(RH_COURT[k]):t.split(' ')[0]}</button>`).join('')+(plus?`<button id="mob-plus">${svg('plus')}${tr('Plus')}</button>`:'');
   if(plus)$('#mob-plus').onclick=menuPlus;
   document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>aller(b.dataset.v));
