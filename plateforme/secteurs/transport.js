@@ -1,0 +1,47 @@
+/* Ilano — modèle Transport / logistique : transporteurs, livraisons, flottes */
+(window.ILANO_SECTEURS = window.ILANO_SECTEURS || {}).transport = {
+  code: 'transport', nom: ['Transport / logistique', 'Transport / logistics'], icone: '🚚', gamme: 'standard',
+  pages: ['co_accueil', 'co_agenda', 'co_ressources', 'co_clients', 'co_factures', 'co_depenses', 'co_prestations'],
+  modules: { agenda: true, clients: true, prestations: true, factures: true, depenses: true, ressources: true, echeanciers: false, reservation: false },
+  mots: {
+    client: ['Client', 'Customer'], clients: ['Clients', 'Customers'],
+    ressource: ['Véhicule', 'Vehicle'], ressources: ['Véhicules', 'Vehicles'],
+    rdv: ['Mission', 'Job'], rdvs: ['Missions et livraisons', 'Jobs & deliveries'],
+    prestation: ['Tarif', 'Rate'], prestations: ['Tarifs de transport', 'Transport rates'],
+    membre: ['Chauffeur', 'Driver'],
+  },
+  categoriesClient: [['client', 'Client', 'Customer'], ['entreprise', 'Entreprise', 'Company']],
+  champsRessource: [
+    { k: 'immatriculation', l: ['Immatriculation', 'Plate number'], liste: true },
+    { k: 'assurance_fin', l: ['Fin d’assurance', 'Insurance expiry'], t: 'date', liste: true },
+    { k: 'visite_fin', l: ['Fin de visite technique', 'Roadworthiness expiry'], t: 'date', liste: true },
+    { k: 'vignette_fin', l: ['Fin de vignette / carte grise', 'Road tax expiry'], t: 'date' },
+    { k: 'kilometrage', l: ['Kilométrage', 'Mileage'], t: 'number' },
+    { k: 'chauffeur', l: ['Chauffeur habituel', 'Usual driver'] },
+  ],
+  typeRessource: 'vehicule', categoriesRessource: ['Camion', 'Camionnette', 'Voiture', 'Moto', 'Bus / minibus', 'Tricycle'],
+  statutsRessource: [['disponible', 'Disponible', 'Available', ''], ['en_mission', 'En mission', 'On a job', 'gris'], ['panne', 'En panne / garage', 'Broken down', 'rouge']],
+  libPrixRessource: ['Recette cible / jour', 'Daily target'],
+  champsRdv: [
+    { k: 'depart', l: ['Lieu de départ', 'Pick-up'] },
+    { k: 'arrivee', l: ['Destination', 'Drop-off'] },
+    { k: 'marchandise', l: ['Marchandise / colis', 'Goods'] },
+    { k: 'preuve', l: ['Preuve de livraison (reçu par…)', 'Proof of delivery (received by…)'] },
+  ],
+  agenda: { mode: 'mission', duree: 240, membre: true, ressource: true },
+  depenses: ['Carburant', 'Entretien / vidange', 'Pièces / réparations', 'Assurance', 'Péages / taxes', 'Salaires chauffeurs', 'Amendes', 'Autre'],
+  depenseParRessource: true,
+  kpis: (r, o) => [
+    [o.L('Recette du mois', 'Revenue this month'), o.fmt(r.ca_mois), o.L('Encaissé : ', 'Collected: ') + o.fmt(r.encaisse_mois), true],
+    [o.L('Dépenses du mois', 'Expenses this month'), o.fmt(r.depenses_mois)],
+    [o.L('Missions aujourd’hui', 'Jobs today'), r.rdv_jour, o.L('Cette semaine : ', 'This week: ') + r.rdv_semaine],
+    [o.L('Documents à renouveler', 'Documents to renew'), (r.alertes_echeances || []).length, o.L('dans les 30 jours', 'within 30 days')],
+  ],
+  parRessource: true,
+  premiers: [
+    ['co_ressources', ['Ajoutez vos véhicules et leurs échéances', 'Add your vehicles and their expiry dates']],
+    ['co_agenda', ['Planifiez vos missions et livraisons', 'Plan your jobs and deliveries']],
+    ['co_depenses', ['Notez le carburant et l’entretien par véhicule', 'Record fuel and maintenance per vehicle']],
+  ],
+  exemples: { ressources: [['Camion Mercedes', 'Camion', 150000], ['Tricycle livraison', 'Tricycle', 20000]], prestations: [['Livraison en ville', 5000, 60], ['Transport interurbain (tonne)', 25000, 480]] },
+};

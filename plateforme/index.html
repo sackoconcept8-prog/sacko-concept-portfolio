@@ -187,12 +187,17 @@ tr:last-child td{border-bottom:0}
           <input type="color" id="coul-man" title="Changer la couleur" style="width:38px;height:30px;padding:2px"></div>
         <label>Nom de l'entreprise</label><input id="i-ent" required maxlength="80">
         <div class="grille2">
-          <div><label>Secteur</label><select id="i-sect"><option>Commerce / boutique</option><option>Supermarché / alimentation</option><option>Téléphones / électronique</option><option>Quincaillerie / BTP</option><option>Pharmacie / parapharmacie</option><option>Restauration / bar</option><option>Cosmétique / mode</option><option data-autre="1" data-demo="/securipro/|/securipro/">Sécurité / gardiennage</option><option data-autre="1" data-demo="/nettopro/demo/|/en/nettopro/">Nettoyage</option><option data-autre="1" data-demo="/btppro/|/btppro/">BTP / travaux</option><option data-logiciel="rhpro">Services / RH</option><option data-autre="1">Autre</option></select></div>
+          <div><label>Secteur</label><select id="i-sect">
+            <optgroup label="Commerce"><option data-modele="commerce">Commerce / boutique</option><option data-modele="commerce">Supermarché / alimentation</option><option data-modele="commerce">Téléphones / électronique</option><option data-modele="commerce">Quincaillerie / matériaux</option><option data-modele="commerce">Pharmacie / parapharmacie</option><option data-modele="commerce">Restauration / bar</option><option data-modele="commerce">Cosmétique / mode (boutique)</option></optgroup>
+            <optgroup label="Services"><option data-modele="hotel">Hôtellerie / résidence</option><option data-modele="ecole">École privée / formation</option><option data-modele="clinique">Clinique / centre de santé</option><option data-modele="immobilier">Agence immobilière</option><option data-modele="transport">Transport / logistique</option><option data-modele="beaute">Salon de beauté / coiffure</option><option data-modele="nettoyage">Nettoyage</option><option data-modele="rh" data-logiciel="rhpro">Services / RH</option></optgroup>
+            <optgroup label="Autres"><option data-modele="securite" data-autre="1" data-demo="/securipro/|/securipro/">Sécurité / gardiennage</option><option data-modele="btp" data-autre="1" data-demo="/btppro/|/btppro/">BTP / travaux</option><option data-modele="generique">Autre</option></optgroup></select></div>
+          <div><label>Taille de votre structure</label><select id="i-taille"><option value="1-10">1 à 10 personnes</option><option value="11-50">11 à 50 personnes</option><option value="51-500">51 à 500 personnes</option><option value="500+">Plus de 500 personnes</option></select></div>
           <div><label>Pays</label><input id="i-pays" placeholder="Votre pays"></div>
           <div><label>Devise</label><select id="i-dev"><option value="XOF">F CFA</option><option value="EUR">Euro</option><option value="USD">Dollar</option></select></div>
           <div><label>Langue</label><select id="i-lang"><option value="fr">Français</option><option value="en">English</option></select></div>
         </div>
-        <div id="sect-info" class="cache" style="margin-top:14px;background:#FFFAEB;border:1px solid #FEDF89;border-radius:12px;padding:12px 14px;font-size:13px;color:#7A2E0E;line-height:1.5"><b>Bon à savoir :</b> votre espace démarre avec <b>Stock &amp; Ventes</b> (produits, caisse, équipe). L'application dédiée à votre secteur arrive bientôt et sera ajoutée à votre espace. <span id="sect-demo-z" class="cache"><br><a id="sect-demo" target="_blank" rel="noopener" href="#">Voir la démo de votre secteur</a> · </span><a id="sect-wa" target="_blank" rel="noopener" href="#">Parlez-nous de vos besoins sur WhatsApp</a></div>
+        <div id="sect-ok" class="cache" style="margin-top:14px;background:var(--p2);border:1px solid #b7e3c9;border-radius:12px;padding:12px 14px;font-size:13px;color:#13734B;line-height:1.5"></div>
+        <div id="sect-info" class="cache" style="margin-top:14px;background:#FFFAEB;border:1px solid #FEDF89;border-radius:12px;padding:12px 14px;font-size:13px;color:#7A2E0E;line-height:1.5"><b>Bon à savoir :</b> votre espace démarre avec <b>le socle Ilano</b> (clients, agenda, devis et factures, dépenses, équipe). Le logiciel complet de votre secteur arrive bientôt et sera ajouté à votre espace. <span id="sect-demo-z" class="cache"><br><a id="sect-demo" target="_blank" rel="noopener" href="#">Voir la démo de votre secteur</a> · </span><a id="sect-wa" target="_blank" rel="noopener" href="#">Parlez-nous de vos besoins sur WhatsApp</a></div>
         <div id="sect-rh" class="cache" style="margin-top:14px;background:var(--p2);border:1px solid #b7e3c9;border-radius:12px;padding:12px 14px;font-size:13px;color:#13734B;line-height:1.5">✓ <span>Votre espace démarre avec</span> <b>RH Pro</b> <span>(employés, congés, pointage, paie, documents officiels, badges).</span></div>
         <button type="button" class="btn" style="width:100%;margin-top:18px" id="ins-suiv">Continuer</button>
       </div>
@@ -241,6 +246,8 @@ tr:last-child td{border-bottom:0}
 <div id="modale-zone"></div>
 
 <script src="rhpro.js"></script>
+<script src="secteurs/generique.js"></script><script src="secteurs/commerce.js"></script><script src="secteurs/hotel.js"></script><script src="secteurs/ecole.js"></script><script src="secteurs/clinique.js"></script><script src="secteurs/immobilier.js"></script><script src="secteurs/transport.js"></script><script src="secteurs/beaute.js"></script><script src="secteurs/nettoyage.js"></script>
+<script src="socle.js"></script>
 <script>
 /* ============ Configuration ============ */
 const SB_URL = 'https://cqbuxbchjnlhezkzzlqq.supabase.co';
@@ -340,7 +347,10 @@ const I18N={
 "Pays du numéro de paiement":"Country of the payment number","Numéro de téléphone (Mobile Money ou contact)":"Phone number (Mobile Money or contact)",
 "sans l'indicatif":"without country code","Payer maintenant":"Pay now","Paiement impossible":"Payment failed","Identité de l'entreprise":"Company identity",
 "Couleur principale":"Main color","Adresse":"Address","Statut :":"Status:","Suspendu":"Suspended","Résilié":"Cancelled","Logiciels :":"Apps:",
-"Contacter le support":"Contact support","Enregistré ✓":"Saved ✓","⬇ Installer l'application":"⬇ Install the app"
+"Contacter le support":"Contact support","Taille de votre structure":"Size of your organization","1 à 10 personnes":"1 to 10 people","11 à 50 personnes":"11 to 50 people","51 à 500 personnes":"51 to 500 people","Plus de 500 personnes":"More than 500 people",
+"Commerce":"Retail","Services":"Services","Autres":"Other","Quincaillerie / matériaux":"Hardware / building supplies","Cosmétique / mode (boutique)":"Beauty / fashion (shop)","Hôtellerie / résidence":"Hotel / guesthouse","École privée / formation":"Private school / training","Clinique / centre de santé":"Clinic / health centre","Agence immobilière":"Real estate agency","Transport / logistique":"Transport / logistics","Salon de beauté / coiffure":"Beauty salon / hairdresser",
+"le socle Ilano":"the Ilano core","(clients, agenda, devis et factures, dépenses, équipe). Le logiciel complet de votre secteur arrive bientôt et sera ajouté à votre espace.":"(customers, calendar, quotes & invoices, expenses, team). The full software for your sector is coming soon and will be added to your workspace.",
+"Invitation envoyée par e-mail ✓":"Invitation sent by email ✓","Démarrage":"Starter","PME":"SME","Croissance":"Growth","Entreprise":"Enterprise","Collaborateur":"Team member","Enregistré ✓":"Saved ✓","⬇ Installer l'application":"⬇ Install the app"
 };
 const PAYS_EN={"Bénin":"Benin","Mali":"Mali","Togo":"Togo","Côte d'Ivoire":"Côte d’Ivoire","Sénégal":"Senegal","Guinée":"Guinea","Cameroun":"Cameroon","Gabon":"Gabon","Congo":"Congo","RD Congo":"DR Congo","France":"France","États-Unis":"United States","Burkina Faso":"Burkina Faso","Niger":"Niger"};
 const I18P=[
@@ -360,7 +370,7 @@ function tr(s){
   if(r===undefined)for(const[re,f]of I18P){const m=t.match(re);if(m){r=f(...m);if(r!==undefined)break}}
   return r===undefined?s:String(s).replace(t,r);
 }
-const ATTRS=['placeholder','title','aria-label'];
+const ATTRS=['placeholder','title','aria-label','label'];
 function trArbre(n){
   if(LANG!=='en'||!n)return;
   if(n.nodeType===3){const p=n.parentNode;if(p&&/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName))return;const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v;return}
@@ -448,8 +458,9 @@ $('#f-cnx').onsubmit=async ev=>{
 $('#c-oubli').onclick=async()=>{
   const id=$('#c-id').value.trim();
   if(!id.includes('@')){$('#c-err').textContent=id?'Pour un identifiant avec code PIN, demandez un nouveau code à votre responsable.':'Saisissez d\'abord votre e-mail ci-dessus.';return}
-  const{error}=await sb.auth.resetPasswordForEmail(id,{redirectTo:location.origin+location.pathname});
-  $('#c-err').innerHTML=error?esc(erreurMsg(error)):'<span class="ok">Si un compte existe, un lien vous a été envoyé par e-mail.</span>';
+  let error=null;try{const r=await fetch(SB_URL+'/functions/v1/notifier',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY},body:JSON.stringify({action:'reset',email:id,langue:LANG,retour:location.origin+location.pathname})});if(!r.ok)throw new Error()}
+  catch{({error}=await sb.auth.resetPasswordForEmail(id,{redirectTo:location.origin+location.pathname}))}
+  $('#c-err').innerHTML=error?esc(erreurMsg(error)):'<span class="ok">'+esc(tr('Si un compte existe, un lien vous a été envoyé par e-mail.'))+'</span>';
 };
 
 // Inscription — logo et couleurs
@@ -487,7 +498,7 @@ $('#f-ins').onsubmit=async ev=>{
   ev.preventDefault();$('#i-err').textContent='';if($('#i-pass').value!==$('#i-pass2').value){$('#i-err').textContent=tr('Les deux mots de passe ne sont pas identiques.');$('#i-pass2').focus();return}const btn=$('#i-btn');btn.disabled=true;btn.textContent='Création de votre espace…';
   const corps={entreprise:$('#i-ent').value,nom:$('#i-nom').value,email:$('#i-email').value,password:$('#i-pass').value,
     telephone:$('#i-tel').value,secteur:$('#i-sect').value,pays:$('#i-pays').value,devise:$('#i-dev').value,langue:$('#i-lang').value,
-    couleur_principale:COUL1,couleur_secondaire:melange(COUL1,.9),logo:LOGO_DATA,logiciel:rhLogicielInscription(),site_web:$('#i-piege').value};
+    couleur_principale:COUL1,couleur_secondaire:melange(COUL1,.9),logo:LOGO_DATA,logiciel:rhLogicielInscription(),modele:coModeleInscription(),effectif:$('#i-taille').value,site_web:$('#i-piege').value};
   try{
     const r=await fetch(SB_URL+'/functions/v1/inscription',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY},body:JSON.stringify(corps)});
     const j=await r.json();if(!r.ok||j.erreur)throw new Error(j.erreur||'Erreur');
@@ -514,7 +525,7 @@ async function demarrer(nouveau){
   $('#v-auth').classList.add('cache');$('#v-app').classList.remove('cache');
   $('#m-logo').src=CTX.espace.logo_url||"ilano-icone.svg";$('#m-nom').textContent=CTX.espace.nom;
   $('#moi-nom').textContent=CTX.membre.nom_complet;$('#moi-role').textContent=ROLES[CTX.membre.role];
-  construireMenu();
+  construireMenu();coCompterNotifs();
   if(['suspendu','resilie'].includes(CTX.espace.statut)){
     const msg=encodeURIComponent(L('Bonjour Ilano, je souhaite renouveler mon abonnement pour ','Hello Ilano, I would like to renew my subscription for ')+CTX.espace.nom+' (code: '+CTX.espace.slug+')');
     $('#nav').innerHTML='';$('#nav-mob').innerHTML='';
@@ -528,7 +539,7 @@ async function demarrer(nouveau){
   }
   aller(vueDepart());
   setTimeout(()=>{sp.style.opacity=0;setTimeout(()=>sp.classList.add('cache'),500)},1300);
-  if(nouveau)setTimeout(()=>toast(CTX.logiciels.includes('stockpro')?'Votre espace est prêt ! Commencez par ajouter vos articles.':'Votre espace est prêt ! Commencez par ajouter vos employés.'),1600);
+  if(nouveau)setTimeout(()=>toast(coPrincipal()?L('Votre espace est prêt ! Suivez les 3 premières étapes.','Your workspace is ready! Follow the first 3 steps.'):CTX.logiciels.includes('stockpro')?'Votre espace est prêt ! Commencez par ajouter vos articles.':'Votre espace est prêt ! Commencez par ajouter vos employés.'),1600);
   if(params.get('paye'))setTimeout(()=>{toast('Merci ! Votre paiement est en cours de confirmation, l\'accès s\'active automatiquement.');history.replaceState(null,'',location.pathname)},1600);
 }
 function localStorageGet(k){try{return localStorage.getItem('sc_'+k)}catch{return null}}
@@ -553,12 +564,13 @@ const svg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 function pages(){
   const a=CTX.logiciels.includes('stockpro');const g=estGerant();
   const r=CTX.logiciels.includes('rhpro');const emp=CTX.membre.role==='employe'&&r;
-  return [g&&(a||!r)&&['accueil','Tableau de bord'],a&&!emp&&['caisse','Caisse'],a&&g&&['articles','Articles'],a&&g&&['mouvements','Entrées / sorties'],
-    a&&!emp&&['ventes','Ventes'],a&&!emp&&['clients','Clients'],...(r?rhPages(g):[]),g&&['equipe','Équipe'],g&&['abonnement','Abonnement'],g&&['reglages','Mon espace']].filter(Boolean);
+  const coP=coPrincipal(),co=coActif()&&coMod('clients');
+  return [...(coP?coPages(g):[]),g&&!coP&&(a||!r)&&['accueil','Tableau de bord'],a&&!emp&&['caisse','Caisse'],a&&g&&['articles','Articles'],a&&g&&['mouvements','Entrées / sorties'],
+    a&&!emp&&['ventes','Ventes'],a&&!emp&&!co&&['clients','Clients'],...(r?rhPages(g):[]),...(!coP?coPages(g):[]),g&&['equipe','Équipe'],g&&['abonnement','Abonnement'],g&&['reglages','Mon espace'],...coPagesFin(g)].filter(Boolean).map(([k,t])=>[k,coTitreMenu(k,t)]);
 }
 function construireMenu(){
   $('#nav').innerHTML=pages().map(([k,t])=>[k,tr(t)]).map(([k,t])=>`<button data-v="${k}">${svg(k)}${t}</button>`).join('');
-  const MOB=['accueil','caisse','articles','ventes','equipe','rh_accueil','rh_employes','rh_conges','rh_pointage','rh_moi','rh_mes_conges','rh_mes_docs','rh_signaler'];
+  const MOB=['co_accueil','co_agenda','co_clients','co_factures','co_mes','co_ressources','accueil','caisse','articles','ventes','equipe','rh_accueil','rh_employes','rh_conges','rh_pointage','rh_moi','rh_mes_conges','rh_mes_docs','rh_signaler'];
   const tout=pages(),mob=tout.filter(([k])=>MOB.includes(k)),plus=tout.length>5;
   $('#nav-mob').innerHTML=mob.map(([k,t])=>[k,tr(t)]).slice(0,plus?4:5).map(([k,t])=>`<button data-v="${k}">${svg(k)}${RH_COURT[k]?tr(RH_COURT[k]):t.split(' ')[0]}</button>`).join('')+(plus?`<button id="mob-plus">${svg('plus')}${tr('Plus')}</button>`:'');
   if(plus)$('#mob-plus').onclick=menuPlus;
@@ -570,7 +582,7 @@ function entete(titre,btn=''){
   const e=CTX.espace;let bandeau='';
   if(e.statut==='essai'&&estGerant()){const j=Math.max(0,Math.ceil((new Date(e.essai_fin)-Date.now())/864e5));
     bandeau=`<div class="essai">⏳ Essai gratuit : <b>${j} jour${j>1?'s':''} restant${j>1?'s':''}</b>. <a href="#" onclick="aller('abonnement');return false">Choisir ma formule</a></div>`}
-  return bandeau+bandeauxLicence()+`<div class="entete"><h1>${titre}</h1><div>${btn}</div></div>`;
+  return bandeau+bandeauxLicence()+coBandeaux()+`<div class="entete"><h1>${titre}</h1><div>${btn}${coOutils()}</div></div>`;
 }
 const C=()=>$('#contenu');
 function modale(html,onOk){
@@ -763,7 +775,7 @@ async function vEquipe(){
   $('#eq-copie').onclick=()=>{navigator.clipboard?.writeText(lien);toast('Lien copié')};
   $('#eq-new').onclick=()=>modale(`<h3>Ajouter un membre</h3>
     <label>Nom complet</label><input name="nom_complet" required>
-    <div class="grille2"><div><label>Rôle</label><select name="role">${CTX.logiciels.includes('stockpro')?'<option value="vendeur">Vendeur</option>':''}${CTX.membre.role==='proprietaire'?`<option value="gerant">${CTX.logiciels.includes('stockpro')?'Gérant':'Gérant / RH'}</option>`:''}</select></div>
+    <div class="grille2"><div><label>Rôle</label><select name="role">${CTX.logiciels.includes('stockpro')||coActif()?`<option value="vendeur">${esc(ROLES.vendeur)}</option>`:''}${CTX.membre.role==='proprietaire'?`<option value="gerant">${CTX.logiciels.includes('stockpro')?'Gérant':'Gérant / RH'}</option>`:''}</select></div>
     <div><label>Poste</label><input name="poste" placeholder="Caissière"></div></div>
     <label>Téléphone</label><input name="telephone">
     <label>Mode de connexion</label><select name="mode" id="eq-mode"><option value="pin">Identifiant + code PIN (sans e-mail)</option><option value="email">E-mail + mot de passe</option></select>
@@ -773,6 +785,7 @@ async function vEquipe(){
      const corps={action:'creer',espace_id:E(),nom_complet:v.nom_complet,role:v.role,poste:v.poste,telephone:v.telephone,
        ...(v.mode==='pin'?{identifiant:v.identifiant,mot_de_passe:v.pin}:{email:v.email,mot_de_passe:v.mdp})};
      const j=await appelMembres(corps);
+     if(v.mode==='email'&&v.email)coNotifier({action:'invitation',email:v.email,nom:v.nom_complet,mot_de_passe:v.mdp}).then(()=>toast(tr('Invitation envoyée par e-mail ✓'))).catch(()=>{});
      const msg=LANG==='en'?(v.mode==='pin'?`Hello ${v.nom_complet}, here is your access to ${CTX.espace.nom}:\n${lien}\nUsername: ${j.connexion.identifiant}\nPIN: ${v.pin}`:`Hello ${v.nom_complet}, here is your access to ${CTX.espace.nom}:\n${lien}\nEmail: ${v.email}\nTemporary password: ${v.mdp}`):(v.mode==='pin'?`Bonjour ${v.nom_complet}, voici votre accès à ${CTX.espace.nom} :\n${lien}\nIdentifiant : ${j.connexion.identifiant}\nCode PIN : ${v.pin}`:`Bonjour ${v.nom_complet}, voici votre accès à ${CTX.espace.nom} :\n${lien}\nE-mail : ${v.email}\nMot de passe provisoire : ${v.mdp}`);
      setTimeout(()=>partagerAcces(msg,v.telephone),50);vEquipe()});
   document.addEventListener('change',e=>{if(e.target.id==='eq-mode'){$('#eq-pin').classList.toggle('cache',e.target.value!=='pin');$('#eq-mail').classList.toggle('cache',e.target.value==='pin')}});
@@ -796,35 +809,45 @@ function partagerAcces(msg,tel){
 
 
 /* ============ Abonnement (paiement automatique) ============ */
-const FORM={starter:'Starter',business:'Business',premium:'Premium',standard:'Standard',serenite:'Sérénité',maintenance:'Maintenance et hébergement'};
+const FORM={starter:'Starter',business:'Business',premium:'Premium',standard:'Standard',serenite:'Sérénité',maintenance:'Maintenance et hébergement',demarrage:'Démarrage',pme:'PME',croissance:'Croissance',entreprise:'Entreprise'};
+const FORM_EN={demarrage:'Starter',pme:'SME',croissance:'Growth',entreprise:'Enterprise',serenite:'Serenity'};
+const nomForm=f=>LANG==='en'&&FORM_EN[f]?FORM_EN[f]:(FORM[f]||f);
+const FORM_TXT={demarrage:['L’offre d’entrée, pour s’équiper sans risque','The entry plan, to get organized with no risk'],pme:['Le cœur de l’offre','Our most popular plan'],croissance:['Plusieurs sites, équipes nombreuses','Several sites, larger teams']};
 async function vAbonnement(){
-  const lic=(await sb.from('licences').select('*').eq('espace_id',E())).data||[];
+  const lic=((await sb.from('licences').select('*').eq('espace_id',E())).data||[]).filter(x=>!x.inclus_dans);
   const codes=lic.map(x=>x.logiciel);
-  const LG=window._abLog&&codes.includes(window._abLog)?window._abLog:(codes.includes('stockpro')?'stockpro':codes[0]||'stockpro');window._abLog=LG;
+  const LG=window._abLog&&codes.includes(window._abLog)?window._abLog:(codes.includes('ilano')?'ilano':codes.includes('stockpro')?'stockpro':codes[0]||'stockpro');window._abLog=LG;
   const l=lic.find(x=>x.logiciel===LG);const achat=l?.type==='achat';
+  const gamme=LG==='ilano'?coS().gamme:'standard';
   let t=verif(await sb.from('tarifs').select('*').eq('actif',true).eq('logiciel',LG).order('ordre'));
-  t=t.filter(x=>achat?x.formule==='maintenance':x.formule!=='maintenance');
+  t=t.filter(x=>achat?x.formule==='maintenance':x.formule!=='maintenance'&&(x.gamme||'standard')===gamme);
   if(!achat){const dv=CTX.espace.devise;if(t.some(x=>x.devise===dv))t=t.filter(x=>x.devise===dv);else if(t.some(x=>x.devise==='XOF'))t=t.filter(x=>x.devise==='XOF')}
   const formules=[...new Set(t.map(x=>x.formule))];
+  const taille=+CTX.taille||0;const conseil=(coPackPour(Math.max(taille,{'1-10':1,'11-50':11,'51-500':51,'500+':501}[CTX.espace.effectif]||1))||[])[0];
+  const wa=txt=>'https://wa.me/15054642331?text='+encodeURIComponent(txt);
   const onglets=codes.length>1?`<div class="chips">${codes.map(c=>`<button type="button" class="${c===LG?'on':''}" data-lg="${c}">${tr(RH_NOMS[c]||c)}</button>`).join('')}</div>`:'';
   C().innerHTML=entete('Mon abonnement')+onglets+(achat?`
    <div class="carte" style="margin-bottom:14px"><b>Licence achetée</b> · ${tr(RH_NOMS[LG]||LG)}<br>${esc(L('Maintenance et hébergement jusqu’au ','Maintenance & hosting until '))}<b>${l.maintenance_fin?new Date(l.maintenance_fin+'T12:00:00').toLocaleDateString(LOC()):'—'}</b>
     ${l.statut==='lecture_seule'?`<br><span class="tag rouge" style="margin-top:6px">🔒 Lecture seule</span>`:''}<br><small style="color:var(--mut)">${esc(L('La 1re année est incluse dans le prix d’achat. Ensuite, le forfait annuel garde votre logiciel à jour, hébergé et sauvegardé. Sans renouvellement, l’espace passe en lecture seule (données visibles, ajout impossible).','The first year is included in the purchase price. After that, the annual plan keeps your software updated, hosted and backed up. Without renewal, the workspace becomes read-only (data visible, no new entries).'))}</small></div>
    ${t.length?`<div class="kpis" style="grid-template-columns:1fr">${t.map(o=>`<div class="carte"><h3 style="margin:0">Forfait annuel de maintenance et d'hébergement</h3><div style="font-size:24px;font-weight:800;margin-top:8px">${fmtT(o)}<small style="font-size:13px;color:var(--mut)"> /an</small></div>
      <button class="btn" style="margin-top:12px" data-t="${o.id}">Renouveler 12 mois</button></div>`).join('')}</div>`:'<div class="carte">Les formules seront bientôt disponibles. Contactez le support Ilano.</div>'}`:`
-   <div class="carte" style="margin-bottom:14px">Formule actuelle : <b>${l?(l.formule==='essai'?'Essai gratuit':FORM[l.formule]||l.formule):'—'}</b>${l?.date_fin?` · valable jusqu'au <b>${new Date(l.date_fin).toLocaleDateString(LOC())}</b>`:''}<br><small style="color:var(--mut)">Si vous renouvelez avant l'échéance, la durée s'ajoute à votre date de fin.</small></div>
-   ${t.length?`<div class="kpis" style="grid-template-columns:repeat(${Math.min(formules.length,3)},1fr)">${formules.map(f=>{const opts=t.filter(x=>x.formule===f);const m1=opts.find(x=>x.mois===1);
-     return`<div class="carte"><h3 style="margin:0">${FORM[f]||f}</h3><p style="color:var(--mut);margin:4px 0 10px">${opts[0].employes_max?'Jusqu\'à '+opts[0].employes_max+' employés':'Employés illimités'}</p>
+   <div class="carte" style="margin-bottom:14px">Formule actuelle : <b>${l?(l.formule==='essai'?'Essai gratuit':nomForm(l.formule)):'—'}</b>${l?.date_fin?` · valable jusqu'au <b>${new Date(l.date_fin).toLocaleDateString(LOC())}</b>`:''}${taille?` · ${esc(L(`${taille} personne(s) dans votre équipe`,`${taille} people in your team`))}`:''}<br><small style="color:var(--mut)">${esc(L('Tous les modules de votre secteur sont inclus dans chaque pack : seule la taille de votre équipe change le prix. Si vous renouvelez avant l’échéance, la durée s’ajoute à votre date de fin.','Every module for your sector is included in every plan: only your team size changes the price. If you renew before it ends, the extra time is added to your end date.'))}</small></div>
+   ${t.length?`<div class="kpis" style="grid-template-columns:repeat(${Math.min(formules.length+1,4)},1fr)">${formules.map(f=>{const opts=t.filter(x=>x.formule===f);const m1=opts.find(x=>x.mois===1);const rec=f===conseil;const trop=opts[0].employes_max&&taille>opts[0].employes_max;
+     return`<div class="carte" style="${rec?'border:2px solid var(--p);':''}${trop?'opacity:.55;':''}">${rec?`<span class="tag" style="margin-bottom:6px">${esc(L('Conseillé pour vous','Recommended for you'))}</span>`:''}<h3 style="margin:0">${esc(nomForm(f))}</h3><p style="color:var(--mut);margin:4px 0 10px">${opts[0].employes_max?esc(L(`Jusqu'à ${opts[0].employes_max} personnes`,`Up to ${opts[0].employes_max} people`)):'Employés illimités'}${FORM_TXT[f]?`<br><small>${esc(L(...FORM_TXT[f]))}</small>`:''}</p>
      ${m1?`<div style="font-size:24px;font-weight:800">${fmtT(m1)}<small style="font-size:13px;color:var(--mut)"> /mois</small></div>`:''}
-     <div style="display:grid;gap:8px;margin-top:12px">${opts.map(o=>`<button class="btn ${o.mois===1?'':'sec'}" data-t="${o.id}">${o.mois} mois — ${fmtT(o)}${o.mois===3?' (-10 %)':o.mois===12?' (-20 %)':''}</button>`).join('')}</div></div>`}).join('')}</div>`:'<div class="carte">Les formules seront bientôt disponibles. Contactez le support Ilano.</div>'}`)+`
+     <div style="display:grid;gap:8px;margin-top:12px">${opts.map(o=>`<button class="btn ${o.mois===1?'':'sec'}" data-t="${o.id}" ${trop?'disabled':''}>${o.mois} mois — ${fmtT(o)}${o.mois===3?' (-10 %)':o.mois===12?' (-20 %)':''}</button>`).join('')}</div></div>`}).join('')}
+     ${['demarrage','pme','croissance'].some(f=>formules.includes(f))?`<div class="carte" style="${conseil==='entreprise'?'border:2px solid var(--p);':''}"><h3 style="margin:0">${esc(nomForm('entreprise'))}</h3><p style="color:var(--mut);margin:4px 0 10px">${esc(L('Plus de 500 personnes','More than 500 people'))}<br><small>${esc(L('Accompagnement dédié','Dedicated support'))}</small></p><div style="font-size:20px;font-weight:800">${esc(L('Sur devis','Custom quote'))}</div>
+      <a class="btn sec" style="margin-top:12px;width:100%" target="_blank" href="${wa(L(`Bonjour Ilano, je souhaite un devis pour le pack Entreprise (${CTX.espace.nom}, code ${CTX.espace.slug}).`,`Hello Ilano, I would like a quote for the Enterprise plan (${CTX.espace.nom}, code ${CTX.espace.slug}).`))}">${esc(L('Demander un devis','Ask for a quote'))}</a></div>`:''}</div>`:'<div class="carte">Les formules seront bientôt disponibles. Contactez le support Ilano.</div>'}`)+`
    <p style="color:var(--mut);font-size:13px;text-align:center">Paiement sécurisé par Chariow : Mobile Money (MTN, Moov, Orange, Wave, Airtel…) ou carte bancaire. Votre accès est activé automatiquement dès le paiement.</p>`;
-  document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>payer(t.find(x=>x.id===b.dataset.t)));
+  document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const o=t.find(x=>x.id===b.dataset.t);
+    if(!o.chariow_product_id){location.href=wa(L(`Bonjour Ilano, je souhaite payer le pack ${nomForm(o.formule)} (${o.mois} mois, ${fmtT(o)}) pour ${CTX.espace.nom} (code ${CTX.espace.slug}).`,`Hello Ilano, I would like to pay for the ${nomForm(o.formule)} plan (${o.mois} month(s), ${fmtT(o)}) for ${CTX.espace.nom} (code ${CTX.espace.slug}).`));return}
+    payer(o)});
   document.querySelectorAll('[data-lg]').forEach(b=>b.onclick=()=>{window._abLog=b.dataset.lg;vAbonnement()});
 }
 const fmtT=o=>new Intl.NumberFormat(LOC(),{style:'currency',currency:o.devise,maximumFractionDigits:o.devise==='XOF'?0:2}).format(o.prix);
 const PAYS=[['BJ','Bénin','229'],['TG','Togo','228'],['ML','Mali','223'],['CI','Côte d\'Ivoire','225'],['SN','Sénégal','221'],['BF','Burkina Faso','226'],['NE','Niger','227'],['GN','Guinée','224'],['CM','Cameroun','237'],['GA','Gabon','241'],['CG','Congo','242'],['CD','RD Congo','243'],['FR','France','33'],['US','États-Unis','1']];
 function payer(o){
-  modale(`<h3>Paiement — ${FORM[o.formule]||o.formule} ${o.mois} mois</h3><p style="font-size:22px;font-weight:800;margin:6px 0">${fmtT(o)}</p>
+  modale(`<h3>Paiement — ${nomForm(o.formule)} ${o.mois} mois</h3><p style="font-size:22px;font-weight:800;margin:6px 0">${fmtT(o)}</p>
    <label>Pays du numéro de paiement</label><select name="pays">${PAYS.map(p=>`<option value="${p[0]}" ${p[1].toLowerCase()===(CTX.espace.pays||'').toLowerCase()?'selected':''}>${p[1]} (+${p[2]})</option>`).join('')}</select>
    <label>Numéro de téléphone (Mobile Money ou contact)</label><input name="tel" inputmode="tel" required value="${esc((CTX.membre.telephone||CTX.espace.telephone||'').replace(/\D/g,''))}" placeholder="sans l'indicatif">`,
   async f=>{const v=Object.fromEntries(new FormData(f));const pref=PAYS.find(p=>p[0]===v.pays)[2];let tel=v.tel.replace(/\D/g,'');if(tel.startsWith(pref)&&tel.length>pref.length+6)tel=tel.slice(pref.length);
@@ -847,7 +870,7 @@ function vReglages(){
     <label>Adresse</label><input name="adresse" value="${esc(e.adresse||'')}">
     <div class="err" id="rg-err"></div><button class="btn">Enregistrer</button></form>
     <div class="carte"><h3 style="margin-top:0">Abonnement</h3><p>Statut : <b>${{essai:'Essai gratuit',actif:'Actif',suspendu:'Suspendu',resilie:'Résilié'}[e.statut]}</b></p>
-    <p>Logiciels : ${CTX.logiciels.map(l=>`<span class="tag">${esc(l)}</span>`).join(' ')}</p><p>Code entreprise : <b>${esc(e.slug)}</b></p>
+    <p>Logiciels : ${CTX.logiciels.map(l=>`<span class="tag">${esc(tr(RH_NOMS[l]||l))}</span>`).join(' ')}</p>${estGerant()?`<p><button class="btn sec pt" onclick="aller('co_modules')">${esc(L('Modules et réglages','Modules & settings'))} →</button></p>`:''}<p>Code entreprise : <b>${esc(e.slug)}</b></p>
     <a class="btn sec" target="_blank" href="https://wa.me/15054642331?text=${encodeURIComponent(L('Bonjour Ilano, je suis ','Hello Ilano, this is ')+e.nom+' ('+e.slug+')')}">Contacter le support</a></div></div>`;
   let nouveauLogo=null;
   $('#rg-lz').onclick=()=>$('#rg-f').click();
@@ -869,7 +892,7 @@ sb.auth.onAuthStateChange((ev)=>{if(ev==='PASSWORD_RECOVERY'){$('#v-app').classL
 let _pi=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();_pi=e;$('#installer').classList.remove('cache')});
 $('#installer').onclick=async()=>{if(!_pi)return;_pi.prompt();await _pi.userChoice;_pi=null;$('#installer').classList.add('cache')};
 window.addEventListener('appinstalled',()=>$('#installer').classList.add('cache'));
-rhInscriptionInit();appliquerLangue();$('#i-lang').value=LANG;if(LANG==='en')$('#i-dev').value='USD';
+rhInscriptionInit();coInscriptionInit();appliquerLangue();$('#i-lang').value=LANG;if(LANG==='en')$('#i-dev').value='USD';
 (async()=>{const{data:{session}}=await sb.auth.getSession();
   if(session&&!location.hash.includes('type=recovery'))demarrer();else montrerAuth()})();
 </script>

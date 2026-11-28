@@ -1,0 +1,40 @@
+/* Ilano — modèle Nettoyage : entreprises de nettoyage et d'entretien */
+(window.ILANO_SECTEURS = window.ILANO_SECTEURS || {}).nettoyage = {
+  code: 'nettoyage', nom: ['Nettoyage', 'Cleaning'], icone: '🧽', gamme: 'standard',
+  pages: ['co_accueil', 'co_agenda', 'co_clients', 'co_ressources', 'co_factures', 'co_prestations', 'co_depenses'],
+  modules: { agenda: true, clients: true, prestations: true, factures: true, depenses: true, ressources: true, echeanciers: false, reservation: false },
+  mots: {
+    client: ['Client', 'Client'], clients: ['Clients', 'Clients'],
+    ressource: ['Site', 'Site'], ressources: ['Sites', 'Sites'],
+    rdv: ['Intervention', 'Job'], rdvs: ['Interventions', 'Jobs'],
+    prestation: ['Prestation', 'Service'], prestations: ['Prestations et tarifs', 'Services & prices'],
+    membre: ['Agent / chef d’équipe', 'Cleaner / team lead'],
+  },
+  categoriesClient: [['client', 'Client', 'Client'], ['entreprise', 'Entreprise', 'Company']],
+  champsRessource: [
+    { k: 'adresse', l: ['Adresse du site', 'Site address'], liste: true },
+    { k: 'surface', l: ['Surface (m²)', 'Area (m²)'], t: 'number' },
+    { k: 'frequence', l: ['Fréquence (ex. 3 fois / semaine)', 'Frequency (e.g. 3 times / week)'] },
+    { k: 'consignes', l: ['Consignes et accès', 'Instructions & access'], t: 'textarea' },
+  ],
+  proprietaireRessource: true, ressourcePartagee: true,
+  typeRessource: 'site', categoriesRessource: ['Bureaux', 'Domicile', 'Commerce', 'Hôtel / restaurant', 'Chantier', 'Autre'],
+  statutsRessource: [['actif', 'Sous contrat', 'Under contract', ''], ['suspendu', 'Suspendu', 'On hold', 'gris']],
+  libPrixRessource: ['Forfait mensuel', 'Monthly fee'],
+  champsRdv: [{ k: 'equipe', l: ['Équipe', 'Team'] }, { k: 'controle', l: ['Contrôle qualité (note /10)', 'Quality check (score /10)'], t: 'number' }],
+  agenda: { mode: 'mission', duree: 180, membre: true, ressource: true, repeter: true },
+  facturationMensuelle: true,
+  depenses: ['Produits d’entretien', 'Matériel', 'Salaires', 'Transport', 'Tenues', 'Assurance', 'Autre'],
+  kpis: (r, o) => [
+    [o.L('Interventions aujourd’hui', 'Jobs today'), r.rdv_jour, o.L('Cette semaine : ', 'This week: ') + r.rdv_semaine, true],
+    [o.L('Facturé ce mois', 'Invoiced this month'), o.fmt(r.ca_mois)],
+    [o.L('Encaissé ce mois', 'Collected this month'), o.fmt(r.encaisse_mois)],
+    [o.L('Reste à encaisser', 'Outstanding'), o.fmt(r.impayes), r.nb_retard ? o.L(r.nb_retard + ' en retard', r.nb_retard + ' overdue') : ''],
+  ],
+  premiers: [
+    ['co_clients', ['Ajoutez vos clients', 'Add your clients']],
+    ['co_ressources', ['Ajoutez leurs sites et le forfait mensuel', 'Add their sites and monthly fee']],
+    ['co_agenda', ['Planifiez les interventions et assignez les équipes', 'Plan jobs and assign teams']],
+  ],
+  exemples: { prestations: [['Nettoyage de bureaux (passage)', 25000, 180], ['Grand ménage', 60000, 360], ['Vitrerie', 15000, 120]] },
+};

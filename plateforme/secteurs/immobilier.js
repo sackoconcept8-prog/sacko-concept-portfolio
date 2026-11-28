@@ -1,0 +1,48 @@
+/* Ilano — modèle Agence immobilière : agences, gestionnaires de biens */
+(window.ILANO_SECTEURS = window.ILANO_SECTEURS || {}).immobilier = {
+  code: 'immobilier', nom: ['Agence immobilière', 'Real estate agency'], icone: '🏠', gamme: 'standard',
+  pages: ['co_accueil', 'co_ressources', 'co_clients', 'co_echeanciers', 'co_factures', 'co_agenda', 'co_depenses'],
+  modules: { agenda: true, clients: true, prestations: false, factures: true, depenses: true, ressources: true, echeanciers: true, reservation: false },
+  mots: {
+    client: ['Contact', 'Contact'], clients: ['Locataires et propriétaires', 'Tenants & landlords'],
+    ressource: ['Bien', 'Property'], ressources: ['Biens', 'Properties'],
+    rdv: ['Visite', 'Viewing'], rdvs: ['Visites et rendez-vous', 'Viewings & meetings'],
+    prestation: ['Prestation', 'Service'], prestations: ['Honoraires', 'Fees'],
+    echeancier: ['Bail', 'Lease'], echeanciers: ['Loyers', 'Rents'],
+    facture: ['Avis d’échéance', 'Rent notice'], recu: ['Quittance de loyer', 'Rent receipt'],
+    membre: ['Agent', 'Agent'],
+  },
+  categoriesClient: [['locataire', 'Locataire', 'Tenant'], ['proprietaire', 'Propriétaire', 'Landlord'], ['prospect', 'Prospect', 'Prospect']],
+  champsClient: [
+    { k: 'piece', l: ['Pièce d’identité (n°)', 'ID document (no.)'] },
+    { k: 'profession', l: ['Profession', 'Occupation'] },
+    { k: 'garant', l: ['Garant', 'Guarantor'] },
+  ],
+  champsRessource: [
+    { k: 'adresse', l: ['Adresse', 'Address'], liste: true },
+    { k: 'pieces', l: ['Nombre de pièces', 'Rooms'], t: 'number' },
+    { k: 'charges', l: ['Charges / mois', 'Service charges / month'], t: 'number' },
+    { k: 'caution', l: ['Caution', 'Deposit'], t: 'number' },
+    { k: 'bail_fin', l: ['Fin du bail', 'Lease end'], t: 'date' },
+    { k: 'commission', l: ['Commission de l’agence (%)', 'Agency fee (%)'], t: 'number' },
+  ],
+  proprietaireRessource: true,
+  typeRessource: 'bien', categoriesRessource: ['Appartement', 'Maison / villa', 'Studio', 'Bureau', 'Magasin', 'Terrain'],
+  statutsRessource: [['libre', 'Libre', 'Vacant', ''], ['loue', 'Loué', 'Let', 'gris'], ['travaux', 'En travaux', 'Under works', 'orange']],
+  libPrixRessource: ['Loyer mensuel', 'Monthly rent'],
+  echeancier: { mode: 'mensuel', mois: 12, libelle: ['Loyer', 'Rent'], ressource: true },
+  agenda: { mode: 'creneau', duree: 45, membre: true, ressource: true },
+  depenses: ['Travaux / réparations', 'Salaires', 'Publicité / annonces', 'Déplacements', 'Loyer de l’agence', 'Impôts et taxes', 'Reversements propriétaires', 'Autre'],
+  kpis: (r, o) => [
+    [o.L('Loyers impayés', 'Unpaid rent'), o.fmt(r.en_retard), o.L(r.nb_retard + ' échéance(s) en retard', r.nb_retard + ' overdue'), true],
+    [o.L('Encaissé ce mois', 'Collected this month'), o.fmt(r.encaisse_mois)],
+    [o.L('Biens loués', 'Properties let'), ((r.ressources_statut || {}).loue || 0) + ' / ' + r.nb_ressources, o.L('Libres : ', 'Vacant: ') + ((r.ressources_statut || {}).libre || 0)],
+    [o.L('Loyers à venir', 'Upcoming rent'), o.fmt(r.a_venir)],
+  ],
+  premiers: [
+    ['co_ressources', ['Ajoutez vos biens et leurs loyers', 'Add your properties and their rent']],
+    ['co_clients', ['Ajoutez vos locataires et propriétaires', 'Add your tenants and landlords']],
+    ['co_echeanciers', ['Créez les loyers mensuels de chaque bail', 'Create the monthly rent for each lease']],
+  ],
+  exemples: { ressources: [['Appartement A1 — Cocody', 'Appartement', 250000], ['Villa 4 pièces — Cadjehoun', 'Maison / villa', 400000]] },
+};

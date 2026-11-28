@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Réserver en ligne</title>
+<meta name="theme-color" content="#0E7A50">
+<link rel="icon" type="image/svg+xml" href="ilano-icone.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--p:#0E7A50;--p2:#EAF7F0;--txt:#071E3E;--mut:#667085;--bord:#e6e8ec;--fond:#f5f7f6;--rouge:#d92d20}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--txt);background:var(--fond);font-size:15px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit}.cache{display:none!important}
+.tete{background:#fff;border-bottom:1px solid var(--bord)}
+.tete .in{max-width:720px;margin:0 auto;padding:22px 18px;display:flex;gap:14px;align-items:center}
+.tete img{max-height:56px;max-width:140px;object-fit:contain}.tete h1{margin:0;font-size:21px}.tete small{color:var(--mut)}
+main{max-width:720px;margin:0 auto;padding:20px 18px 60px}
+.carte{background:#fff;border:1px solid var(--bord);border-radius:16px;padding:20px;margin-bottom:14px}
+h2{font-size:17px;margin:0 0 12px;display:flex;gap:10px;align-items:center}h2 i{font-style:normal;width:26px;height:26px;border-radius:8px;background:var(--p);color:#fff;display:inline-grid;place-items:center;font-size:13px}
+label{display:block;font-size:13px;font-weight:600;color:#344054;margin:12px 0 6px}
+input,select,textarea{width:100%;border:1px solid #d0d5dd;border-radius:10px;padding:12px;background:#fff;color:var(--txt)}
+input:focus,select:focus,textarea:focus{outline:2px solid color-mix(in srgb,var(--p) 35%,transparent);border-color:var(--p)}
+.choix{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.opt{border:1px solid var(--bord);border-radius:12px;padding:14px;background:#fff;cursor:pointer;text-align:left}
+.opt:hover{border-color:var(--p)}.opt.on{border:2px solid var(--p);background:var(--p2)}.opt b{display:block}.opt small{color:var(--mut)}.opt .px{color:var(--p);font-weight:800;margin-top:4px;display:block}
+.opt[disabled]{opacity:.45;cursor:not-allowed}
+.creneaux{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.cr{border:1px solid var(--bord);border-radius:10px;padding:10px 6px;background:#fff;cursor:pointer;font-weight:700}.cr:hover{border-color:var(--p)}.cr.on{background:var(--p);color:#fff;border-color:var(--p)}
+.btn{background:var(--p);color:#fff;border:0;border-radius:12px;padding:14px 20px;font-weight:700;cursor:pointer;width:100%;font-size:16px}
+.btn:disabled{opacity:.55;cursor:wait}.btn.sec{background:var(--p2);color:var(--p)}
+.grille2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.err{color:var(--rouge);font-size:14px;min-height:20px;margin-top:10px}.vide{color:var(--mut);text-align:center;padding:16px}
+.resume{background:var(--p2);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.6;margin-top:12px}
+.pied{text-align:center;color:#98a2b3;font-size:12px;margin-top:24px}.pied a{color:inherit}
+.ok{text-align:center;padding:30px 20px}.ok .rond{width:64px;height:64px;border-radius:50%;background:var(--p);color:#fff;font-size:32px;display:grid;place-items:center;margin:0 auto 14px}
+@media(max-width:560px){.grille2{grid-template-columns:1fr}.tete h1{font-size:18px}}
+</style>
+</head>
+<body>
+<header class="tete"><div class="in" id="tete"><div><h1>…</h1></div></div></header>
+<main id="m"><div class="carte vide">Chargement…</div></main>
+<script>
+const SB_URL='https://cqbuxbchjnlhezkzzlqq.supabase.co',SB_KEY='sb_publishable_2FhOq6XnaOlE6s0p1kExkA_FEuEoPOm';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const $=s=>document.querySelector(s);const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const P=new URLSearchParams(location.search);const SLUG=(P.get('e')||'').toLowerCase();
+let LANG=P.get('lang')||'';let I=null;const L=(f,e)=>LANG==='en'?e:f;
+const fmt=v=>new Intl.NumberFormat(LANG==='en'?'en-US':'fr-FR',{style:'currency',currency:I?.devise||'XOF',maximumFractionDigits:(I?.devise||'XOF')==='XOF'?0:2}).format(v||0);
+const jourL=d=>d.toLocaleDateString(LANG==='en'?'en-US':'fr-FR',{weekday:'long',day:'numeric',month:'long'});
+const hm=d=>d.toLocaleTimeString(LANG==='en'?'en-US':'fr-FR',{hour:'2-digit',minute:'2-digit'});
+const iso=d=>{const x=new Date(d);x.setMinutes(x.getMinutes()-x.getTimezoneOffset());return x.toISOString().slice(0,10)};
+function lisible(h){let n=parseInt((h||'#0E7A50').slice(1),16),c=[n>>16,(n>>8)&255,n&255];while((0.299*c[0]+0.587*c[1]+0.114*c[2])/255>0.55)c=c.map(v=>v*0.88);return'#'+c.map(v=>Math.round(v).toString(16).padStart(2,'0')).join('')}
+const S={prest:null,membre:'',date:iso(new Date()),creneau:null,arr:iso(new Date()),dep:iso(new Date(Date.now()+864e5)),chambre:null};
+
+async function init(){
+  if(!SLUG){$('#m').innerHTML=`<div class="carte vide">${L('Lien de réservation incomplet.','Incomplete booking link.')}</div>`;return}
+  const{data,error}=await sb.rpc('co_public_infos',{p_slug:SLUG});I=data;
+  if(!LANG)LANG=I?.langue||((navigator.language||'fr').startsWith('fr')?'fr':'en');document.documentElement.lang=LANG;
+  if(error||!I){$('#tete').innerHTML=`<div><h1>${L('Réservation en ligne','Online booking')}</h1></div>`;$('#m').innerHTML=`<div class="carte vide">${L('La réservation en ligne n’est pas disponible pour le moment. Contactez directement l’établissement.','Online booking is not available right now. Please contact the business directly.')}</div>`;return}
+  const p=lisible(I.couleur);document.documentElement.style.setProperty('--p',p);document.documentElement.style.setProperty('--p2',p+'1a');document.querySelector('meta[name=theme-color]').content=p;
+  document.title=L('Réserver — ','Book — ')+I.nom;if(I.logo_url)document.querySelector('link[rel=icon]').href=I.logo_url;
+  $('#tete').innerHTML=`${I.logo_url?`<img src="${esc(I.logo_url)}" alt="">`:''}<div><h1>${esc(I.nom)}</h1><small>${esc([I.adresse,I.telephone].filter(Boolean).join(' · '))}</small></div>`;
+  I.modele==='hotel'?vueHotel():vueCreneaux();
+}
+/* ---------- Hôtel : dates puis chambre ---------- */
+async function vueHotel(){
+  $('#m').innerHTML=`<div class="carte"><h2><i>1</i>${L('Vos dates','Your dates')}</h2><div class="grille2"><div><label>${L('Arrivée','Check-in')}</label><input type="date" id="h-a" min="${iso(new Date())}" value="${S.arr}"></div><div><label>${L('Départ','Check-out')}</label><input type="date" id="h-d" value="${S.dep}"></div></div></div>
+   <div class="carte"><h2><i>2</i>${L('Votre chambre','Your room')}</h2><div id="h-ch" class="choix"></div></div>${formulaire(3)}`;
+  const maj=async()=>{S.arr=$('#h-a').value;S.dep=$('#h-d').value;if(S.dep<=S.arr){const d=new Date(S.arr+'T12:00:00');d.setDate(d.getDate()+1);S.dep=iso(d);$('#h-d').value=S.dep}$('#h-d').min=S.arr;
+    const du=new Date(S.arr+'T14:00'),au=new Date(S.dep+'T12:00');const nuits=Math.round((au-du)/864e5+.1)||1;
+    const{data:occ}=await sb.rpc('co_public_occupation',{p_slug:SLUG,p_du:du.toISOString(),p_au:au.toISOString()});
+    const libres=I.ressources.filter(r=>!(occ||[]).some(o=>o.r===r.id));const cats={};for(const r of I.ressources){const c=r.categorie||L('Chambre','Room');(cats[c]=cats[c]||{all:[],libres:[]}).all.push(r);if(libres.includes(r))cats[c].libres.push(r)}
+    $('#h-ch').innerHTML=Object.keys(cats).length?Object.entries(cats).map(([c,g])=>{const r=g.libres[0];const pmin=Math.min(...g.all.map(x=>+x.prix||0));
+      return`<button class="opt ${S.chambre&&g.libres.some(x=>x.id===S.chambre)?'on':''}" data-r="${r?.id||''}" ${r?'':'disabled'}><b>${esc(c)}</b><small>${r?(g.libres.length+' '+L('disponible(s)','available')):L('Complet à ces dates','Full on these dates')}${g.all[0].capacite?' · '+g.all[0].capacite+' '+L('pers.','guests'):''}</small><span class="px">${fmt(pmin)} ${L('/ nuit','/ night')}${nuits>1?` · ${L('env.','approx.')} ${fmt(pmin*nuits)}`:''}</span></button>`}).join(''):`<div class="vide">${L('Aucune chambre proposée en ligne.','No rooms offered online.')}</div>`;
+    if(S.chambre&&!libres.some(x=>x.id===S.chambre))S.chambre=null;
+    document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{S.chambre=b.dataset.r;document.querySelectorAll('[data-r]').forEach(x=>x.classList.toggle('on',x===b));resume()});resume()};
+  $('#h-a').onchange=maj;$('#h-d').onchange=maj;lierForm();maj();
+}
+/* ---------- Rendez-vous : prestation, personne, jour, heure ---------- */
+function vueCreneaux(){
+  const eq=I.equipe||[];const n=eq.length?4:3;
+  $('#m').innerHTML=`<div class="carte"><h2><i>1</i>${L('Choisissez une prestation','Choose a service')}</h2><div class="choix" id="c-pr">${I.prestations.length?I.prestations.map(p=>`<button class="opt" data-p="${p.id}"><b>${esc(p.nom)}</b><small>${p.duree_min?dur(p.duree_min):''}${p.description?' · '+esc(p.description):''}</small><span class="px">${fmt(p.prix)}</span></button>`).join(''):`<div class="vide">${L('Prise de rendez-vous simple, sans prestation à choisir.','Simple booking — no service to choose.')}</div>`}</div></div>
+   ${eq.length?`<div class="carte"><h2><i>2</i>${L('Avec qui ?','With whom?')}</h2><div class="choix"><button class="opt on" data-m="">${L('Peu importe','No preference')}</button>${eq.map(m=>`<button class="opt" data-m="${m.id}"><b>${esc(m.nom)}</b></button>`).join('')}</div></div>`:''}
+   <div class="carte"><h2><i>${eq.length?3:2}</i>${L('Le jour et l’heure','Day and time')}</h2><label>${L('Jour','Day')}</label><input type="date" id="c-d" min="${iso(new Date())}" value="${S.date}"><label>${L('Heure','Time')}</label><div id="c-h" class="creneaux"></div></div>${formulaire(n)}`;
+  document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{S.prest=b.dataset.p;document.querySelectorAll('[data-p]').forEach(x=>x.classList.toggle('on',x===b));creneaux()});
+  document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{S.membre=b.dataset.m;document.querySelectorAll('[data-m]').forEach(x=>x.classList.toggle('on',x===b));creneaux()});
+  $('#c-d').onchange=()=>{S.date=$('#c-d').value;creneaux()};lierForm();creneaux();
+}
+const dur=m=>m>=60?Math.floor(m/60)+' h'+(m%60?' '+String(m%60).padStart(2,'0'):''):m+' min';
+async function creneaux(){S.creneau=null;resume();const z=$('#c-h');const h=I.reglages?.horaires||{};const ouv=h.ouverture||'08:00',fer=h.fermeture||'18:00',fermes=h.fermes||[0];
+  const p=I.prestations.find(x=>x.id===S.prest);const d=p?.duree_min||30;const pas=+(I.reglages?.pas_min)||30;
+  const jour=new Date(S.date+'T00:00');if(fermes.includes(jour.getDay())){z.innerHTML=`<div class="vide" style="grid-column:1/-1">${L('Fermé ce jour-là. Choisissez un autre jour.','Closed on this day. Please choose another day.')}</div>`;return}
+  const a=new Date(S.date+'T'+ouv),b=new Date(S.date+'T'+fer);
+  const{data:occ}=await sb.rpc('co_public_occupation',{p_slug:SLUG,p_du:a.toISOString(),p_au:b.toISOString()});const eq=(I.equipe||[]).map(m=>m.id);
+  const libre=(t1,t2,m)=>!(occ||[]).some(o=>o.m===m&&new Date(o.d)<t2&&new Date(o.f)>t1);
+  const slots=[];for(let t=new Date(a);t.getTime()+d*6e4<=b.getTime();t=new Date(t.getTime()+pas*6e4)){const t2=new Date(t.getTime()+d*6e4);if(t<new Date(Date.now()+30*6e4))continue;
+    let m=null;if(S.membre){if(!libre(t,t2,S.membre))continue;m=S.membre}else if(eq.length){m=eq.find(x=>libre(t,t2,x));if(!m)continue}
+    else if((occ||[]).some(o=>new Date(o.d)<t2&&new Date(o.f)>t))continue;slots.push([t,t2,m])}
+  z.innerHTML=slots.length?slots.map((s,i)=>`<button class="cr" data-c="${i}">${hm(s[0])}</button>`).join(''):`<div class="vide" style="grid-column:1/-1">${L('Plus de créneau libre ce jour-là. Essayez un autre jour.','No free time left on this day. Try another day.')}</div>`;
+  document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{S.creneau=slots[+b.dataset.c];document.querySelectorAll('[data-c]').forEach(x=>x.classList.toggle('on',x===b));resume()});
+}
+function formulaire(n){return`<form class="carte" id="f"><h2><i>${n}</i>${L('Vos coordonnées','Your details')}</h2>
+  <label>${L('Nom complet','Full name')}</label><input name="nom" required minlength="2" maxlength="120" autocomplete="name">
+  <div class="grille2"><div><label>${L('Téléphone / WhatsApp','Phone / WhatsApp')}</label><input name="tel" type="tel" required minlength="8" autocomplete="tel" placeholder="+229 …"></div><div><label>${L('E-mail (facultatif)','Email (optional)')}</label><input name="email" type="email" autocomplete="email"></div></div>
+  <label>${L('Message (facultatif)','Message (optional)')}</label><textarea name="note" rows="2" maxlength="1000"></textarea>
+  <div class="resume cache" id="res"></div><div class="err" id="err"></div><button class="btn" id="go">${L('Envoyer ma demande','Send my request')}</button>
+  <p style="font-size:12px;color:var(--mut);text-align:center;margin:10px 0 0">${L('Votre demande est confirmée par l’établissement. Vos informations servent uniquement à cette réservation.','The business confirms your request. Your details are only used for this booking.')}</p></form>`}
+function resume(){const r=$('#res');if(!r)return;let t='';
+  if(I.modele==='hotel'){const c=I.ressources.find(x=>x.id===S.chambre);if(c){const n=Math.round((new Date(S.dep+'T12:00')-new Date(S.arr+'T14:00'))/864e5+.1);t=`<b>${esc(c.categorie||c.nom)}</b> · ${jourL(new Date(S.arr+'T12:00'))} → ${jourL(new Date(S.dep+'T12:00'))} · ${n} ${L('nuit(s)','night(s)')}`}}
+  else if(S.creneau){const p=I.prestations.find(x=>x.id===S.prest);t=`${p?`<b>${esc(p.nom)}</b> · `:''}${jourL(S.creneau[0])} ${L('à','at')} ${hm(S.creneau[0])}${p?' · '+fmt(p.prix):''}`}
+  r.innerHTML=t;r.classList.toggle('cache',!t)}
+function lierForm(){$('#f').onsubmit=async ev=>{ev.preventDefault();$('#err').textContent='';const v=Object.fromEntries(new FormData(ev.target));let a={};
+  if(I.modele==='hotel'){if(!S.chambre){$('#err').textContent=L('Choisissez une chambre.','Choose a room.');return}a={p_debut:new Date(S.arr+'T14:00').toISOString(),p_fin:new Date(S.dep+'T12:00').toISOString(),p_ressource:S.chambre}}
+  else{if(I.prestations.length&&!S.prest){$('#err').textContent=L('Choisissez une prestation.','Choose a service.');return}if(!S.creneau){$('#err').textContent=L('Choisissez une heure.','Choose a time.');return}
+    a={p_debut:S.creneau[0].toISOString(),p_fin:S.creneau[1].toISOString(),p_prestation:S.prest||null,p_membre:S.creneau[2]||null}}
+  const b=$('#go');b.disabled=true;
+  const{error}=await sb.rpc('co_public_reserver',{p_slug:SLUG,p_nom:v.nom,p_telephone:v.tel,p_email:v.email||null,p_note:v.note||null,...a});b.disabled=false;
+  if(error){$('#err').textContent=error.message.replace(/^.*?:\s*/,'');return}
+  const txt=$('#res').innerText;const wa=I.telephone?`https://wa.me/${String(I.telephone).replace(/\D/g,'')}?text=${encodeURIComponent(L(`Bonjour, je viens de faire une demande de réservation en ligne : ${txt}. Nom : ${v.nom}.`,`Hello, I just sent an online booking request: ${txt}. Name: ${v.nom}.`))}`:'';
+  $('#m').innerHTML=`<div class="carte ok"><div class="rond">✓</div><h2 style="justify-content:center">${L('Demande envoyée !','Request sent!')}</h2><p style="color:var(--mut)">${esc(I.nom)} ${L('vous confirme votre réservation très vite.','will confirm your booking shortly.')}</p><div class="resume" style="text-align:left">${$('#res')?.innerHTML||esc(txt)}</div>
+   ${wa?`<a class="btn sec" style="display:block;text-decoration:none;margin-top:14px" href="${wa}" target="_blank">💬 ${L('Écrire sur WhatsApp','Message on WhatsApp')}</a>`:''}<button class="btn" style="margin-top:10px" onclick="location.reload()">${L('Faire une autre réservation','Make another booking')}</button></div>`}}
+init();
+</script>
+<p class="pied">Ilano · <a href="/ilano/" target="_blank">sackoconcept.com/ilano</a></p>
+</body>
+</html>

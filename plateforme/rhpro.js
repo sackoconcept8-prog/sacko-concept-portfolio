@@ -189,7 +189,7 @@ function menuPlus(){Object.assign(IC,RH_IC);
   $('.voile').onclick=e=>{if(e.target.classList.contains('voile'))fermer()}}
 /* Bandeaux licence (tous logiciels) : lecture seule, échéances proches */
 function bandeauxLicence(){if(!estGerant()||!CTX?.licences)return'';let h='';
-  for(const l of CTX.licences){const nm=RH_NOMS[l.logiciel]||l.logiciel;
+  for(const l of CTX.licences.filter(x=>!x.inclus_dans)){const nm=RH_NOMS[l.logiciel]||l.logiciel;
     if(l.statut==='lecture_seule'){h+=`<div class="rh-bandeau ro"><span><b>🔒 Lecture seule</b> — ${esc(L(`${nm} : le forfait de maintenance et d'hébergement a expiré le ${rhDl(l.maintenance_fin)}. Vos données restent visibles, mais l'ajout et la modification sont bloqués.`,`${tr(nm)}: the maintenance & hosting plan expired on ${rhDl(l.maintenance_fin)}. Your data is still visible, but adding and editing are blocked.`))}</span><button class="btn pt" onclick="window._abLog='${l.logiciel}';aller('abonnement')">Renouveler le forfait</button></div>`;continue}
     if(l.type==='achat'&&l.maintenance_fin){const j=Math.ceil((new Date(l.maintenance_fin+'T23:59:59')-Date.now())/864e5);
       if(j>=0&&j<=30)h+=`<div class="rh-bandeau rap"><span>${esc(L(`⏰ Le forfait de maintenance et d'hébergement de ${nm} arrive à échéance le ${rhDl(l.maintenance_fin)} (dans ${j} jour${j>1?'s':''}). Renouvelez-le pour garder l'accès complet.`,`⏰ The maintenance & hosting plan for ${tr(nm)} ends on ${rhDl(l.maintenance_fin)} (in ${j} day${j>1?'s':''}). Renew it to keep full access.`))}</span><button class="btn pt" onclick="window._abLog='${l.logiciel}';aller('abonnement')">Renouveler le forfait</button></div>`}
