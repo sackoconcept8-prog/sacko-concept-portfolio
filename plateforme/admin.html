@@ -254,7 +254,7 @@ function demos(){const z=$('#demos');
    ${DEMOS.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">${DEMOS.map(x=>`<button class="btn sec" style="justify-content:flex-start;text-align:left;padding:12px" data-demo="${x.id}">${DEMO_IC[x.modele]||'✨'} <span><b>${esc(x.nom)}</b><br><small>${esc(x.modele)}</small></span></button>`).join('')}</div>`
     :'<p style="color:var(--mut)">Aucun espace de démonstration.</p>'}
    ${ROLE==='admin'?`<button class="btn lien pt" id="dm-reset" style="margin-top:10px">↻ ${DEMOS.length?'Remettre les démos à zéro':'Créer les espaces de démonstration'}</button>`:''}`;
-  document.querySelectorAll('[data-demo]').forEach(b=>b.onclick=()=>{try{localStorage.setItem('sc_espace',b.dataset.demo)}catch{}window.open('/plateforme/','_blank')});
+  document.querySelectorAll('[data-demo]').forEach(b=>b.onclick=()=>{try{localStorage.setItem('sc_espace',b.dataset.demo)}catch{}location.href='/plateforme/'});
   if($('#dm-reset'))$('#dm-reset').onclick=async()=>{if(DEMOS.length&&!confirm('Remettre toutes les démos à leur état de départ ? Ce que vous y avez ajouté sera effacé.'))return;
     $('#dm-reset').disabled=true;const{error}=await sb.rpc('ilano_reinitialiser_demos');if(error)alert(error.message);charger()};
 }
