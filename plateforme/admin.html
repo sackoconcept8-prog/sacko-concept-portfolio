@@ -78,7 +78,7 @@ $('#deco').onclick=async()=>{await sb.auth.signOut();location.reload()};
 
 async function charger(){
   const{data:ro}=await sb.rpc('ilano_mon_role');ROLE=ro?.role||'admin';
-  const{data,error}=await sb.rpc('admin_espaces');
+  let{data,error}=await sb.rpc('admin_espaces');
   if(data){setTimeout(rappels,0);setTimeout(demandes,0);setTimeout(support,0);setTimeout(equipe,0)}
   if(error||data===null){$('#v-cnx').classList.remove('cache');$('#v-admin').classList.add('cache');if(!error&&data===null){$('#c-err').textContent="Ce compte n'est pas administrateur.";await sb.auth.signOut()}return}
   DEMOS=data.filter(x=>String(x.slug).startsWith('demo-'));data=data.filter(x=>!String(x.slug).startsWith('demo-'));
