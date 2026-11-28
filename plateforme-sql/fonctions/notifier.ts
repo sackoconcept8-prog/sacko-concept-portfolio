@@ -153,7 +153,8 @@ ${b.mot_de_passe ? `<tr><td style="padding:8px 0;font-size:13px;color:#6B7A8C">$
       if (!q || q.utilises >= q.quota) return rep({ erreur: t(`Quota de SMS du mois atteint (${q?.quota ?? 0}). Contactez Ilano pour un pack de SMS.`, `Monthly SMS quota reached (${q?.quota ?? 0}). Contact Ilano for an SMS pack.`), quota: q }, 429);
       const cle = Deno.env.get('BREVO_API_KEY');
       if (!cle) return rep({ erreur: t('SMS bientôt disponibles', 'SMS coming soon') }, 503);
-      const exp = String(es.nom).normalize('NFD').replace(/[^A-Za-z0-9]/g, '').slice(0, 11) || 'Ilano';
+      // Un seul nom d'expéditeur enregistré (« Ilano ») : les opérateurs d'Afrique de l'Ouest bloquent les noms non déclarés
+      const exp = (Deno.env.get('SMS_EXPEDITEUR') || 'Ilano').slice(0, 11);
       const r = await fetch('https://api.brevo.com/v3/transactionalSMS/sms', {
         method: 'POST', headers: { 'api-key': cle, 'Content-Type': 'application/json', accept: 'application/json' },
         body: JSON.stringify({ sender: exp, recipient: to, content: message, type: 'transactional', tag: 'ilano' }),
