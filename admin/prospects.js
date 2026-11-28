@@ -22,9 +22,11 @@ const P_REL_KEY = "sc_pros_rel";
 const P_APPS = {
   securipro:{n:"SécuriPro",url:"https://www.sackoconcept.com/securipro/",subj:"SécuriPro – logiciel de gestion pour sociétés de gardiennage",en:"SécuriPro – management software for security companies"},
   btppro:{n:"BTP Pro",url:"https://www.sackoconcept.com/btppro/",subj:"BTP Pro – logiciel de gestion pour entreprises de routes et travaux publics",en:"BTP Pro – management software for road and public works companies"},
-  nettopro:{n:"NettoPro",url:"https://www.sackoconcept.com/nettopro/",subj:"NettoPro – logiciel de gestion pour sociétés de nettoyage",en:"NettoPro – management software for cleaning companies"}
+  nettopro:{n:"NettoPro",url:"https://www.sackoconcept.com/nettopro/",subj:"NettoPro – logiciel de gestion pour sociétés de nettoyage",en:"NettoPro – management software for cleaning companies"},
+  clinique:{n:"Ilano Clinique",brand:"Ilano",url:"https://www.sackoconcept.com/plateforme/?secteur=clinique",lb:"Essai gratuit 14 jours : ",subj:"Ilano – logiciel de gestion pour cliniques",en:"Ilano – management software for clinics",def:"votre clinique"},
+  ecole:{n:"Ilano École",brand:"Ilano",url:"https://www.sackoconcept.com/plateforme/?secteur=ecole",lb:"Essai gratuit 14 jours : ",subj:"Ilano – logiciel de gestion pour écoles privées",en:"Ilano – management software for private schools",def:"votre établissement"}
 };
-function pMk(app,sujet,quoi,points,enQuoi,enPoints){const n=P_APPS[app].n,u=P_APPS[app].url,s="\nHawa Sacko · SACKO CONCEPT";return{
+function pMk(app,sujet,quoi,points,enQuoi,enPoints){const n=P_APPS[app].brand||P_APPS[app].n,u=P_APPS[app].url,s="\nHawa Sacko · SACKO CONCEPT";return{
   premier:"Bonjour,\nJ'aimerais m'entretenir avec vous au sujet de "+sujet+".\nNous avons conçu "+n+", un logiciel pour "+quoi+" : "+points+".\nJe peux vous le présenter en 15 minutes."+s,
   grandes:"Bonjour,\nJ'aimerais m'entretenir avec la direction de {agence} au sujet de "+sujet+".\nNous avons conçu "+n+", un logiciel de gestion pour "+quoi+", installé à vos couleurs.\nJe peux vous le présenter en 15 minutes."+s,
   relance:"Bonjour,\nJe reviens vers vous au sujet de "+n+", notre logiciel pour "+quoi+".\nJe peux vous le présenter en 15 minutes, quand vous voulez."+s,
@@ -34,9 +36,11 @@ function pMk(app,sujet,quoi,points,enQuoi,enPoints){const n=P_APPS[app].n,u=P_AP
   relance3:"Bonjour,\nJe ne veux pas vous déranger davantage. Si le sujet redevient d'actualité, la démo de "+n+" reste ouverte : "+u+"\nBelle continuation à {agence}."+s}}
 const P_TPLX = {
   btppro:pMk("btppro","le suivi de vos chantiers","les entreprises de routes et de travaux publics","avancement par kilomètre, engins, matériaux, pointage des ouvriers et décomptes","managing your road works","a software for road and public works companies, with site progress, equipment, materials, attendance and payment claims"),
+  clinique:pMk("clinique","la gestion de votre clinique","les cliniques et polycliniques","dossiers patients, rendez-vous, consultations, facturation avec part assurance, pharmacie et honoraires des médecins","managing your clinic","a software for clinics, with patient records, appointments, consultations, billing with insurance share, pharmacy and doctors' fees"),
+  ecole:pMk("ecole","la gestion de votre établissement","les écoles privées","élèves et classes, notes par trimestre, bulletins, frais de scolarité par tranches, relances des impayés et espace parents","managing your school","a software for private schools, with students and classes, term grades, report cards, tuition by instalments, reminders and a parent portal"),
   nettopro:pMk("nettopro","la gestion de vos agents et de vos sites","les sociétés de nettoyage","planning des agents, pointage, contrôles qualité, devis et factures","managing your cleaning teams","a software for cleaning companies, with staff scheduling, check-in, quality checks, quotes and invoices")
 };
-function pApp(r){const a=String(r.Application||"").toLowerCase();return a.includes("btp")?"btppro":a.includes("nett")?"nettopro":"securipro"}
+function pApp(r){const a=String(r.Application||"").toLowerCase();return a.includes("btp")?"btppro":a.includes("nett")?"nettopro":a.includes("clini")?"clinique":/[ée]cole/.test(a)?"ecole":"securipro"}
 function pTplBase(k,app){return app&&app!=="securipro"?(P_TPLX[app][k]||P_TPL[k].t):P_TPL[k].t}
 function pTplKey(k,app){return app&&app!=="securipro"?app+":"+k:k}
 function pSubj(r,tk){const a=P_APPS[pApp(r)];return tk==="en"?a.en:a.subj}
@@ -98,9 +102,10 @@ async function pSave(r,ch){
 }
 const P_LV="v=5"; // changer ce numéro force WhatsApp à recharger l'aperçu des liens
 function pLinkFix(t,a){t=String(t).replace(/https?:\/\/(www\.)?sackoconcept\.com\/(securipro|btppro|nettopro)\/?(\?[^\s]*)?/g,(m,w,app)=>"https://www.sackoconcept.com/"+app+"/?"+P_LV);
-  if(!/sackoconcept\.com\/(securipro|btppro|nettopro)/.test(t)){const u=P_APPS[a].url+"?"+P_LV,lb=/^Hello/.test(t)?"Free demo: ":"Démo gratuite : ";t=/\nHawa Sacko/.test(t)?t.replace(/\nHawa Sacko/,"\n"+lb+u+"\nHawa Sacko"):t+"\n"+lb+u}
-  return t.replace(/ de le /g," du ")}
-function pMsg(r,k){const a=pApp(r);return pLinkFix(pTpl(k,a).split("{agence}").join(r.Agence||(a==="securipro"?"votre agence":"votre entreprise")),a)}
+  t=t.replace(/https?:\/\/(www\.)?sackoconcept\.com\/plateforme\/\?secteur=([a-z]+)(&[^\s]*)?/g,(m,w,sec)=>"https://www.sackoconcept.com/plateforme/?secteur="+sec+"&"+P_LV);
+  if(!/sackoconcept\.com\/(securipro|btppro|nettopro|plateforme)/.test(t)){const u=P_APPS[a].url+(P_APPS[a].url.includes("?")?"&":"?")+P_LV,lb=/^Hello/.test(t)?(P_APPS[a].lb?"14-day free trial: ":"Free demo: "):(P_APPS[a].lb||"Démo gratuite : ");t=/\nHawa Sacko/.test(t)?t.replace(/\nHawa Sacko/,"\n"+lb+u+"\nHawa Sacko"):t+"\n"+lb+u}
+  return t.replace(/ de le /g," du ").replace(/ de Ilano/g," d'Ilano")}
+function pMsg(r,k){const a=pApp(r);return pLinkFix(pTpl(k,a).split("{agence}").join(r.Agence||(a==="securipro"?"votre agence":P_APPS[a].def||"votre entreprise")),a)}
 const P_SAMPLE = [
   ["2026-11-05","Sénégal","DIS – Dakar Intérim Sécurité","Dakar","+221 33 825 58 34","Fixe","Grande","Plus de 1 000 agents, convoyage de fonds.","","À contacter","","","contact@exemple-dis.sn",""],
   ["2026-11-05","Guinée","G4S Guinée","Conakry, Kipé","+224 669 40 00 02","Mobile","Grande","Filiale du groupe mondial G4S.","","Contacté",""],
