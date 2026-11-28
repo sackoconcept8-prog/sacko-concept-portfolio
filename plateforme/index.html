@@ -4,17 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ilano — Sign in</title>
-<meta name="theme-color" content="#13734B">
+<meta name="theme-color" content="#0E7A50">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="ilano-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ilano">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23EAF6EF'/%3E%3Crect x='26' y='26' width='12' height='28' rx='4' fill='%231B2A4A'/%3E%3Crect x='26.5' y='9' width='11' height='11' rx='2' transform='rotate(45 32 14.5)' fill='%231FA36B'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="ilano-icone.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--p:#13734B;--p2:#EAF6EF;--txt:#1B2A4A;--mut:#667085;--bord:#e6e8ec;--fond:#f7f8fa;--blanc:#fff;--rouge:#d92d20;--orange:#f79009;--r:14px}
+:root{--p:#0E7A50;--p2:#EAF7F0;--txt:#071E3E;--mut:#667085;--bord:#e6e8ec;--fond:#f7f8fa;--blanc:#fff;--rouge:#d92d20;--orange:#f79009;--r:14px}
 *{box-sizing:border-box}html,body{margin:0}
 body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--txt);background:var(--fond);font-size:15px;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit}
@@ -30,15 +30,28 @@ input:focus,select:focus,textarea:focus{outline:2px solid color-mix(in srgb,var(
 .err{color:var(--rouge);font-size:13px;min-height:18px;margin-top:8px}
 .ok{color:var(--p);font-size:13px}
 /* ---------- Accueil / auth ---------- */
-.auth{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr}
-.auth-g{background:linear-gradient(160deg,var(--p2),#fff 70%);padding:48px;display:flex;flex-direction:column;justify-content:space-between}
-.auth-g h1{font-size:38px;line-height:1.12;margin:28px 0 14px;letter-spacing:-.02em}
-.auth-g p{color:var(--mut);font-size:16px;max-width:460px;line-height:1.6}
-.auth-g ul{list-style:none;padding:0;margin:24px 0;display:grid;gap:10px}
-.auth-g li{display:flex;gap:10px;align-items:center}.auth-g li b{color:var(--p)}
+.auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;background:#F3F6F4}
+.auth-carte{width:100%;max-width:1140px;min-height:660px;display:grid;grid-template-columns:1.05fr 1fr;background:#fff;border-radius:28px;overflow:hidden;box-shadow:0 1px 2px rgba(7,30,62,.05),0 30px 70px -30px rgba(7,30,62,.22)}
+.auth-g{position:relative;overflow:hidden;background:linear-gradient(155deg,#DDF2E6 0%,#EEF8F2 50%,#FAFDFB 100%);padding:44px 48px;display:flex;flex-direction:column;justify-content:space-between;gap:28px}
+.auth-g>*{position:relative;z-index:1}
+.auth-g .deco{position:absolute;z-index:0;border-radius:50%;border:1px solid rgba(14,122,80,.18);pointer-events:none}
+.auth-g .deco.d1{width:460px;height:460px;right:-230px;bottom:-200px}
+.auth-g .deco.d2{width:280px;height:280px;right:-120px;bottom:-110px;border-color:rgba(14,122,80,.12)}
+.auth-g .deco-pt{position:absolute;z-index:0;width:12px;height:12px;border-radius:3px;background:#14A06A;right:44px;top:52px}
+.auth-g .deco-pt.p2{width:8px;height:8px;background:#071E3E;right:206px;top:auto;bottom:70px;border-radius:2px}
+.badge-essai{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #BFE5CF;color:var(--p);border-radius:999px;padding:7px 14px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.badge-essai::before{content:"";width:7px;height:7px;border-radius:2px;background:#14A06A}
+.auth-g h1{font-size:54px;line-height:1.02;margin:22px 0 16px;letter-spacing:-.035em;font-weight:800}
+.auth-g h1 span{display:block}.auth-g h1 .acc{color:var(--p)}
+.auth-g p{color:#4A5568;font-size:16px;max-width:430px;line-height:1.65;margin:0}
+.auth-g ul{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:12px;font-size:14px;font-weight:600;color:#1F2D44}
+.auth-g li{display:flex;gap:14px;align-items:center}
+.auth-g li::before{content:"";width:22px;height:2px;border-radius:2px;background:var(--p);flex:none}
+.auth-pied{display:flex;justify-content:space-between;gap:12px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6B7A8C}
 .marque{display:flex;gap:10px;align-items:center;font-weight:800;letter-spacing:.02em}
 .marque img{width:40px;height:40px;object-fit:contain;border-radius:10px;background:#fff}
-.auth-d{display:flex;align-items:center;justify-content:center;padding:32px;background:#fff}
+.marque img.logo-ilano{width:auto;height:50px;border-radius:0;background:none}
+.auth-d{display:flex;align-items:center;justify-content:center;padding:48px 44px;background:#fff}
 .boite{width:100%;max-width:420px}
 .boite h2{font-size:24px;margin:0 0 6px}.boite .sous{color:var(--mut);margin:0 0 18px}
 .onglets{display:flex;background:var(--fond);border-radius:12px;padding:4px;margin-bottom:18px}
@@ -54,7 +67,6 @@ input:focus,select:focus,textarea:focus{outline:2px solid color-mix(in srgb,var(
 .ilano{display:inline-flex;align-items:flex-end;font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:34px;line-height:1;color:#1B2A4A;letter-spacing:-.5px;text-decoration:none}
 .ilano .i{position:relative;display:inline-block}.ilano .i::after{content:"";position:absolute;left:50%;top:.1em;width:.24em;height:.24em;background:#1FA36B;border-radius:.04em;transform:translateX(-50%) rotate(45deg)}
 .ilano .tm{font-family:"Plus Jakarta Sans",sans-serif;font-size:11px;font-weight:600;margin-left:2px;align-self:flex-start}
-.auth-g h1{font-family:"Playfair Display",Georgia,serif;font-weight:700}
 .lang-sw{display:flex;justify-content:flex-end;gap:4px;margin-bottom:14px;font-size:13px;font-weight:700}
 .lang-sw a{color:var(--mut);text-decoration:none;padding:6px 10px;border-radius:8px}.lang-sw a.on{background:var(--p2);color:var(--p)}
 /* ---------- Ecran logo ---------- */
@@ -111,7 +123,7 @@ tr:last-child td{border-bottom:0}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#101828;color:#fff;padding:12px 18px;border-radius:12px;z-index:60;font-size:14px}
 .bas-mobile{display:none}
 @media(max-width:900px){
- .auth{grid-template-columns:1fr}.auth-g{padding:28px}.auth-g h1{font-size:28px}.auth-g ul{display:none}
+ .auth{padding:0;background:#fff;align-items:stretch}.auth-carte{grid-template-columns:1fr;border-radius:0;box-shadow:none;min-height:100vh}.auth-g{padding:24px 22px 26px;gap:14px}.auth-g h1{font-size:34px;margin:16px 0 10px}.auth-g p{font-size:14px}.auth-g ul,.auth-g .deco,.auth-g .deco-pt,.auth-pied{display:none}.auth-d{padding:24px 22px 40px;align-items:flex-start}.marque img.logo-ilano{height:36px}
  .app{grid-template-columns:1fr}.menu{display:none}
  .contenu{padding:18px 14px 90px}.kpis{grid-template-columns:1fr 1fr}.deux,.caisse{grid-template-columns:1fr}
  .bas-mobile{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--bord);z-index:30;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
@@ -125,19 +137,22 @@ tr:last-child td{border-bottom:0}
 
 <!-- ================= ACCUEIL : connexion / inscription ================= -->
 <section id="v-auth" class="auth cache">
+ <div class="auth-carte">
   <div class="auth-g">
-    <div class="marque" id="auth-marque"><a class="ilano" href="/ilano/" aria-label="Ilano"><span class="i">ı</span>lano<span class="tm">™</span></a></div>
+    <span class="deco d1" aria-hidden="true"></span><span class="deco d2" aria-hidden="true"></span><span class="deco-pt" aria-hidden="true"></span><span class="deco-pt p2" aria-hidden="true"></span>
+    <div class="marque" id="auth-marque"><a href="/ilano/" aria-label="Ilano"><img class="logo-ilano" src="/ilano/images/ilano-logo.svg" alt="Ilano"></a></div>
     <div>
-      <h1 id="auth-titre">Inscrivez-vous. Tout est prêt.</h1>
+      <span class="badge-essai" id="auth-badge">Essai gratuit · 14 jours</span>
+      <h1 id="auth-titre"><span>Inscrivez-vous.</span><span class="acc">Tout est prêt.</span></h1>
       <p id="auth-texte">Ajoutez votre logo : vos couleurs s'appliquent partout automatiquement. Stock, ventes, caisse et équipe, sur ordinateur et téléphone.</p>
       <ul>
-        <li><b>✓</b> 14 jours d'essai gratuit, sans carte bancaire</li>
-        <li><b>✓</b> Votre logo et vos couleurs sur tout le logiciel</li>
-        <li><b>✓</b> Vos vendeurs se connectent avec un identifiant et un code PIN</li>
-        <li><b>✓</b> Vos données sont séparées et protégées</li>
+        <li>14 jours d'essai gratuit, sans carte bancaire</li>
+        <li>Votre logo et vos couleurs sur tout le logiciel</li>
+        <li>Vos vendeurs se connectent avec un identifiant et un code PIN</li>
+        <li>Vos données sont séparées et protégées</li>
       </ul>
     </div>
-    <small style="color:var(--mut)">© Ilano™ · SACKO CONCEPT LLC — Albuquerque, NM, USA</small>
+    <div class="auth-pied"><span>© Ilano™ · SACKO CONCEPT LLC</span><span>Albuquerque, NM · USA</span></div>
   </div>
   <div class="auth-d"><div class="boite">
     <div class="lang-sw" aria-label="Language"><a href="?lang=fr" data-l="fr">FR</a><a href="?lang=en" data-l="en">EN</a></div>
@@ -197,6 +212,7 @@ tr:last-child td{border-bottom:0}
       <button class="btn" style="width:100%">Enregistrer</button>
     </form>
   </div></div>
+  </div>
 </section>
 
 <!-- ================= Ecran d'ouverture au logo du client ================= -->
@@ -234,6 +250,7 @@ const LOC=()=>LANG==='en'?'en-US':'fr-FR';
 const L=(fr,en)=>LANG==='en'?en:fr;
 const I18N={
 "Inscrivez-vous. Tout est prêt.":"Sign up. You’re all set.",
+"Inscrivez-vous.":"Sign up.","Tout est prêt.":"You’re all set.","Essai gratuit · 14 jours":"Free trial · 14 days",
 "Ajoutez votre logo : vos couleurs s'appliquent partout automatiquement. Stock, ventes, caisse et équipe, sur ordinateur et téléphone.":"Add your logo and your colors apply everywhere automatically. Stock, sales, checkout and team — on computer and phone.",
 "14 jours d'essai gratuit, sans carte bancaire":"14-day free trial, no credit card needed",
 "Votre logo et vos couleurs sur tout le logiciel":"Your logo and colors across the whole app",
@@ -362,7 +379,7 @@ function lum([r,g,b]){return(0.299*r+0.587*g+0.114*b)/255}
 function melange(h,blanc){const[r,g,b]=hexRgb(h);return rgbHex(r+(255-r)*blanc,g+(255-g)*blanc,b+(255-b)*blanc)}
 function lisible(h){let c=hexRgb(h);while(lum(c)>0.55){c=c.map(v=>v*0.88)}return rgbHex(...c)}
 function appliquerMarque(e){
-  const p=lisible(e.couleur_principale||'#1f8a5b');
+  const p=lisible(e.couleur_principale||'#0E7A50');
   document.documentElement.style.setProperty('--p',p);
   document.documentElement.style.setProperty('--p2',e.couleur_secondaire||melange(p,.9));
   document.querySelector('meta[name=theme-color]').content=p;
@@ -399,7 +416,7 @@ function montrerAuth(){
     $('#c-code').value=slug;
     sb.rpc('marque_espace',{p_slug:slug}).then(({data})=>{ if(!data)return; appliquerMarque(data);
       $('#auth-marque').innerHTML=`${data.logo_url?`<img src="${esc(data.logo_url)}" alt="">`:''}<span>${esc(data.nom)}</span>`;
-      $('#auth-titre').textContent='Bienvenue chez '+data.nom;$('#auth-texte').textContent='Connectez-vous à votre espace de travail.';
+      $('#auth-badge').classList.add('cache');$('#auth-titre').textContent='Bienvenue chez '+data.nom;$('#auth-texte').textContent='Connectez-vous à votre espace de travail.';
       $('#o-ins').classList.add('cache');
     });
   }
@@ -482,7 +499,7 @@ async function demarrer(nouveau){
   if(CTX.espace.logo_url){$('#sp-logo').src=CTX.espace.logo_url;$('#sp-logo').classList.remove('cache')}else $('#sp-logo').classList.add('cache');
   sp.classList.remove('cache');sp.style.opacity=1;
   $('#v-auth').classList.add('cache');$('#v-app').classList.remove('cache');
-  $('#m-logo').src=CTX.espace.logo_url||"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23EAF6EF'/%3E%3Crect x='26' y='26' width='12' height='28' rx='4' fill='%231B2A4A'/%3E%3Crect x='26.5' y='9' width='11' height='11' rx='2' transform='rotate(45 32 14.5)' fill='%231FA36B'/%3E%3C/svg%3E";$('#m-nom').textContent=CTX.espace.nom;
+  $('#m-logo').src=CTX.espace.logo_url||"ilano-icone.svg";$('#m-nom').textContent=CTX.espace.nom;
   $('#moi-nom').textContent=CTX.membre.nom_complet;$('#moi-role').textContent=ROLES[CTX.membre.role];
   construireMenu();
   if(['suspendu','resilie'].includes(CTX.espace.statut)){
@@ -829,7 +846,7 @@ function vReglages(){
         verif(await sb.storage.from('photos').upload(ch,nouveauLogo,{upsert:true}));logo_url=sb.storage.from('photos').getPublicUrl(ch).data.publicUrl}
       const p=lisible(v.couleur_principale);
       const maj=verif(await sb.from('espaces').update({nom:v.nom,telephone:v.telephone,adresse:v.adresse,couleur_principale:p,couleur_secondaire:melange(p,.9),logo_url}).eq('id',e.id).select().single());
-      CTX.espace=maj;appliquerMarque(maj);$('#m-logo').src=maj.logo_url||"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23EAF6EF'/%3E%3Crect x='26' y='26' width='12' height='28' rx='4' fill='%231B2A4A'/%3E%3Crect x='26.5' y='9' width='11' height='11' rx='2' transform='rotate(45 32 14.5)' fill='%231FA36B'/%3E%3C/svg%3E";$('#m-nom').textContent=maj.nom;toast('Enregistré ✓');
+      CTX.espace=maj;appliquerMarque(maj);$('#m-logo').src=maj.logo_url||"ilano-icone.svg";$('#m-nom').textContent=maj.nom;toast('Enregistré ✓');
     }catch(er){$('#rg-err').textContent=erreurMsg(er)}};
 }
 

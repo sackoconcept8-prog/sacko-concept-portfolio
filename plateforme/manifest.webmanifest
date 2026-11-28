@@ -6,7 +6,7 @@
  "scope": "/plateforme/",
  "display": "standalone",
  "background_color": "#FBFAF6",
- "theme_color": "#13734B",
+ "theme_color": "#0E7A50",
  "icons": [
   {
    "src": "ilano-192.png",
