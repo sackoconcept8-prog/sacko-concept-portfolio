@@ -173,7 +173,8 @@ function coChamps(type){const S=coS();const base=(type==='client'?S.champsClient
 function coChampHTML(c,v){const lab=esc(coL(c.l)),n='ch_'+c.k;v=v??'';
   if(c.t==='textarea')return`<label>${lab}</label><textarea name="${n}" rows="2">${esc(v)}</textarea>`;
   if(c.t==='select')return`<label>${lab}</label><select name="${n}">${c.o.map(o=>`<option value="${esc(o[0])}" ${o[0]===v?'selected':''}>${esc(LANG==='en'?o[2]:o[1])}</option>`).join('')}</select>`;
-  return`<label>${lab}</label><input name="${n}" type="${c.t==='number'?'number':c.t==='date'?'date':c.t==='tel'?'tel':'text'}" ${c.t==='number'?'step="any"':''} value="${esc(v)}" ${c.requis?'required':''}>`}
+  const ops=typeof c.options==='function'?c.options():null;
+  return`<label>${lab}</label><input name="${n}" type="${c.t==='number'?'number':c.t==='date'?'date':c.t==='tel'?'tel':'text'}" ${c.t==='number'?'step="any"':''} value="${esc(v)}" ${c.requis?'required':''} ${ops?`list="dl_${n}"`:''}>${ops?`<datalist id="dl_${n}">${ops.map(o=>`<option value="${esc(o)}">`).join('')}</datalist>`:''}`}
 function coLireChamps(v,type,avant={}){const o={...avant};for(const c of coChamps(type)){const x=v['ch_'+c.k];if(x===undefined)continue;if(x===''||x==null)delete o[c.k];else o[c.k]=c.t==='number'?+x:x}return o}
 
 /* ======================================================================

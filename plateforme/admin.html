@@ -253,6 +253,7 @@ function demos(){const z=$('#demos');
   z.innerHTML=`<h3 style="margin:0 0 4px">👁 Espaces de démonstration</h3><p style="color:var(--mut);margin:0 0 10px;font-size:14px">Un espace par secteur, rempli d'exemples. Ouvrez-le pour voir exactement ce que voit votre client, et pour faire vos démonstrations.</p>
    ${DEMOS.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">${DEMOS.map(x=>`<button class="btn sec" style="justify-content:flex-start;text-align:left;padding:12px" data-demo="${x.id}">${DEMO_IC[x.modele]||'✨'} <span><b>${esc(x.nom)}</b><br><small>${esc(x.modele)}</small></span></button>`).join('')}</div>`
     :'<p style="color:var(--mut)">Aucun espace de démonstration.</p>'}
+   ${DEMOS.some(x=>x.modele==='ecole')?`<p style="font-size:14px;margin:12px 0 0">👨‍👩‍👧 Espace parents de la démo école (famille Mensah, 3 enfants) : <a href="/plateforme/parents.html?t=demo-famille-mensah" target="_blank">ouvrir</a> · code <b>1234</b></p>`:''}
    ${ROLE==='admin'?`<button class="btn lien pt" id="dm-reset" style="margin-top:10px">↻ ${DEMOS.length?'Remettre les démos à zéro':'Créer les espaces de démonstration'}</button>`:''}`;
   document.querySelectorAll('[data-demo]').forEach(b=>b.onclick=()=>{try{localStorage.setItem('sc_espace',b.dataset.demo)}catch{}location.href='/plateforme/'});
   if($('#dm-reset'))$('#dm-reset').onclick=async()=>{if(DEMOS.length&&!confirm('Remettre toutes les démos à leur état de départ ? Ce que vous y avez ajouté sera effacé.'))return;

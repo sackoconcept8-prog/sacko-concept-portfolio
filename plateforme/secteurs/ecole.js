@@ -1,8 +1,14 @@
 /* Ilano — modèle École privée : écoles, collèges, lycées, centres de formation */
 (window.ILANO_SECTEURS = window.ILANO_SECTEURS || {}).ecole = {
   code: 'ecole', nom: ['École privée', 'Private school'], icone: '🎓', gamme: 'standard',
-  pages: ['co_accueil', 'co_clients', 'co_echeanciers', 'co_factures', 'co_prestations', 'co_agenda', 'co_depenses'],
-  modules: { agenda: true, clients: true, prestations: true, factures: true, depenses: true, ressources: false, echeanciers: true, reservation: false },
+  pages: ['co_accueil', 'ec_classes', 'co_clients', 'ec_notes', 'ec_bulletins', 'ec_absences', 'ec_enseignants', 'ec_parents', 'co_echeanciers', 'co_factures', 'co_prestations', 'co_agenda', 'co_depenses'],
+  pagesGestion: ['ec_parents'],
+  mob: ['co_accueil', 'ec_classes', 'ec_notes', 'ec_absences'],
+  titres: () => ({ ec_classes: L('Classes', 'Classes'), ec_notes: L('Notes', 'Marks'), ec_bulletins: L('Bulletins', 'Report cards'), ec_absences: L('Absences', 'Attendance'), ec_enseignants: L('Enseignants', 'Teachers'), ec_parents: L('Espace parents', 'Parents’ space') }),
+  courts: () => ({ ec_classes: L('Classes', 'Classes'), ec_notes: L('Notes', 'Marks'), ec_absences: L('Appel', 'Attendance') }),
+  accueilExtra: 'ecAccueil', ficheExtra: 'ecFiche',
+  modulesMetier: [['classes', ['Classes', 'Classes'], ['Classes, titulaires, matières et coefficients', 'Classes, form teachers, subjects and weights']], ['notes', ['Notes et bulletins', 'Marks & report cards'], ['Notes par trimestre, moyennes, rangs, bulletins imprimables', 'Marks per term, averages, ranks, printable report cards']], ['absences', ['Absences', 'Attendance'], ['Appel du jour, retards, justificatifs, message aux parents', 'Daily roll call, late arrivals, excuses, message to parents']], ['enseignants', ['Enseignants', 'Teachers'], ['Personnel, classes tenues, salaires', 'Staff, classes taught, salaries']], ['espace_parents', ['Espace parents', 'Parents’ space'], ['Chaque parent suit ses enfants avec un lien et un code', 'Each parent follows their children with a link and a code']]],
+  modules: { agenda: true, clients: true, prestations: true, factures: true, depenses: true, ressources: false, echeanciers: true, reservation: false, classes: true, notes: true, absences: true, enseignants: true, espace_parents: true },
   mots: {
     client: ['Élève', 'Student'], clients: ['Élèves', 'Students'],
     ressource: ['Salle', 'Room'], ressources: ['Salles', 'Rooms'],
@@ -14,7 +20,7 @@
   },
   categoriesClient: [['eleve', 'Élève', 'Student']],
   champsClient: [
-    { k: 'classe', l: ['Classe', 'Class'], liste: true, requis: true },
+    { k: 'classe', l: ['Classe', 'Class'], liste: true, requis: true, options: () => (window.ecNomsClasses ? window.ecNomsClasses() : null) },
     { k: 'matricule', l: ['Matricule', 'Student ID'] },
     { k: 'date_naissance', l: ['Date de naissance', 'Date of birth'], t: 'date' },
     { k: 'parent_nom', l: ['Parent / tuteur', 'Parent / guardian'], liste: true },

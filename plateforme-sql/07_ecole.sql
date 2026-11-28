@@ -1,0 +1,6 @@
+-- Ilano · métier École (migrations ilano_ecole_1 et ilano_ecole_2_demo appliquées sur sacko-plateforme)
+-- Tables : ec_enseignants, ec_classes, ec_matieres, ec_cours, ec_notes, ec_appreciations, ec_absences, ec_parents
+-- Élèves = co_clients (catégorie 'eleve', champs.classe = nom de la classe, champs.parent_tel)
+-- Fonctions : ec_resultats(classe, trimestre) [équipe], ec_parent_acces(espace, tel, nom, nouveau_code) [gérant],
+--             ec_parent_portail(jeton, code) [public : lien + code à 4 chiffres, blocage 15 min après 5 erreurs],
+--             ilano_demo_ecole(espace) [démo, super admin], appelée par ilano_reinitialiser_demos()

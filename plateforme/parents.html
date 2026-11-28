@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Espace parents</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0E7A50">
+<link rel="icon" type="image/svg+xml" href="ilano-icone.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--p:#0E7A50;--p2:#EAF7F0;--txt:#071E3E;--mut:#667085;--bord:#e6e8ec;--fond:#f5f7f6;--rouge:#d92d20;--orange:#b54708}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--txt);background:var(--fond);font-size:15px;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}.cache{display:none!important}
+.tete{background:#fff;border-bottom:1px solid var(--bord)}
+.tete .in{max-width:760px;margin:0 auto;padding:18px;display:flex;gap:14px;align-items:center}
+.tete img{max-height:52px;max-width:130px;object-fit:contain}.tete h1{margin:0;font-size:19px}.tete small{color:var(--mut);display:block}
+.logo-ph{width:46px;height:46px;border-radius:12px;background:var(--p);color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px;flex:none}
+main{max-width:760px;margin:0 auto;padding:18px 16px 60px}
+.carte{background:#fff;border:1px solid var(--bord);border-radius:16px;padding:18px;margin-bottom:14px}
+h2{font-size:17px;margin:0 0 10px}h3{font-size:15px;margin:0 0 8px}
+label{display:block;font-size:13px;font-weight:600;color:#344054;margin:10px 0 6px}
+input{width:100%;border:1px solid #d0d5dd;border-radius:10px;padding:13px;background:#fff;color:var(--txt);font-size:22px;letter-spacing:10px;text-align:center}
+.btn{background:var(--p);color:#fff;border:0;border-radius:12px;padding:13px 18px;font-weight:700;cursor:pointer;width:100%;margin-top:12px}
+.err{color:var(--rouge);font-size:14px;margin-top:8px;min-height:18px}
+.onglets{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px}
+.onglets button{border:1px solid var(--bord);background:#fff;border-radius:999px;padding:9px 14px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--txt)}
+.onglets button.on{background:var(--p);border-color:var(--p);color:#fff}
+.chips{display:flex;gap:6px;margin:0 0 12px}.chips button{border:1px solid var(--bord);background:#fff;border-radius:10px;padding:7px 11px;font-size:13px;cursor:pointer;color:var(--txt)}.chips button.on{background:var(--p2);border-color:var(--p);color:var(--p);font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.kpi{background:#fff;border:1px solid var(--bord);border-radius:14px;padding:12px}.kpi small{color:var(--mut);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}.kpi div{font-size:22px;font-weight:800;margin-top:4px}
+.kpi.p{background:var(--p);border-color:var(--p);color:#fff}.kpi.p small{color:#ffffffcc}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px 6px;border-bottom:1px solid #f2f4f7;text-align:left}th{color:var(--mut);font-size:12px;font-weight:600}td.r,th.r{text-align:right}
+.ligne{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #f2f4f7}.ligne:last-child{border-bottom:0}.ligne small{color:var(--mut)}
+.tag{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;background:#f2f4f7;color:#475467}.tag.r{background:#fef3f2;color:#b42318}.tag.v{background:var(--p2);color:var(--p)}
+.barre{height:8px;background:#eef2f6;border-radius:6px;overflow:hidden;margin:8px 0}.barre i{display:block;height:100%;background:var(--p)}
+.mut{color:var(--mut);font-size:13px}.pied{text-align:center;color:#98a2b3;font-size:12px;margin-top:24px}
+@media(max-width:520px){.kpis{gap:8px}.kpi{padding:10px}.kpi small{font-size:10px}.kpi div{font-size:18px}}
+</style>
+</head>
+<body>
+<header class="tete"><div class="in"><div id="logo" class="logo-ph">🎓</div><div><h1 id="t-nom">Espace parents</h1><small id="t-sous"></small></div></div></header>
+<main>
+  <div class="carte" id="v-code">
+    <h2 id="c-titre">Entrez votre code</h2>
+    <p class="mut" id="c-texte">L’école vous a envoyé un code à 4 chiffres avec ce lien.</p>
+    <form id="f-code"><input id="code" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" autocomplete="one-time-code" required><button class="btn" id="c-ok">Voir mes enfants</button><div class="err" id="c-err"></div></form>
+  </div>
+  <div id="v-app" class="cache"></div>
+  <p class="pied" id="pied">Ilano · SACKO CONCEPT</p>
+</main>
+<script>
+const sb=supabase.createClient('https://cqbuxbchjnlhezkzzlqq.supabase.co','sb_publishable_2FhOq6XnaOlE6s0p1kExkA_FEuEoPOm');
+const $=s=>document.querySelector(s);const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const jeton=new URLSearchParams(location.search).get('t')||'';
+let LANG=(navigator.language||'fr').startsWith('en')?'en':'fr',D=null,ENF=0,TRI=1;
+const L=(f,e)=>LANG==='en'?e:f;
+const n2=v=>v==null?'—':(+v).toLocaleString(LANG==='en'?'en-GB':'fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt=v=>new Intl.NumberFormat(LANG==='en'?'en-GB':'fr-FR',{style:'currency',currency:D?.ecole?.devise||'XOF',maximumFractionDigits:D?.ecole?.devise==='XOF'||D?.ecole?.devise==='XAF'||D?.ecole?.devise==='GNF'?0:2}).format(v||0);
+const dateL=d=>d?new Date(String(d).length<=10?d+'T12:00:00':d).toLocaleDateString(LANG==='en'?'en-GB':'fr-FR',{day:'2-digit',month:'short',year:'numeric'}):'—';
+const triL=t=>LANG==='en'?['','1st term','2nd term','3rd term'][t]:['','1er trimestre','2e trimestre','3e trimestre'][t];
+const coul=v=>v==null?'var(--mut)':v>=14?'var(--p)':v>=10?'var(--orange)':'var(--rouge)';
+function textes(){$('#c-titre').textContent=L('Entrez votre code','Enter your code');$('#c-texte').textContent=L('L’école vous a envoyé un code à 4 chiffres avec ce lien.','The school sent you a 4-digit code with this link.');$('#c-ok').textContent=L('Voir mes enfants','See my children');document.title=L('Espace parents','Parents’ space')}
+async function ouvrir(code){
+  $('#c-err').textContent='';$('#c-ok').disabled=true;
+  try{const{data,error}=await sb.rpc('ec_parent_portail',{p_jeton:jeton,p_code:code});if(error)throw error;
+    if(data.erreur){const m={lien:L('Ce lien n’est plus valable. Demandez un nouveau lien à l’école.','This link is no longer valid. Ask the school for a new one.'),code:L('Code incorrect.','Wrong code.'),bloque:L('Trop d’essais. Réessayez dans 15 minutes.','Too many attempts. Try again in 15 minutes.'),suspendu:L('L’espace de l’école est momentanément indisponible.','The school’s space is temporarily unavailable.')}[data.erreur];
+      $('#c-err').textContent=m||data.erreur;try{sessionStorage.removeItem('ec_code_'+jeton)}catch{}return}
+    try{sessionStorage.setItem('ec_code_'+jeton,code)}catch{}
+    D=data;if(D.ecole.langue==='en'&&!navigator.language.startsWith('fr'))LANG='en';TRI=+D.ecole.trimestre||1;afficher()}
+  catch(e){$('#c-err').textContent=L('Connexion impossible. Vérifiez votre internet et réessayez.','Cannot connect. Check your internet and try again.')}
+  finally{$('#c-ok').disabled=false}}
+function afficher(){
+  const e=D.ecole;document.documentElement.style.setProperty('--p',e.couleur||'#0E7A50');
+  $('#t-nom').textContent=e.nom;$('#t-sous').textContent=[L('Espace parents','Parents’ space'),e.annee].filter(Boolean).join(' · ');
+  $('#logo').outerHTML=e.logo_url?`<img id="logo" src="${esc(e.logo_url)}" alt="">`:`<div id="logo" class="logo-ph">${esc((e.nom||'É')[0])}</div>`;
+  $('#v-code').classList.add('cache');$('#v-app').classList.remove('cache');
+  if(!D.enfants.length){$('#v-app').innerHTML=`<div class="carte">${esc(L('Aucun élève n’est rattaché à votre numéro. Contactez l’école.','No student is linked to your number. Please contact the school.'))}</div>`;return}
+  const k=D.enfants[ENF],r=(k.resultats||[]).find(x=>x.trimestre===TRI)||{},el=r.eleve||{},p=k.paiements||{},reste=(+p.total||0)-(+p.paye||0);
+  const mats=(r.matieres||[]).map(m=>({...m,moy:el.notes?.[m.id]}));
+  $('#v-app').innerHTML=`<p style="margin:0 0 10px">${esc(L('Bonjour','Hello'))} ${esc(D.parent||'')} 👋</p>
+   ${D.enfants.length>1?`<div class="onglets">${D.enfants.map((x,i)=>`<button data-e="${i}" class="${i===ENF?'on':''}">${esc(x.nom.split(' ')[0])} · ${esc(x.classe||'')}</button>`).join('')}</div>`:''}
+   <div class="carte"><h2>${esc(k.nom)}</h2><p class="mut" style="margin:-4px 0 12px">${esc(L('Classe','Class'))} ${esc(k.classe||'—')}${k.titulaire?' · '+esc(L('Titulaire : ','Form teacher: '))+esc(k.titulaire):''}</p>
+    <div class="chips">${[1,2,3].map(t=>`<button data-t="${t}" class="${t===TRI?'on':''}">${esc(triL(t))}</button>`).join('')}</div>
+    <div class="kpis"><div class="kpi p"><small>${esc(L('Moyenne','Average'))}</small><div>${n2(el.moyenne)}</div></div>
+     <div class="kpi"><small>${esc(L('Rang','Rank'))}</small><div>${el.rang?el.rang+'<span style="font-size:14px;color:var(--mut)"> / '+r.effectif+'</span>':'—'}</div></div>
+     <div class="kpi"><small>${esc(L('Moy. de la classe','Class avg'))}</small><div>${n2(r.moyenne_classe)}</div></div></div>
+    ${mats.some(m=>m.moy!=null)?`<table><tr><th>${esc(L('Matière','Subject'))}</th><th class="r">Coef</th><th class="r">${esc(L('Moyenne','Average'))}</th><th class="r">${esc(L('Classe','Class'))}</th></tr>
+     ${mats.map(m=>`<tr><td>${esc(m.nom)}</td><td class="r">${m.coef}</td><td class="r"><b style="color:${coul(m.moy)}">${n2(m.moy)}</b></td><td class="r" style="color:var(--mut)">${n2(m.moyenne_classe)}</td></tr>`).join('')}</table>`
+     :`<p class="mut">${esc(L('Pas encore de notes pour ce trimestre.','No marks yet for this term.'))}</p>`}
+    ${el.conduite!=null||el.appreciation?`<div style="margin-top:12px;background:#f6f8fa;border-radius:12px;padding:12px">${el.conduite!=null?`<div><b>${esc(L('Conduite','Conduct'))} :</b> ${el.conduite} / 20</div>`:''}${el.appreciation?`<div style="margin-top:4px"><b>${esc(L('Appréciation','Comment'))} :</b> ${esc(el.appreciation)}</div>`:''}${el.decision?`<div style="margin-top:4px"><b>${esc(el.decision)}</b></div>`:''}</div>`:''}</div>
+   <div class="carte"><h3>🙋 ${esc(L('Absences et retards','Absences & late arrivals'))}</h3>
+    ${(k.absences||[]).length?k.absences.map(a=>`<div class="ligne"><span>${dateL(a.date)} · ${esc(a.type==='retard'?L('Retard','Late'):L('Absence','Absence'))}${a.motif?'<br><small>'+esc(a.motif)+'</small>':''}</span>${a.justifiee?`<span class="tag v">${esc(L('Justifiée','Excused'))}</span>`:`<span class="tag r">${esc(L('Non justifiée','Not excused'))}</span>`}</div>`).join(''):`<p class="mut" style="margin:0">${esc(L('Aucune absence. Bravo !','No absence. Well done!'))}</p>`}</div>
+   <div class="carte"><h3>💳 ${esc(L('Frais de scolarité','School fees'))}</h3>
+    ${p.total>0?`<div class="ligne"><span>${esc(L('Total facturé','Total billed'))}</span><b>${fmt(p.total)}</b></div><div class="ligne"><span>${esc(L('Déjà payé','Paid'))}</span><b style="color:var(--p)">${fmt(p.paye)}</b></div>
+     <div class="barre"><i style="width:${Math.min(100,Math.round(100*(+p.paye||0)/(+p.total||1)))}%"></i></div>
+     <div class="ligne"><span>${esc(L('Reste à payer','Left to pay'))}</span><b style="color:${reste>0?'var(--rouge)':'var(--p)'}">${fmt(reste)}</b></div>
+     ${p.prochaine?`<p class="mut" style="margin:8px 0 0">${esc(L('Prochaine échéance : ','Next instalment: '))}<b style="color:var(--txt)">${fmt(p.prochaine.montant)}</b> ${esc(L('avant le','by'))} ${dateL(p.prochaine.date)}${p.prochaine.objet?' · '+esc(p.prochaine.objet):''}</p>`:''}
+     ${reste>0&&(e.mobile_money||e.lien_paiement)?`<p class="mut" style="margin:8px 0 0">${e.mobile_money?esc(L('Payer par Mobile Money : ','Pay by Mobile Money: '))+'<b style="color:var(--txt)">'+esc(e.mobile_money)+'</b>':''}${e.lien_paiement?` <a href="${esc(e.lien_paiement)}" target="_blank" rel="noopener">${esc(L('Payer en ligne','Pay online'))}</a>`:''}</p>`:''}`
+     :`<p class="mut" style="margin:0">${esc(L('Aucun frais enregistré pour le moment.','No fees recorded yet.'))}</p>`}</div>
+   ${e.telephone?`<a class="btn" style="display:block;text-align:center;text-decoration:none" target="_blank" href="https://wa.me/${String(e.telephone).replace(/\D/g,'')}">${esc(L('Écrire à l’école sur WhatsApp','Message the school on WhatsApp'))}</a>`:''}`;
+  document.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{ENF=+b.dataset.e;afficher()});
+  document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{TRI=+b.dataset.t;afficher()});
+  $('#pied').textContent=L('Espace parents propulsé par Ilano','Parents’ space powered by Ilano');
+}
+textes();
+if(!jeton){$('#v-code').innerHTML=`<h2>${esc(L('Lien incomplet','Incomplete link'))}</h2><p class="mut">${esc(L('Ouvrez le lien complet envoyé par l’école.','Open the full link sent by the school.'))}</p>`}
+else{$('#f-code').onsubmit=e=>{e.preventDefault();ouvrir($('#code').value.trim())};let c=null;try{c=sessionStorage.getItem('ec_code_'+jeton)}catch{};if(c)ouvrir(c);else $('#code').focus()}
+</script>
+</body>
+</html>
