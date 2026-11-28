@@ -63,6 +63,12 @@ input:focus,select:focus,textarea:focus{outline:2px solid color-mix(in srgb,var(
 .pastille{width:28px;height:28px;border-radius:8px;border:1px solid var(--bord)}
 .etapes{display:flex;gap:6px;margin-bottom:16px}.etapes i{flex:1;height:4px;border-radius:4px;background:var(--bord)}.etapes i.on{background:var(--p)}
 .grille2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.mdp{position:relative}.mdp input{padding-right:84px}
+.mdp .voir{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--p);font-weight:700;font-size:12px;cursor:pointer;padding:8px 10px;border-radius:8px}
+.mdp .voir:hover{background:var(--p2)}
+.force{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:8px 0 4px}.force i{height:4px;border-radius:4px;background:var(--bord)}
+.force[data-n="1"] i:nth-child(-n+1){background:#d92d20}.force[data-n="2"] i:nth-child(-n+2){background:#f79009}.force[data-n="3"] i:nth-child(-n+3){background:#14A06A}.force[data-n="4"] i{background:var(--p)}
+.force-txt{font-size:12px;color:var(--mut);min-height:16px}
 /* ---------- Ilano ---------- */
 .ilano{display:inline-flex;align-items:flex-end;font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:34px;line-height:1;color:#1B2A4A;letter-spacing:-.5px;text-decoration:none}
 .ilano .i{position:relative;display:inline-block}.ilano .i::after{content:"";position:absolute;left:50%;top:.1em;width:.24em;height:.24em;background:#1FA36B;border-radius:.04em;transform:translateX(-50%) rotate(45deg)}
@@ -195,7 +201,9 @@ tr:last-child td{border-bottom:0}
         <label>Votre nom complet</label><input id="i-nom" required>
         <label>E-mail</label><input id="i-email" type="email" autocomplete="email" required>
         <label>Téléphone / WhatsApp</label><input id="i-tel" type="tel">
-        <label>Mot de passe (8 caractères minimum)</label><input id="i-pass" type="password" minlength="8" autocomplete="new-password" required>
+        <label>Mot de passe (8 caractères minimum)</label><div class="mdp"><input id="i-pass" type="password" minlength="8" autocomplete="new-password" required><button type="button" class="voir" data-cible="i-pass" aria-label="Afficher le mot de passe">Afficher</button></div>
+        <div class="force" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="force-txt" id="i-force"></div>
+        <label>Confirmer le mot de passe</label><div class="mdp"><input id="i-pass2" type="password" minlength="8" autocomplete="new-password" required><button type="button" class="voir" data-cible="i-pass2" aria-label="Afficher le mot de passe">Afficher</button></div>
         <input id="i-piege" class="cache" tabindex="-1" autocomplete="off">
         <div class="err" id="i-err"></div>
         <button class="btn" style="width:100%" id="i-btn">Créer mon espace gratuit</button>
@@ -207,7 +215,7 @@ tr:last-child td{border-bottom:0}
     <!-- Nouveau mot de passe (après lien e-mail) -->
     <form id="f-reset" class="cache">
       <h2>Nouveau mot de passe</h2><p class="sous">Choisissez votre nouveau mot de passe.</p>
-      <label>Nouveau mot de passe</label><input id="r-pass" type="password" minlength="8" required>
+      <label>Nouveau mot de passe</label><div class="mdp"><input id="r-pass" type="password" minlength="8" required><button type="button" class="voir" data-cible="r-pass" aria-label="Afficher le mot de passe">Afficher</button></div><label>Confirmer le mot de passe</label><div class="mdp"><input id="r-pass2" type="password" minlength="8" autocomplete="new-password" required><button type="button" class="voir" data-cible="r-pass2" aria-label="Afficher le mot de passe">Afficher</button></div>
       <div class="err" id="r-err"></div>
       <button class="btn" style="width:100%">Enregistrer</button>
     </form>
@@ -250,7 +258,7 @@ const LOC=()=>LANG==='en'?'en-US':'fr-FR';
 const L=(fr,en)=>LANG==='en'?en:fr;
 const I18N={
 "Inscrivez-vous. Tout est prêt.":"Sign up. You’re all set.",
-"Inscrivez-vous.":"Sign up.","Tout est prêt.":"You’re all set.","Essai gratuit · 14 jours":"Free trial · 14 days",
+"Inscrivez-vous.":"Sign up.","Confirmer le mot de passe":"Confirm password","Afficher":"Show","Masquer":"Hide","Afficher le mot de passe":"Show password","Les deux mots de passe ne sont pas identiques.":"The two passwords do not match.","Trop court":"Too short","Faible":"Weak","Moyen":"Fair","Bon":"Good","Excellent":"Excellent","Tout est prêt.":"You’re all set.","Essai gratuit · 14 jours":"Free trial · 14 days",
 "Ajoutez votre logo : vos couleurs s'appliquent partout automatiquement. Stock, ventes, caisse et équipe, sur ordinateur et téléphone.":"Add your logo and your colors apply everywhere automatically. Stock, sales, checkout and team — on computer and phone.",
 "14 jours d'essai gratuit, sans carte bancaire":"14-day free trial, no credit card needed",
 "Votre logo et vos couleurs sur tout le logiciel":"Your logo and colors across the whole app",
@@ -470,8 +478,13 @@ const _majS=majSecteur;majSecteur=function(){_majS();const o=$('#i-sect').select
 $('#ins-suiv').onclick=()=>{if($('#i-ent').value.trim().length<2){toast("Indiquez le nom de l'entreprise");return}
   $('#ins-1').classList.add('cache');$('#ins-2').classList.remove('cache');document.querySelectorAll('.etapes i')[1].classList.add('on')};
 $('#ins-prec').onclick=()=>{$('#ins-2').classList.add('cache');$('#ins-1').classList.remove('cache');document.querySelectorAll('.etapes i')[1].classList.remove('on')};
+
+/* ============ Mots de passe : afficher, force, confirmation ============ */
+document.querySelectorAll('.mdp .voir').forEach(b=>b.onclick=()=>{const i=document.getElementById(b.dataset.cible);const v=i.type==='password';i.type=v?'text':'password';b.textContent=tr(v?'Masquer':'Afficher')});
+$('#i-pass').addEventListener('input',()=>{const v=$('#i-pass').value;let n=0;if(v.length>=8)n++;if(/[A-Z]/.test(v)&&/[a-z]/.test(v))n++;if(/\d/.test(v))n++;if(/[^A-Za-z0-9]/.test(v)||v.length>=12)n++;if(!v)n=0;
+  document.querySelector('.force').dataset.n=n;$('#i-force').textContent=v?tr(['Trop court','Faible','Moyen','Bon','Excellent'][n]):''});
 $('#f-ins').onsubmit=async ev=>{
-  ev.preventDefault();$('#i-err').textContent='';const btn=$('#i-btn');btn.disabled=true;btn.textContent='Création de votre espace…';
+  ev.preventDefault();$('#i-err').textContent='';if($('#i-pass').value!==$('#i-pass2').value){$('#i-err').textContent=tr('Les deux mots de passe ne sont pas identiques.');$('#i-pass2').focus();return}const btn=$('#i-btn');btn.disabled=true;btn.textContent='Création de votre espace…';
   const corps={entreprise:$('#i-ent').value,nom:$('#i-nom').value,email:$('#i-email').value,password:$('#i-pass').value,
     telephone:$('#i-tel').value,secteur:$('#i-sect').value,pays:$('#i-pays').value,devise:$('#i-dev').value,langue:$('#i-lang').value,
     couleur_principale:COUL1,couleur_secondaire:melange(COUL1,.9),logo:LOGO_DATA,logiciel:rhLogicielInscription(),site_web:$('#i-piege').value};
@@ -483,7 +496,7 @@ $('#f-ins').onsubmit=async ev=>{
   }catch(e){$('#i-err').textContent=erreurMsg(e)}
   btn.disabled=false;btn.textContent='Créer mon espace gratuit';
 };
-$('#f-reset').onsubmit=async ev=>{ev.preventDefault();const{error}=await sb.auth.updateUser({password:$('#r-pass').value});
+$('#f-reset').onsubmit=async ev=>{ev.preventDefault();if($('#r-pass').value!==$('#r-pass2').value){$('#r-err').textContent=tr('Les deux mots de passe ne sont pas identiques.');return}const{error}=await sb.auth.updateUser({password:$('#r-pass').value});
   if(error){$('#r-err').textContent=erreurMsg(error);return}toast('Mot de passe modifié');history.replaceState(null,'',location.pathname);demarrer()};
 
 /* ============ Démarrage de l'espace ============ */
